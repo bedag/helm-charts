@@ -7,6 +7,8 @@ name: Release Helm Charts
 #  push:
 #    branches:
 #      - master
+on: [push]
+
 
 jobs:
   release:

@@ -1,7 +1,6 @@
 # Contributing Guidelines
 
-We'd love to accept your patches and contributions to this project. There are
-just a few small guidelines you need to follow.
+We'd love to accept your patches and contributions to this project. There are just a few small guidelines you need to follow.
 
 ## Sign off Your Work
 
@@ -9,7 +8,6 @@ The Developer Certificate of Origin (DCO) is a lightweight way for contributors 
 
 By making a contribution to this project, you agree to and comply with the
 [Developer's Certificate of Origin](./DCO).
-
 
 This is my commit message
 
@@ -49,16 +47,16 @@ Your PR has to fulfill the following points, to be considered:
 
 ### Versioning
 
-Each chart's version follows the [semver standard](https://semver.org/). Charts should start at version `1.0.0`. Any change to a chart (even just documentation) requires a new chart version.
+Each chart's version follows the [semver standard](https://semver.org/). Charts should start at version `1.0.0`.
 
 Any breaking changes to a chart (backwards incompatible) require:
 
   * Bump of the current Major version of the chart
   * State possible manual changes for this chart version in the `Upgrading` section of the chart's `README.md`
 
-## Release Process
+#### Immutability
 
-TBD
+Each release for each chart must be immutable. Any change to a chart (even just documentation) requires a version bump.
 
 ## Adding a new chart
 

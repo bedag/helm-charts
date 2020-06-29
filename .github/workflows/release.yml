@@ -1,14 +1,11 @@
 #
 # Template based on origin https://github.com/helm/charts-repo-actions-demo/blob/master/.github/workflows/release.yaml
 #
-name: Release Helm Charts
-
-#on:
-#  push:
-#    branches:
-#      - master
-on: [push]
-
+name: Helm Chart Release
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   release:
@@ -20,24 +17,24 @@ jobs:
       - name: Fetch history
         run: git fetch --prune --unshallow
 
-      - name: Configure Git
-        run: |
-          git config user.name "$GITHUB_ACTOR"
-          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
-      # See https://github.com/helm/chart-releaser-action/issues/6
-      - name: Install Helm
+      # Install Helm (Dependency)
+      - name: Install Helm Binary
         run: |
           curl -fsSLo get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
           chmod 700 get_helm.sh
           ./get_helm.sh
 
-      - name: Add dependency chart repos
+      # Install Chart Releaser (Dependency)
+      - name: Chart Releaser Binary
+        env:
+          CR_VERSION: "1.0.0-beta.1"
         run: |
-          helm repo add stable https://kubernetes-charts.storage.googleapis.com/
-          helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
+          curl -sL "https://github.com/helm/chart-releaser/releases/download/v${CR_VERSION}/chart-releaser_${CR_VERSION}_linux_amd64.tar.gz" | tar zx && chmod +x ./cr && sudo mv ./cr /usr/local/bin/
 
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.0.0-rc.2
+      # Run Release Script
+      - name: Release Charts
         env:
           CR_TOKEN: "${{ secrets.CR_TOKEN }}"
+          CR_REPO_URL: "https://bedag-charts.github.io/helm-charts"
+        run: |
+          bash .github/release/release.sh

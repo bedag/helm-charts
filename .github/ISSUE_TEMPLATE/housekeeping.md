@@ -1,7 +1,7 @@
 ---
-name: Feature request
+name: Housekeeping request
 about: Suggest an idea for this project
-title: '[bedag/{chart-name}] issue title'
+title: '[housekeeping] improvement title'
 labels: 'enhancement'
 assignees: ''
 
@@ -14,14 +14,11 @@ Describe *in detail* the feature/behavior/change you'd like to see.
 Be ready for followup questions, and please respond in a timely manner. If we can't reproduce a bug or think a feature already exists, we might close your issue.  If we're wrong, PLEASE feel free to reopen it and explain why.
 -->
 
-**Is your feature request related to a problem? Please describe.**
+**Is your feature request related to a problem? What would you like to improve?**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
 **Describe the solution you'd like**
 A clear and concise description of what you want to happen.
-
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
 
 **Additional context**
 Add any other context or screenshots about the feature request here.

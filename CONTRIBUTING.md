@@ -32,7 +32,7 @@ With these steps you can make a contribution:
 
 All submissions, including submissions by project members, require review. We use GitHub pull requests for this purpose. Consult [GitHub Help](https://help.github.com/articles/about-pull-requests/) for more information on using pull requests. See the above stated requirements for PR on this project.
 
-##  Release Process
+## Release Process
 
   1. Changes are automatically linted and tested using the [ct tool](https://github.com/helm/chart-testing) embedded as a GitHub action.
   2. Review is done manually by Bedag Informatik AG team members.
@@ -66,6 +66,26 @@ Each release for each chart must be immutable. Any change to a chart (even just 
 
 Currently these are the only requirements to add a new chart:
 
-  * **Only Helm Charts version 3 are accepted.**
+  * **Only Helm Charts version 3 are accepted/supported.**
   * The chart has it's on `README.md` describing it's configuration options with default values. The documentation should also cover  some basic configuration examples.
   * Follow a best practice structure for the layout of the chart  directory (A good reference is (bitnami's blog)[https://docs.bitnami.com/tutorials/production-ready-charts/] on this topic)
+
+## Recommendations
+
+We have some recommendations for creating a new chart.
+
+### Chart Schema
+
+A [Chart Schema](https://helm.sh/docs/topics/charts#schema-files) helps improving the value validations of the given chart values. But it's also used in solutions, where you can deploy charts over a gui. For example [Rancher](https://rancher.com/products/rancher/) uses the Chart Schema to render a user friendly page, where you can change the chart values. To get a good first layout of your values you might want to use [this Helm Plugin](https://github.com/karuppiah7890/helm-schema-gen). It automatically creates the schema file according to your values file.
+
+Install the Plugin
+
+```
+helm plugin install https://github.com/karuppiah7890/helm-schema-gen
+```
+
+Generate Schema file
+
+```
+helm schema-gen values.yaml
+```

@@ -25,7 +25,7 @@ See git help commit:
 With these steps you can make a contribution:
 
   1. Fork this repository, develop and test your changes on that fork.
-  2. All commits have a meaningful description and are signed off as described above.
+  2. All commits have a meaningful description and are signed off as described above and also verified.
   3. Submit a pull request from your fork to this project.
 
 ## Code reviews
@@ -44,7 +44,7 @@ All submissions, including submissions by project members, require review. We us
 Your PR has to fulfill the following points, to be considered:
 
   * CI Jobs for linting must pass.
-  * The title of the PR starts with the chart name (e.g. `[bedag/chart_name] Additional options for SecurityContext`)
+  * The title of the PR starts with the chart name (e.g. `[chart_name] Additional options for SecurityContext`)
   * Changes must follow [Helm best practices](https://helm.sh/docs/chart_best_practices/).
   * Changes to a chart require a version bump for that chart following [semver standard](https://semver.org/).
   * New/Changed Configurations for the chart are documented in it's `README.md` file.
@@ -66,9 +66,9 @@ Each release for each chart must be immutable. Any change to a chart (even just 
 
 Currently these are the only requirements to add a new chart:
 
-  * **Only Helm Charts version 3 are accepted/supported.**
+  * **Only Helm Version 3+ Charts ([ApiVersion 2](https://helm.sh/docs/topics/v2_v3_migration/)) are accepted/supported.**
   * The chart has it's on `README.md` describing it's configuration options with default values. The documentation should also cover  some basic configuration examples.
-  * Follow a best practice structure for the layout of the chart  directory (A good reference is (bitnami's blog)[https://docs.bitnami.com/tutorials/production-ready-charts/] on this topic)
+  * Follow a best practice structure for the layout of the chart  directory (A good reference is [bitnami's blog](https://docs.bitnami.com/tutorials/production-ready-charts/) on this topic)
 
 ## Recommendations
 

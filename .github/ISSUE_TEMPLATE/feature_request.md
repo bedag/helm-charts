@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: '[bedag/{chart-name}] issue title'
+title: '[{chart-name}] issue title'
 labels: 'enhancement'
 assignees: ''
 

@@ -1,0 +1,84 @@
+{{- define "bedag-lib.values.horizontalpodautoscaler" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict "parentKey" (default "autoscaling" .key) "path" (cat (default "" (default $context.path .path)) (default "autoscaling" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+#
+## - Horizontal Pod Autoscaler
+## Reference: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+##
+{{ $_.parentKey }}:
+
+  ## Horizontal Pod Autoscaler Enable
+  # {{ $_.path }}enabled --  Enable HPA resource
+  enabled: true
+
+  ## Horizontal Pod Autoscaler API version
+  # {{ $_.path }}apiVersion -- Configure the api version used for the Job resource.
+  apiVersion: ""
+
+  ## Horizontal Pod Autoscaler Labels
+  # {{ $_.path }}labels -- Merges given labels with common labels
+  labels: {}
+
+  ## Horizontal Pod Autoscaler Annotations
+  # {{ $_.path }}annotations -- Configure HPA Annotations
+  annotations: {}
+
+  ## Horizontal Pod Autoscaler Target
+  # {{ $_.path }}scaleTargetRef -- scaleTargetRef points to the target resource to scale, and is used to the pods for which metrics should be collected, as well as to actually change the replica count.
+  scaleTargetRef:
+
+  ## Horizontal Pod Autoscaler minimum Replicas
+  # {{ $_.path }}minReplicas -- minReplicas is the lower limit for the number of replicas to which the autoscaler can scale down. It defaults to 1 pod.
+  # @default -- 1
+  minReplicas:
+
+  ## Horizontal Pod Autoscaler minimum Replicas
+  # {{ $_.path }}maxReplicas -- maxReplicas is the upper limit for the number of replicas to which the autoscaler can scale up. It cannot be less that minReplicas.
+  maxReplicas:
+
+  ## Horizontal Pod Autoscaler Target CPU
+  # {{ $_.path }}targetCPUUtilizationPercentage -- Set the averageUtilization for the CPU resrouce as integer percentage (e.g. 50 = 50%)
+  targetCPUUtilizationPercentage:
+
+  ## Horizontal Pod Autoscaler Target Memory
+  # {{ $_.path }}targetMemoryUtilizationPercentage -- Set the averageUtilization for the Memory resrouce as integer percentage (e.g. 50 = 50%)
+  targetMemoryUtilizationPercentage:
+
+  ## Horizontal Pod Autoscaler Custom Metric Rules
+  # {{ $_.path }}metrics -- Define [Custom Metrics](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics) rules
+  metrics: []
+  #
+  # - type: External
+  #   external:
+  #     metric:
+  #       name: queue_messages_ready
+  #       selector: "queue=worker_tasks"
+  #     target:
+  #       type: AverageValue
+  #       averageValue: 30
+  #
+  #  - type: Object
+  #    object:
+  #      metric:
+  #        name: requests-per-second
+  #      describedObject:
+  #        apiVersion: networking.k8s.io/v1beta1
+  #        kind: Ingress
+  #        name: main-route
+  #      target:
+  #        type: Value
+  #        value: 10k
+
+  ## Horizontal Pod Autoscaler Scale Behavior
+  # {{ $_.path }}behavior -- Define [Scaling Policies](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-configurable-scaling-behavior) for the HPA resource.
+  behavior: {}
+  #
+  #  scaleDown:
+  #    policies:
+  #    - type: Pods
+  #      value: 4
+  #      periodSeconds: 60
+  #    - type: Percent
+  #      value: 10
+  #      periodSeconds: 60
+{{- end -}}

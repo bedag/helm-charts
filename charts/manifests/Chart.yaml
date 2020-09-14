@@ -1,0 +1,16 @@
+apiVersion: v2
+name: manifests
+description: "Bedag's Manifest chart. Library full of basic kubernetes manifests."
+type: library
+version: 0.1.0
+keywords:
+  - Bedag
+  - Manifests
+  - Library
+maintainers:
+  - name: oliverbaehler
+    email: oliver.baehler@bedag.ch
+dependencies:
+  - name: "library"
+    version: 0.2.0
+    repository: https://buttahtoast.github.io/helm-charts/

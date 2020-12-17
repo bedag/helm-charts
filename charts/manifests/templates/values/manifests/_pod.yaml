@@ -1,0 +1,15 @@
+{{- define "bedag-lib.values.pod" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict "parentKey" (default "pod" .key) "path" (cat (default "" (default $context.path .path)) (default "pod" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+#
+## - Pod
+## Reference: https://kubernetes.io/docs/concepts/workloads/pods/
+##
+{{ $_.parentKey }}:
+
+  ## Pod API version
+  # {{ $_.path }}apiVersion -- Configure the api version used for the Pod resource
+  apiVersion: ""
+
+  {{- include "bedag-lib.values.template.pod" $_ | nindent 2 }}
+{{- end -}}

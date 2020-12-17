@@ -1,12 +1,15 @@
+## Reference: https://github.com/helm/chart-testing/blob/master/doc/ct_lint-and-install.md
+##
 remote: origin
 chart-dirs:
   - charts
 chart-repos:
-  - bitnami=https://charts.bitnami.com/bitnami
-  - stable=https://kubernetes-charts.storage.googleapis.com
-  - incubator=https://kubernetes-charts-incubator.storage.googleapis.com
+  - buttahtoast=https://buttahtoast.github.io/helm-charts/
 check-version-increment: true
 debug: true
 validate-chart-schema: true
 validate-maintainers: true
 validate-yaml: false
+all: true
+excluded-charts:
+  - "manifests"

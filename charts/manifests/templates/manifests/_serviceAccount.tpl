@@ -1,0 +1,59 @@
+{{/*
+
+Copyright © 2020 Oliver Baehler
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+*/}}
+{{- define "bedag-lib.manifest.serviceaccount.values" -}}
+  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "serviceAccount" "root" .)) "context" .context) -}}
+{{- end }}
+
+{{- define "bedag-lib.manifest.serviceaccount" -}}
+  {{- if .context -}}
+    {{- $context := .context -}}
+    {{- $serviceAccount := (fromYaml (include "bedag-lib.manifest.serviceaccount.values" .)) -}}
+    {{- if $serviceAccount.create -}}
+kind: ServiceAccount
+      {{- if $serviceAccount.apiVersion }}
+apiVersion: {{ $serviceAccount.apiVersion }}
+      {{- else }}
+apiVersion: v1
+      {{- end }}
+metadata:
+  name: {{ include "bedag-lib.serviceAccountName" (dict "sa" $serviceAccount "context" $context) }}
+  labels: {{- include "lib.utils.labels" (dict "labels" $serviceAccount.labels "context" $context)| nindent 4 }}
+      {{- if $serviceAccount.annotations }}
+  annotations:
+        {{- range $anno, $val := $serviceAccount.annotations }}
+          {{- $anno | nindent 4 }}: {{ $val | quote }}
+        {{- end }}
+      {{- end }}
+      {{- if (kindIs "bool" $serviceAccount.automountServiceAccountToken) }}
+automountServiceAccountToken: {{ $serviceAccount.automountServiceAccountToken }}
+      {{- end }}
+      {{- if and $serviceAccount.secrets (kindIs "slice" $serviceAccount.secrets) }}
+secrets: {{ toYaml $serviceAccount.secrets | nindent 2 }}
+      {{- end }}
+      {{- if or (and $serviceAccount.imagePullSecrets (kindIs "slice" $serviceAccount.imagePullSecrets)) $serviceAccount.globalPullSecrets }}
+        {{- if $serviceAccount.globalPullSecrets }}
+imagePullSecrets: {{- include "bedag-lib.util.imagePullSecrets" (dict "pullSecrets" $serviceAccount.imagePullSecrets "context" $context)| nindent 2 }}
+        {{- else }}
+imagePullSecrets: {{ toYaml $serviceAccount.imagePullSecrets | nindent 2 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- else }}
+    {{- fail "Template requires '.context' as arguments" }}
+  {{- end }}
+{{- end -}}

@@ -38,6 +38,10 @@ All submissions, including submissions by project members, require review. We us
   2. Review is done manually by Bedag Informatik AG team members.
   3. Once review is done, the branch is merged into the master branch, where a Github action automatically creates a release on the GitHub repository. The new release is added to the index, laying in the gh-pages branch.
 
+## Helm Docs
+
+To have consistent README documentations for each chart we use the [helm-docs plugin](https://github.com/norwoodj/helm-docs). Make sure to write the chart README in a compatible format. Helm-Docs is executed on Pull Request creation.
+
 
 ## Technical Requirements
 

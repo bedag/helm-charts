@@ -28,7 +28,7 @@ accessModes: [ "ReadWriteOnce" ]
 storageClass: ""
 
 ## Persistent Volume Claim Selector
-# {{ .path }}selector -- Configure PVC [Selector](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector)
+# {{ $_.path }}selector -- Configure PVC [Selector](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector)
 selector: {}
 
 ## Persistent Volume Claim Data Sources

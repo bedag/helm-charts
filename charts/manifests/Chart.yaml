@@ -2,7 +2,7 @@ apiVersion: v2
 name: manifests
 description: "Bedag's Manifest chart. Library full of basic kubernetes manifests."
 type: library
-version: 0.1.0
+version: 0.1.1
 keywords:
   - Bedag
   - Manifests

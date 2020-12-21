@@ -4,7 +4,7 @@ In the following sections we explain how to use the manifest.
 
   * **[Bundles](#bundles)**
   * **[Manifest Templates](#manifest-templates)**
-  * **[Templates](#resource-templa tes)**
+  * **[Templates](#resource-templates)**
   * **[Examples](#examples)**
 
 Don't forget to take a look at Presets as well:

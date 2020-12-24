@@ -5,6 +5,30 @@ entries:
       artifacthub.io/containsSecurityUpdates: "false"
       artifacthub.io/prerelease: "true"
     apiVersion: v2
+    created: "2020-12-24T15:08:20.625324553Z"
+    dependencies:
+    - name: library
+      repository: https://buttahtoast.github.io/helm-charts/
+      version: 0.2.0
+    description: Bedag's Manifest chart. Library full of basic kubernetes manifests.
+    digest: 651d06cfcd6d21e12a2cf4d36da1705b92961398491236de9a5bec5ff977cee3
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Manifests
+    - Library
+    maintainers:
+    - email: oliver.baehler@bedag.ch
+      name: oliverbaehler
+    name: manifests
+    type: library
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/manifests-0.1.2/manifests-0.1.2.tgz
+    version: 0.1.2
+  - annotations:
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/prerelease: "true"
+    apiVersion: v2
     created: "2020-12-21T09:16:41.267835307Z"
     dependencies:
     - name: library

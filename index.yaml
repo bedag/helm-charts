@@ -1,7 +1,10 @@
 apiVersion: v1
 entries:
   manifests:
-  - apiVersion: v2
+  - annotations:
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/prerelease: "true"
+    apiVersion: v2
     created: "2020-12-21T09:16:41.267835307Z"
     dependencies:
     - name: library
@@ -21,7 +24,10 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/manifests-0.1.1/manifests-0.1.1.tgz
     version: 0.1.1
-  - apiVersion: v2
+  - annotations:
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/prerelease: "true"
+    apiVersion: v2
     created: "2020-12-17T16:10:46.756419811Z"
     dependencies:
     - name: library

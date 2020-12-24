@@ -1,6 +1,6 @@
 ---
 # Artifact Hub repository metadata file
-repositoryID: e128977f-063d-47af-9dac-8d08dc680feb
+repositoryID: "e128977f-063d-47af-9dac-8d08dc680feb"
 owners: # (optional, used to claim repository ownership)
   - name: oliverbaehler
     email: oliverbaehler@hotmail.com

@@ -13,7 +13,6 @@
 
   ## Deployment Labels
   # {{ $_.path }}labels -- Merges given labels with common labels
-  # @default -- `bedag-lib.commonLabels`
   labels: {}
 
   ## Deployment Service
@@ -23,7 +22,6 @@
 
   ## Deployment Selector Labels
   # {{ $_.path }}selectorLabels -- Define SelectorLabels for the Pod Template
-  # @default -- `bedag-lib.selectorLabels`
   selectorLabels: {}
 
   ## Amount of Replicas

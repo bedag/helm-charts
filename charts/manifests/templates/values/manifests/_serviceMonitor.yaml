@@ -1,0 +1,47 @@
+{{- define "bedag-lib.values.servicemonitor" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict "parentKey" (default "serviceMonitor" .key) "path" (cat (default "" (default $context.path .path)) (default "serviceMonitor" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+#
+## - ServiceMonitor
+## Reference: https://docs.openshift.com/container-platform/4.4/rest_api/monitoring_apis/servicemonitor-monitoring-coreos-com-v1.html
+## ServiceMonitor API Object - https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#servicemonitorspec
+##
+{{ $_.parentKey }}:
+
+  ## Enable ServiceMonitor
+  # {{ $_.path }}enabled -- Enable serviceMonitor Resource
+  enabled: true
+
+  ## ServiceMonitor API version
+  # {{ $_.path }}apiVersion -- Configure the api version used for the ServiceMonitor resource
+  apiVersion: ""
+
+  ## ServiceMonitor Namespace
+  ## {{ $_.path }}namespace -- Define the namespace to deploy the srviceMonitor in
+  namespace: ""
+
+  ## ServiceMonitor NamespaceSelector
+  # {{ $_.path }}namespaceSelector -- Define which Namespaces to watch. Can either be type string or slice
+  # @default -- `$.Release.Namespace`
+  namespaceSelector: []
+
+  ## ServiceMonitor Additional Fields
+  # {{ $_.path }}additonalFields -- Define additional fields, which aren't available as seperat key (e.g. `sampleLimit`)
+  additonalFields: {}
+
+  ## ServiceMonitor Endpoint Configuration
+  # {{ $_.path }}endpoints -- Configure Prometheus ServiceMonitor [Endpoints](https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#endpoint)
+  endpoints: {}
+  #  - port: metrics
+  #    path: "/"
+  #    interval: 10s
+  #    scrapeTimeout: 10s
+
+  ## ServiceMonitor labels
+  # {{ $_.path }}labels -- Configure Prometheus ServiceMonitor labels
+  labels: {}
+
+  ## ServiceMonitor Selector Configuration
+  # {{ $_.path }}selector -- Configure Prometheus ServiceMonitor Selector
+  selector: {}
+{{- end -}}

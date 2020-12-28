@@ -13,7 +13,6 @@
 
   ## Statefulset Labels
   # {{ $_.path }}labels -- Merges given labels with common labels
-  # @default -- `bedag-lib.commonLabels`
   labels: {}
 
   ## Statefulset Service
@@ -23,12 +22,10 @@
 
   ## Statefulset Selector Labels
   # {{ $_.path }}selectorLabels -- Define SelectorLabels for the Pod Template
-  # @default -- `bedag-lib.selectorLabels`
   selectorLabels: {}
 
   ## Amount of Replicas
   # {{ $_.path }}replicaCount -- Amount of Replicas deployed
-  # @default -- 1
   replicaCount: 1
 
   ## Statefulset Pod Management Policy

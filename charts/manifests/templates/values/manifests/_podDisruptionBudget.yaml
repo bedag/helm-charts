@@ -17,7 +17,6 @@
 
   ## Pdb Labels
   # {{ $_.path }}labels -- Merges given labels with common labels
-  # @default -- `bedag-lib.commonLabels`
   labels: {}
 
   ## Pdb Selector Labels

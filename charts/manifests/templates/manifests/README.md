@@ -65,7 +65,7 @@ resources:
       {{- if .Release.IsInstall }}
       replicaCount: 1
       {{- end }}
-  - type: "services"
+  - type: "service"
     name: "headless"
     values {{ toYaml .Values.service | nindent 6 }}  
 {{- end }}
@@ -596,6 +596,45 @@ resources:
   - type: "serviceaccount"
     values: {{ toYaml $.Values.sa | nindent 6 }}
     fullname: "custom-sa"
+  ...
+```
+
+## ServiceMonitor
+
+This Template returns a [ServiceMonitor](https://docs.openshift.com/container-platform/4.4/rest_api/monitoring_apis/servicemonitor-monitoring-coreos-com-v1.html) Kubernetes Manifest.
+
+### Arguments
+
+The following arguments are supported for this template. If a required argument is not given, the template will fail or return empty.
+
+  * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
+  * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
+  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.context` - Inherited Root Context (Required)
+
+### [Values](../values/manifests/_serviceMonitor.yaml)
+
+You can access the supported values for this kubernetes manifest through clicking on values. These values represent the default values for this manifest.
+
+### Templates
+
+Does not implement any templates.
+
+### Usage
+
+```
+{{ include "bedag-lib.manifest.servicemonitor" (dict "values" $.Values.serviceMonitor "fullname" "custom-sm" "context" $) }}
+```
+
+#### With Bundle
+
+```
+resources:
+  ...
+  - type: "servicemonitor"
+    values: {{ toYaml $.Values.serviceMonitor | nindent 6 }}
+    fullname: "custom-sm"
   ...
 ```
 

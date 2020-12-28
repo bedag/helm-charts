@@ -67,8 +67,8 @@ spec:
     {{- end }}
   containers:
     - {{- include "bedag-lib.template.container" (set . "container" $values) | nindent 6 }}
-    {{- if $values.sideCars }}
-      {{- toYaml $values.sideCars | nindent 4 }}
+    {{- if $values.sidecars }}
+      {{- include "lib.utils.template" (dict "value" $values.sidecars "context" $context) | nindent 4 }}
     {{- end }}
     {{- if $values.volumes }}
   volumes: {{ toYaml $values.volumes | nindent 4 }}

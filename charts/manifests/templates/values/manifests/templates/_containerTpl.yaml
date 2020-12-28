@@ -1,7 +1,4 @@
 {{- define "bedag-lib.values.template.container" -}}
-  {{- $context := (default $ .context) -}}{{- $data := (default dict .data) -}}{{- $minimal := (default false .minimal) }}
-  {{- $path := (default "" (default $context.path .path)) -}}
-
   {{- $context := (default $ .context) }}
   {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
 
@@ -51,7 +48,7 @@ args: {{ toYaml (default dict $_.data.args) | nindent 2 }}
 
 ## Environment Variables
 # {{ $_.path }}environment -- Configure Environment Variables (Refer to values.yaml)
-environment: {{ toYaml (default dict $data.environment) | nindent 2 }}
+environment: {{ toYaml (default dict $_.data.environment) | nindent 2 }}
 # - name: "MY_ENV"
 #   value: "someValue"
 #   secret: true

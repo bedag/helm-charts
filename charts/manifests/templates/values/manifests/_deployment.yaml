@@ -17,7 +17,6 @@
 
   ## Deployment Service
   # {{ $_.path }}serviceName -- Define a Service for the Deployment
-  # @default -- `bedag-lib.fullname`
   serviceName: ""
 
   ## Deployment Selector Labels

@@ -17,7 +17,6 @@
 
   ## Statefulset Service
   # {{ $_.path }}serviceName -- Define a Service for the Statefulset
-  # @default -- `bedag-lib.fullname`
   serviceName: ""
 
   ## Statefulset Selector Labels

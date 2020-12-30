@@ -19,7 +19,7 @@ labels:
 targetPort: 5555
 
 ## JMX Exporter Port
-#  {{ $_.path }}port -- Exposed JMX Exporter Port (Service and Sidecar)
+# {{ $_.path }}port -- Exposed JMX Exporter Port (Service and Sidecar)
 port: 5556
 
 ## Prometheus Endpoint Configuration

@@ -21,7 +21,6 @@
 
   ## Pdb Selector Labels
   # {{ $_.path }}selectorLabels -- Define SelectorLabels for the pdb
-  # @default -- `bedag-lib.selectorLabels`
   selectorLabels: {}
 
   ## Pdb minAvailable

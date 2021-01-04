@@ -1,6 +1,0 @@
-dependencies:
-- name: manifests
-  repository: file://../../.
-  version: 0.2.0
-digest: sha256:d53e2117063dce311e74cad97a4d3ccd591fec76e4f53f0e67a69b470fc311f6
-generated: "2021-01-04T17:36:26.696096702+01:00"

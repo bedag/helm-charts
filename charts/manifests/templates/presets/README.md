@@ -27,7 +27,7 @@ Implements the following templates or manifests:
 ### Usage
 
 ```
-{{ include "bedag-lib.presets" (dict "preset" "jmxexporter" "values" $.Values.jmxExporter "context" $) | nindent 0 }}
+{{ include "bedag-lib.utils.presets" (dict "preset" "jmxexporter" "values" $.Values.jmxExporter "context" $) | nindent 0 }}
 ```
 
 ### Usage Output
@@ -135,7 +135,7 @@ resources:
     {{- toYaml $.Values.extraResources | nindent 2 }}
   {{- end }}
 
-  {{ $jmxExporter := (fromYaml (include "bedag-lib.presets" (dict "preset" "jmxexporter" "values" $.Values.jmxExporter "context" $))) }}
+  {{ $jmxExporter := (fromYaml (include "bedag-lib.utils.presets" (dict "preset" "jmxexporter" "values" $.Values.jmxExporter "context" $))) }}
   {{- if $jmxExporter.extraResources }}
     {{- toYaml $jmxExporter.extraResources | nindent 2 }}
   {{- end }}
@@ -207,7 +207,7 @@ Implements the following templates or manifests:
 ### Usage
 
 ```
-initContainers: {{ include "bedag-lib.presets" (dict "preset" "permissions" "values" $.Values.volumePermissions "returnAsArray" true "context" $) | nindent 2 }}
+initContainers: {{ include "bedag-lib.utils.presets" (dict "preset" "permissions" "values" $.Values.volumePermissions "returnAsArray" true "context" $) | nindent 2 }}
 ```
 
 ### Usage Output
@@ -258,7 +258,7 @@ resources:
         {{- if and $.Values.statefulset.initContainers (kindIs "slice"   $.Values.statefulset.initContainers) }}
           {{- toYaml $.Values.statefulset | nindent 8 }}
         {{- end }}
-        {{ include "bedag-lib.presets" (dict "preset" "permissions" "values" (mergeOverwrite   $.Values.volumePermissions (fromYaml (include "chart.volumePermission.values" $))) "returnAsArray"   true "context" $) | nindent 8 }}
+        {{ include "bedag-lib.utils.presets" (dict "preset" "permissions" "values" (mergeOverwrite   $.Values.volumePermissions (fromYaml (include "chart.volumePermission.values" $))) "returnAsArray"   true "context" $) | nindent 8 }}
 
   ....
 {{- end -}}        
@@ -281,7 +281,7 @@ Implements the following templates or manifests:
 ### Usage
 
 ```
-initContainers: {{ include "bedag-lib.presets" (dict "preset" "readiness" "values" (dict "enabled" true "url" "https://google.com") "context" $) | nindent 2 }}
+initContainers: {{ include "bedag-lib.utils.presets" (dict "preset" "readiness" "values" (dict "enabled" true "url" "https://google.com") "context" $) | nindent 2 }}
 ```
 
 ### Usage Output

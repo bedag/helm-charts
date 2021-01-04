@@ -1,0 +1,26 @@
+## Enabled Values Generator
+doc:
+
+  ## Define which manifest to generate (e.g. "statfulset")
+  ## On of .manifest or .preset has to be set, otherwise the function returns empty
+  manifest: ""
+
+  ## Define which manifest to generate (e.g. "permissions")
+  ## On of .manifest or .preset has to be set, otherwise the function returns empty
+  ## The .manifest field takes precedence over the .preset field, if both are set.
+  preset: ""
+
+  ## If you want your values to be in a more complex structure, you can define the yaml path
+  ## This mostly matters for all the helm-docs fields being generated.
+  #path: "custom.sub.path"
+  path: ""
+
+  ## Overwrite the top key for the values.
+  ## E.g. for the manifest statefulset the default top key is "statefulset", which has all other
+  ## keys as child. With this option you can change this key to e.g. "frontend"
+  key: ""
+
+  ## A single manifest can have a lot of values. With enabling minimal output the values
+  ## which come from sub templates or manifests will only be referenced as comment but not printed
+  ## to keep your values slim.
+  minimal: false

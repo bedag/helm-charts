@@ -16,7 +16,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.manifest.servicemonitor.values" -}}
-  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "servicemonitor" "root" .)) "context" .context) -}}
+  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "servicemonitor" "root" .)) "context" .context) -}}
 {{- end }}
 
 {{- define "bedag-lib.manifest.servicemonitor" -}}
@@ -31,18 +31,18 @@ apiVersion: monitoring.coreos.com/v1
       {{- end }}
 kind: ServiceMonitor
 metadata:
-  name: {{ include "bedag-lib.fullname" . }}
-  labels: {{- include "lib.utils.labels" (dict "labels" $serviceMonitor.labels "context" $context)| nindent 4 }}
+  name: {{ include "bedag-lib.utils.common.fullname" . }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $serviceMonitor.labels "context" $context)| nindent 4 }}
       {{- if $serviceMonitor.namespace }}
-  namespace: {{- include "lib.utils.template" (dict "value" $serviceMonitor.namespace "context" $context) }}
+  namespace: {{- include "lib.utils.strings.template" (dict "value" $serviceMonitor.namespace "context" $context) }}
       {{- end }}
 spec:
       {{- if $serviceMonitor.additionalFields }}
         {{- toYaml $serviceMonitor.additionalFields | nindent 2 }}
       {{- end }}
   selector:
-    matchLabels: {{- include "lib.utils.template" (dict "value" (default (include "lib.utils.selectorLabels" $context) $serviceMonitor.selector) "context" $context) | nindent 6 }}
-  endpoints: {{- include "lib.utils.template" (dict "value" $serviceMonitor.endpoints "context" $context) | nindent 4 }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $serviceMonitor.selector) "context" $context) | nindent 6 }}
+  endpoints: {{- include "lib.utils.strings.template" (dict "value" $serviceMonitor.endpoints "context" $context) | nindent 4 }}
   namespaceSelector:
     matchNames:
       {{- if $serviceMonitor.namespaceSelector }}

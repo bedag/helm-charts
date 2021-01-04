@@ -20,7 +20,7 @@ limitations under the License.
   {{- if and $values .context -}}
     {{- $context := .context -}}
 metadata:
-  labels: {{- include "lib.utils.labels" (dict "labels" $values.podLabels "versionUnspecific" "true" "context" $context)| nindent 4 }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $values.podLabels "versionUnspecific" "true" "context" $context)| nindent 4 }}
     {{- if or $values.podAnnotations $values.forceRedeploy }}
   annotations:
       {{- if $values.forceRedeploy }}
@@ -28,39 +28,39 @@ metadata:
       {{- end }}
       {{- if or $values.podAnnotations }}
         {{- range $anno, $val := $values.podAnnotations }}
-          {{- $anno | nindent 4 }}: {{ include "lib.utils.template" (dict "value" $val "context" $context) }}
+          {{- $anno | nindent 4 }}: {{ include "lib.utils.strings.template" (dict "value" $val "context" $context) }}
         {{- end }}
       {{- end }}
     {{- end }}
 spec:
     {{- if $values.podFields }}
-      {{- include "lib.utils.template" (dict "value" $values.podFields "context" $context) | nindent 2 }}
+      {{- include "lib.utils.strings.template" (dict "value" $values.podFields "context" $context) | nindent 2 }}
     {{- end }}
     {{- if $values.restartPolicy }}
   restartPolicy: {{ $values.restartPolicy }}
     {{- end }}
-    {{- $pullSecrets := include "lib.utils.imagePullSecrets" (dict "pullSecrets" $values.imagePullSecrets "context" $context) }}
+    {{- $pullSecrets := include "lib.utils.globals.imagePullSecrets" (dict "pullSecrets" $values.imagePullSecrets "context" $context) }}
     {{- if $pullSecrets }}
   imagePullSecrets: {{- toYaml $pullSecrets | indent 4 }}
     {{- end }}
     {{- with $values.affinity }}
-  affinity: {{- include "lib.utils.template" (dict "value" . "context" $context) | nindent 4 }}
+  affinity: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
     {{- end }}
     {{- with $values.nodeSelector }}
-  nodeSelector: {{- include "lib.utils.template" (dict "value" . "context" $context) | nindent 4 }}
+  nodeSelector: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
     {{- end }}
     {{- with $values.tolerations }}
-  tolerations: {{- include "lib.utils.template" (dict "value" . "context" $context) | nindent 4 }}
+  tolerations: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
     {{- end }}
     {{- with $values.priorityClassName }}
-  priorityClassName: {{- include "lib.utils.template" (dict "value" . "context" $context) | nindent 4 }}
+  priorityClassName: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
     {{- end }}
     {{- with $values.podSecurityContext }}
-  securityContext: {{- include "lib.utils.template" (dict "value" . "context" $context) | nindent 4 }}
+  securityContext: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
     {{- end }}
     {{- if $values.serviceAccount }}
       {{- $_ := set . "sa" $values.serviceAccount }}
-  serviceAccountName: {{ include "bedag-lib.serviceAccountName" . }}
+  serviceAccountName: {{ include "bedag-lib.utils.common.serviceAccountName" . }}
     {{- end }}
     {{- with $values.initContainers }}
   initContainers: {{- toYaml $values.initContainers | nindent 4 }}
@@ -68,7 +68,7 @@ spec:
   containers:
     - {{- include "bedag-lib.template.container" (set . "container" $values) | nindent 6 }}
     {{- if $values.sidecars }}
-      {{- include "lib.utils.template" (dict "value" $values.sidecars "context" $context) | nindent 4 }}
+      {{- include "lib.utils.strings.template" (dict "value" $values.sidecars "context" $context) | nindent 4 }}
     {{- end }}
     {{- if $values.volumes }}
   volumes: {{ toYaml $values.volumes | nindent 4 }}

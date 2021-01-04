@@ -39,7 +39,7 @@ config:
 
 
 ## Container Configuration
-## {{ include "bedag-lib.intern.docLink" $ }}#container-template
+## {{ include "bedag-lib.utils.intern.docLink" $ }}#container-template
   {{- if $_.minimal }}
 ## Supports all the values from the referenced template. Find all available values in the link above.
   {{- else }}
@@ -50,7 +50,7 @@ config:
   {{- end }}
 
 ## Service Configuration
-## {{ include "bedag-lib.intern.docLink" $ }}#service
+## {{ include "bedag-lib.utils.intern.docLink" $ }}#service
   {{- if $_.minimal }}
 ## Supports all the values from the referenced template. Find all available values in the link above.
   {{- else }}
@@ -60,7 +60,7 @@ config:
   {{- end }}
 
 ## ServiceMonitor Configuration
-## {{ include "bedag-lib.intern.docLink" $ }}#servicemonitor
+## {{ include "bedag-lib.utils.intern.docLink" $ }}#servicemonitor
   {{- if $_.minimal }}
 ## Supports all the values from the referenced template. Find all available values in the link above.
   {{- else }}

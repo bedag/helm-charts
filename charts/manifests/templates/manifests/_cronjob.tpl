@@ -16,7 +16,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.manifest.cronjob.values" -}}
-  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "cronjob" "root" .)) "context" .context) -}}
+  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "cronjob" "root" .)) "context" .context) -}}
 {{- end }}
 
 {{- define "bedag-lib.manifest.cronjob" -}}
@@ -31,8 +31,8 @@ apiVersion: {{ $cronjob.apiVersion }}
 apiVersion: batch/v1
       {{- end }}
 metadata:
-  name:  {{ include "bedag-lib.fullname" . }}
-  labels: {{- include "lib.utils.labels" (dict "labels" $cronjob.labels "context" $context)| nindent 4 }}
+  name:  {{ include "bedag-lib.utils.common.fullname" . }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $cronjob.labels "context" $context)| nindent 4 }}
       {{- if $cronjob.annotations }}
   annotations:
         {{- range $anno, $val := $cronjob.annotations }}

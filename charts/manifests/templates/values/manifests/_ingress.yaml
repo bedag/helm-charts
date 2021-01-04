@@ -53,7 +53,7 @@
   #      - path: "/"
   #
   # {{ $_.path }}hosts[0].paths[0].serviceName -- Ingress Path service backend name
-  # @default -- `bedag-lib.fullname`
+  # @default -- `bedag-lib.utils.common.fullname`
   #        serviceName: ""
   #
   # {{ $_.path }}hosts[0].paths[0].servicePort -- Ingress Path service backend port

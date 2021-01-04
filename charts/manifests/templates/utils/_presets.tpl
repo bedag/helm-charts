@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */
-{{- define "bedag-lib.presets" -}}
+{{- define "bedag-lib.utils.presets" -}}
   {{- if and .preset .context -}}
     {{- $params := . -}}
     {{- $base := "bedag-lib.presets." }}

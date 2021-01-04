@@ -15,7 +15,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.manifest.statefulset.values" -}}
-  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "statefulset" "root" .)) "context" .context) }}
+  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "statefulset" "root" .)) "context" .context) }}
 {{- end }}
 
 {{- define "bedag-lib.manifest.statefulset" -}}
@@ -29,8 +29,8 @@ apiVersion: {{ $statefulset.apiVersion }}
 apiVersion: apps/v1
     {{- end }}
 metadata:
-  name: {{ include "bedag-lib.fullname" . }}
-  labels: {{- include "lib.utils.labels" (dict "labels" $statefulset.labels "context" $context)| nindent 4 }}
+  name: {{ include "bedag-lib.utils.common.fullname" . }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $statefulset.labels "context" $context)| nindent 4 }}
 spec:
   podManagementPolicy: {{ default "OrderedReady" $statefulset.podManagementPolicy }}
   updateStrategy:
@@ -44,8 +44,8 @@ spec:
     {{- end }}
   replicas: {{ default "1" $statefulset.replicaCount }}
   selector:
-    matchLabels: {{- include "lib.utils.template" (dict "value" (default (include "lib.utils.selectorLabels" $context) $statefulset.selectorLabels) "context" $context) | indent 6 }}
-  serviceName: {{ default (include "bedag-lib.fullname" .) $statefulset.serviceName }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $statefulset.selectorLabels) "context" $context) | indent 6 }}
+  serviceName: {{ default (include "bedag-lib.utils.common.fullname" .) $statefulset.serviceName }}
   template: {{- include "bedag-lib.template.pod" (set . "pod" $statefulset) | nindent 4 }}
     {{- if and $statefulset.volumeClaimTemplates (kindIs "slice" $statefulset.volumeClaimTemplates) }}
   volumeClaimTemplates: {{- toYaml $statefulset.volumeClaimTemplates | nindent 4 }}

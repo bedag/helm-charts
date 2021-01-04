@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */
-{{- define "bedag-lib.values.generator" -}}
+{{- define "bedag-lib.utils.values.generator" -}}
   {{- if $.Values }}
     {{- if $.Values.doc }}
       {{- if or $.Values.doc.manifest $.Values.doc.preset }}
@@ -35,10 +35,12 @@ limitations under the License.
         {{- end }}
         {{- $params := dict "path" $path "key" (default "" $.Values.doc.key) "context" $context "minimal" (default false $.Values.doc.minimal) }}
         {{- if $path }}
-          {{- include "lib.utils.printYAMLStructure" (dict "structure" $path "data" (include $resource $params)) | nindent 0 }}
+          {{- include "lib.utils.dicts.printYAMLStructure" (dict "structure" $path "data" (include $resource $params)) | nindent 0 }}
         {{- else }}
           {{- include $resource $params | nindent 0 }}
         {{- end }}
+      {{- else }}
+        {{- include "lib.values.all" $ | nindent 0 }}
       {{- end }}
     {{- end }}
   {{- end }}

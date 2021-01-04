@@ -16,7 +16,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.manifest.horizontalpodautoscaler.values" -}}
-  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "horizontalpodautoscaler" "key" "autoscaler" "root" .)) "context" .context) }}
+  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "horizontalpodautoscaler" "key" "autoscaler" "root" .)) "context" .context) }}
 {{- end }}
 
 {{- define "bedag-lib.manifest.horizontalpodautoscaler" -}}
@@ -24,15 +24,15 @@ limitations under the License.
     {{- $context := .context -}}
     {{- $hpa := (fromYaml (include "bedag-lib.manifest.horizontalpodautoscaler.values" .)) -}}
     {{- if $hpa.enabled -}}
-kind: HorizontalPodAutoscaler    
+kind: HorizontalPodAutoscaler
       {{- if $hpa.apiVersion -}}
 apiVersion: {{ $hpa.apiVersion }}
       {{- else }}
 apiVersion: autoscaling/v2beta2
       {{- end }}
 metadata:
-  name: {{ include "bedag-lib.fullname" . }}
-  labels: {{- include "lib.utils.labels" (dict "labels" $hpa.labels "context" $context) | nindent 4 }}
+  name: {{ include "bedag-lib.utils.common.fullname" . }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $hpa.labels "context" $context) | nindent 4 }}
 spec:
           {{- if and $hpa.behavior (kindIs "map" $hpa.behavior) }}
   behavior: {{ toYaml $hpa.behavior | nindent 4 }}
@@ -59,7 +59,7 @@ spec:
         {{- else }}
     apiVersion: apps/v1
     kind: Statefulset
-    name: {{ include "bedag-lib.fullname" . }}
+    name: {{ include "bedag-lib.utils.common.fullname" . }}
         {{- end }}
         {{- if $hpa.minReplicas }}
   minReplicas: {{ $hpa.minReplicas }}

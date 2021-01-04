@@ -19,7 +19,7 @@ limitations under the License.
 {{- define "bedag-lib.manifest.bundle" -}}
   {{- $manifestPath := "bedag-lib.manifest." -}}
   {{- if and .context (kindIs "map" .context) .bundle (kindIs "map" .bundle) -}}
-    {{- $context := mergeOverwrite .context (default dict (fromYaml (include "lib.utils.parentAppend" .bundle.common))) -}}
+    {{- $context := mergeOverwrite .context (default dict (fromYaml (include "lib.utils.dicts.parentAppend" .bundle.common))) -}}
     {{- if $.bundle.name }}
       {{- $_ := set $context "bundlename" $.bundle.name -}}
     {{- end }}
@@ -28,14 +28,14 @@ limitations under the License.
 apiVersion: v1
 kind: List
 metadata:
-  name: {{ include "bedag-lib.fullname" $context }}
-  labels: {{- include "lib.utils.labels" $context | nindent 4 }}
+  name: {{ include "bedag-lib.utils.common.fullname" $context }}
+  labels: {{- include "lib.utils.common.labels" $context | nindent 4 }}
 items:
       {{- range .bundle.resources -}}
         {{- $type := required "Missing required field '.type' for resource in bundle" .type | lower }}
         {{- $manifest := (cat $manifestPath $type | nospace) -}}
         {{- if and (eq $type "raw") .manifest }}
-  - {{- include "lib.utils.template" (dict "value" .manifest "context" $context) | nindent 4 }}
+  - {{- include "lib.utils.strings.template" (dict "value" .manifest "context" $context) | nindent 4 }}
         {{- else }}
           {{- $v_params := set . "context" $context }}
           {{- $values := (fromYaml (include (cat $manifest ".values" | nospace) $v_params)) }}

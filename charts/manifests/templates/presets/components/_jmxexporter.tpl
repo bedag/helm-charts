@@ -21,7 +21,7 @@ limitations under the License.
 {{- define "bedag-lib.presets.jmxexporter" -}}
   {{- if and $.values $.context }}
     {{- if $.values.enabled }}
-      {{- $name := (include "lib.utils.toDns1123" $.values.name) }}
+      {{- $name := (include "lib.utils.strings.toDns1123" $.values.name) }}
       {{- $_ := set . "container" .values }}
 container: {{- include "bedag-lib.template.container" . | nindent 2 }}
       {{- $_ := unset . "container" }}
@@ -34,7 +34,7 @@ ports:
 volumes:
   - name: "{{  $name }}-config"
     configMap:
-      name: {{ include "bedag-lib.fullname" (dict "name" $name "context" $.context) }}
+      name: {{ include "bedag-lib.utils.common.fullname" (dict "name" $name "context" $.context) }}
       {{- end }}
 
 extraResources:
@@ -44,12 +44,12 @@ extraResources:
       apiVersion: v1
       kind: ConfigMap
       metadata:
-        name: {{ include "bedag-lib.fullname" (dict "name" $name "context" $.context) }}
-        labels: {{- include "lib.utils.labels" (dict "labels" $.values.labels "context" $.context) | nindent 10 }}
+        name: {{ include "bedag-lib.utils.common.fullname" (dict "name" $name "context" $.context) }}
+        labels: {{- include "lib.utils.common.labels" (dict "labels" $.values.labels "context" $.context) | nindent 10 }}
           manifests.bedag/component: {{ $name }}
       data:
         jmx-prometheus.yml: |-
-          {{- include "lib.utils.template" (dict "value" $.values.config "context" $.context) | nindent 10 }}
+          {{- include "lib.utils.strings.template" (dict "value" $.values.config "context" $.context) | nindent 10 }}
       {{- end }}
       {{- if $.values.service.enabled }}
   - type: "service"
@@ -68,12 +68,12 @@ extraResources:
   Preset - Overwrite Values
 */}}
 {{- define "bedag-lib.presets.jmxexporter.overwrites" -}}
-  {{- $name := (include "lib.utils.toDns1123" $.values.name) }}
+  {{- $name := (include "lib.utils.strings.toDns1123" $.values.name) }}
 
   ## JMX Configuration
   {{- $config := $.values.config }}
   {{- if (kindIs "string" $.values.config)}}
-    {{- $config = (fromYaml ("lib.utils.template" (dict "value" $.values.config "context" $.context)))}}
+    {{- $config = (fromYaml ("lib.utils.strings.template" (dict "value" $.values.config "context" $.context)))}}
   {{- end }}
   {{- if not ($config.jmxUrl) }}
 config:
@@ -122,6 +122,6 @@ serviceMonitor:
     {{- end }}
   labels: {{ toYaml $.values.labels | nindent 4 }}
     manifests.bedag/component: {{ $name }}
-  selector:
+  selector: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $.context) $.values.serviceMonitor.selector) "context" $.context) | indent 4 }}
     manifests.bedag/component: {{ $name }}
 {{- end }}

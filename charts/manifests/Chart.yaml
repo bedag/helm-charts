@@ -5,16 +5,18 @@ type: library
 version: 0.2.0
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 keywords:
-  - Bedag
-  - Manifests
-  - Library
+- Bedag
+- Manifests
+- Library
 maintainers:
-  - name: oliverbaehler
-    email: oliver.baehler@bedag.ch
+- name: oliverbaehler
+  email: oliver.baehler@bedag.ch
+- name: SRE
+  email: sre@bedag.ch
 dependencies:
-  - name: "library"
-    version: 0.2.1
-    repository: https://buttahtoast.github.io/helm-charts/
+- name: "library"
+  version: "~0.3.0"
+  repository: "https://buttahtoast.github.io/helm-charts/"
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/prerelease: "true"

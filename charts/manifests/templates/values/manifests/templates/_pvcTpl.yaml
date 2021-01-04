@@ -3,7 +3,6 @@
   {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
 ## Persistent Volume Claim Labels
 # {{ $_.path }}labels -- Merges given labels with common labels
-# @default -- `bedag-lib.commonLabels`
 labels: {}
 
 ## Persistent Volume Claim Annotations

@@ -15,6 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */
-{{- define "bedag-lib.intern.docLink" -}}
+{{- define "bedag-lib.utils.intern.docLink" -}}
 https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#container-template
 {{- end }}

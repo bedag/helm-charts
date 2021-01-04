@@ -25,28 +25,21 @@ limitations under the License.
       {{- end }}
       {{- if .values.environment }}
         {{- $environment := .values.environment }}
-        {{- if (include "bedag-lib.environment.hasSecrets" $environment) }}
+        {{- if (include "bedag-lib.utils.environment.hasSecrets" $environment) }}
 - apiVersion: v1
   kind: Secret
   metadata:
-    name: {{ include "bedag-lib.fullname" . }}-env
-    labels: {{- include "lib.utils.labels" (dict "labels" .values.labels "context" .context)| nindent 6 }}
+    name: {{ include "bedag-lib.utils.common.fullname" . }}-env
+    labels: {{- include "lib.utils.common.labels" (dict "labels" .values.labels "context" .context)| nindent 6 }}
   type: Opaque
   data:
           {{- range $environment }}
             {{- if .secret }}
-              {{- .name | nindent 4 }}: {{ include "lib.utils.template" (dict "value" .value "context" $.context) | b64enc }}
+              {{- .name | nindent 4 }}: {{ include "lib.utils.strings.template" (dict "value" .value "context" $.context) | b64enc }}
             {{- end }}
           {{- end }}
         {{- end }}
       {{- end }}
     {{- end }}
   {{- end }}
-
-
-
-
-
-
-
 {{- end -}}

@@ -17,12 +17,10 @@
 
   ## Pdb Labels
   # {{ $_.path }}labels -- Merges given labels with common labels
-  # @default -- `bedag-lib.commonLabels`
   labels: {}
 
   ## Pdb Selector Labels
   # {{ $_.path }}selectorLabels -- Define SelectorLabels for the pdb
-  # @default -- `bedag-lib.selectorLabels`
   selectorLabels: {}
 
   ## Pdb minAvailable

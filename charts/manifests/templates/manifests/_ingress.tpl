@@ -16,7 +16,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.manifest.ingress.values" -}}
-  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "ingress" "root" .)) "context" .context) -}}
+  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "ingress" "root" .)) "context" .context) -}}
 {{- end }}
 
 {{- define "bedag-lib.manifest.ingress" -}}
@@ -28,17 +28,17 @@ kind: Ingress
       {{- if $ingress.apiVersion -}}
 apiVersion: {{ $ingress.apiVersion }}
       {{- else -}}
-        {{- if semverCompare ">=1.19-0" (include "lib.utils.capabilities" $context) }}
+        {{- if semverCompare ">=1.19-0" (include "lib.utils.common.capabilities" $context) }}
 apiVersion: networking.k8s.io/v1
-        {{- else if semverCompare ">=1.14-0" (include "lib.utils.capabilities" $context) }}
+        {{- else if semverCompare ">=1.14-0" (include "lib.utils.common.capabilities" $context) }}
 apiVersion: networking.k8s.io/v1beta1
         {{- else }}
 apiVersion: extensions/v1beta1
         {{- end }}
       {{- end }}
 metadata:
-  name:  {{ include "bedag-lib.fullname" . }}
-  labels: {{- include "lib.utils.labels" (dict "labels" $ingress.labels "context" $context)| nindent 4 }}
+  name:  {{ include "bedag-lib.utils.common.fullname" . }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $ingress.labels "context" $context)| nindent 4 }}
       {{- if $ingress.annotations }}
   annotations:
         {{- range $anno, $val := $ingress.annotations }}
@@ -49,7 +49,7 @@ spec:
       {{- if and $ingress.backend (kindIs "map" $ingress.backend) }}
   backend: {{- toYaml $ingress.backend | nindent 4 }}
       {{- end }}
-      {{- if semverCompare ">=1.18-0" (include "lib.utils.capabilities" $context) -}}
+      {{- if semverCompare ">=1.18-0" (include "lib.utils.common.capabilities" $context) -}}
         {{- if and $ingress.ingressClass (kindIs "string" $ingress.ingressClass) }}
   ingressClassName: {{ $ingress.ingressClass }}
         {{- end }}
@@ -73,25 +73,25 @@ spec:
             {{- $p := dict "path" "" "pathType" "" "service" dict "resource" dict }}
             {{- if kindIs "string" . }}
               {{- $_ := set $p "path" . }}
-              {{- $_ := set $p "service" (dict "name" (include "bedag-lib.fullname" $context) "port" "http") }}
+              {{- $_ := set $p "service" (dict "name" (include "bedag-lib.utils.common.fullname" $context) "port" "http") }}
             {{- else }}
               {{- $_ := set $p "path" (default "/" .path) }}
               {{- $_ := set $p "pathType" (default "" .pathType) }}
               {{- if .resource }}
                 {{- $_ := set $p "resource" .resource }}
               {{- else }}
-                {{- $_ := set $p "service" (dict "name" (include "lib.utils.toDns1123" (default (include "bedag-lib.fullname" $context) .serviceName)) "port" (include "lib.utils.toDns1123" (default "http" .servicePort))) }}
+                {{- $_ := set $p "service" (dict "name" (include "lib.utils.strings.toDns1123" (default (include "bedag-lib.utils.common.fullname" $context) .serviceName)) "port" (include "lib.utils.toDns1123" (default "http" .servicePort))) }}
               {{- end }}
             {{- end }}
           - path: {{ $p.path }}
-            {{- if semverCompare ">=1.18-0" (include "lib.utils.capabilities" $context) }}
+            {{- if semverCompare ">=1.18-0" (include "lib.utils.common.capabilities" $context) }}
             pathType: {{ default "Prefix" $p.pathType }}
             {{- end }}
             backend:
             {{- if $p.resource }}
               resource: {{- toYaml $p.resource | nindent 16 }}
             {{- else }}
-              {{- if semverCompare ">=1.19-0" (include "lib.utils.capabilities" $context) }}
+              {{- if semverCompare ">=1.19-0" (include "lib.utils.common.capabilities" $context) }}
               service:
                 name: {{ $p.service.name }}
                 port:

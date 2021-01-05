@@ -16,7 +16,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.manifest.networkpolicy.values" -}}
-  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "networkPolicy" "root" .)) "context" .context) }}
+  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "networkPolicy" "root" .)) "context" .context) }}
 {{- end }}
 
 {{- define "bedag-lib.manifest.networkpolicy" -}}
@@ -31,11 +31,11 @@ apiVersion: {{ $networkPolicy.apiVersion }}
 apiVersion: networking.k8s.io/v1
       {{- end }}
 metadata:
-  name:  {{ include "bedag-lib.fullname" . }}
-  labels: {{- include "lib.utils.labels" (dict "labels" $networkPolicy.labels "context" $context)| nindent 4 }}
+  name:  {{ include "bedag-lib.utils.common.fullname" . }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $networkPolicy.labels "context" $context)| nindent 4 }}
 spec:
   podSelector:
-    matchLabels: {{- include "lib.utils.template" (dict "value" (default (include "lib.utils.selectorLabels" $context) $networkPolicy.selector) "context" $context) | indent 6 }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $networkPolicy.selector) "context" $context) | indent 6 }}
       {{- if or $networkPolicy.ingress $networkPolicy.egress}}
   policyTypes:
         {{- if and $networkPolicy.ingress (kindIs "slice" $networkPolicy.ingress) }}
@@ -54,11 +54,11 @@ spec:
           {{- end }}
           {{- if .namespaceSelector }}
       - namespaceSelector:
-          matchLabels: {{- include "lib.utils.template" (dict "value" .namespaceSelector "context" $context) | nindent 12 }}
+          matchLabels: {{- include "lib.utils.strings.template" (dict "value" .namespaceSelector "context" $context) | nindent 12 }}
           {{- end }}
           {{- if .podSelector }}
       - podSelector:
-          matchLabels: {{- include "lib.utils.template" (dict "value" .podSelector "context" $context) | nindent 12 }}
+          matchLabels: {{- include "lib.utils.strings.template" (dict "value" .podSelector "context" $context) | nindent 12 }}
           {{- end }}
           {{- if .ports }}
       ports: {{- toYaml .ports | nindent 8 }}

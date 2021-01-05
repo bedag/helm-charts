@@ -16,7 +16,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.manifest.job.values" -}}
-  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "job" "root" .)) "context" .context) -}}
+  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "job" "root" .)) "context" .context) -}}
 {{- end }}
 
 {{- define "bedag-lib.manifest.job" -}}

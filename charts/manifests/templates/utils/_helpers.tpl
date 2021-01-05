@@ -15,9 +15,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */
-{{ define "bedag-lib.helpers.javaProxies" -}}
+{{ define "bedag-lib.utils.helpers.javaProxies" -}}
   {{- if .proxy -}}
-    {{- $proxies := (include "lib.utils.template" ( dict "value" .proxy "context" .context)) | fromYaml -}}
+    {{- $proxies := (include "lib.utils.strings.template" ( dict "value" .proxy "context" .context)) | fromYaml -}}
     {{- $noproxies := "" -}}
     {{- if .proxy.noProxy -}}
       {{- if kindIs "slice" .proxy.noProxy -}}

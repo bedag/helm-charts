@@ -16,7 +16,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.manifest.pod.values" -}}
-  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "pod" "root" .)) "context" .context) -}}
+  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "pod" "root" .)) "context" .context) -}}
 {{- end }}
 
 {{- define "bedag-lib.manifest.pod" -}}

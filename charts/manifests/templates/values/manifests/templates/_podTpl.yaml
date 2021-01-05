@@ -29,7 +29,7 @@ volumes: []
 #    emptyDir: {}
 #  - name: share
 #    persistentVolumeClaim:
-#      claimName: '{{ include "lib.utils.fullname" $context }}-shared'
+#      claimName: 'shared'
 
 ## RestartPolicy Configuration
 # {{ $_.path }}restartPolicy -- Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
@@ -71,7 +71,7 @@ sidecars: []
 
 
 ## Container Configuration
-## {{ include "bedag-lib.intern.docLink" $ }}#container-template
+## {{ include "bedag-lib.utils.intern.docLink" $ }}#container-template
   {{- if $_.minimal }}
 ## Supports all the values from the referenced template. Find all available values in the link above.
   {{- else }}

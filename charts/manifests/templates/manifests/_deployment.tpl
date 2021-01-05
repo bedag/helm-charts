@@ -16,7 +16,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.manifest.deployment.values" -}}
-  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "deployment" "root" .)) "context" .context) -}}
+  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "deployment" "root" .)) "context" .context) -}}
 {{- end }}
 
 {{- define "bedag-lib.manifest.deployment" -}}
@@ -30,16 +30,16 @@ apiVersion: {{ $deployment.apiVersion }}
 apiVersion: apps/v1
     {{- end }}
 metadata:
-  name: {{ include "bedag-lib.fullname" . }}
-  labels: {{- include "lib.utils.labels" (dict "labels" $deployment.labels "context" $context)| nindent 4 }}
+  name: {{ include "bedag-lib.utils.common.fullname" . }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $deployment.labels "context" $context)| nindent 4 }}
 spec:
     {{- with $deployment.strategy }}
   strategy: {{ toYaml . |  nindent 4 }}
     {{- end }}
   replicas: {{ default "1" $deployment.replicaCount }}
   selector:
-    matchLabels: {{- include "lib.utils.template" (dict "value" (default (include "lib.utils.selectorLabels" $context) $deployment.selectorLabels) "context" $context) | nindent 6 }}
-  serviceName: {{ default (include "bedag-lib.fullname" $context) $deployment.serviceName }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $deployment.selectorLabels) "context" $context) | nindent 6 }}
+  serviceName: {{ default (include "bedag-lib.utils.common.fullname" $context) $deployment.serviceName }}
   template: {{- include "bedag-lib.template.pod" (dict "pod" $deployment "context" $context) | nindent 4 }}
   {{- end }}
 {{- end -}}

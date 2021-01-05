@@ -35,7 +35,7 @@ If an as required marked argument is missing, the template engine will intention
   * `.`/`.context` - Inherited Root Context (Required).
   * `.bundlename` - Overwrites the prefix with the bundlename (Optional)
 
-**Note**: Implements the `{{ lib.utils.fullname }}` template and supports all it's arguments/keys.
+**Note**: Implements the `{{ lib.utils.common.fullname }}` template and supports all it's arguments/keys.
 
 #### Returns
 
@@ -44,7 +44,7 @@ String
 #### Usage
 
 ```
-{{- include "bedag-lib.fullname" $ }}
+{{- include "bedag-lib.utils.common.fullname" $ }}
 ```
 
 ### ServiceAccountName
@@ -66,7 +66,7 @@ String
 #### Usage
 
 ```
-{{- include "bedag-lib.serviceAccountName" $ }}
+{{- include "bedag-lib.utils.common.serviceAccountName" $ }}
 ```
 
 ### MergedValues
@@ -89,7 +89,7 @@ String, YAML Structure
 #### Usage
 
 ```
-{{- $values := include "bedag-lib.mergedValues" (dict "type" "serviceAccount" "root" .) }}
+{{- $values := include "bedag-lib.utils.common.mergedValues" (dict "type" "serviceAccount" "root" .) }}
 ```
 
 ## [Helpers](./_helpers.tpl)
@@ -147,7 +147,7 @@ String
 #### Usage
 
 ```
-{{ include "bedag-lib.helpers.javaProxies" (dict "proxy" .Values.proxy "context" $) }}
+{{ include "bedag-lib.utils.helpers.javaProxies" (dict "proxy" .Values.proxy "context" $) }}
 ```
 
 ## [Environment](./_environment.tpl)
@@ -196,7 +196,7 @@ String, YAML Structure
 #### Usage
 
 ```
-{{- include "bedag-lib.environment.keyList" (dict "environment" $.Values.environment "context" $) }}
+{{- include "bedag-lib.utils.environment.keyList" (dict "environment" $.Values.environment "context" $) }}
 ```
 
 ### HasSecrets
@@ -217,7 +217,7 @@ Boolean
 #### Usage
 
 ```
-{{- if (include "bedag-lib.environment.hasSecrets" $.Values.environment) }}
+{{- if (include "bedag-lib.utils.environment.hasSecrets" $.Values.environment) }}
   ...
 {{- end }}
 ```
@@ -234,8 +234,8 @@ If an as required marked argument is missing, the template engine will intention
 
   * `.preset` - Define which preset to render (Required).
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.utils.common.fullname` template (Optional).
+  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.utils.common.fullname` template (Optional).
   * `.returnAsArray` - If set, the output is returned as list element (Prefix `- {output}`)
   * `.context` - Inherited Root Context (Required).
 
@@ -299,12 +299,14 @@ String, YAML Structure
 
 #### Usage
 
+[Check out the plugin, makes life easier for now](../../plugin/README.md)
+
 To use this template we need to be able to execute `helm template`. Since this is not possible within the library, we need to include the template in an application chart. E.g:
 
 **templates/generator.txt**
 
 ```
-{{- include "bedag-lib.values.generator" $ | nindent 0 }}
+{{- include "bedag-lib.utils.values.generator" $ | nindent 0 }}
 ```
 
 Now we can start using the generator:
@@ -346,5 +348,5 @@ String
 
 ```
 Setup the application via this endpoint:
-{{ include "bedag-lib.notes.public" (dict "path" "/setup" "ingress" $.Values.ingress "service" $.Values.service "context" $) | indent 8 }}
+{{ include "bedag-lib.utils.notes.public" (dict "path" "/setup" "ingress" $.Values.ingress "service" $.Values.service "context" $) | indent 8 }}
 ```

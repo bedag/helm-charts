@@ -16,7 +16,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.manifest.service.values" -}}
-  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "service" "root" .)) "context" .context) -}}
+  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "service" "root" .)) "context" .context) -}}
 {{- end }}
 
 {{- define "bedag-lib.manifest.service" -}}
@@ -31,8 +31,8 @@ apiVersion: {{ $svc.apiVersion }}
 apiVersion: v1
       {{- end }}
 metadata:
-  name: {{ include "bedag-lib.fullname" . }}
-  labels: {{- include "lib.utils.labels" (dict "labels" $svc.labels "context" $context)| nindent 4 }}
+  name: {{ include "bedag-lib.utils.common.fullname" . }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $svc.labels "context" $context)| nindent 4 }}
       {{- if $svc.annotations }}
   annotations:
         {{- range $anno, $val := $svc.annotations }}
@@ -54,10 +54,10 @@ spec:
   clusterIP: {{ $svc.clusterIP }}
       {{- end }}
   ports:
-    - name: {{ include "lib.utils.toDns1123" (default "http" $svc.portName) }}
+    - name: {{ include "lib.utils.strings.toDns1123" (default "http" $svc.portName) }}
       port: {{ default 80 $svc.port }}
       protocol: {{ default "TCP" $svc.protocol }}
-      targetPort: {{ include "lib.utils.toDns1123" (default "http" $svc.targetPort) }}
+      targetPort: {{ include "lib.utils.strings.toDns1123" (default "http" $svc.targetPort) }}
       {{- if and (or (eq $type "NodePort") (eq $type "LoadBalancer")) (not (empty $svc.nodePort)) }}
       nodePort: {{ $svc.nodePort }}
       {{- else if eq $type "ClusterIP" }}
@@ -66,7 +66,7 @@ spec:
       {{- if and $svc.extraPorts (kindIs "slice" $svc.extraPorts) }}
         {{- toYaml $svc.extraPorts | nindent 4 }}
       {{- end }}
-  selector: {{- include "lib.utils.template" (dict "value" (default (include "lib.utils.selectorLabels" $context) $svc.selector) "context" $context) | nindent 4 }}
+  selector: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $svc.selector) "context" $context) | nindent 4 }}
     {{- end }}
   {{- else }}
     {{- fail "Template requires '.context' as arguments" }}

@@ -20,8 +20,8 @@ limitations under the License.
   {{- if and $values .context -}}
     {{- $context := .context -}}
 metadata:
-  name: {{ include "bedag-lib.fullname" . }}
-  labels: {{- include "lib.utils.labels" (dict "labels" $values.labels "context" $context)| nindent 4 }}
+  name: {{ include "bedag-lib.utils.common.fullname" . }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $values.labels "context" $context)| nindent 4 }}
     {{- if $values.annotations }}
   annotations:
       {{- range $anno, $val := $values.annotations }}
@@ -36,7 +36,7 @@ spec:
   resources:
     requests:
       storage: {{ default "1Gi" $values.size | quote }}
-  storageClassName: {{ include "lib.utils.storageClass" (dict "persistence" $values.storageClass "context" $context) }}
+  storageClassName: {{ include "lib.utils.globals.storageClass" (dict "persistence" $values.storageClass "context" $context) }}
     {{- if $values.selector }}
   selector: {{ toYaml $values.selector | nindent 4 }}
     {{- end }}

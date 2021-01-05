@@ -13,22 +13,18 @@
 
   ## Statefulset Labels
   # {{ $_.path }}labels -- Merges given labels with common labels
-  # @default -- `bedag-lib.commonLabels`
   labels: {}
 
   ## Statefulset Service
   # {{ $_.path }}serviceName -- Define a Service for the Statefulset
-  # @default -- `bedag-lib.fullname`
   serviceName: ""
 
   ## Statefulset Selector Labels
   # {{ $_.path }}selectorLabels -- Define SelectorLabels for the Pod Template
-  # @default -- `bedag-lib.selectorLabels`
   selectorLabels: {}
 
   ## Amount of Replicas
   # {{ $_.path }}replicaCount -- Amount of Replicas deployed
-  # @default -- 1
   replicaCount: 1
 
   ## Statefulset Pod Management Policy
@@ -58,7 +54,7 @@
 
 
   ## Pod Configuration
-  ## {{ include "bedag-lib.intern.docLink" $_ }}#pod-template
+  ## {{ include "bedag-lib.utils.intern.docLink" $_ }}#pod-template
   {{- if $_.minimal }}
   ## Supports all the values from the referenced template. Find all available values in the link above.
   {{- else }}

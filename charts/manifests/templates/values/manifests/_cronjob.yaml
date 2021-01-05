@@ -51,7 +51,7 @@
 
 
   ## Pod Configuration
-  ## {{ include "bedag-lib.intern.docLink" $ }}#job-template
+  ## {{ include "bedag-lib.utils.intern.docLink" $ }}#job-template
   {{- if $_.minimal }}
   ## Supports all the values from the referenced template. Find all available values in the link above.
   {{- else }}

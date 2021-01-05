@@ -18,23 +18,23 @@ limitations under the License.
 {{/*
   Sprig Template - Fullname Template Wrapper. Considers the Bundlename as prefix, if defined.
 */}}
-{{- define "bedag-lib.fullname" -}}
+{{- define "bedag-lib.utils.common.fullname" -}}
    {{- $c := . -}}
    {{- $_ := set $c "context" (default . .context) }}
    {{- $_ := set $c "prefix" (default $c.context.bundlename .bundlename) }}
-   {{- include "lib.utils.fullname" $c }}
+   {{- include "lib.utils.common.fullname" $c }}
 {{- end }}
 
 {{/*
   Sprig Template - ServiceAccountName
 */}}
-{{- define "bedag-lib.serviceAccountName" -}}
+{{- define "bedag-lib.utils.common.serviceAccountName" -}}
   {{- if .context }}
     {{- if .sa }}
       {{- if or .sa.enabled .sa.create }}
         {{- if .sa.enabled }}
           {{- if .sa.create -}}
-            {{- printf "%s" (default (include "bedag-lib.fullname" .) .sa.name) }}
+            {{- printf "%s" (default (include "bedag-lib.utils.common.fullname" .) .sa.name) }}
           {{- else -}}
             {{- printf "%s" (default "default" .sa.name) }}
           {{- end -}}
@@ -53,7 +53,7 @@ limitations under the License.
 {{/*
   Sprig Template - MergedValues
 */}}
-{{- define "bedag-lib.mergedValues" -}}
+{{- define "bedag-lib.utils.common.mergedValues" -}}
   {{- if and .type .root -}}
     {{- $tpl := cat "bedag-lib.values." (.type | lower) | nospace -}}
     {{- $defaultValues := default dict (get (fromYaml (include $tpl .root.context)) ((default .type .key) | toString)) -}}

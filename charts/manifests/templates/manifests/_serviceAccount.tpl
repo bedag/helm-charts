@@ -16,7 +16,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.manifest.serviceaccount.values" -}}
-  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "serviceAccount" "root" .)) "context" .context) -}}
+  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "serviceAccount" "root" .)) "context" .context) -}}
 {{- end }}
 
 {{- define "bedag-lib.manifest.serviceaccount" -}}
@@ -31,8 +31,8 @@ apiVersion: {{ $serviceAccount.apiVersion }}
 apiVersion: v1
       {{- end }}
 metadata:
-  name: {{ include "bedag-lib.serviceAccountName" (dict "sa" $serviceAccount "context" $context) }}
-  labels: {{- include "lib.utils.labels" (dict "labels" $serviceAccount.labels "context" $context)| nindent 4 }}
+  name: {{ include "bedag-lib.utils.common.serviceAccountName" (dict "sa" $serviceAccount "context" $context) }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $serviceAccount.labels "context" $context)| nindent 4 }}
       {{- if $serviceAccount.annotations }}
   annotations:
         {{- range $anno, $val := $serviceAccount.annotations }}
@@ -47,7 +47,7 @@ secrets: {{ toYaml $serviceAccount.secrets | nindent 2 }}
       {{- end }}
       {{- if or (and $serviceAccount.imagePullSecrets (kindIs "slice" $serviceAccount.imagePullSecrets)) $serviceAccount.globalPullSecrets }}
         {{- if $serviceAccount.globalPullSecrets }}
-imagePullSecrets: {{- include "bedag-lib.util.imagePullSecrets" (dict "pullSecrets" $serviceAccount.imagePullSecrets "context" $context)| nindent 2 }}
+imagePullSecrets: {{- include "lib.utils.globals.imagePullSecrets" (dict "pullSecrets" $serviceAccount.imagePullSecrets "context" $context)| nindent 2 }}
         {{- else }}
 imagePullSecrets: {{ toYaml $serviceAccount.imagePullSecrets | nindent 2 }}
         {{- end }}

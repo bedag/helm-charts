@@ -58,7 +58,7 @@ args:
 
 The default values for this preset go here:
 
-**templates/values/presets/_say.yaml**
+**templates/values/presets/_says.yaml**
 
 ```
 {{- define "bedag-lib.presets.values.says" -}}
@@ -134,7 +134,7 @@ First i am creating the main file (do whatever structure you like, just make sur
 
 */}}
 {{- define "bedag-lib.manifest.servicemonitor.values" -}}
-  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "serviceMonitor" "root" .)) "context" .context) -}}
+  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "serviceMonitor" "root" .)) "context" .context) -}}
 {{- end }}
 
 
@@ -157,7 +157,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name:  {{ include "bedag-lib.fullname" . }}
-  labels: {{- include "lib.utils.labels" (dict "labels" $serviceMonitor.labels "context" $context)| nindent 4 }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $serviceMonitor.labels "context" $context)| nindent 4 }}
         {{- if $serviceMonitor.namespace }}
   namespace: {{ $serviceMonitor.namespace }}
         {{- end }}
@@ -167,7 +167,7 @@ spec:
         {{- end }}
   selector:
     matchLabels:
-  endpoints: {{- include "lib.utils.template" (dict "value" $serviceMonitor.endpoints "context" $context) | nindent 4 }}
+  endpoints: {{- include "lib.utils.strings.template" (dict "value" $serviceMonitor.endpoints "context" $context) | nindent 4 }}
   namespaceSelector:
     matchNames:
         {{- if $serviceMonitor.namespaceSelector }}

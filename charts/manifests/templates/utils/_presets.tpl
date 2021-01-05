@@ -15,11 +15,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */
-{{- define "bedag-lib.presets" -}}
+{{- define "bedag-lib.utils.presets" -}}
   {{- if and .preset .context -}}
     {{- $params := . -}}
     {{- $base := "bedag-lib.presets." }}
-    {{- $basePath := (cat $base .preset | nospace) -}}
+    {{- $basePath := (cat $base .preset | nospace | lower) -}}
     {{- $baseValues := (cat $base "values" "." .preset | nospace) }}
     {{- $_ := set $params "values" (mergeOverwrite (fromYaml (include $baseValues .)) (default dict .values)) -}}
     {{- $_ := set $params "values" (mergeOverwrite $params.values (fromYaml (include (cat $basePath "." "overwrites" | nospace) $params))) -}}

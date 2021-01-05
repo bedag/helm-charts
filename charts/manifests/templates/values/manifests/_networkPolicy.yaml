@@ -21,7 +21,6 @@
 
   ## Network Policy Pod Selector
   # {{ $_.path }}selector -- Pod Selector Labels for Network Policy
-  # @default -- `bedag-lib.selectorLabels`
   selector: {}
 
   ## Network Ingress Policies (Slice)

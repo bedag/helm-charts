@@ -16,7 +16,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.manifest.poddisruptionbudget.values" -}}
-  {{- include "lib.utils.template" (dict "value" (include "bedag-lib.mergedValues" (dict "type" "podDisruptionBudget" "key" "pdb" "root" .)) "context" .context) -}}
+  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "podDisruptionBudget" "key" "pdb" "root" .)) "context" .context) -}}
 {{- end }}
 
 {{- define "bedag-lib.manifest.poddisruptionbudget" -}}
@@ -31,8 +31,8 @@ apiVersion: {{ $pdb.apiVersion }}
 apiVersion: policy/v1beta1
         {{- end }}
 metadata:
-  name: {{ include "bedag-lib.fullname" . }}
-  labels: {{- include "lib.utils.labels" (dict "labels" $pdb.labels "context" $context)| nindent 4 }}
+  name: {{ include "bedag-lib.utils.common.fullname" . }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $pdb.labels "context" $context)| nindent 4 }}
 spec:
         {{- if or $pdb.minAvailable $pdb.maxUnavailable}}
           {{- if $pdb.minAvailable }}
@@ -45,7 +45,7 @@ spec:
   minAvailable: 1
         {{- end }}
   selector:
-    matchLabels: {{- include "lib.utils.template" (dict "value" (default (include "lib.utils.selectorLabels" $context) $pdb.selectorLabels) "context" $context) | nindent 6 }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $pdb.selectorLabels) "context" $context) | nindent 6 }}
     {{- end }}
   {{- end }}
 {{- end -}}

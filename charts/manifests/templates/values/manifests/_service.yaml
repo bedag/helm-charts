@@ -70,7 +70,6 @@
 
   ## Service Selector
   # {{ $_.path }}selector -- Configure Service Selector Labels
-  # @default -- `bedag-lib.selectorLabels`
   selector: {}
 
 {{- end -}}

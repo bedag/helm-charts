@@ -8,6 +8,6 @@ This library ships with a Values Generator, which allows to generate values.yaml
 
   * [../utils/README.md#generator](../utils/README.md#generator)
 
+### Plugin
 
-
-MORE DOC TBD
+[See the Generator Helm Plugin](../../plugin/README.md)

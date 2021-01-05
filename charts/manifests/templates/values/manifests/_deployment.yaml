@@ -13,17 +13,14 @@
 
   ## Deployment Labels
   # {{ $_.path }}labels -- Merges given labels with common labels
-  # @default -- `bedag-lib.commonLabels`
   labels: {}
 
   ## Deployment Service
   # {{ $_.path }}serviceName -- Define a Service for the Deployment
-  # @default -- `bedag-lib.fullname`
   serviceName: ""
 
   ## Deployment Selector Labels
   # {{ $_.path }}selectorLabels -- Define SelectorLabels for the Pod Template
-  # @default -- `bedag-lib.selectorLabels`
   selectorLabels: {}
 
   ## Amount of Replicas
@@ -40,7 +37,7 @@
 
 
   ## Pod Configuration
-  ## {{ include "bedag-lib.intern.docLink" $ }}#pod-template
+  ## {{ include "bedag-lib.utils.intern.docLink" $ }}#pod-template
   {{- if $_.minimal }}
   ## Supports all the values from the referenced template. Find all available values in the link above.
   {{- else }}

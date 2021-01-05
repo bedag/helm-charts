@@ -1,0 +1,71 @@
+{{- define "bedag-lib.presets.values.jmxexporter" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+## Enable JMX Exporter
+# {{ $_.path }}enabled -- Enables [JMX Exporter](https://github.com/bitnami/bitnami-docker-jmx-exporter) as Sidecar
+enabled: false
+
+## Component Name
+# {{ $_.path }}name -- Name for all component parts (ports, resources). Useful when you are using the component multiple times
+name: "jmx"
+
+## Component Specific Labels
+# {{ $_.path }}labels -- Component Specific Labels.
+labels:
+  app.kubernetes.io/component: metrics
+
+## JMX Exporter TargetPort
+# {{ $_.path }}targetPort -- Define which Port to scrape. Points to the Port where the jmx metrics are exposed on the Maincar.
+targetPort: 5555
+
+## JMX Exporter Port
+# {{ $_.path }}port -- Exposed JMX Exporter Port (Service and Sidecar)
+port: 5556
+
+## Prometheus Endpoint Configuration
+# {{ $_.path }}endpoint -- Additional Configuration for the ServiceMonitor Endpoint (Overwrites .serviceMonitor.endpoints)
+endpoint:
+  path: "/"
+  interval: 10s
+  scrapeTimeout: 10s
+
+## JMX Exporter Configuration
+# {{ $_.path }}config -- Configure JMX Exporter configuration. The `jmxUrl` configuration will be set automatically, if not overwritten. [See all Configurations](https://github.com/prometheus/jmx_exporter#configuration)
+# @default -- See values.yaml
+config:
+  lowercaseOutputName: true
+  lowercaseOutputLabelNames: true
+  ssl: false
+
+
+## Container Configuration
+## {{ include "bedag-lib.utils.intern.docLink" $ }}#container-template
+  {{- if $_.minimal }}
+## Supports all the values from the referenced template. Find all available values in the link above.
+  {{- else }}
+## Full Configuration
+
+    {{- $o := set $_ "data" (mergeOverwrite $_.data (dict "imageRepository" "bitnami/jmx-exporter" "imageTag" "0.13.0-debian-10-r52")) }}
+    {{- include "bedag-lib.values.template.container" $_ | nindent 0 }}
+  {{- end }}
+
+## Service Configuration
+## {{ include "bedag-lib.utils.intern.docLink" $ }}#service
+  {{- if $_.minimal }}
+## Supports all the values from the referenced template. Find all available values in the link above.
+  {{- else }}
+## Full Configuration
+
+    {{- include "bedag-lib.values.service" $_ | nindent 0 }}
+  {{- end }}
+
+## ServiceMonitor Configuration
+## {{ include "bedag-lib.utils.intern.docLink" $ }}#servicemonitor
+  {{- if $_.minimal }}
+## Supports all the values from the referenced template. Find all available values in the link above.
+  {{- else }}
+## Full Configuration
+
+    {{- include "bedag-lib.values.servicemonitor" $_ | nindent 0 }}
+  {{- end }}
+{{- end }}

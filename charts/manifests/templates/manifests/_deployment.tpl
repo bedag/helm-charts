@@ -39,7 +39,9 @@ spec:
   replicas: {{ default "1" $deployment.replicaCount }}
   selector:
     matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $deployment.selectorLabels) "context" $context) | nindent 6 }}
-  serviceName: {{ default (include "bedag-lib.utils.common.fullname" $context) $deployment.serviceName }}
+  {{- if $deployment.deploymentExtras }}
+    {{- toYaml $deployment.deploymentExtras | nindent 2 }}
+  {{- end }}
   template: {{- include "bedag-lib.template.pod" (dict "pod" $deployment "context" $context) | nindent 4 }}
   {{- end }}
 {{- end -}}

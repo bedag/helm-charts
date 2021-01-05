@@ -46,6 +46,9 @@ spec:
   selector:
     matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $statefulset.selectorLabels) "context" $context) | indent 6 }}
   serviceName: {{ default (include "bedag-lib.utils.common.fullname" .) $statefulset.serviceName }}
+  {{- if $statefulset.statefulsetExtras }}
+    {{- toYaml $statefulset.statefulsetExtras | nindent 2 }}
+  {{- end }}
   template: {{- include "bedag-lib.template.pod" (set . "pod" $statefulset) | nindent 4 }}
     {{- if and $statefulset.volumeClaimTemplates (kindIs "slice" $statefulset.volumeClaimTemplates) }}
   volumeClaimTemplates: {{- toYaml $statefulset.volumeClaimTemplates | nindent 4 }}

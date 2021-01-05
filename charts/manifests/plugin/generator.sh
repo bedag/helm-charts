@@ -66,4 +66,5 @@ HELM_VALUES=""
 [ -n "$MINIMAL" ] && HELM_VALUES="${HELM_VALUES} --set doc.minimal=true"
 
 ## -- Execute Helm
-$HELM_BIN template $HELM_VALUES ${HELM_ARGS} --dependency-update values-generator/
+#$HELM_BIN 
+helm template $HELM_VALUES ${HELM_ARGS} --dependency-update values-generator/

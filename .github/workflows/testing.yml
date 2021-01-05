@@ -1,0 +1,49 @@
+#
+# Reference: https://github.com/helm/chart-testing-action
+#
+name: Helm Chart Linting and Testing
+on: pull_request
+jobs:
+  chart-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Fetch history
+        run: git fetch --prune --unshallow
+
+      - name: Chart Linting
+        id: lint
+        uses: helm/chart-testing-action@v1.0.0
+        with:
+          command: lint
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.0.0
+        # Only build a kind cluster if there are chart changes to test.
+        if: steps.lint.outputs.changed == 'true'
+
+      - name: Chart Installation
+        uses: helm/chart-testing-action@v1.0.0
+        # Only test if there are any changes
+        if: steps.lint.outputs.changed == 'true'
+        with:
+          command: install
+
+  dry-release:
+    runs-on: ubuntu-latest
+    needs:
+      - chart-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Fetch history
+        run: git fetch --prune --unshallow
+
+      - name: Helm Chart Publish
+        uses: buttahtoast/helm-release-action@v1.1.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          dryrun: true

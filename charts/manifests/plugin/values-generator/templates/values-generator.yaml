@@ -1,1 +1,1 @@
-{{- include "bedag-lib.values.generator" $ | nindent 0 }}
+{{- include "bedag-lib.utils.values.generator" $ | nindent 0 }}

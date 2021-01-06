@@ -17,7 +17,7 @@ chmod +x helm-charts/charts/manifests/plugin/generator.sh
 You can install Helm Plugins local. This means, in the HELM_PLUGIN directory will be a symbolic link created given to the directory. This is how you would install it locally:
 
 ```
-helm install helm-charts/charts/manifests/plugin
+helm plugin install helm-charts/charts/manifests/plugin
 ```
 Since it's a symbolic link, the git repository has to persist.
 

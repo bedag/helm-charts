@@ -3,4 +3,4 @@ version: "0.1.0"
 usage: "Get Manifest Values"
 description: "Get Manifest Values"
 ignoreFlags: false
-command: "bash ./generator.sh"
+command: "$HELM_PLUGIN_DIR/generator.sh"

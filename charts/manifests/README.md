@@ -41,11 +41,11 @@ Major Changes to functions are documented with the version affected. **Before up
 
 # Documentation
 
-For Artifacthub Users: The entire documentation can be found in the GitHub Repository.
+For Artifacthub Users: The entire documentation can be found in the [GitHub Repository](https://github.com/bedag/helm-charts/).
 
 We tried our best with the documentation. Since it's a very different approach on writing helm charts it's hard to explain. Therefor we suggest taking a look at other charts in this chart repository, since they (might) be written with the help of this library. We expect users of this library to have a deep know-hopw of Helm und Go Sprig. If that's not the case yet, we recommend coming back later, because the usage might frustrate you more than you actually benefit from it. We are planing to expand the documentation in the future. Your contribution is welcome, if you are a fan of the project! :)
 
-We recommend looking thirst through the **Kubernetes Manifests** section.
+We recommend looking first through the **Kubernetes Manifests** section.
 
   * **[Manifests](./templates/manifests/README.md)**
   * **[Presets](./templates/presets/README.md)**

@@ -15,11 +15,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */}}
-test: | {{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "kafdrop.bundle" $)) "context" $) | nindent 2 }}
 
-
-
-
+{{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "kafdrop.bundle" $)) "context" $) | nindent 0 }}
 {{- define "kafdrop.bundle" -}}
 resources:
 
@@ -27,9 +24,6 @@ resources:
   {{- if $jmxExporter.extraResources }}
     {{- toYaml $jmxExporter.extraResources | nindent 2 }}
   {{- end }}
-
-
-
 
   - type: "deployment"
     values: {{ toYaml $.Values.deployment | nindent 6 }}

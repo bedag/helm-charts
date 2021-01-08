@@ -26,3 +26,7 @@ Sessionx.vim
 .idea/
 .intellij/
 *.iml
+
+# Custom Files
+charts/manifests/plugin/values-generator/charts/
+charts/manifests/plugin/values-generator/Chart.lock

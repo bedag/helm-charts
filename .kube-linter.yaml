@@ -1,0 +1,11 @@
+---
+checks:
+  addAllBuiltIn: true
+  exclude:
+    - "no-anti-affinity"
+    - "required-annotation-email"
+    - "required-label-owner"
+    - "unset-cpu-requirements"
+    - "unset-memory-requirements"
+    - "no-read-only-root-fs"
+    - "default-service-account"

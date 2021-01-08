@@ -25,25 +25,19 @@ limitations under the License.
     {{- end }}
     {{- $_ := set $context "Bundle" $.bundle.resources -}}
     {{- if .bundle.resources -}}
-apiVersion: v1
-kind: List
-metadata:
-  name: {{ include "bedag-lib.utils.common.fullname" $context }}
-  labels: {{- include "lib.utils.common.labels" $context | nindent 4 }}
-items:
       {{- range .bundle.resources -}}
         {{- $type := required "Missing required field '.type' for resource in bundle" .type | lower }}
         {{- $manifest := (cat $manifestPath $type | nospace) -}}
         {{- if and (eq $type "raw") .manifest }}
-  - {{- include "lib.utils.strings.template" (dict "value" .manifest "context" $context) | nindent 4 }}
+---{{- include "lib.utils.strings.template" (dict "value" .manifest "context" $context) | nindent 0 }}
         {{- else }}
           {{- $v_params := set . "context" $context }}
           {{- $values := (fromYaml (include (cat $manifest ".values" | nospace) $v_params)) }}
           {{- $parameters := (dict "type" $type "values" $values "name" (default "" .name) "fullname" (default "" .fullname) "context" $context) }}
           {{- $resource := include $manifest $parameters }}
           {{- if $resource }}
-  - {{- $resource | nindent 4 }}
-            {{- include "bedag-lib.template.bundleExtras" $parameters | nindent 2 -}}
+---{{- $resource | nindent 0 }}
+            {{- include "bedag-lib.template.bundleExtras" $parameters | nindent 0 -}}
           {{- end -}}
         {{- end -}}
       {{- end -}}

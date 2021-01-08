@@ -1,17 +1,14 @@
 ## Enabled Values Generator
 doc:
 
-  ## Define which manifest to generate (e.g. "statfulset")
-  ## On of .manifest or .preset has to be set, otherwise the function returns empty
+  ## doc.manifest -- Define which manifest to generate (e.g. "statfulset")
   manifest: ""
 
-  ## Define which manifest to generate (e.g. "permissions")
-  ## On of .manifest or .preset has to be set, otherwise the function returns empty
-  ## The .manifest field takes precedence over the .preset field, if both are set.
+
+  # doc.preset -- Define which preset to render (e.g. "permissions")
   preset: ""
 
-  ## If you want your values to be in a more complex structure, you can define the yaml path
-  ## This mostly matters for all the helm-docs fields being generated.
+  # doc.path -- If you want your values to be in a more complex structure, you can define the yaml path. This mostly matters for all the helm-docs fields being generated.
   #path: "custom.sub.path"
   path: ""
 

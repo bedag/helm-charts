@@ -6,4 +6,4 @@ global:
 
   ## Global Docker Image Registry
   # global.imageRegistry -- Global Docker Image Registry declaration. Will overwrite all child .registry fields.
-  imageRegistry: "registry-group.mgmtbi.ch"
+  imageRegistry: ""

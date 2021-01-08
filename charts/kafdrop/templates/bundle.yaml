@@ -42,7 +42,6 @@ resources:
       {{/*
         Predefined Ports
       */}}
-      {{- if or $.Values.deployment.ports $jmxExporter.ports }}
       ports:
         {{- if $.Values.deployment.ports }}
           {{- toYaml $.Values.deployment.ports | nindent 8 }}
@@ -53,7 +52,6 @@ resources:
         {{- if $jmxExporter.ports }}
           {{- toYaml $jmxExporter.ports | nindent 8 }}
         {{- end }}
-      {{- end }}
 
       {{/*
         Predefined Statefulset Volumes

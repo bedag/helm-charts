@@ -496,8 +496,7 @@ service:
 
   ## Service Port
   # service.port -- Configure Service Port (Required)
-  # @default -- 80
-  port: 5555
+  port: 9000
 
   ## Service Target Port
   # service.targetPort -- Configure Service TargetPort

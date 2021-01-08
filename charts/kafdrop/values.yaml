@@ -694,7 +694,7 @@ autoscaling:
 
   ## Horizontal Pod Autoscaler minimum Replicas
   # autoscaling.maxReplicas -- maxReplicas is the upper limit for the number of replicas to which the autoscaler can scale up. It cannot be less that minReplicas.
-  maxReplicas:
+  maxReplicas: 2
 
   ## Horizontal Pod Autoscaler Target CPU
   # autoscaling.targetCPUUtilizationPercentage -- Set the averageUtilization for the CPU resrouce as integer percentage (e.g. 50 = 50%)

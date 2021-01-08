@@ -358,7 +358,7 @@ deployment:
 
     # deployment.image.tag -- Configure Docker Image tag
     # @default -- Tag defaults to `.Chart.Appversion`, if not set
-    tag: ""
+    tag: "latest"
 
   ## Container Resources
   # deployment.resources -- Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)

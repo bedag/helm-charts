@@ -426,7 +426,7 @@ deployment:
     httpGet:
       path: "{{ include \"kafdrop.endpoint\" $ }}"
       port: http
-    initialDelaySeconds: 120
+    initialDelaySeconds: 60
 
 
   ## LivenessProbe Configuration
@@ -435,7 +435,7 @@ deployment:
     httpGet:
       path: "{{ include \"kafdrop.endpoint\" $ }}"
       port: http
-    initialDelaySeconds: 120
+    initialDelaySeconds: 60
 
   ## StartupProbe Configuration
   # deployment.startupProbe -- Container [StartupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes)

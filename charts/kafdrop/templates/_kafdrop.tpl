@@ -1,7 +1,6 @@
 {{/*
-Kafdrop Configuration
-Renders Broker Connections correctly, if they are type slice, Handles
-the default, when it's already a single string
+  Kafdrop Configuration
+  Renders Broker Connections correctly, if they are type slice, Handles the default, when it's already a single string
 */}}
 {{- define "kafdrop.connections" -}}
     {{- $connections := $.Values.config.kafka.connections -}}
@@ -12,9 +11,8 @@ the default, when it's already a single string
 {{- end }}
 
 {{/*
-Kafdrop Configuration
-Renders Broker Connections correctly, if they are type slice, Handles
-the default, when it's already a single string
+  Kafdrop Configuration
+  Renders Broker Connections correctly, if they are type slice, Handles the default, when it's already a single string
 */}}
 {{- define "kafdrop.jvmopts" -}}
     {{- $jvmopts := $.Values.config.jvm -}}
@@ -25,17 +23,15 @@ the default, when it's already a single string
 {{- end -}}
 
 {{/*
-Kafdrop Configuration
-Merges Commandline Arguments with Protocol Path, if defined
+  Kafdrop Configuration Merges Commandline Arguments with Protocol Path, if defined
 */}}
 {{- define "kafdrop.protobuf" -}}
 {{- if $.Values.config.protoDesc.enabled -}} --message.format=PROTOBUF --protobufdesc.directory={{- $.Values.config.protoDesc.path -}} {{- end -}}
 {{- end -}}
 
-
 {{/*
-Kafdrop Configuration
-Merges Commandline Arguments with Protocol Path, if defined
+  Kafdrop Configuration
+  Merges Commandline Arguments with Protocol Path, if defined
 */}}
 {{- define "kafdrop.cmdArgs" -}}
     {{- if $.Values.config.cmdArgs }}
@@ -47,7 +43,9 @@ Merges Commandline Arguments with Protocol Path, if defined
     {{- end }}
 {{- end -}}
 
-
+{{- define "kafdrop.endpoint" }}
+{{- $.Values.config.server.context | trimSuffix "/" | nospace }}/actuator/health
+{{- end }}
 
 
 

@@ -19,6 +19,9 @@ limitations under the License.
 {{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "kafdrop.bundle" $)) "context" $) | nindent 0 }}
 {{- define "kafdrop.bundle" -}}
 resources:
+  {{- if $.Values.extraResources }}
+    {{- toYaml $.Values.extraResources | nindent 2 }}
+  {{- end }}
 
   {{ $jmxExporter := (fromYaml (include "bedag-lib.utils.presets" (dict "preset" "jmxexporter" "values" $.Values.jmxExporter "context" $))) }}
   {{- if $jmxExporter.extraResources }}
@@ -28,6 +31,8 @@ resources:
   - type: "deployment"
     values: {{ toYaml $.Values.deployment | nindent 6 }}
     overwrites:
+      podAnnotations:
+        checksum/config: {{ $.Values.config | toString | sha256sum }}
 
       environment: {{- include "kafdrop.configuration" $ | nindent 8 }}
         {{- if $.Values.deployment.environment }}
@@ -42,6 +47,9 @@ resources:
         {{- if $.Values.deployment.ports }}
           {{- toYaml $.Values.deployment.ports | nindent 8 }}
         {{- end }}
+        - name: http
+          containerPort: {{ $.Values.config.server.port }}
+          protocol: TCP
         {{- if $jmxExporter.ports }}
           {{- toYaml $jmxExporter.ports | nindent 8 }}
         {{- end }}
@@ -73,13 +81,11 @@ resources:
         {{- end }}
       {{- end }}
 
-
   - type: "service"
     values: {{ toYaml $.Values.service | nindent 6 }}
 
   - type: "ingress"
     values: {{ toYaml $.Values.ingress | nindent 6 }}
-
 
   {{- if (gt (int $.Values.deployment.replicaCount) 1) }}
   - type: "poddisruptionbudget"

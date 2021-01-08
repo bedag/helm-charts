@@ -92,6 +92,9 @@ proxy:
   noProxy: []
 
 
+timezone: "Zurich/Europa"
+
+
 ## Kafdrop Configuration
 ## Defines values which will be set as environment variable for the
 ## kafdrop pod.

@@ -268,47 +268,44 @@ resources:
 Should get you something like this:
 
 ```
-apiVersion: v1
-kind: List
-items:
-  -
-    apiVersion: monitoring.coreos.com/v1
-    kind: ServiceMonitor
-    metadata:
-      name:  tess-sm
-      labels:
-        app.kubernetes.io/instance: test
-        app.kubernetes.io/name: expand
-        app.kubernetes.io/version: 1.16.0
-    spec:
-      selector:
-        matchLabels:
-      endpoints:
-        - interval: 15s
-          path: /metrics
-          targetPort: 8000
-      namespaceSelector:
-        matchNames:
-          - default
-  -
-    apiVersion: monitoring.coreos.com/v1
-    kind: ServiceMonitor
-    metadata:
-      name:  full-sm
-      labels:
-        app.kubernetes.io/instance: test
-        app.kubernetes.io/name: expand
-        app.kubernetes.io/version: 1.16.0
-    spec:
-      selector:
-        matchLabels:
-      endpoints:
-        - interval: 15s
-          path: /metrics
-          targetPort: 8000
-      namespaceSelector:
-        matchNames:
-          - default
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name:  tess-sm
+  labels:
+    app.kubernetes.io/instance: test
+    app.kubernetes.io/name: expand
+    app.kubernetes.io/version: 1.16.0
+spec:
+  selector:
+    matchLabels:
+  endpoints:
+    - interval: 15s
+      path: /metrics
+      targetPort: 8000
+  namespaceSelector:
+    matchNames:
+      - default
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name:  full-sm
+  labels:
+    app.kubernetes.io/instance: test
+    app.kubernetes.io/name: expand
+    app.kubernetes.io/version: 1.16.0
+spec:
+  selector:
+    matchLabels:
+  endpoints:
+    - interval: 15s
+      path: /metrics
+      targetPort: 8000
+  namespaceSelector:
+    matchNames:
+      - default
 ```
 
 Wow! Seems to work perfectly! How are you so good? If you are having trouble, please open an issue, we are happy to help.

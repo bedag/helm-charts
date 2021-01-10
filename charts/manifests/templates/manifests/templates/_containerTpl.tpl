@@ -31,7 +31,7 @@ resources: {{- include "lib.utils.strings.template" (dict "value" . "context" $c
     {{- if $values.containerFields }}
       {{- include "lib.utils.strings.template" (dict "value" $values.containerFields "context" $context)  | nindent 0 }}
     {{- end }}
-    {{- if $values.environment }}
+    {{- if and $values.environment (kindIs "slice" $values.environment) }}
       {{- if $context.Bundle }}
 env: {{- include "bedag-lib.utils.environment.keyList" (dict "environment" $values.environment "allowSecrets" true "context" $context) | nindent 2 }}
       {{- else }}
@@ -56,10 +56,10 @@ startupProbe: {{ include "lib.utils.strings.template" (dict "value" $values.star
     {{- with $values.lifecycle }}
 lifecycle: {{ include "lib.utils.strings.template" (dict "value" $values.lifecycle "context" $context) | nindent 2 }}
     {{- end }}
-    {{- if $values.volumeMounts }}
+    {{- if and $values.volumeMounts (kindIs "slice" $values.volumeMounts) }}
 volumeMounts: {{- include "lib.utils.strings.template" (dict "value" $values.volumeMounts "context" $context) | nindent 2 }}
     {{- end }}
-    {{- if $values.ports }}
+    {{- if and $values.ports (kindIs "slice" $values.ports) }}
 ports: {{- include "lib.utils.strings.template" (dict "value" $values.ports "context" $context) | nindent 2 }}
     {{- end }}
   {{- end }}

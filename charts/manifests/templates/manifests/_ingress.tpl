@@ -80,7 +80,7 @@ spec:
               {{- if .resource }}
                 {{- $_ := set $p "resource" .resource }}
               {{- else }}
-                {{- $_ := set $p "service" (dict "name" (include "lib.utils.strings.toDns1123" (default (include "bedag-lib.utils.common.fullname" $context) .serviceName)) "port" (include "lib.utils.toDns1123" (default "http" .servicePort))) }}
+                {{- $_ := set $p "service" (dict "name" (include "lib.utils.strings.toDns1123" (default (include "bedag-lib.utils.common.fullname" $context) .serviceName)) "port" (include "lib.utils.strings.toDns1123" (default "http" .servicePort))) }}
               {{- end }}
             {{- end }}
           - path: {{ $p.path }}

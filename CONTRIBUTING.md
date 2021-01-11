@@ -40,8 +40,20 @@ All submissions, including submissions by project members, require review. We us
 
 ## Helm Docs
 
-To have consistent README documentations for each chart we use the [helm-docs plugin](https://github.com/norwoodj/helm-docs). Make sure to write the chart README in a compatible format. Helm-Docs is executed on Pull Request creation.
+To have consistent README documentations for each chart we use the [helm-docs plugin](https://github.com/norwoodj/helm-docs). Make sure to write the chart README in a compatible format. Helm-Docs is executed on Push events.
 
+
+## Release Action
+
+See which options are available on the [Github Release Action](https://github.com/buttahtoast/helm-release-action). We Use for publishing charts within this repository.
+
+### Kube Linter
+
+[Kube-Linter](https://github.com/stackrox/kube-linter) is supported for all charts and as global configuration. The Global configuration applies to all charts.
+
+### Unit Tests
+
+Unit Tests can be created on a chart basis. Unit Tests are optional.
 
 ## Technical Requirements
 

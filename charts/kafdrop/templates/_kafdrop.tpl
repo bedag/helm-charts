@@ -1,7 +1,6 @@
 {{/*
-Kafdrop Configuration
-Renders Broker Connections correctly, if they are type slice, Handles
-the default, when it's already a single string
+  Kafdrop Configuration
+  Renders Broker Connections correctly, if they are type slice, Handles the default, when it's already a single string
 */}}
 {{- define "kafdrop.connections" -}}
     {{- $connections := $.Values.config.kafka.connections -}}
@@ -12,9 +11,8 @@ the default, when it's already a single string
 {{- end }}
 
 {{/*
-Kafdrop Configuration
-Renders Broker Connections correctly, if they are type slice, Handles
-the default, when it's already a single string
+  Kafdrop Configuration
+  Renders Broker Connections correctly, if they are type slice, Handles the default, when it's already a single string
 */}}
 {{- define "kafdrop.jvmopts" -}}
     {{- $jvmopts := $.Values.config.jvm -}}
@@ -25,17 +23,15 @@ the default, when it's already a single string
 {{- end -}}
 
 {{/*
-Kafdrop Configuration
-Merges Commandline Arguments with Protocol Path, if defined
+  Kafdrop Configuration Merges Commandline Arguments with Protocol Path, if defined
 */}}
 {{- define "kafdrop.protobuf" -}}
 {{- if $.Values.config.protoDesc.enabled -}} --message.format=PROTOBUF --protobufdesc.directory={{- $.Values.config.protoDesc.path -}} {{- end -}}
 {{- end -}}
 
-
 {{/*
-Kafdrop Configuration
-Merges Commandline Arguments with Protocol Path, if defined
+  Kafdrop Configuration
+  Merges Commandline Arguments with Protocol Path, if defined
 */}}
 {{- define "kafdrop.cmdArgs" -}}
     {{- if $.Values.config.cmdArgs }}
@@ -47,8 +43,9 @@ Merges Commandline Arguments with Protocol Path, if defined
     {{- end }}
 {{- end -}}
 
-
-
+{{- define "kafdrop.endpoint" }}
+{{- $.Values.config.server.context | trimSuffix "/" | nospace }}/actuator/health
+{{- end }}
 
 
 {{/*
@@ -65,35 +62,29 @@ Merges Commandline Arguments with Protocol Path, if defined
   value: "{{ $.Values.config.server.port }}"
 - name: CMD_ARGS
   value: "{{ template "kafdrop.cmdArgs" . }}"
-{{- if $.Values.config.kafka.properties.content }}
+  {{- if $.Values.config.kafka.properties.content }}
 - name: KAFKA_PROPERTIES
-  valueFrom:
-    secretKeyRef:
-      name: {{ include "bedag-lib.utils.common.fullname" $ }}-config
-      key: KAFKA_PROPERTIES
-{{- end }}
+  secret: true
+  value: {{ include "lib.utils.strings.template" (dict "value" .Values.config.kafka.properties.content "context" $) }}
+  {{- end }}
 - name: KAFKA_PROPERTIES_FILE
   value: "{{ $.Values.config.kafka.properties.destination }}"
-{{- if $.Values.config.kafka.keystore.content }}
+  {{- if $.Values.config.kafka.truststore.content }}
 - name: KAFKA_TRUSTSTORE
-  valueFrom:
-    secretKeyRef:
-      name: {{ include "bedag-lib.utils.common.fullname" $ }}-config
-      key: KAFKA_TRUSTSTORE
-{{- end }}
+  secret: true
+  value: {{ include "lib.utils.strings.template" (dict "value" .Values.config.kafka.truststore.content "context" $) }}
+  {{- end }}
 - name: KAFKA_TRUSTSTORE_FILE
   value: "{{ $.Values.config.kafka.truststore.destination }}"
-{{- if $.Values.config.kafka.keystore.content }}
+  {{- if $.Values.config.kafka.keystore.content }}
 - name: KAFKA_KEYSTORE
-  valueFrom:
-    secretKeyRef:
-      name: {{ include "bedag-lib.utils.common.fullname" $ }}-config
-      key: KAFKA_KEYSTORE
-{{- end }}
+  secret: true
+  value: {{ include "lib.utils.strings.template" (dict "value" .Values.config.kafka.keystore.content "context" $) }}
+  {{- end }}
 - name: KAFKA_KEYSTORE_FILE
   value: "{{ $.Values.config.kafka.keystore.destination }}"
-{{- if $.Values.jmxExporter.enabled }}
-  - name: JMX_PORT
-    value: "{{ $.Values.jmxExporter.targetPort }}"
-{{- end }}
+  {{- if $.Values.jmxExporter.enabled }}
+- name: JMX_PORT
+  value: "{{ $.Values.jmxExporter.targetPort }}"
+  {{- end }}
 {{- end -}}

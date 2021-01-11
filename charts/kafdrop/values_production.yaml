@@ -1,9 +1,35 @@
+##
+## Global Configuration
+global:
+  imageRegistry: "company-registry.example.com"
+
+## Proxy Configuration
+proxy:
+  httpProxy:
+    host: "proxy.example.com"
+    port: "8080"
+  httpsProxy:
+    host: "proxy.example.com"
+    port: "80"
+  noProxy:
+    - "localhost"
+    - "127.0.0.1"
+    - "*.example.com"
+    - "{{ (index .Values.ingress.hosts 0).host }}"
+
+## Ingress Configuration
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/affinity:  cookie
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "10800" #3h
+  hosts:
+    - host: kafdrop.cluster.ingress
+      paths: [ "/" ]
+  tls:
+    - hosts:
+        - kafdrop.cluster.ingress
+
+## Enables JMX Exporter
 jmxExporter:
   enabled: true
-
-
-global:
-
-  ## Global Docker Image Registry
-  # global.imageRegistry -- Global Docker Image Registry declaration. Will overwrite all child .registry fields.
-  imageRegistry: ""

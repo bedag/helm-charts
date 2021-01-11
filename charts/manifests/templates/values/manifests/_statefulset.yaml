@@ -53,6 +53,11 @@
   #      storageClassName: { include "lib.utils.storageClass" (dict "persistence" .Values.persistence "context" $.Values) }
 
 
+  ## Statefulset Extra Values
+  # {{ $_.path }}statefulsetExtras -- Extra Fields for Statefulset Manifest
+  statefulsetExtras: {}
+  #
+
   ## Pod Configuration
   ## {{ include "bedag-lib.utils.intern.docLink" $_ }}#pod-template
   {{- if $_.minimal }}

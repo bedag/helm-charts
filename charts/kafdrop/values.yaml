@@ -22,6 +22,10 @@ global:
   # global.imagePullSecrets -- Global Docker Image Pull Secrets declaration. Added to local Docker Image Pull Secrets.
   imagePullSecrets: []
 
+## Extra Resources
+# extraResources -- Enter Extra Resources managed by the Jira Release
+extraResources: []
+
 ## Common Values
 ##
 
@@ -91,16 +95,16 @@ proxy:
   # noProxy: [ "localhost", "127.0.0.1" ]
   noProxy: []
 
+## Define Container Timezone
+# timezone -- Define Container Timezone (Sets TZ Environment)
+timezone: "Europe/Zurich"
+
 
 ## Kafdrop Configuration
 ## Defines values which will be set as environment variable for the
 ## kafdrop pod.
 ##
 config:
-
-  ## TimeZone Configuration
-  # config.timezone -- Timezone configuration
-  timezone: "Europe/Zurich"
 
   ## Kafka SubElement
   ##
@@ -190,10 +194,6 @@ deployment:
   # deployment.labels -- Merges given labels with common labels
   labels: {}
 
-  ## Deployment Service
-  # deployment.serviceName -- Define a Service for the Deployment
-  serviceName: ""
-
   ## Deployment Selector Labels
   # deployment.selectorLabels -- Define SelectorLabels for the Pod Template
   selectorLabels: {}
@@ -210,7 +210,12 @@ deployment:
   #    maxSurge: 1
   #    maxUnavailable: 0
 
-
+  ## Deployment Extra Values
+  # {{ $_.path }}deploymentExtras -- Extra Fields for Deployment Manifest
+  deploymentExtras: {}
+  # progressDeadlineSeconds: "600s"
+  #
+  
   ## Pod Configuration
   ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#container-template#pod-template
   ## Full Configuration
@@ -414,25 +419,23 @@ deployment:
   ## Container SecurityContext
   # deployment.securityContext -- Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
   securityContext:
-    {}
+    runAsUser: 999
 
   ## ReadinessProbe Configuration
   # deployment.readinessProbe -- Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)
   readinessProbe:
-    {}
-  #  httpGet:
-  #    path: /health
-  #    port: http
-  #  initialDelaySeconds: 60
+    httpGet:
+      path: "{{ include \"kafdrop.endpoint\" $ }}"
+      port: http
+    initialDelaySeconds: 60
 
   ## LivenessProbe Configuration
   # deployment.livenessProbe -- Container [LivenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command)
   livenessProbe:
-    {}
-  #  httpGet:
-  #    path: /health
-  #    port: http
-  #  initialDelaySeconds: 60
+    httpGet:
+      path: "{{ include \"kafdrop.endpoint\" $ }}"
+      port: http
+    initialDelaySeconds: 60
 
   ## StartupProbe Configuration
   # deployment.startupProbe -- Container [StartupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes)
@@ -493,8 +496,7 @@ service:
 
   ## Service Port
   # service.port -- Configure Service Port (Required)
-  # @default -- 80
-  port: 5555
+  port: 9000
 
   ## Service Target Port
   # service.targetPort -- Configure Service TargetPort

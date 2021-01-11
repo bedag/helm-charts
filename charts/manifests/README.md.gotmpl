@@ -41,6 +41,17 @@ Major Changes to functions are documented with the version affected. **Before up
 |||||
 
 
+{{/*
+  Chart Sources
+*/}}
+{{ template "chart.sourcesSection" . }}
+
+{{/*
+  Chart Requirements
+*/}}
+{{ template "chart.requirementsSection" . }}
+
+
 # Documentation
 
 For Artifacthub Users: The entire documentation can be found in the GitHub Repository.
@@ -55,12 +66,6 @@ We recommend looking thirst through the **Kubernetes Manifests** section.
   * **[Values](./templates/values/README.md)**
   * **[Utilities](./templates/utils/README.md)**
 
-{{/*
-  Chart Sources
-*/}}
-{{ template "chart.sourcesSection" . }}
+## Quickstart
 
-{{/*
-  Chart Requirements
-*/}}
-{{ template "chart.requirementsSection" . }}
+[See this page for a quickstart](./templates/Quickstart.md)

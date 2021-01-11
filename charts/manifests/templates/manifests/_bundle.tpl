@@ -41,6 +41,8 @@ limitations under the License.
           {{- end -}}
         {{- end -}}
       {{- end -}}
-    {{- end -}}
+    {{- else }}
+      {{- fail "Missing Keys or Wrong YAML structure!" }}
+    {{- end }}
   {{- end -}}
 {{- end -}}

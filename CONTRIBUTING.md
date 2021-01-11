@@ -25,7 +25,7 @@ See git help commit:
 With these steps you can make a contribution:
 
   1. Fork this repository, develop and test your changes on that fork.
-  2. All commits have a meaningful description and are signed off as described above and also verified.
+  2. All commits have a meaningful description, are signed off as described above and verified.
   3. Submit a pull request from your fork to this project.
 
 ## Code reviews
@@ -42,6 +42,7 @@ All submissions, including submissions by project members, require review. We us
 
 To have consistent README documentations for each chart we use the [helm-docs plugin](https://github.com/norwoodj/helm-docs). Make sure to write the chart README in a compatible format. Helm-Docs is executed on Push events.
 
+**NOTE**: When creating your own `README.md.gotmpl`, don't forget to add it to your `.helmignore` file.
 
 ## Release Action
 
@@ -59,6 +60,8 @@ Unit Tests can be created on a chart basis. Unit Tests are optional.
 
 Your PR has to fulfill the following points, to be considered:
 
+  * Chart should use [Bedag Manifests Library](./charts/manifests/README.md), if possible
+  * Make use of [Artifacthub Annotations](https://github.com/artifacthub/hub/blob/master/docs/helm_annotations.md)
   * CI Jobs for linting must pass.
   * The title of the PR starts with the chart name (e.g. `[chart_name] Additional options for SecurityContext`)
   * Changes must follow [Helm best practices](https://helm.sh/docs/chart_best_practices/).
@@ -85,23 +88,3 @@ Currently these are the only requirements to add a new chart:
   * **Only Helm Version 3+ Charts ([ApiVersion 2](https://helm.sh/docs/topics/v2_v3_migration/)) are accepted/supported.**
   * The chart has it's on `README.md` describing it's configuration options with default values. The documentation should also cover  some basic configuration examples.
   * Follow a best practice structure for the layout of the chart  directory (A good reference is [bitnami's blog](https://docs.bitnami.com/tutorials/production-ready-charts/) on this topic)
-
-## Recommendations
-
-We have some recommendations for creating a new chart.
-
-### Chart Schema
-
-A [Chart Schema](https://helm.sh/docs/topics/charts#schema-files) helps improving the value validations of the given chart values. But it's also used in solutions, where you can deploy charts over a gui. For example [Rancher](https://rancher.com/products/rancher/) uses the Chart Schema to render a user friendly page, where you can change the chart values. To get a good first layout of your values you might want to use [this Helm Plugin](https://github.com/karuppiah7890/helm-schema-gen). It automatically creates the schema file according to your values file.
-
-Install the Plugin
-
-```
-helm plugin install https://github.com/karuppiah7890/helm-schema-gen
-```
-
-Generate Schema file
-
-```
-helm schema-gen values.yaml
-```

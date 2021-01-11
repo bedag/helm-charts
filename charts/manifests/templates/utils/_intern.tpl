@@ -16,5 +16,5 @@ limitations under the License.
 
 */
 {{- define "bedag-lib.utils.intern.docLink" -}}
-https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#container-template
+https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md
 {{- end }}

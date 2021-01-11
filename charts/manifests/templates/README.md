@@ -1,8 +1,3 @@
-
-
-
-
-
 # Development
 
 Here you find some documentation on how to add manifests or components to the library or expanding it by yourself.

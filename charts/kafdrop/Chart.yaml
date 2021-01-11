@@ -1,7 +1,7 @@
 apiVersion: v2
 name: kafdrop
 description: Unofficial Helm Chart for Kafdrop
-version: 1.0.0
+version: 1.0.1
 appVersion: 3.27.0
 type: application
 home: https://github.com/obsidiandynamics/kafdrop

@@ -417,7 +417,8 @@ deployment:
   ## Container SecurityContext
   # deployment.securityContext -- Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
   securityContext:
-    runAsUser: 999
+    runAsNonRoot: true
+    runAsUser: 1000
 
   ## ReadinessProbe Configuration
   # deployment.readinessProbe -- Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)

@@ -99,6 +99,7 @@ proxy:
 # timezone -- Define Container Timezone (Sets TZ Environment)
 timezone: "Europe/Zurich"
 
+
 ## Kafdrop Configuration
 ## Defines values which will be set as environment variable for the
 ## kafdrop pod.
@@ -214,7 +215,7 @@ deployment:
   deploymentExtras: {}
   # progressDeadlineSeconds: "600s"
   #
-
+  
   ## Pod Configuration
   ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#container-template#pod-template
   ## Full Configuration
@@ -427,7 +428,6 @@ deployment:
       path: "{{ include \"kafdrop.endpoint\" $ }}"
       port: http
     initialDelaySeconds: 60
-
 
   ## LivenessProbe Configuration
   # deployment.livenessProbe -- Container [LivenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command)

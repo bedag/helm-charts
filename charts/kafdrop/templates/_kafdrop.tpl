@@ -48,7 +48,6 @@
 {{- end }}
 
 
-
 {{/*
   Kafdrop Environment Configuration
 */}}

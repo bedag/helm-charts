@@ -147,6 +147,7 @@ With the Manifest templates you have the possibility to get a single resource. T
 Currently we support the following Kubernetes Manifests:
 
   * **[Cronjob](#cronjob)**
+  * **[DaemonSet](#daemonset)**
   * **[Deployment](#deployment)**
   * **[HorizontalPodAutoscaler](#horizontalpodautoscaler)**
   * **[Ingress](#ingress)**
@@ -198,6 +199,47 @@ resources:
   - type: "cronjob"
     values: {{ toYaml $.Values.cronjob | nindent 6 }}
     fullname: "custom-cronjob"
+  ...
+```
+
+## DaemonSet
+
+This Template returns a [DaemonSet](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/) Kubernetes Manifest.
+
+### Arguments
+
+The following arguments are supported for this template. If a required argument is not given, the template will fail or return empty.
+
+  * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
+  * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
+  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.context` - Inherited Root Context (Required)
+
+### [Values](../values/manifests/daemonset.yaml)
+
+You can access the supported values for this kubernetes manifest through clicking on values. These values represent the default values for this manifest.
+
+### Templates
+
+Implements the following templates:
+
+  * **[Pod Template](#pod-template)**
+
+### Usage
+
+```
+{{ include "bedag-lib.manifest.daemonset" (dict "values" $.Values.daemonset "fullname" "custom-daemonset" "context" $) }}
+```
+
+#### With Bundle
+
+```
+resources:
+  ...
+  - type: "daemonset"
+    values: {{ toYaml $.Values.daemonset | nindent 6 }}
+    fullname: "custom-daemonset"
   ...
 ```
 

@@ -1,0 +1,43 @@
+{{- define "bedag-lib.values.daemonset" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict "parentKey" (default "daemonset" .key) "path" (cat (default "" (default $context.path .path)) (default "daemonset" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+#
+## - DaemonSet
+## Reference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
+##
+{{ $_.parentKey }}:
+
+  ## DaemonSet API version
+  # {{ $_.path }}apiVersion -- Configure the api version used for the DaemonSet resource
+  apiVersion: ""
+
+  ## DaemonSet Labels
+  # {{ $_.path }}labels -- Merges given labels with common labels
+  labels: {}
+
+  ## DaemonSet Selector Labels
+  # {{ $_.path }}selectorLabels -- Define SelectorLabels for the Pod Template
+  selectorLabels: {}
+
+  ## DaemonSet minReadySeconds
+  # {{ $_.path }}minReadySeconds -- DaemonSet [Min Ready in Seconds](https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/#performing-a-rolling-update). **DaemonSet only**
+  minReadySeconds: ""
+
+  ## DaemonSet, can be set to RollingUpdate or OnDelete by default.
+  # {{ $_.path }}updateStrategy -- DaemonSet [Update Strategy](https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/#performing-a-rolling-update). **DaemonSet only**
+  updateStrategy: RollingUpdate
+
+  ## maxUnavailable update strategy
+  # {{ $_.path }}rollingUpdatePartition -- DaemonSet [Update Pratition](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/#pod-management-policies). **DaemonSet only**
+  rollingUpdatemaxUnavailable: ""
+
+  ## Pod Configuration
+  ## {{ include "bedag-lib.utils.intern.docLink" $_ }}#pod-template
+  {{- if $_.minimal }}
+  ## Supports all the values from the referenced template. Find all available values in the link above.
+  {{- else }}
+  ## Full Configuration
+
+    {{- include "bedag-lib.values.template.pod" $_ | nindent 2 }}
+  {{- end }}
+{{- end -}}

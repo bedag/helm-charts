@@ -2,15 +2,13 @@ apiVersion: v2
 name: manifests
 description: "Bedag's Manifest chart. Library full of basic kubernetes manifests."
 type: library
-version: 0.4.1
+version: 0.4.2
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 keywords:
 - Bedag
 - Manifests
 - Library
 maintainers:
-- name: oliverbaehler
-  email: oliver.baehler@bedag.ch
 - name: SRE
   email: sre@bedag.ch
 dependencies:

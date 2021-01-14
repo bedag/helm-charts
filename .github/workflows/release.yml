@@ -17,3 +17,5 @@ jobs:
         uses: buttahtoast/helm-release-action@v1.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          kubeLinterDisable: true
+          unitTestDisable: true

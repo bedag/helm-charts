@@ -165,6 +165,28 @@ annotations:
   artifacthub.io/containsSecurityUpdates: "true"
 ```
 
+### Changelog
+
+Changes on a chart must be documented in a chart specific changelog. For every new release the entire ```artifacthub.io/changes``` needs to be rewritten. Please use the following template:
+
+
+```
+artifacthub.io/changes: |
+  **Added:**
+    * Added something within this chart
+  **Changed:**
+    * Changed Something within this chart
+    * Changed Something else within this chart
+  **Deprecated:**
+    * None
+  **Removed:**
+    * None
+  **Fixed:**
+    * Some Bug was fixed
+  **Security:**
+    * None
+```
+
 # Workflows
 
 The following Workflows are executed on named events.

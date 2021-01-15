@@ -424,7 +424,7 @@ deployment:
   # deployment.readinessProbe -- Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)
   readinessProbe:
     httpGet:
-      path: /health
+      path: "{{ include \"kafdrop.endpoint\" $ }}"
       port: http
     initialDelaySeconds: 60
 
@@ -432,7 +432,7 @@ deployment:
   # deployment.livenessProbe -- Container [LivenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command)
   livenessProbe:
     httpGet:
-      path: /health
+      path: "{{ include \"kafdrop.endpoint\" $ }}"
       port: http
     initialDelaySeconds: 60
 

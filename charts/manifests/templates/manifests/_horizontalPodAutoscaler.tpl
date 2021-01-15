@@ -23,7 +23,7 @@ limitations under the License.
   {{- if .context }}
     {{- $context := .context -}}
     {{- $hpa := (fromYaml (include "bedag-lib.manifest.horizontalpodautoscaler.values" .)) -}}
-    {{- if $hpa.enabled -}}
+    {{- if and $hpa.enabled (or $hpa.targetCPUUtilizationPercentage $hpa.targetMemoryUtilizationPercentage $hpa.metrics) -}}
 kind: HorizontalPodAutoscaler
       {{- if $hpa.apiVersion -}}
 apiVersion: {{ $hpa.apiVersion }}

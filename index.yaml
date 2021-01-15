@@ -2,6 +2,45 @@ apiVersion: v1
 entries:
   manifests:
   - annotations:
+      artifacthub.io/changes: |
+        **Added:**
+          * None
+        **Changed:**
+          * Dependency `library` latest version
+        **Deprecated:**
+          * None
+        **Removed:**
+          * None
+        **Fixed:**
+          * [manifest/horizontalPodAutoscaler]: Metrics must be set for manifest to be returned
+        **Security:**
+          * None
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/prerelease: "true"
+    apiVersion: v2
+    created: "2021-01-15T01:04:38.64909425Z"
+    dependencies:
+    - name: library
+      repository: https://buttahtoast.github.io/helm-charts/
+      version: ~0.3.0
+    description: Bedag's Manifest chart. Library full of basic kubernetes manifests.
+    digest: c63d7cd5bd6a653b091cc65d60ed0e4aad425ef99b9983970ce0b18c920ef92c
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Manifests
+    - Library
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: manifests
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/manifests
+    type: library
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/manifests-0.4.3/manifests-0.4.3.tgz
+    version: 0.4.3
+  - annotations:
       artifacthub.io/containsSecurityUpdates: "false"
       artifacthub.io/prerelease: "true"
     apiVersion: v2

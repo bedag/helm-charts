@@ -1,5 +1,7 @@
 # Changelog
 
+## [kafdrop-0.1.2](https://github.com/florentinadolf/helm-charts/tree/kafdrop-0.1.2) (2021-01-15)
+
 ## [kafdrop-0.1.1](https://github.com/florentinadolf/helm-charts/tree/kafdrop-0.1.1) (2021-01-15)
 
 ## [kafdrop-0.1.0](https://github.com/florentinadolf/helm-charts/tree/kafdrop-0.1.0) (2021-01-15)

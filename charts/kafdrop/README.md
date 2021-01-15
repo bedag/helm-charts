@@ -1,14 +1,24 @@
 # kafdrop
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 1.16.0](https://img.shields.io/badge/AppVersion-1.16.0-informational?style=flat-square)
+![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.27.0](https://img.shields.io/badge/AppVersion-3.27.0-informational?style=flat-square)
 
-A Helm chart for Kubernetes
+Unofficial Helm Chart for Kafdrop
+
+**Homepage:** <https://github.com/obsidiandynamics/kafdrop>
+
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| oliverbaehler | oliverbaehler@hotmail.com |  |
+| florentinadolf | florentin-david.adolf@bedag.ch |  |
+| SRE | sre@bedag.ch |  |
 
 ## Requirements
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://buttahtoast.github.io/helm-charts-1 | manifests | 0.1.5 |
+| https://bedag.github.io/helm-charts/ | manifests | ~0.3.0 |
 
 ## Values
 
@@ -41,7 +51,6 @@ A Helm chart for Kubernetes
 | config.server.context | string | `"/"` |  |
 | config.server.port | string | `"9000"` |  |
 | config.timezone | string | `"Europe/Zurich"` | Timezone configuration |
-| deployment."service.portName" | string | `""` |  |
 | deployment.affinity | object | `{}` | Pod [Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) |
 | deployment.apiVersion | string | `""` | Configure the api version used for the Deployment resource |
 | deployment.args | object | `{}` | Configure arguments for executed command |
@@ -70,7 +79,7 @@ A Helm chart for Kubernetes
 | deployment.replicaCount | int | 1 | Amount of Replicas deployed |
 | deployment.resources | object | `{}` | Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) |
 | deployment.restartPolicy | string | `nil` | Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy |
-| deployment.securityContext | object | `{}` | Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) |
+| deployment.securityContext | object | `{"runAsNonRoot":true,"runAsUser":1000}` | Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) |
 | deployment.selectorLabels | object | `{}` | Define SelectorLabels for the Pod Template |
 | deployment.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | deployment.serviceAccount.apiVersion | string | v1 | Configure the api version used |
@@ -82,6 +91,7 @@ A Helm chart for Kubernetes
 | deployment.serviceAccount.labels | object | `{}` | Merges given labels with common labels |
 | deployment.serviceAccount.name | string | `""` | If not set and create is true, a name is generated using the fullname template |
 | deployment.serviceAccount.secrets | list | `[]` | Secrets is the list of secrets allowed to be used by pods running using this ServiceAccount |
+| deployment.serviceName | string | `""` | Define a Service for the Deployment |
 | deployment.sidecars | list | `[]` | Allows to add sidecars to your [maincar]](https://kubernetes.io/docs/concepts/workloads/pods/#using-pods) |
 | deployment.startupProbe | object | `{}` | Container [StartupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes) |
 | deployment.strategy | object | `{}` | Deployment [Update Strategy](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend). **Deployments only** |
@@ -173,11 +183,12 @@ A Helm chart for Kubernetes
 | service.loadBalancerIP | string | `""` | Configure Service [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer). Set the LoadBalancer service type to internal only. |
 | service.loadBalancerSourceRanges | list | `[]` | Configure Service [loadBalancerSourceRanges](https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service) |
 | service.nodePort | string | `""` | Specify the nodePort value for the LoadBalancer and NodePort service types |
-| service.port | int | 80 | Configure Service Port (Required) |
+| service.port | int | `9000` | Configure Service Port (Required) |
 | service.portName | string | http | Configure Service Port name |
 | service.selector | object | `{}` | Configure Service Selector Labels |
 | service.targetPort | string | http | Configure Service TargetPort |
 | service.type | string | `"ClusterIP"` | Configure Service [Type](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types). |
+| timezone | string | `"Zurich/Europa"` |  |
 
 ----------------------------------------------
 Autogenerated from chart metadata using [helm-docs v1.4.0](https://github.com/norwoodj/helm-docs/releases/v1.4.0)

@@ -1,6 +1,6 @@
 # kafdrop
 
-![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.27.0](https://img.shields.io/badge/AppVersion-3.27.0-informational?style=flat-square)
+![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.27.0](https://img.shields.io/badge/AppVersion-3.27.0-informational?style=flat-square)
 
 Unofficial Helm Chart for Kafdrop
 
@@ -10,8 +10,6 @@ Unofficial Helm Chart for Kafdrop
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| oliverbaehler | oliverbaehler@hotmail.com |  |
-| florentinadolf | florentin-david.adolf@bedag.ch |  |
 | SRE | sre@bedag.ch |  |
 
 ## Requirements

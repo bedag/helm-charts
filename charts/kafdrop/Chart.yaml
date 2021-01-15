@@ -1,7 +1,7 @@
 apiVersion: v2
 name: kafdrop
 description: Unofficial Helm Chart for Kafdrop
-version: 1.0.1
+version: 0.1.0
 appVersion: 3.27.0
 type: application
 home: https://github.com/obsidiandynamics/kafdrop
@@ -11,10 +11,6 @@ keywords:
   - Kafdrop
   - Browsing
 maintainers:
-  - name: oliverbaehler
-    email: oliverbaehler@hotmail.com
-  - name: florentinadolf
-    email: florentin-david.adolf@bedag.ch
   - name: SRE
     email: sre@bedag.ch
 dependencies:

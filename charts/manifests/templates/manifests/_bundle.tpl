@@ -1,6 +1,6 @@
 {{/*
 
-Copyright © 2020 Oliver Baehler
+Copyright © 2021 Bedag Informatik AG
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -41,6 +41,8 @@ limitations under the License.
           {{- end -}}
         {{- end -}}
       {{- end -}}
-    {{- end -}}
+    {{- else }}
+      {{- fail "Missing Keys or Wrong YAML structure!" }}
+    {{- end }}
   {{- end -}}
 {{- end -}}

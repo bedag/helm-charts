@@ -20,6 +20,7 @@ jobs:
           curl -s -L -o /usr/local/bin/helm-docs.tar.gz "https://github.com/norwoodj/helm-docs/releases/download/$(curl --silent "https://api.github.com/repos/norwoodj/helm-docs/releases/latest" | jq -r .tag_name)/helm-docs_$(curl --silent "https://api.github.com/repos/norwoodj/helm-docs/releases/latest" | jq -r .tag_name | cut -d "v" -f2-)_Linux_x86_64.tar.gz"
           cd /usr/local/bin/ && tar xfv helm-docs.tar.gz
           chmod +x ./helm-docs
+
       - name: Update Documentation
         run: |
           git status

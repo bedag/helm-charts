@@ -1,6 +1,6 @@
 {{/*
 
-Copyright © 2020 Oliver Baehler
+Copyright © 2021 Bedag Informatik AG
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ limitations under the License.
   {{- if .context }}
     {{- $context := .context -}}
     {{- $hpa := (fromYaml (include "bedag-lib.manifest.horizontalpodautoscaler.values" .)) -}}
-    {{- if $hpa.enabled -}}
+    {{- if and $hpa.enabled (or $hpa.targetCPUUtilizationPercentage $hpa.targetMemoryUtilizationPercentage $hpa.metrics) -}}
 kind: HorizontalPodAutoscaler
       {{- if $hpa.apiVersion -}}
 apiVersion: {{ $hpa.apiVersion }}

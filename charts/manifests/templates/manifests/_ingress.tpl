@@ -1,6 +1,6 @@
 {{/*
 
-Copyright © 2020 Oliver Baehler
+Copyright © 2021 Bedag Informatik AG
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -80,7 +80,7 @@ spec:
               {{- if .resource }}
                 {{- $_ := set $p "resource" .resource }}
               {{- else }}
-                {{- $_ := set $p "service" (dict "name" (include "lib.utils.strings.toDns1123" (default (include "bedag-lib.utils.common.fullname" $context) .serviceName)) "port" (include "lib.utils.toDns1123" (default "http" .servicePort))) }}
+                {{- $_ := set $p "service" (dict "name" (include "lib.utils.strings.toDns1123" (default (include "bedag-lib.utils.common.fullname" $context) .serviceName)) "port" (include "lib.utils.strings.toDns1123" (default "http" .servicePort))) }}
               {{- end }}
             {{- end }}
           - path: {{ $p.path }}

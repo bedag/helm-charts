@@ -2,7 +2,27 @@
 
 We'd love to accept your patches and contributions to this project. There are just a few small guidelines you need to follow.
 
-## Sign off Your Work
+# How to Contribute
+
+With these steps you can make a contribution:
+
+  1. Fork this repository, develop and test your changes on that fork
+  2. Commit changes
+  3. Submit a [pull request](#pull-requests) from your fork to this project.
+
+Before starting, go through the requirements below.  
+
+## Commits
+
+Please have meaningful commit messages.
+
+### Commit Signature Verification
+
+Each commit's signature must be verified.
+
+  * [About commit signature verification](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/about-commit-signature-verification)
+
+### Sign off Your Work
 
 The Developer Certificate of Origin (DCO) is a lightweight way for contributors to certify that they wrote or otherwise have the right to submit the code they are contributing to the project. Here is the full text of the [DCO](./DCO). Contributors must sign-off each commit by adding a Signed-off-by line to commit messages.
 
@@ -20,88 +40,177 @@ See git help commit:
     http://developercertificate.org/ for more information).
 ```
 
-# How to Contribute
-
-With these steps you can make a contribution:
-
-  1. Fork this repository, develop and test your changes on that fork.
-  2. All commits have a meaningful description and are signed off as described above and also verified.
-  3. Submit a pull request from your fork to this project.
-
-## Code reviews
+# Pull Requests
 
 All submissions, including submissions by project members, require review. We use GitHub pull requests for this purpose. Consult [GitHub Help](https://help.github.com/articles/about-pull-requests/) for more information on using pull requests. See the above stated requirements for PR on this project.
 
-## Release Process
+Your Pull Request has to fulfill the following points, to be considered:
 
-  1. Changes are automatically linted and tested using the [ct tool](https://github.com/helm/chart-testing) embedded as a GitHub action.
-  2. Review is done manually by Bedag Informatik AG team members.
-  3. Once review is done, the branch is merged into the master branch, where a Github action automatically creates a release on the GitHub repository. The new release is added to the index, laying in the gh-pages branch.
-
-## Helm Docs
-
-To have consistent README documentations for each chart we use the [helm-docs plugin](https://github.com/norwoodj/helm-docs). Make sure to write the chart README in a compatible format. Helm-Docs is executed on Push events.
-
-
-## Release Action
-
-See which options are available on the [Github Release Action](https://github.com/buttahtoast/helm-release-action). We Use for publishing charts within this repository.
-
-### Kube Linter
-
-[Kube-Linter](https://github.com/stackrox/kube-linter) is supported for all charts and as global configuration. The Global configuration applies to all charts.
-
-### Unit Tests
-
-Unit Tests can be created on a chart basis. Unit Tests are optional.
-
-## Technical Requirements
-
-Your PR has to fulfill the following points, to be considered:
-
-  * CI Jobs for linting must pass.
+  * Workflows must pass.
+  * DCO Check must pass.
+  * All commits correspond to the requirements (See [Commits](#commits))
   * The title of the PR starts with the chart name (e.g. `[chart_name] Additional options for SecurityContext`)
-  * Changes must follow [Helm best practices](https://helm.sh/docs/chart_best_practices/).
-  * Changes to a chart require a version bump for that chart following [semver standard](https://semver.org/).
-  * New/Changed Configurations for the chart are documented in it's `README.md` file.
+  * Changes to a chart require a version bump for that chart following [versioning conventions](#versioning).
+  * New/Changed Configurations for the chart are documented in it's `README.md.gotmpl` file.
 
-### Versioning
+## Versioning
 
-Each chart's version follows the [semver standard](https://semver.org/). New charts should start at version `1.0.0`.
+Each chart's version follows the [semver standard](https://semver.org/). New charts should start at version `1.0.0`, if it's considered stable. If it's not considered stable, it must be released as [prerelease](#prerelease).
 
 Any breaking changes to a chart (backwards incompatible) require:
 
   * Bump of the current Major version of the chart
-  * State possible manual changes for this chart version in the `Upgrading` section of the chart's `README.md`
+  * State possible manual changes for this chart version in the `Upgrading` section of the chart's `README.md.gotmpl` ([See Upgrade](#upgrades))
 
-#### Immutability
+### Immutability
 
-Each release for each chart must be immutable. Any change to a chart (even just documentation) requires a version bump.
+Each release for each chart must be immutable. Any change to a chart (even just documentation) requires a version bump. Trying to release the same version twice will result in an error.
 
-## Adding a new chart
+## Work in Progress
 
-Currently these are the only requirements to add a new chart:
+By adding `WIP: *` as prefix for your pull request title, your pull request is considered not yet ready for review. This changes when removing this prefix later.
 
-  * **Only Helm Version 3+ Charts ([ApiVersion 2](https://helm.sh/docs/topics/v2_v3_migration/)) are accepted/supported.**
-  * The chart has it's on `README.md` describing it's configuration options with default values. The documentation should also cover  some basic configuration examples.
-  * Follow a best practice structure for the layout of the chart  directory (A good reference is [bitnami's blog](https://docs.bitnami.com/tutorials/production-ready-charts/) on this topic)
+## Review
 
-## Recommendations
+When creating a Pull Request is automatically assigned. If your Pull Request does not have any activity after certain days, feel free to comment a reminder (it might happen that we forget about it, since we maintain this repository part time). Your Pull Request requires approve to mergedable.
 
-We have some recommendations for creating a new chart.
+# Chart Requirements
 
-### Chart Schema
+There are certain requirements charts have to match, to be maintained in your Helm Repository. Most of the requirements are relevant when you are planning to add a new chart to the repository.
 
-A [Chart Schema](https://helm.sh/docs/topics/charts#schema-files) helps improving the value validations of the given chart values. But it's also used in solutions, where you can deploy charts over a gui. For example [Rancher](https://rancher.com/products/rancher/) uses the Chart Schema to render a user friendly page, where you can change the chart values. To get a good first layout of your values you might want to use [this Helm Plugin](https://github.com/karuppiah7890/helm-schema-gen). It automatically creates the schema file according to your values file.
+## Manifests Library
 
-Install the Plugin
+**Important**: All of the maintained charts in this repository should make use of the [Bedag Manifests Library](./charts/manifests). There might be exceptions.
 
-```
-helm plugin install https://github.com/karuppiah7890/helm-schema-gen
-```
-
-Generate Schema file
+When adding the Bedag Manifests Library as dependency, we don't add it as local dependency (aka via `file://..`) since the library itself has dependencies, which are not included that way. Therefor you must declare the dependency from the repository itself:
 
 ```
-helm schema-gen values.yaml
+dependencies:
+  - name: manifests
+    version: "~0.4.0"
+    repository: https://bedag.github.io/helm-charts/
 ```
+
+## Documentation
+
+The documentation for each chart is done with [helm-docs](https://github.com/norwoodj/helm-docs). This way we can ensure that values are consistent with the chart documentation.
+
+**NOTE**: When creating your own `README.md.gotmpl`, don't forget to add it to your `.helmignore` file.
+
+### Major Changes
+
+Your chart should have a dedicated documentation part, where major changes to the chart are mentioned which cause a new major release. Here's a little example on how you could do that:
+
+```
+# Major Changes
+
+Major Changes are documented with the version affected. **Before upgrading to a new version, check this section out!**
+
+| **Chart Version** | **Change/Description** | **Commits/PRs** |
+| :---------------- | :--------------------- | :-------------- |
+||||
+```
+
+### Upgrades
+
+If your chart requires manual interaction for version upgrades (might be the case for major upgrades) you need to mention the exact instructions in a dedicated documentation part of your chart. That's not the case for upgrades, where no specific interaction is required.
+
+## Maintainer
+
+Charts published by Bedag will only have Bedag as maintainer and no dedicated contributors.
+
+```
+maintainers:
+- name: Bedag
+  email: sre@bedag.ch
+```
+
+## Dependencies
+
+Dependency versions should be set to a fixed version. We allow version fixing over all bugfix versions (eg. `~1.0.0`), since bugfix releases should not have big impact.
+
+```
+dependencies:
+- name: "apache"
+  version: "~1.3.0"
+  repository: "https://charts.bitnami.com/bitnami"
+```
+
+There might be cases where this rule can not be applied, we are open to discuss that.
+
+
+## ArtifactHub Annotations
+
+Since we release our charts on [Artifacthub](https://artifacthub.io/) we encourage making use of the provided chart annotations for Artifacthub.
+
+  * [All Artifacthub Annotations](https://github.com/artifacthub/hub/blob/master/docs/helm_annotations.md)
+
+In some cases they might not be required.
+
+### Prerelease
+
+Annotation to mark chart release as prerelease:
+
+```
+annotations:
+  artifacthub.io/prerelease: "true"
+```
+
+### SecurityUpdates
+
+Annotation to mark that chart release contains security updates:
+
+```
+annotations:
+  artifacthub.io/containsSecurityUpdates: "true"
+```
+
+### Changelog
+
+Changes on a chart must be documented in a chart specific changelog. For every new release the entire ```artifacthub.io/changes``` needs to be rewritten. Please use the following template:
+
+
+```
+artifacthub.io/changes: |
+  **Added:**
+    * Added something within this chart
+  **Changed:**
+    * Changed Something within this chart
+    * Changed Something else within this chart
+  **Deprecated:**
+    * None
+  **Removed:**
+    * None
+  **Fixed:**
+    * Some Bug was fixed
+  **Security:**
+    * None
+```
+
+# Workflows
+
+The following Workflows are executed on named events.
+
+## Push
+
+On each Push [Helm-Docs](#documentation) will executed (fails on protected branches).
+
+## Pull Requests
+
+On creating a Pull Request the following workflows will be executed:
+
+  1. Chart Linting - All Charts are linted using the [ct tool](https://github.com/helm/chart-testing).
+  2. Chart Installation - All Charts are installed to KinD isntance using the [ct tool](https://github.com/helm/chart-testing).
+  3. Chart Release Dry-Run - Only charts which had changes to their **Chart.yaml** file are considered for the Release Dry-Run. No Release will be made during Dry-Run. The following checks must pass:
+    * Passed [Kube-Linter](https://github.com/stackrox/kube-linter) Tests (Required).
+    * Passed [Helm Unit-Tests](https://github.com/quintush/helm-unittest) if any are defined (Optional).
+
+  See which options are available on the [Github Release Action](https://github.com/buttahtoast/helm-release-action), which is used for releases.  
+
+## Release (Master Push)
+
+On making a push on master the following workflows will be executed:
+
+  1. Chart Release - Only charts which had changes to their **Chart.yaml** file are considered for the Release.
+
+See which options are available on the [Github Release Action](https://github.com/buttahtoast/helm-release-action), which is used for releases.

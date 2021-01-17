@@ -2,15 +2,15 @@ apiVersion: v2
 name: manifests
 description: "Bedag's Manifest chart. Library full of basic kubernetes manifests."
 type: library
-version: 0.3.0
+version: 0.4.3
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 keywords:
 - Bedag
 - Manifests
 - Library
+sources:
+- https://github.com/bedag/helm-charts/tree/master/charts/manifests
 maintainers:
-- name: oliverbaehler
-  email: oliver.baehler@bedag.ch
 - name: SRE
   email: sre@bedag.ch
 dependencies:
@@ -20,3 +20,16 @@ dependencies:
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/prerelease: "true"
+  artifacthub.io/changes: |
+    **Added:**
+      * None
+    **Changed:**
+      * Dependency `library` latest version
+    **Deprecated:**
+      * None
+    **Removed:**
+      * None
+    **Fixed:**
+      * [manifest/horizontalPodAutoscaler]: Metrics must be set for manifest to be returned
+    **Security:**
+      * None

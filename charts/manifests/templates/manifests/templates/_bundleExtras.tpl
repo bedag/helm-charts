@@ -1,6 +1,6 @@
 {{/*
 
-Copyright © 2020 Oliver Baehler
+Copyright © 2021 Bedag Informatik AG
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.template.bundleExtras" -}}
   {{- if and .values .context }}
-    {{- if (has .type (list "deployment" "pod" "statefulset")) }}
+    {{- if (has .type (list "deployment" "pod" "statefulset" "daemonset")) }}
       {{- if .values.serviceAccount }}
         {{- if and .values.serviceAccount.enabled .values.serviceAccount.create }}
 ---{{- include "bedag-lib.manifest.serviceaccount" (dict "values" .values.serviceAccount "context" .context) | nindent 0 }}

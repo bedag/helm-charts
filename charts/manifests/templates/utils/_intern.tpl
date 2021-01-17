@@ -1,6 +1,6 @@
 /*
 
-Copyright © 2020 Oliver Baehler
+Copyright © 2021 Bedag Informatik AG
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,5 +16,5 @@ limitations under the License.
 
 */
 {{- define "bedag-lib.utils.intern.docLink" -}}
-https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#container-template
+https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md
 {{- end }}

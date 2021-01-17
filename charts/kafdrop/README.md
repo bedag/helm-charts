@@ -1,6 +1,6 @@
 # kafdrop
 
-![Version: 0.0.1](https://img.shields.io/badge/Version-0.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.27.0](https://img.shields.io/badge/AppVersion-3.27.0-informational?style=flat-square)
+![Version: 0.1.3](https://img.shields.io/badge/Version-0.1.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 3.27.0](https://img.shields.io/badge/AppVersion-3.27.0-informational?style=flat-square)
 
 Unofficial Helm Chart for Kafdrop
 
@@ -30,7 +30,6 @@ Unofficial Helm Chart for Kafdrop
 | autoscaling.maxReplicas | string | `nil` | maxReplicas is the upper limit for the number of replicas to which the autoscaler can scale up. It cannot be less that minReplicas. |
 | autoscaling.metrics | list | `[]` | Define [Custom Metrics](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics) rules |
 | autoscaling.minReplicas | string | 1 | minReplicas is the lower limit for the number of replicas to which the autoscaler can scale down. It defaults to 1 pod. |
-| autoscaling.scaleTargetRef | string | `nil` | scaleTargetRef points to the target resource to scale, and is used to the pods for which metrics should be collected, as well as to actually change the replica count. |
 | autoscaling.targetCPUUtilizationPercentage | string | `nil` | Set the averageUtilization for the CPU resrouce as integer percentage (e.g. 50 = 50%) |
 | autoscaling.targetMemoryUtilizationPercentage | string | `nil` | Set the averageUtilization for the Memory resrouce as integer percentage (e.g. 50 = 50%) |
 | commonLabels | object | `{}` | Common Labels are added to each kubernetes resource manifest. |

@@ -1,0 +1,101 @@
+{{- define "bedag-lib.values.ingress" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict "parentKey" (default "ingress" .key) "path" (cat (default "" (default $context.path .path)) (default "ingress" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+#
+## - Ingress
+## Reference: https://kubernetes.io/docs/concepts/services-networking/ingress/
+##
+{{ $_.parentKey }}:
+
+  ## Enable Ingress
+  # {{ $_.path }}enabled -- Enable Ingress Resource
+  enabled: true
+
+  ## Ingress API version
+  # {{ $_.path }}apiVersion -- Configure the api version used for the ingress resource.
+  apiVersion: ""
+
+  ## Ingress Labels
+  # {{ $_.path }}labels -- Configure Ingress additional Labels
+  labels: {}
+
+  ## Ingress Annotations
+  # {{ $_.path }}annotations -- Configure Ingress Annotations
+  annotations: {}
+  #  kubernetes.io/ingress.class: nginx (Deprecated)
+  #  kubernetes.io/tls-acme: "true"
+
+  ## Ingress Default Backend
+  # {{ $_.path }}backend -- Configure a [default backend](https://kubernetes.io/docs/concepts/services-networking/ingress/#default-backend) for this ingress resource
+  backend: {}
+  # service:
+  #   name: backend
+  #   port:
+  #     number: 80
+
+  ## Ingress Default Class
+  # {{ $_.path }}ingressClass -- Configure the [default ingress class](https://kubernetes.io/docs/concepts/services-networking/ingress/#default-ingress-class) for this ingress.
+  ingressClass: ""
+
+  ## Ingress HTTP Rules
+  # {{ $_.path }}hosts -- Configure Ingress [Hosts](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-rules) (Required)
+  hosts: []
+
+  # {{ $_.path }}hosts[0].host -- Ingress Hostname
+  #  - host: chart-example.local
+  #
+  # {{ $_.path }}hosts[0].paths -- Ingress Paths
+  #    paths:
+  #
+  ## Path with service backend
+  #
+  # {{ $_.path }}hosts[0].paths[0].path -- Ingress Path Context
+  #      - path: "/"
+  #
+  # {{ $_.path }}hosts[0].paths[0].serviceName -- Ingress Path service backend name
+  # @default -- `bedag-lib.utils.common.fullname`
+  #        serviceName: ""
+  #
+  # {{ $_.path }}hosts[0].paths[0].servicePort -- Ingress Path service backend port
+  # @default -- http
+  #        servicePort: ""
+  #
+  ## Path with resource backend
+  #
+  # {{ $_.path }}hosts[0].paths[1].path -- Ingress Path Context
+  #      - path: "/storage"
+  #
+  # {{ $_.path }}hosts[0].paths[1].pathType -- Ingress path [pathType](https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types)
+  # @default -- Prefix
+  #        pathType: "ImplementationSpecific"
+  #
+  # {{ $_.path }}hosts[0].paths[1].resource -- Ingress path resource backend
+  #        resource:
+  #          apiGroup: k8s.example.com
+  #          kind: StorageBucket
+  #          name: icon-assets
+  #
+  # {{ $_.path }}hosts[0].paths[2].path -- Direct Ingress Path. Defaults to service backend.
+  #      - "/"
+  #
+
+  ## Ingress TLS Configuration
+  # {{ $_.path }}tls -- Configure Ingress [TLS](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls)
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+  ## Custom Ingress Rules
+  # {{ $_.path }}customRules -- Configure Custom Ingress [Rules](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend)
+  customRules: []
+  #  - http:
+  #      paths:
+  #        - path: /icons
+  #          pathType: ImplementationSpecific
+  #          backend:
+  #            resource:
+  #              apiGroup: k8s.example.com
+  #              kind: StorageBucket
+  #              name: icon-assets
+{{- end -}}

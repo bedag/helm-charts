@@ -1,0 +1,51 @@
+{{- define "bedag-lib.presets.values.readiness" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+## Readiness Enable
+# {{ $_.path }}enabled -- Enables Readiness Check
+enabled: false
+
+## Readiness Name
+# {{ $_.path }}name -- Readiness Container Name
+# @default -- `readiness`
+name: ""
+
+## Target Url
+# {{ $_.path }}url -- Url which will be called to check readiness (Required)
+url: ""
+
+## Allowed Status Codes
+# {{ $_.path }}retries -- Allowed HTTP status codes returned from the url
+status: [ "200" ]
+
+## Retry Count
+# {{ $_.path }}retries -- Maximum Amount of Retries until exit 1
+retries: 30
+
+## Retry Wait
+# {{ $_.path }}wait -- Amount of time between each attempt
+wait: 1s
+
+## Authentification
+# Enable Authentication for given URL
+auth:
+
+  ## Authentification User
+  # {{ $_.path }}user -- User to be used for Authentication. Could also be a reference to environment variable (e.g. `"$CURL_USER"`)
+  user: ""
+
+  ## Authentification Passowrd
+  # {{ $_.path }}password -- Corrseponding password for the user used for Authentication. Could also be a reference to environment variable (e.g. `"$CURL_PASSWORD"`)
+  password: ""
+
+## Container Configuration
+## {{ include "bedag-lib.utils.intern.docLink" $ }}#container-template
+  {{- if $_.minimal }}
+## Supports all the values from the referenced template. Find all available values in the link above.
+  {{- else }}
+## Full Configuration
+
+    {{- $o := set $_ "data" (mergeOverwrite $_.data (dict "imageRepository" "curlimages/curl")) }}
+    {{- include "bedag-lib.values.template.container" $_ | nindent 0 }}
+  {{- end }}
+{{- end -}}

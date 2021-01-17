@@ -1,0 +1,49 @@
+{{- define "bedag-lib.values.deployment" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict "parentKey" (default "deployment" .key) "path" (cat (default "" (default $context.path .path)) (default "deployment" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+#
+## - Deployment
+## Reference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+##
+{{ $_.parentKey }}:
+
+  ## Deployment API version
+  # {{ $_.path }}apiVersion -- Configure the api version used for the Deployment resource
+  apiVersion: ""
+
+  ## Deployment Labels
+  # {{ $_.path }}labels -- Merges given labels with common labels
+  labels: {}
+
+  ## Deployment Selector Labels
+  # {{ $_.path }}selectorLabels -- Define SelectorLabels for the Pod Template
+  selectorLabels: {}
+
+  ## Amount of Replicas
+  # {{ $_.path }}replicaCount -- Amount of Replicas deployed
+  # @default -- 1
+  replicaCount: 1
+
+  ## Deployment Update Strategy
+  # {{ $_.path }}strategy -- Deployment [Update Strategy](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend). **Deployments only**
+  strategy: {}
+  #  type: RollingUpdate
+  #    maxSurge: 1
+  #    maxUnavailable: 0
+
+  ## Deployment Extra Values
+  # {{ $_.path }}deploymentExtras -- Extra Fields for Deployment Manifest
+  deploymentExtras: {}
+  # progressDeadlineSeconds: "600s"
+  #
+
+  ## Pod Configuration
+  ## {{ include "bedag-lib.utils.intern.docLink" $ }}#pod-template
+  {{- if $_.minimal }}
+  ## Supports all the values from the referenced template. Find all available values in the link above.
+  {{- else }}
+  ## Full Configuration
+
+      {{- include "bedag-lib.values.template.pod" $_ | nindent 2 }}
+  {{- end }}
+{{- end -}}

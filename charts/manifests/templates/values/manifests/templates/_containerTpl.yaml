@@ -1,0 +1,116 @@
+{{- define "bedag-lib.values.template.container" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+
+#
+## -- Container
+## Reference: https://kubernetes.io/de/docs/concepts/containers/
+## Container API Object - https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#container-v1-core
+#
+
+## Custom Container Name
+# {{ $_.path }}containerName -- Configure Container Name
+# @default -- `.Chart.Name`
+containerName: {{ default "" $_.data.containerName }}
+
+## Docker Image definition.
+image:
+  # {{ $_.path }}image.registry -- Configure Docker Registry. Will be overwritten if set by global variable.
+  registry: {{ default "docker.io" $_.data.imageRegistry }}
+
+  # {{ $_.path }}image.repository -- Configure Docker Repository
+  repository: {{ default "bitnami/apache" $_.data.imageRepository }}
+
+  # {{ $_.path }}image.pullPolicy -- Configure Docker Pull Policy. Will be overwritten if set by global variable.
+  pullPolicy: {{ default "" $_.data.imagePullPolicy }}
+
+  # {{ $_.path }}image.tag -- Configure Docker Image tag
+  # @default -- Tag defaults to `.Chart.Appversion`, if not set
+  tag: {{ default "" $_.data.imageTag }}
+
+## Container Resources
+# {{ $_.path }}resources -- Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+resources: {{ toYaml (default dict $_.data.resources) | nindent 2 }}
+#  requests:
+#    memory: "64Mi"
+#    cpu: "250m"
+#  limits:
+#    memory: "128Mi"
+#    cpu: "500m"
+
+## Container Command
+# {{ $_.path }}command -- Configure executed container command
+command: {{ toYaml (default dict $_.data.command) | nindent 2 }}
+
+## Container Command Args
+# {{ $_.path }}args -- Configure arguments for executed command
+args: {{ toYaml (default dict $_.data.args) | nindent 2 }}
+
+## Environment Variables
+# {{ $_.path }}environment -- Configure Environment Variables (Refer to values.yaml)
+environment: {{ toYaml (default dict $_.data.environment) | nindent 2 }}
+# - name: "MY_ENV"
+#   value: "someValue"
+#   secret: true
+# - name: SOME_SPEC
+#   valueFrom:
+#     fieldRef:
+#       fieldPath: spec.*
+#
+
+## Container Ports
+# {{ $_.path }}ports -- Configure Container Ports
+ports: {{ toYaml (default dict $_.data.ports) | nindent 2 }}
+# - name: "health"
+#   containerPort: 9090
+#   protocol: TCP
+
+## Additional Volume Mounts
+# {{ $_.path }}volumeMounts -- Configure Container [volumeMounts](https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/)
+volumeMounts: {{ toYaml (default dict $_.data.volumeMounts) | nindent 2 }}
+#  - name: "cache"
+#    mountPath: /cache
+#  - name: "share"
+#    mountPath: /var/data/share
+
+## Container SecurityContext
+# {{ $_.path }}securityContext -- Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+securityContext: {{ toYaml (default dict $_.data.securityContext) | nindent 2 }}
+
+## ReadinessProbe Configuration
+# {{ $_.path }}readinessProbe -- Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)
+readinessProbe: {{ toYaml (default dict $_.data.readinessProbe) | nindent 2 }}
+#  httpGet:
+#    path: /health
+#    port: http
+#  initialDelaySeconds: 60
+
+## LivenessProbe Configuration
+# {{ $_.path }}livenessProbe -- Container [LivenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command)
+livenessProbe: {{ toYaml (default dict $_.data.livenessProbe) | nindent 2 }}
+#  httpGet:
+#    path: /health
+#    port: http
+#  initialDelaySeconds: 60
+
+## StartupProbe Configuration
+# {{ $_.path }}startupProbe -- Container [StartupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes)
+startupProbe: {{ toYaml (default dict $_.data.startupProbe) | nindent 2 }}
+#  httpGet:
+#    path: /health
+#    port: http
+#  failureThreshold: 30
+#  periodSeconds: 10
+
+## Container Lifecycle Hooks
+# {{ $_.path }}lifecycle -- Container [Lifecycle](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/)
+lifecycle: {{ toYaml (default dict $_.data.lifecycle) | nindent 2 }}
+#  postStart:
+#    exec:
+#      command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+
+## Container ExtraFields
+# {{ $_.path }}containerFields -- Extra fields used on the container definition
+containerFields: {{ toYaml (default dict $_.data.containerFields) | nindent 2 }}
+#  stdinOnce: true
+{{- end }}

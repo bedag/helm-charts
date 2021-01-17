@@ -1,0 +1,62 @@
+{{- define "bedag-lib.values.cronjob" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict "parentKey" (default "cronjob" .key) "path" (cat (default "" (default $context.path .path)) (default "cronjob" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+#
+## - Cronjob
+## Reference: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
+##
+{{ $_.parentKey }}:
+
+  ## CronJob Enable
+  # {{ $_.path }}enabled -- Enable CronJob Resource
+  enabled: true
+
+  ## CronJob API version
+  # {{ $_.path }}apiVersion -- Configure the api version used for the CronJob resource.
+  apiVersion: ""
+
+  ## CronJob Labels
+  # {{ $_.path }}labels -- Configure CronJob additional Labels
+  labels: {}
+
+  ## CronJob Annotations
+  # {{ $_.path }}annotations -- Configure CronJob Annotations
+  annotations: {}
+
+  ## CronJob ConcurrencyPolicy
+  # {{ $_.path }}concurrencyPolicy -- Specifies how to treat concurrent executions of a Job. Valid values are: - "Allow" (default): allows CronJobs to run concurrently; - "Forbid": forbids concurrent runs, skipping next run if previous run hasn't finished yet; - "Replace": cancels currently running job and replaces it with a new one.
+  concurrencyPolicy:
+
+  ## CronJob failedJobsHistoryLimit
+  # {{ $_.path }}failedJobsHistoryLimit -- The number of failed finished jobs to retain. This is a pointer to distinguish between explicit zero and not specified.
+  failedJobsHistoryLimit: 1
+
+  ## CronJob Schedule
+  # {{ $_.path }}schedule -- The schedule in Cron format, see https://crontab.guru/.
+  schedule: "5 4 * * *"
+
+  ## CronJob startingDeadlineSeconds
+  # {{ $_.path }}startingDeadlineSeconds -- Optional deadline in seconds for starting the job if it misses scheduled time for any reason. Missed jobs executions will be counted as failed ones.
+  startingDeadlineSeconds:
+
+  ## CronJob successfulJobsHistoryLimit
+  # {{ $_.path }}successfulJobsHistoryLimit -- The number of successful finished jobs to retain. This is a pointer to distinguish between explicit zero and not specified.
+  # @default -- 3
+  successfulJobsHistoryLimit:
+
+  ## CronJob Suspend
+  # {{ $_.path }}suspend -- The number of successful finished jobs to retain. This is a pointer to distinguish between explicit zero and not specified.
+  # @default -- false
+  suspend:
+
+
+  ## Pod Configuration
+  ## {{ include "bedag-lib.utils.intern.docLink" $ }}#job-template
+  {{- if $_.minimal }}
+  ## Supports all the values from the referenced template. Find all available values in the link above.
+  {{- else }}
+  ## Full Configuration
+
+    {{- include "bedag-lib.values.template.job" $_ | nindent 2 }}
+  {{- end }}
+{{- end }}

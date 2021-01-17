@@ -1,0 +1,41 @@
+{{- define "bedag-lib.presets.values.permissions" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+## Volume Permission Enable
+# {{ $_.path }}enabled -- Enables Volume Permissions
+enabled: false
+
+## Volume Permission Name
+# {{ $_.path }}name -- Volume Permission Container Name
+# @default -- `permission`
+name: ""
+
+## User Configuration (CHMOD User)
+# {{ $_.path }}runAsUser -- (int) Configure the directory User Owner.
+#@ @default -- `0`
+runAsUser:
+
+## Group Configuration (CHMOD Group)
+# {{ $_.path }}runAsGroup -- (int) Configure the directory Group Owner.
+#@ @default -- `0`
+runAsGroup:
+
+## Directory Mode (Optional)
+# {{ $_.path }}mode -- (int) Configure permission mode (eg. 755). If not set no permission mode will be applied.
+mode:
+
+## Destination Directories
+# {{ $_.path }}directories -- Configure destination directories. The Change Owner/Mode operation will be applied to these directories. Can be String or Slice.
+directories: [ "/tmp" ]
+
+## Container Configuration
+## {{ include "bedag-lib.utils.intern.docLink" $ }}#container-template
+  {{- if $_.minimal }}
+## Supports all the values from the referenced template. Find all available values in the link above.
+  {{- else }}
+## Full Configuration
+
+    {{- $o := set $_ "data" (mergeOverwrite $_.data (dict "imageRepository" "bitnami/minideb" "imageTag" "buster")) }}
+    {{- include "bedag-lib.values.template.container" $_ | nindent 0 }}
+  {{- end }}
+{{- end -}}

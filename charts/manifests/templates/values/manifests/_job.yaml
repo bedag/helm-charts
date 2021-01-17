@@ -1,0 +1,27 @@
+{{- define "bedag-lib.values.job" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict "parentKey" (default "job" .key) "path" (cat (default "" (default $context.path .path)) (default "job" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+#
+## - Job
+## Reference: https://kubernetes.io/docs/concepts/workloads/controllers/job/
+##
+{{ $_.parentKey }}:
+
+  ## Enable Job
+  # {{ $_.path }}enabled -- Enable Job Resource
+  enabled: true
+
+  ## Job API version
+  # {{ $_.path }}apiVersion -- Configure the api version used for the Job resource.
+  apiVersion: ""
+
+  ## Job Labels
+  # {{ $_.path }}labels -- Merges given labels with common labels
+  labels: {}
+
+  ## Job Annotations
+  # {{ $_.path }}annotations -- Configure Job Annotations
+  annotations: {}
+
+  {{- include "bedag-lib.values.template.job" $_ | nindent 2 }}
+{{- end }}

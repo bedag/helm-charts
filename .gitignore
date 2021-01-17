@@ -1,2 +1,32 @@
+# Helm
 /charts/*/charts
 /charts/*/requirements.lock
+/charts/*/Chart.lock
+
+# Swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Session
+Session.vim
+Sessionx.vim
+
+# Temporary
+.netrwhist
+*~
+
+# OSX trash
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+.intellij/
+*.iml
+
+# Custom Files
+charts/manifests/plugin/values-generator/charts/
+charts/manifests/plugin/values-generator/Chart.lock

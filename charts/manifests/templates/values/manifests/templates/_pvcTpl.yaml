@@ -1,0 +1,38 @@
+{{- define "bedag-lib.values.template.pvc" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+## Persistent Volume Claim Labels
+# {{ $_.path }}labels -- Merges given labels with common labels
+labels: {}
+
+## Persistent Volume Claim Annotations
+# {{ $_.path }}annotations -- Configure PVC additional Annotations ([Monitor Labels](https://www.weave.works/docs/cloud/latest/tasks/monitor/configuration-k8s/))
+annotations: {}
+
+## Persistent Volume Reference Name
+# {{ $_.path }}volumeName -- Persistent Volume Reference Name
+volumeName: ""
+
+## Persistent Volume Claim Requested Storage Size
+# {{ $_.path }}size -- Configure Persistent Volume Claim Storage Size
+# @default -- 1Gi
+size: "1Gi"
+
+## Persistent Volume Claim Access Modes
+# {{ $_.path }}accessModes -- Configure PVC [Access Modes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes)
+accessModes: [ "ReadWriteOnce" ]
+
+## Persistent Volume Claim Storage Class
+# {{ $_.path }}storageClass -- Configure PVC [Storage Class](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1)
+storageClass: ""
+
+## Persistent Volume Claim Selector
+# {{ $_.path }}selector -- Configure PVC [Selector](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector)
+selector: {}
+
+## Persistent Volume Claim Data Sources
+# {{ $_.path }}dataSource -- Data Sources are currently only supported for [CSI Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#volume-snapshot-and-restore-volume-from-snapshot-support)
+dataSource:
+#  name: existing-src-pvc-name
+#  kind: PersistentVolumeClaim
+{{- end -}}

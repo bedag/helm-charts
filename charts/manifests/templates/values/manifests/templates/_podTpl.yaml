@@ -1,0 +1,82 @@
+{{- define "bedag-lib.values.template.pod" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+## Image Pull Secrets
+# {{ $_.path }}imagePullSecrets -- Define [ImagePullSecrets](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). Will be overwritten if set by global variable.
+imagePullSecrets: []
+
+## Pod Labels
+# {{ $_.path }}podLabels -- Pod [labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) are only added for the pod
+podLabels: {}
+
+## Pod Annotations
+# {{ $_.path }}podAnnotations -- Pod [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) are only added for the pod
+podAnnotations: {}
+
+## Pod ForceRedeploy
+## {{ $_.path }}forceRedeploy -- Adds timestamp annotation, causing your pods to be redeployed everytime a new release applied.
+forceRedeploy: false
+
+## Extra Pod Fields
+# {{ $_.path }}podFields -- Add extra field to the [Pod Template](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podtemplate-v1-core) if not available as value.
+podFields: {}
+#  hostNetwork: true
+
+## Additional Kubernetes Volumes
+# {{ $_.path }}volumes -- Additional [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
+volumes: []
+#  - name: cache
+#    emptyDir: {}
+#  - name: share
+#    persistentVolumeClaim:
+#      claimName: 'shared'
+
+## RestartPolicy Configuration
+# {{ $_.path }}restartPolicy -- Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
+restartPolicy: {{ default "" $_.data.restartPolicy }}
+
+## Affinity Configuration
+# {{ $_.path }}affinity -- Pod [Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)
+affinity: {}
+
+## NodeSelector Configuration
+# {{ $_.path }}nodeSelector -- Pod [NodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
+nodeSelector: {}
+
+## Tolerations Configuration
+# {{ $_.path }}tolerations -- Pod [Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+tolerations: {}
+
+## Priority Configuration
+# {{ $_.path }}priorityClassName -- Pod [priorityClassName](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass)
+priorityClassName: ""
+
+## Pod SecurityContext Configuration
+# {{ $_.path }}podSecurityContext -- Pod [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+podSecurityContext: {}
+
+## Pod Initcontainers
+# {{ $_.path }}initContainers -- Pod [initContainers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
+initContainers: []
+#  - name: init-myservice
+#    image: busybox:1.28
+#    command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+
+## Pod SideCar Containers
+# {{ $_.path }}sidecars -- Allows to add sidecars to your [maincar]](https://kubernetes.io/docs/concepts/workloads/pods/#using-pods)
+sidecars: []
+
+
+  {{- include "bedag-lib.values.serviceaccount" $_ | nindent 0 }}
+
+
+## Container Configuration
+## {{ include "bedag-lib.utils.intern.docLink" $ }}#container-template
+  {{- if $_.minimal }}
+## Supports all the values from the referenced template. Find all available values in the link above.
+  {{- else }}
+## Full Configuration
+
+    {{- include "bedag-lib.values.template.container" $_ | nindent 0 }}
+  {{- end }}
+{{- end -}}

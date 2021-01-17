@@ -1,0 +1,75 @@
+{{- define "bedag-lib.values.service" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict "parentKey" (default "service" .key) "path" (cat (default "" (default $context.path .path)) (default "service" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+#
+## - Service
+## Reference: https://kubernetes.io/docs/concepts/services-networking/service/
+##
+{{ $_.parentKey }}:
+
+  ## Service Enable
+  # {{ $_.path }}enabled -- Enable Service Resource
+  enabled: true
+
+  ## Service API version
+  # {{ $_.path }}apiVersion -- Configure the api version used
+  # @default -- v1
+  apiVersion: ""
+
+  ## Service Labels
+  # {{ $_.path }}labels -- Configure Service additional Labels
+  labels: {}
+
+  ## Service Annotations
+  # {{ $_.path }}annotations -- Configure Service additional Annotations ([Monitor Labels](https://www.weave.works/docs/cloud/latest/tasks/monitor/configuration-k8s/))
+  annotations: {}
+
+  ## Service Type
+  # {{ $_.path }}type -- Configure Service [Type](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types).
+  type: ClusterIP
+
+  ## Service Port Name
+  # {{ $_.path }}portName -- Configure Service Port name
+  # @default -- http
+  portName: ""
+
+  ## Service Port
+  # {{ $_.path }}port -- Configure Service Port (Required)
+  # @default -- 80
+  port:
+
+  ## Service Target Port
+  # {{ $_.path }}targetPort -- Configure Service TargetPort
+  # @default -- http
+  targetPort: ""
+
+  ## Service Extra Ports
+  # {{ $_.path }}extraPorts -- Add additional ports to the service
+  extraPorts: []
+
+  ## Service NodePort ([Reference](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport))
+  # {{ $_.path }}nodePort -- Specify the nodePort value for the LoadBalancer and NodePort service types
+  nodePort: ""
+
+  ## Service Loadbalancer IP
+  # {{ $_.path }}loadBalancerIP -- Configure Service [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer). Set the LoadBalancer service type to internal only.
+  loadBalancerIP: ""
+
+  ## Service Load Balancer SourceRanges
+  # {{ $_.path }}loadBalancerSourceRanges -- Configure Service [loadBalancerSourceRanges](https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service)
+  ## Example:
+  ## loadBalancerSourceRanges:
+  ## - 10.10.10.0/24
+  ##
+  loadBalancerSourceRanges: []
+
+  ## Service ClusterIP
+  # {{ $_.path }}clusterIP -- Configure Service [clusterIP](https://kubernetes.io/docs/concepts/services-networking/service/#choosing-your-own-ip-address)
+  # @default -- None
+  # clusterIP: None
+
+  ## Service Selector
+  # {{ $_.path }}selector -- Configure Service Selector Labels
+  selector: {}
+
+{{- end -}}

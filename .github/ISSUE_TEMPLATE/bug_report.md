@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Bug reports help us improve the chart quality
-title: '[bedag/{chart-name}] issue title'
+title: '[{chart-name}] issue title'
 labels: 'bug'
 assignees: ''
 

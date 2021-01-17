@@ -1,0 +1,70 @@
+{{- define "bedag-lib.values.statefulset" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict "parentKey" (default "statefulset" .key) "path" (cat (default "" (default $context.path .path)) (default "statefulset" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+#
+## - Statefulset
+## Reference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+##
+{{ $_.parentKey }}:
+
+  ## Statefulset API version
+  # {{ $_.path }}apiVersion -- Configure the api version used for the Statefulset resource
+  apiVersion: ""
+
+  ## Statefulset Labels
+  # {{ $_.path }}labels -- Merges given labels with common labels
+  labels: {}
+
+  ## Statefulset Service
+  # {{ $_.path }}serviceName -- Define a Service for the Statefulset
+  serviceName: ""
+
+  ## Statefulset Selector Labels
+  # {{ $_.path }}selectorLabels -- Define SelectorLabels for the Pod Template
+  selectorLabels: {}
+
+  ## Amount of Replicas
+  # {{ $_.path }}replicaCount -- Amount of Replicas deployed
+  replicaCount: 1
+
+  ## Statefulset Pod Management Policy
+  # {{ $_.path }}podManagementPolicy -- Statefulset [Management Policy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies). **Statefulset only**
+  podManagementPolicy: ""
+
+  ## StrategyType, can be set to RollingUpdate or OnDelete by default.
+  # {{ $_.path }}updateStrategy -- Statefulset [Update Strategy](https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/#updating-statefulsets). **Statefulset only**
+  updateStrategy: RollingUpdate
+
+  ## Partition update strategy
+  # {{ $_.path }}rollingUpdatePartition -- Statefulset [Update Pratition](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#partitions). **Statefulset only**
+  rollingUpdatePartition: ""
+
+  ## Persistent Volume Template Configuration
+  # {{ $_.path }}volumeClaimTemplates -- Statefulset [volumeClaimTemplates](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#components). **Statefulset only**
+  volumeClaimTemplates: []
+  #  - metadata:
+  #      name: example
+  #      annotations: {}
+  #    spec:
+  #      accessModes: [ "ReadWriteOnce" ]
+  #      resources:
+  #        requests:
+  #          storage: "1Gi"
+  #      storageClassName: { include "lib.utils.storageClass" (dict "persistence" .Values.persistence "context" $.Values) }
+
+
+  ## Statefulset Extra Values
+  # {{ $_.path }}statefulsetExtras -- Extra Fields for Statefulset Manifest
+  statefulsetExtras: {}
+  #
+
+  ## Pod Configuration
+  ## {{ include "bedag-lib.utils.intern.docLink" $_ }}#pod-template
+  {{- if $_.minimal }}
+  ## Supports all the values from the referenced template. Find all available values in the link above.
+  {{- else }}
+  ## Full Configuration
+
+    {{- include "bedag-lib.values.template.pod" $_ | nindent 2 }}
+  {{- end }}
+{{- end -}}

@@ -1,0 +1,33 @@
+{{- define "bedag-lib.values.poddisruptionbudget" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict "parentKey" (default "pdb" .key) "path" (cat (default "" (default $context.path .path)) (default "pdb" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+#
+## - Pod disruption budget
+## Reference: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+##
+{{ $_.parentKey }}:
+
+  ## Enable Pdb
+  # {{ $_.path }}enabled -- Enable Pdb Resource
+  enabled: true
+
+  ## Pdb API version
+  # {{ $_.path }}apiVersion -- Configure the api version used for the Pdb resource
+  apiVersion: ""
+
+  ## Pdb Labels
+  # {{ $_.path }}labels -- Merges given labels with common labels
+  labels: {}
+
+  ## Pdb Selector Labels
+  # {{ $_.path }}selectorLabels -- Define SelectorLabels for the pdb
+  selectorLabels: {}
+
+  ## Pdb minAvailable
+  # {{ $_.path }}minAvailable -- Number or percentage of pods which must be available during a disruption. If neither `minAvailable` or `maxUnavailable` is set, de Policy defaults to `minAvailable: 1`
+  minAvailable:
+
+  ## Pdb maxUnavailable
+  # {{ $_.path }}maxUnavailable -- Number or percentage of pods which is allowed to be unavailable during a disruption
+  maxUnavailable:
+{{- end -}}

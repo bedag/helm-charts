@@ -2,6 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![](https://github.com/bedag/helm-charts/workflows/Helm%20Chart%20Release/badge.svg?branch=master)](https://github.com/bedag/helm-charts/actions)
+[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/main)](https://artifacthub.io/packages/search?repo=main)
 
 ![Bedag](https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg)
 

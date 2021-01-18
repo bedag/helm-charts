@@ -2,7 +2,7 @@ apiVersion: v2
 name: manifests
 description: "Bedag's Manifest chart. Library full of basic kubernetes manifests."
 type: library
-version: 0.4.3
+version: 0.4.4
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 keywords:
 - Bedag
@@ -21,15 +21,5 @@ annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/prerelease: "true"
   artifacthub.io/changes: |
-    **Added:**
-      * None
-    **Changed:**
-      * Dependency `library` latest version
-    **Deprecated:**
-      * None
-    **Removed:**
-      * None
-    **Fixed:**
-      * [manifest/horizontalPodAutoscaler]: Metrics must be set for manifest to be returned
-    **Security:**
-      * None
+    * **[Fixed]**: Cronjob render correct manifest structure
+    * **[Fixed]**: Cronjob use Default API `batch/v1beta1`

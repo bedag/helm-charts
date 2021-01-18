@@ -167,24 +167,18 @@ annotations:
 
 ### Changelog
 
-Changes on a chart must be documented in a chart specific changelog. For every new release the entire ```artifacthub.io/changes``` needs to be rewritten. Please use the following template:
+Changes on a chart must be documented in a chart specific changelog. For every new release the entire artifacthub.io/changes needs to be rewritten. Each change requires a new bullet point following the pattern **[{type}]**: {description}. Please use the following template:
 
 
 ```
 artifacthub.io/changes: |
-  **Added:**
-    * Added something within this chart
-  **Changed:**
-    * Changed Something within this chart
-    * Changed Something else within this chart
-  **Deprecated:**
-    * None
-  **Removed:**
-    * None
-  **Fixed:**
-    * Some Bug was fixed
-  **Security:**
-    * None
+  * **[Added]**: Something New was added
+  * **[Changed]**: Changed Something within this chart
+  * **[Changed]**: Changed Something else within this chart
+  * **[Deprecated]**: Something deprecated
+  * **[Removed]**: Something was removed
+  * **[Fixed]**: Something was fixed
+  * **[Security]**: Some Security Patch was included
 ```
 
 # Workflows

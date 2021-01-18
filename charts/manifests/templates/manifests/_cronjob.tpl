@@ -28,7 +28,7 @@ kind: CronJob
       {{- if $cronjob.apiVersion }}
 apiVersion: {{ $cronjob.apiVersion }}
       {{- else }}
-apiVersion: batch/v1
+apiVersion: batch/v1beta1
       {{- end }}
 metadata:
   name:  {{ include "bedag-lib.utils.common.fullname" . }}
@@ -46,8 +46,7 @@ spec:
   startingDeadlineSeconds: {{ $cronjob.startingDeadlineSeconds }}
   successfulJobsHistoryLimit: {{ $cronjob.successfulJobsHistoryLimit }}
   suspend: {{ $cronjob.suspend }}
-  jobTemplate:
-    spec: {{- include "bedag-lib.template.job" (set . "job" $cronjob) | nindent 6 }}
+  jobTemplate: {{- include "bedag-lib.template.job" (set . "job" $cronjob) | nindent 4 }}
     {{- end }}
   {{- end }}
 {{- end -}}

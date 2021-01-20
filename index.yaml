@@ -3,6 +3,35 @@ entries:
   manifests:
   - annotations:
       artifacthub.io/changes: |
+        - **[Fixes]**: Bundle Extras allowed for all resources within bundle
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "true"
+    apiVersion: v2
+    created: "2021-01-20T14:40:32.721510958Z"
+    dependencies:
+    - name: library
+      repository: https://buttahtoast.github.io/helm-charts/
+      version: ~0.3.0
+    description: Bedag's Manifest chart. Library full of basic kubernetes manifests.
+    digest: f857d7a196c8a098f4a9e1c53ad7a8f85102b846d605210cc8df4c7b03b935ca
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Manifests
+    - Library
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: manifests
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/manifests
+    type: library
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/manifests-0.4.5/manifests-0.4.5.tgz
+    version: 0.4.5
+  - annotations:
+      artifacthub.io/changes: |
         * **[Fixed]**: Cronjob render correct manifest structure
         * **[Fixed]**: Cronjob use Default API `batch/v1beta1`
       artifacthub.io/containsSecurityUpdates: "false"

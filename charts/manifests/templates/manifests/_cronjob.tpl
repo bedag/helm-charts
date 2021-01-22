@@ -42,7 +42,7 @@ metadata:
 spec:
   concurrencyPolicy: {{ $cronjob.concurrencyPolicy }}
   failedJobsHistoryLimit: {{ $cronjob.failedJobsHistoryLimit }}
-  schedule: {{ $cronjob.schedule }}
+  schedule: {{ $cronjob.schedule | quote }}
   startingDeadlineSeconds: {{ $cronjob.startingDeadlineSeconds }}
   successfulJobsHistoryLimit: {{ $cronjob.successfulJobsHistoryLimit }}
   suspend: {{ $cronjob.suspend }}

@@ -56,7 +56,7 @@
   # @default -- `bedag-lib.utils.common.fullname`
   #        serviceName: ""
   #
-  # {{ $_.path }}hosts[0].paths[0].servicePort -- Ingress Path service backend port
+  # {{ $_.path }}hosts[0].paths[0].servicePort -- Ingress Path service backend port. With new ingress resources there's a distinction between port name and number references. If you want to reference a port number, make sure it's type integer or float and is not quoted in the values.
   # @default -- http
   #        servicePort: ""
   #

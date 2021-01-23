@@ -172,13 +172,13 @@ Changes on a chart must be documented in a chart specific changelog. For every n
 
 ```
 artifacthub.io/changes: |
-  - **[Added]**: Something New was added
-  - **[Changed]**: Changed Something within this chart
-  - **[Changed]**: Changed Something else within this chart
-  - **[Deprecated]**: Something deprecated
-  - **[Removed]**: Something was removed
-  - **[Fixed]**: Something was fixed
-  - **[Security]**: Some Security Patch was included
+  - "[Added]: Something New was added"
+  - "[Changed]: Changed Something within this chart"
+  - "[Changed]: Changed Something else within this chart"
+  - "[Deprecated]: Something deprecated"
+  - "[Removed]: Something was removed"
+  - "[Fixed]: Something was fixed"
+  - "[Security]: Some Security Patch was included"
 ```
 
 # Workflows

@@ -29,8 +29,7 @@ apiVersion: {{ $pod.apiVersion }}
     {{- else }}
 apiVersion: v1
     {{- end }}
-kind: Pod
-    {{- include "bedag-lib.template.pod" (set . "pod" $pod) | indent 0 }}
+    {{- include "bedag-lib.template.pod" (set . "pod" $pod) | nindent 0 }}
   {{- else }}
     {{- fail "Template requires '.context' as arguments" }}
   {{- end }}

@@ -16,7 +16,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.template.container" -}}
-  {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.container" .)) .container -}}
+  {{- $values := (mergeOverwrite (fromYaml (include "bedag-lib.values.template.container" .)) .container) -}}
   {{- if and $values .context -}}
     {{- $context := .context -}}
 name: {{ default $context.Chart.Name $values.containerName }}
@@ -31,11 +31,24 @@ resources: {{- include "lib.utils.strings.template" (dict "value" . "context" $c
     {{- if $values.containerFields }}
       {{- include "lib.utils.strings.template" (dict "value" $values.containerFields "context" $context)  | nindent 0 }}
     {{- end }}
+env: {{- include "lib.utils.extras.environment" $context | nindent 2 }}
     {{- if and $values.environment (kindIs "slice" $values.environment) }}
-      {{- if $context.Bundle }}
-env: {{- include "bedag-lib.utils.environment.keyList" (dict "environment" $values.environment "allowSecrets" true "context" $context) | nindent 2 }}
-      {{- else }}
-env: {{- include "bedag-lib.utils.environment.keyList" (dict "environment" $values.environment "context" $context) | nindent 2 }}
+      {{- $filteredList := list -}}
+      {{- range $values.environment }}
+        {{- if .secret }}
+          {{- if $context.Bundle }}
+  - name: {{ required "Field .name is required for environment item!" .name | quote }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ include "bedag-lib.utils.common.fullname" $ }}-env
+        key: {{ .name | quote }}
+          {{- end }}
+        {{- else }}
+          {{- $filteredList = append $filteredList . -}}
+        {{- end }}
+      {{- end }}
+      {{- if $filteredList }}
+        {{- include "lib.utils.strings.template" (dict "value" $filteredList "context" $context) | nindent 2 }}
       {{- end }}
     {{- end }}
     {{- if $values.command }}

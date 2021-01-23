@@ -2,7 +2,7 @@ apiVersion: v2
 name: manifests
 description: "Bedag's Manifest chart. Library full of basic kubernetes manifests."
 type: library
-version: 0.4.6
+version: 0.4.7
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 keywords:
 - Bedag
@@ -22,4 +22,4 @@ annotations:
   artifacthub.io/prerelease: "true"
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
-    - Quote Cronjob Schedule
+    - [Fixes] Ingress port name/number validation

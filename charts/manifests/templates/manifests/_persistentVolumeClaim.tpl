@@ -15,24 +15,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */}}
-{{- define "bedag-lib.manifest.persistentvolumeclaim.values" -}}
-  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "persistentvolumeclaim" "key" "pvc" "root" .)) "context" .context) -}}
-{{- end }}
-
 {{- define "bedag-lib.manifest.persistentvolumeclaim" -}}
   {{- if .context -}}
     {{- $context := .context -}}
-    {{- $pvc := (fromYaml (include "bedag-lib.manifest.persistentvolumeclaim.values" .)) -}}
-    {{- if $pvc.enabled -}}
+    {{- $pvc := mergeOverwrite (fromYaml (include "bedag-lib.values.persistentvolumeclaim" $)).pvc (default dict .values) (default dict .overwrites) -}}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $pvc) }}
+      {{- if $pvc.enabled -}}
 kind: PersistentVolumeClaim
-      {{- if $pvc.apiVersion }}
+        {{- if $pvc.apiVersion }}
 apiVersion: {{ $pvc.apiVersion }}
-      {{- else }}
+        {{- else }}
 apiVersion: v1
+        {{- end }}
+        {{- include "bedag-lib.template.persistentvolumeclaim" (set . "pvc" $pvc) | nindent 0 }}
       {{- end }}
-      {{- include "bedag-lib.template.persistentVolumeClaim" (set . "pvc" $pvc) | nindent 0 }}
+    {{- else }}
+      {{- fail "Template requires '.context' as arguments" }}
     {{- end }}
-  {{- else }}
-    {{- fail "Template requires '.context' as arguments" }}
   {{- end }}
 {{- end }}

@@ -41,8 +41,8 @@ It's difficult to quickstart with this project unless you already have a deeper 
     Now it's time to get started with actually using the Manifests library. Let's create a new file `new-charts/templates/bundle.yaml` and add the basic Bundle structure ([Read More on Bundles](./manifests/README.md#bundles)). Let's also add our first bundle resource of type `statefulset`
 
    ```
-   {{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "new-chart.bundle" $)) "context" $) | nindent 0 }}
-   {{- define "new-chart.bundle" -}}
+   {{- include "bedag-lib.manifest.bundle" $ | nindent 0 }}
+   {{- define "chart.bundle" -}}
    resources:
     - type: "statefulset"
       values: {{ toYaml $.Values.frontend | nindent 6 }}
@@ -75,8 +75,8 @@ It's difficult to quickstart with this project unless you already have a deeper 
     Now it's your turn. Implement the logic you need on manifest basis and add many more manifests. We are going to add a service with you, then it's up to you. The `new-charts/templates/bundle.yaml` looks now like this:
 
    ```
-   {{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "new-chart.bundle" $)) "context" $) | nindent 0 }}
-   {{- define "new-chart.bundle" -}}
+   {{- include "bedag-lib.manifest.bundle" $ | nindent 0 }}
+   {{- define "chart.bundle" -}}
    resources:
     - type: "statefulset"
       values: {{ toYaml $.Values.frontend | nindent 6 }}
@@ -105,8 +105,8 @@ It's difficult to quickstart with this project unless you already have a deeper 
    2. Just overwrite what's necessary. We want to give each end user of our charts as much freedom as possible. You should always consider a user's inputs. This is mainly required for slice inputs, since maps are merged. With slices, entire lists are overwritten.
 
     ```
-    {{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "new-chart.bundle" $)) "context" $) | nindent 0 }}
-    {{- define "new-chart.bundle" -}}
+    {{- include "bedag-lib.manifest.bundle" $ | nindent 0 }}
+    {{- define "chart.bundle" -}}
     resources:
       - type: "statefulset"
         values: {{ toYaml $.Values.frontend | nindent 6 }}
@@ -130,7 +130,7 @@ It's difficult to quickstart with this project unless you already have a deeper 
    3. ExtraResources are always welcome :)
 
     ```
-    {{- define "new-chart.bundle" -}}
+    {{- define "chart.bundle" -}}
     resources:
         {{- if $.Values.extraResources }}
           {{- toYaml $.Values.extraResources | nindent 2 }}
@@ -147,5 +147,5 @@ It's difficult to quickstart with this project unless you already have a deeper 
    4. Sometimes you might encounter errors. Most of the time the source of errors will be a malformed bundle YAML. To check how your YAML looks, you can do something like this and then `helm template` it:
 
     ```
-   test: | {{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "new-chart.bundle" $)) "context" $) | nindent 2 }}
+   test: | {{- include "bedag-lib.manifest.bundle" $ | nindent 2 }}
     ```

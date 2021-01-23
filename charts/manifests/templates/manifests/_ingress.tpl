@@ -15,55 +15,52 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */}}
-{{- define "bedag-lib.manifest.ingress.values" -}}
-  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "ingress" "root" .)) "context" .context) -}}
-{{- end }}
-
 {{- define "bedag-lib.manifest.ingress" -}}
   {{- if .context -}}
     {{- $context := .context -}}
-    {{- $ingress := (fromYaml (include "bedag-lib.manifest.ingress.values" .)) -}}
-    {{- if and $ingress.enabled $ingress.hosts -}}
+    {{- $ingress := mergeOverwrite (fromYaml (include "bedag-lib.values.ingress" $)).ingress (default dict .values) (default dict .overwrites) -}}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $ingress) }}
+      {{- if and $ingress.enabled $ingress.hosts -}}
 kind: Ingress
-      {{- if $ingress.apiVersion -}}
+        {{- if $ingress.apiVersion -}}
 apiVersion: {{ $ingress.apiVersion }}
-      {{- else -}}
-        {{- if semverCompare ">=1.19-0" (include "lib.utils.common.capabilities" $context) }}
+        {{- else -}}
+          {{- if semverCompare ">=1.19-0" (include "lib.utils.common.capabilities" $context) }}
 apiVersion: networking.k8s.io/v1
-        {{- else if semverCompare ">=1.14-0" (include "lib.utils.common.capabilities" $context) }}
+          {{- else if semverCompare ">=1.14-0" (include "lib.utils.common.capabilities" $context) }}
 apiVersion: networking.k8s.io/v1beta1
-        {{- else }}
+          {{- else }}
 apiVersion: extensions/v1beta1
+          {{- end }}
         {{- end }}
-      {{- end }}
 metadata:
   name:  {{ include "bedag-lib.utils.common.fullname" . }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" $ingress.labels "context" $context)| nindent 4 }}
-      {{- if $ingress.annotations }}
+        {{- if $ingress.annotations }}
   annotations:
-        {{- range $anno, $val := $ingress.annotations }}
-          {{- $anno | nindent 4 }}: {{ $val | quote }}
-        {{- end }}
-      {{- end }}
-spec:
-      {{- if and $ingress.backend (kindIs "map" $ingress.backend) }}
-  backend: {{- toYaml $ingress.backend | nindent 4 }}
-      {{- end }}
-      {{- if semverCompare ">=1.18-0" (include "lib.utils.common.capabilities" $context) -}}
-        {{- if and $ingress.ingressClass (kindIs "string" $ingress.ingressClass) }}
-  ingressClassName: {{ $ingress.ingressClass }}
-        {{- end }}
-      {{- end }}
-      {{- if $ingress.tls }}
-  tls:
-        {{- range $ingress.tls }}
-    - hosts:
-          {{- range .hosts }}
-        - {{ . | quote }}
+          {{- range $anno, $val := $ingress.annotations }}
+            {{- $anno | nindent 4 }}: {{ $val | quote }}
           {{- end }}
-      secretName: {{ default "" .secretName }}
         {{- end }}
-      {{- end }}
+spec:
+        {{- if and $ingress.backend (kindIs "map" $ingress.backend) }}
+  backend: {{- toYaml $ingress.backend | nindent 4 }}
+        {{- end }}
+        {{- if semverCompare ">=1.18-0" (include "lib.utils.common.capabilities" $context) -}}
+          {{- if and $ingress.ingressClass (kindIs "string" $ingress.ingressClass) }}
+  ingressClassName: {{ $ingress.ingressClass }}
+          {{- end }}
+        {{- end }}
+        {{- if $ingress.tls }}
+  tls:
+          {{- range $ingress.tls }}
+    - hosts:
+            {{- range .hosts }}
+        - {{ . | quote }}
+            {{- end }}
+      secretName: {{ default "" .secretName }}
+          {{- end }}
+        {{- end }}
   rules:
         {{- range $ingress.hosts }}
     - host: {{ required "Field .host required for ingress manifest" .host | quote }}
@@ -107,6 +104,7 @@ spec:
             {{- end }}
           {{- end }}
         {{- end }}
+      {{- end }}
     {{- end }}
   {{- else }}
     {{- fail "Template requires '.context' as argument" }}

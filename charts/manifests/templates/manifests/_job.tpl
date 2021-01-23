@@ -15,22 +15,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */}}
-{{- define "bedag-lib.manifest.job.values" -}}
-  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "job" "root" .)) "context" .context) -}}
-{{- end }}
-
 {{- define "bedag-lib.manifest.job" -}}
   {{- if .context -}}
     {{- $context := .context -}}
-    {{- $job := (fromYaml (include "bedag-lib.manifest.job.values" .)) -}}
-    {{- if $job.enabled }}
+    {{- $job := mergeOverwrite (fromYaml (include "bedag-lib.values.job" $)).job (default dict .values) (default dict .overwrites) -}}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $job) }}
+      {{- if $job.enabled }}
 kind: Job
-      {{- if $job.apiVersion }}
+        {{- if $job.apiVersion }}
 apiVersion: {{ $job.apiVersion }}
-      {{- else }}
+        {{- else }}
 apiVersion: batch/v1
-      {{- end }}
+        {{- end }}
 {{- include "bedag-lib.template.job" (set . "job" $job) | nindent 0 }}
+      {{- end }}
     {{- end }}
   {{- end }}
 {{- end -}}

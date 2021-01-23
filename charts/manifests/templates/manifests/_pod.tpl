@@ -15,23 +15,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */}}
-{{- define "bedag-lib.manifest.pod.values" -}}
-  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "pod" "root" .)) "context" .context) -}}
-{{- end }}
-
 {{- define "bedag-lib.manifest.pod" -}}
   {{- if .context -}}
     {{- $context := .context -}}
-    {{- $pod := (fromYaml (include "bedag-lib.manifest.pod.values" .)) -}}
+    {{- $pod := mergeOverwrite (fromYaml (include "bedag-lib.values.pod" $)).pod (default dict .values) (default dict .overwrites) -}}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $pod) }}
 kind: Pod
-    {{- if $pod.apiVersion }}
+      {{- if $pod.apiVersion }}
 apiVersion: {{ $pod.apiVersion }}
-    {{- else }}
+      {{- else }}
 apiVersion: v1
+      {{- end }}
+      {{- $podTpl := fromYaml (include "bedag-lib.template.pod" (set . "pod" $pod)) }}
+      {{- $_ := set $podTpl.metadata "name" (include "bedag-lib.utils.common.fullname" .) }}
+      {{- toYaml $podTpl | nindent 0 }}
     {{- end }}
-    {{- $podTpl := fromYaml (include "bedag-lib.template.pod" (set . "pod" $pod)) }}
-    {{- $_ := set $podTpl.metadata "name" (include "bedag-lib.utils.common.fullname" .) }}
-    {{- toYaml $podTpl | nindent 0 }}
   {{- else }}
     {{- fail "Template requires '.context' as arguments" }}
   {{- end }}

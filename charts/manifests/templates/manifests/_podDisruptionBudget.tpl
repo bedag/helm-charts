@@ -15,14 +15,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */}}
-{{- define "bedag-lib.manifest.poddisruptionbudget.values" -}}
-  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "podDisruptionBudget" "key" "pdb" "root" .)) "context" .context) -}}
-{{- end }}
-
 {{- define "bedag-lib.manifest.poddisruptionbudget" -}}
   {{- if .context -}}
     {{- $context := .context -}}
-    {{- $pdb := (fromYaml (include "bedag-lib.manifest.poddisruptionbudget.values" .)) -}}
+    {{- $pdb := mergeOverwrite (fromYaml (include "bedag-lib.values.poddisruptionbudget" $)).pdb (default dict .values) (default dict .overwrites) -}}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $pdb) }}
       {{- if $pdb.enabled -}}
 kind: PodDisruptionBudget
         {{- if $pdb.apiVersion }}
@@ -46,6 +43,7 @@ spec:
         {{- end }}
   selector:
     matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $pdb.selectorLabels) "context" $context) | nindent 6 }}
+      {{- end }}
     {{- end }}
   {{- end }}
 {{- end -}}

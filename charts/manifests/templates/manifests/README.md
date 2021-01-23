@@ -45,11 +45,37 @@ We recommend creating a dedicated template within your chart just for the bundle
 {{/*
   Bundle Inclusion
 */}}
-{{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "chart.bundle" $)) "context" $) | nindent 0 }}
+{{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "custom.bundle" $)) "context" $) | nindent 0 }}
 
 {{/*
   Bundle Definition
 */}}
+{{- define "custom.bundle" -}}
+name: "frontend"
+common:
+  commonLabels:
+    "custom-chart-label": "1"
+resources:
+  {{- if .Values.extraResources }}
+    {{- toYaml .Values.extraResources | nindent 2 }}
+  {{- end }}
+  - type: "statefulset"
+    values: {{ toYaml .Values.statefulset | nindent 6 }}
+    overwrites:
+      {{- if .Release.IsInstall }}
+      replicaCount: 1
+      {{- end }}
+  - type: "service"
+    name: "headless"
+    values {{ toYaml .Values.service | nindent 6 }}  
+{{- end }}
+```
+### Explicit Bundle
+
+If you have a single bundle, you can just declare the bundle with `chart.bundle` to keep complexity lower. Like this:
+
+```
+{{- include "bedag-lib.manifest.bundle" $ | nindent 0 }}
 {{- define "chart.bundle" -}}
 name: "frontend"
 common:
@@ -70,6 +96,8 @@ resources:
     values {{ toYaml .Values.service | nindent 6 }}  
 {{- end }}
 ```
+
+Recommended if you just need one bundle in your chart.
 
 ## Resource Types
 

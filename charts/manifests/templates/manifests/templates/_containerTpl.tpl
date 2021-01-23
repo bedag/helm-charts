@@ -17,7 +17,7 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.template.container" -}}
   {{- $values := (mergeOverwrite (fromYaml (include "bedag-lib.values.template.container" .)) .container) -}}
-  {{- if and $values .context -}}
+  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) .context (include "bedag-lib.utils.intern.noYamlError" .context) -}}
     {{- $context := .context -}}
 name: {{ default $context.Chart.Name $values.containerName }}
 image: {{ include "lib.utils.globals.image" (dict "image" $values "context" $context "default" (default $context.Chart.AppVersion .default)) }}

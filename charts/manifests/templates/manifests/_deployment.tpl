@@ -15,33 +15,31 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */}}
-{{- define "bedag-lib.manifest.deployment.values" -}}
-  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "deployment" "root" .)) "context" .context) -}}
-{{- end }}
-
 {{- define "bedag-lib.manifest.deployment" -}}
   {{- if .context -}}
     {{- $context := .context -}}
-    {{- $deployment := (fromYaml (include "bedag-lib.manifest.deployment.values" .)) -}}
+    {{- $deployment := mergeOverwrite (fromYaml (include "bedag-lib.values.deployment" $)).deployment (default dict .values) (default dict .overwrites) -}}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $deployment) }}
 kind: Deployment
-    {{- if $deployment.apiVersion }}
+      {{- if $deployment.apiVersion }}
 apiVersion: {{ $deployment.apiVersion }}
-    {{- else }}
+      {{- else }}
 apiVersion: apps/v1
-    {{- end }}
+      {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" $deployment.labels "context" $context)| nindent 4 }}
 spec:
-    {{- with $deployment.strategy }}
+      {{- with $deployment.strategy }}
   strategy: {{ toYaml . |  nindent 4 }}
-    {{- end }}
+      {{- end }}
   replicas: {{ default "1" $deployment.replicaCount }}
   selector:
     matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $deployment.selectorLabels) "context" $context) | nindent 6 }}
-  {{- if $deployment.deploymentExtras }}
-    {{- toYaml $deployment.deploymentExtras | nindent 2 }}
-  {{- end }}
+      {{- if $deployment.deploymentExtras }}
+        {{- toYaml $deployment.deploymentExtras | nindent 2 }}
+      {{- end }}
   template: {{- include "bedag-lib.template.pod" (set . "pod" $deployment) | nindent 4 }}
+    {{- end }}
   {{- end }}
 {{- end -}}

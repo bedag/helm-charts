@@ -16,38 +16,6 @@ limitations under the License.
 
 */
 {{/*
-  Sprig Template - KeyList
-*/}}
-{{- define "bedag-lib.utils.environment.keyList" -}}
-  {{- if .context }}
-    {{- $context := .context }}
-    {{- include "lib.utils.extras.environment" $context | indent 0 }}
-    {{- if .environment }}
-      {{- $filteredList := list -}}
-      {{- range .environment }}
-        {{- if .secret }}
-          {{- if $.allowSecrets }}
-- name: {{ required "Field .name is required for environment item!" .name | quote }}
-  valueFrom:
-    secretKeyRef:
-      name: {{ include "bedag-lib.utils.common.fullname" $context }}-env
-      key: {{ .name | quote }}
-          {{- end }}
-        {{- else }}
-            {{- $filteredList = append $filteredList . -}}
-        {{- end }}
-      {{- end }}
-      {{- if $filteredList }}
-        {{- include "lib.utils.strings.template" (dict "value" $filteredList "context" $context) | nindent 0 }}
-      {{- end }}
-    {{- end }}
-  {{- else }}
-    {{- fail "Template requires '.context' as argument" }}
-  {{- end }}
-{{- end -}}
-
-
-{{/*
   Sprig Template - HasSecrets
 */}}
 {{- define "bedag-lib.utils.environment.hasSecrets" -}}

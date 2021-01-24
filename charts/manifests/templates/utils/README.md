@@ -13,7 +13,6 @@ Description and Definition of all available Go Sprig Templates. Base functionali
 * **[Helpers](#helpers)**
   * [javaProxies](#javaproxies)
 * **[Environment](#environment)**
-  * [keyList](#keylist)
   * [hasSecrets](#hassecrets)
 * **[Presets](#presets)**
 * **[Values](#values)**
@@ -152,53 +151,6 @@ String
 
 ## [Environment](./_environment.tpl)
 
-### KeyList
----
-
-This template adds to functionality, to add secret values to environment variables. When creating a secret environment variable, the value is written into a secret and the secret is referenced in the environment variable key. In addition it contains some useful default environment variables.
-
-#### Arguments
-
-If an as required marked argument is missing, the template engine will intentionally.
-
-  * `.environment` - Supported environment key structure (Optional). If not set default environment variables are returned.
-  * `.context` - Inherited Root Context (Required).
-  * `.allowSecrets` - If set, allows the rendering of secret environment variables.
-
-#### Structure
-
-This template supports the following key structure:
-
-```
-environment:
-
-# Environment Variables
-- name: "MY_ENV"
-  value: "someValue"
-- name: "MY_SPEC"
-  valueFrom:
-   fieldRef:
-     fieldPath: spec.*
-
-# Secret Environment Variables
-- name: "MY_SECRET"
-  value: "S3CRET"
-  secret: true
-
-```
-
-**Note:** Secret Environment variables are only supported/rendered if the resource is part of a bundle. If the resource is not part of a bundle the secrets are removed, to prevent exposing them.
-
-#### Returns
-
-String, YAML Structure
-
-#### Usage
-
-```
-{{- include "bedag-lib.utils.environment.keyList" (dict "environment" $.Values.environment "context" $) }}
-```
-
 ### HasSecrets
 ---
 
@@ -269,7 +221,7 @@ This template supports the following key structure:
 ## Enabled Values Generator
 doc:
 
-  ## Define which manifest to generate (e.g. "statfulset")
+  ## Define which manifest to generate (e.g. "statefulset")
   ## On of .manifest or .preset has to be set, otherwise the function returns empty
   manifest: "statefulset"
 
@@ -312,7 +264,7 @@ To use this template we need to be able to execute `helm template`. Since this i
 Now we can start using the generator:
 
 ```
-## Generate Values for the Statefulset manifest with "frontend" as topkey instead of statefulset.
+## Generate Values for the Statefulset manifest with "frontend" as top key instead of statefulset.
 helm template gen . --set doc.manifest="statefulset" --set doc.key="frontend"
 
 

@@ -35,7 +35,7 @@ A preset is an implementation of a manifest/template for a very specific use cas
 {{/*
   Preset Say - Overwrite Values
 
-  These values will overwrite all the other values given as input. Effectivily implementing
+  These values will overwrite all the other values given as input. Effectively implementing
   the logic for the use case.The given values (defaults merged with user input) are available
   under the .values key.
 
@@ -125,7 +125,7 @@ First i am creating the main file (do whatever structure you like, just make sur
 {{/*
   We need a dedicated resource for the values for this manifests. This is mainly to ensure
   to functionality of the manifest within a bundle. If you want to implement it the same way as
-  shown is up to. The function should just return the default values for the manifest, overwritien
+  shown is up to. The function should just return the default values for the manifest, overwritten
   by the .values field and superoverwritten by the .overwrites field.
   Make Sure:
     * Has **bedag-lib.manifest** as prefix
@@ -209,7 +209,7 @@ We recommend adding default values for each manifest, these can be used as refer
   apiVersion: ""
 
   ## ServiceMonitor Namespace
-  ## {{ $_.path }}namespace -- Define the namespace to deploy the srviceMonitor in
+  ## {{ $_.path }}namespace -- Define the namespace to deploy the serviceMonitor in
   namespace: ""
 
   ## ServiceMonitor NamespaceSelector
@@ -218,8 +218,8 @@ We recommend adding default values for each manifest, these can be used as refer
   namespaceSelector: []
 
   ## ServiceMonitor Additional Fields
-  # {{ $_.path }}additonalFields -- Define additional fields, which aren't available as seperat key (e.g. `sampleLimit`)
-  additonalFields: {}
+  # {{ $_.path }}additionalFields -- Define additional fields, which aren't available as separat key (e.g. `sampleLimit`)
+  additionalFields: {}
 
   ## ServiceMonitor Endpoint Configuration
   # {{ $_.path }}endpoints -- Configure Prometheus ServiceMonitor [Endpoints](https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#endpoint)

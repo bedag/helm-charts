@@ -106,7 +106,7 @@ extraResources:
   - type: "servicemonitor"
     name: jmx
     values:
-      additonalFields: {}
+      additionalFields: {}
       apiVersion: ""
       enabled: true
       endpoints:

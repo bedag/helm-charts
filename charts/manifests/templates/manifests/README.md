@@ -39,7 +39,7 @@ Explanation of the above keys:
 
 ## Usage
 
-We recommend creating a dedicated template within your chart just for the bundle strucure. This structure should then be used to call the bundle template, like so:
+We recommend creating a dedicated template within your chart just for the bundle structure. This structure should then be used to call the bundle template, like so:
 
 ```
 {{/*
@@ -124,19 +124,43 @@ Allows to directly create a serviceAccount without having to declare it as dedic
 
 #### Affects
 
-Affects the following resources:
+All resources
 
-`Pod`, `Deployment` and `Statefulset`
+#### Structure
+
+See ServiceAccount Values.
 
 ### Environment Secrets
 
-Environment secrets allows to directly add secrets from the environment declaration. Secret Key's values will be encoded into a secret and mounted to the environment. This function is implemented by the `bedag-lib.environment.keyList` template [See here]().
+Environment secrets allows to directly add secrets from the environment declaration. Secret Key's values will be encoded into a secret and mounted to the environment.
 
 #### Affects
 
-Affects the following resources:
+All resources
 
-`Pod`, `Deployment` and `Statefulset`
+#### Structure
+
+This template supports the following key structure:
+
+```
+environment:
+
+# Environment Variables
+- name: "MY_ENV"
+  value: "someValue"
+- name: "MY_SPEC"
+  valueFrom:
+   fieldRef:
+     fieldPath: spec.*
+
+# Secret Environment Variables
+- name: "MY_SECRET"
+  value: "S3CRET"
+  secret: true
+
+```
+
+**Note:** Secret Environment variables are only supported/rendered if the resource is part of a bundle. If the resource is not part of a bundle the secrets are removed, to prevent exposing them.
 
 # Manifest Templates
 
@@ -884,7 +908,7 @@ resources:
 
 #### Multiple Bundles
 
-Using multiple bundles is very straightforward, just do the same thing you did with a single bundle but multiple times - that's it. In this example we seperate two microservices within the chart (Frontend/Backend).
+Using multiple bundles is very straightforward, just do the same thing you did with a single bundle but multiple times - that's it. In this example we separate two microservices within the chart (Frontend/Backend).
 
 **templates/frontend.yaml**
 ```

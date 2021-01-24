@@ -3,6 +3,35 @@ entries:
   manifests:
   - annotations:
       artifacthub.io/changes: |
+        - Fixes Deployment inheritance
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "true"
+    apiVersion: v2
+    created: "2021-01-24T16:10:22.851287968Z"
+    dependencies:
+    - name: library
+      repository: https://buttahtoast.github.io/helm-charts/
+      version: ~0.3.0
+    description: Bedag's Manifest chart. Library full of basic kubernetes manifests.
+    digest: 7fe6f25527a88a50809e613cdf022a617c3cc96b6d41b67b50e321735f9621b5
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Manifests
+    - Library
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: manifests
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/manifests
+    type: library
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/manifests-0.4.8/manifests-0.4.8.tgz
+    version: 0.4.8
+  - annotations:
+      artifacthub.io/changes: |
         - [Fixes] Ingress port name/number validation
       artifacthub.io/containsSecurityUpdates: "false"
       artifacthub.io/license: Apache-2.0

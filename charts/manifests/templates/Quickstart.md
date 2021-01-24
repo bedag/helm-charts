@@ -35,7 +35,7 @@ It's difficult to quickstart with this project unless you already have a deeper 
     ...
     ```
 
-    We like to have our dependencies fixed over all bugfix versions of a minor release (which is implied by `~`).   Use your prefered dependency strategie.
+    We like to have our dependencies fixed over all bugfix versions of a minor release (which is implied by `~`).   Use your preferred dependency strategie.
 
 5. **Initialize Bundle**</br>
     Now it's time to get started with actually using the Manifests library. Let's create a new file `new-charts/templates/bundle.yaml` and add the basic Bundle structure ([Read More on Bundles](./manifests/README.md#bundles)). Let's also add our first bundle resource of type `statefulset`
@@ -98,7 +98,7 @@ It's difficult to quickstart with this project unless you already have a deeper 
    There's your service! :)
 
 8. **Before you go**</br>
-   1. Don't forget that you have all the power of go sprif in your hands within your bundles file. Use it whisely:
+   1. Don't forget that you have all the power of go sprig in your hands within your bundles file. Use it wisely:
 
      * [http://masterminds.github.io/sprig/](http://masterminds.github.io/sprig/)
 
@@ -125,7 +125,7 @@ It's difficult to quickstart with this project unless you already have a deeper 
 
     {{- end }}
     ```
-    Eventough we are overwriting the port, we are still using the ports the user might input.
+    Even though we are overwriting the port, we are still using the ports the user might input.
 
    3. ExtraResources are always welcome :)
 
@@ -144,7 +144,7 @@ It's difficult to quickstart with this project unless you already have a deeper 
     {{- end -}}
     ```
 
-   4. Sometimes you might encounter errors. Most of the time the source of errors will be a mallformed bundle YAML. To check how your YAML looks, you can do something like this and then `helm template` it:
+   4. Sometimes you might encounter errors. Most of the time the source of errors will be a malformed bundle YAML. To check how your YAML looks, you can do something like this and then `helm template` it:
 
     ```
    test: | {{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "new-chart.bundle" $)) "context" $) | nindent 2 }}

@@ -72,7 +72,7 @@ By adding `WIP: *` as prefix for your pull request title, your pull request is c
 
 ## Review
 
-When creating a Pull Request is automatically assigned. If your Pull Request does not have any activity after certain days, feel free to comment a reminder (it might happen that we forget about it, since we maintain this repository part time). Your Pull Request requires approve to mergedable.
+When creating a Pull Request is automatically assigned. If your Pull Request does not have any activity after certain days, feel free to comment a reminder (it might happen that we forget about it, since we maintain this repository part time). Your Pull Request requires approve to be mergeable.
 
 # Chart Requirements
 
@@ -194,7 +194,7 @@ On each Push [Helm-Docs](#documentation) will executed (fails on protected branc
 On creating a Pull Request the following workflows will be executed:
 
   1. Chart Linting - All Charts are linted using the [ct tool](https://github.com/helm/chart-testing).
-  2. Chart Installation - All Charts are installed to KinD isntance using the [ct tool](https://github.com/helm/chart-testing).
+  2. Chart Installation - All Charts are installed to KinD instance using the [ct tool](https://github.com/helm/chart-testing).
   3. Chart Release Dry-Run - Only charts which had changes to their **Chart.yaml** file are considered for the Release Dry-Run. No Release will be made during Dry-Run. The following checks must pass:
     * Passed [Kube-Linter](https://github.com/stackrox/kube-linter) Tests (Required).
     * Passed [Helm Unit-Tests](https://github.com/quintush/helm-unittest) if any are defined (Optional).

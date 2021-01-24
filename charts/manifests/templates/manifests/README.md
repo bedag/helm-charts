@@ -39,7 +39,7 @@ Explanation of the above keys:
 
 ## Usage
 
-We recommend creating a dedicated template within your chart just for the bundle strucure. This structure should then be used to call the bundle template, like so:
+We recommend creating a dedicated template within your chart just for the bundle structure. This structure should then be used to call the bundle template, like so:
 
 ```
 {{/*
@@ -908,7 +908,7 @@ resources:
 
 #### Multiple Bundles
 
-Using multiple bundles is very straightforward, just do the same thing you did with a single bundle but multiple times - that's it. In this example we seperate two microservices within the chart (Frontend/Backend).
+Using multiple bundles is very straightforward, just do the same thing you did with a single bundle but multiple times - that's it. In this example we separate two microservices within the chart (Frontend/Backend).
 
 **templates/frontend.yaml**
 ```

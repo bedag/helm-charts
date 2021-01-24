@@ -221,7 +221,7 @@ This template supports the following key structure:
 ## Enabled Values Generator
 doc:
 
-  ## Define which manifest to generate (e.g. "statfulset")
+  ## Define which manifest to generate (e.g. "statefulset")
   ## On of .manifest or .preset has to be set, otherwise the function returns empty
   manifest: "statefulset"
 
@@ -264,7 +264,7 @@ To use this template we need to be able to execute `helm template`. Since this i
 Now we can start using the generator:
 
 ```
-## Generate Values for the Statefulset manifest with "frontend" as topkey instead of statefulset.
+## Generate Values for the Statefulset manifest with "frontend" as top key instead of statefulset.
 helm template gen . --set doc.manifest="statefulset" --set doc.key="frontend"
 
 

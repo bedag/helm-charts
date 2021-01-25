@@ -76,7 +76,7 @@ Unofficial Helm Chart for Kafdrop
 | deployment.replicaCount | int | 1 | Amount of Replicas deployed |
 | deployment.resources | object | `{}` | Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) |
 | deployment.restartPolicy | string | `nil` | Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy |
-| deployment.securityContext | object | `{"runAsNonRoot":true,"runAsUser":1000}` | Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) |
+| deployment.securityContext | object | `{"runAsNonRoot":false,"runAsUser":0}` | Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) |
 | deployment.selectorLabels | object | `{}` | Define SelectorLabels for the Pod Template |
 | deployment.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | deployment.serviceAccount.apiVersion | string | v1 | Configure the api version used |

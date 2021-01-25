@@ -29,7 +29,9 @@ apiVersion: {{ $pod.apiVersion }}
     {{- else }}
 apiVersion: v1
     {{- end }}
-    {{- include "bedag-lib.template.pod" (set . "pod" $pod) | nindent 0 }}
+    {{- $podTpl := fromYaml (include "bedag-lib.template.pod" (set . "pod" $pod)) }}
+    {{- $_ := set $podTpl.metadata "name" (include "bedag-lib.utils.common.fullname" .) }}
+    {{- toYaml $podTpl | nindent 0 }}
   {{- else }}
     {{- fail "Template requires '.context' as arguments" }}
   {{- end }}

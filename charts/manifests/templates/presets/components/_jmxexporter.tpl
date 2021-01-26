@@ -122,6 +122,6 @@ serviceMonitor:
     {{- end }}
   labels: {{ toYaml $.values.labels | nindent 4 }}
     manifests.bedag/component: {{ $name }}
-  selector: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $.context) $.values.serviceMonitor.selector) "context" $.context) | indent 4 }}
+  selector: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $.context) $.values.serviceMonitor.selector) "context" $.context) | nindent 4 }}
     manifests.bedag/component: {{ $name }}
 {{- end }}

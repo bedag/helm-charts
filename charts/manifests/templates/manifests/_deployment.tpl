@@ -42,6 +42,6 @@ spec:
   {{- if $deployment.deploymentExtras }}
     {{- toYaml $deployment.deploymentExtras | nindent 2 }}
   {{- end }}
-  template: {{- include "bedag-lib.template.pod" (dict "pod" $deployment "context" $context) | nindent 4 }}
+  template: {{- include "bedag-lib.template.pod" (set . "pod" $deployment) | nindent 4 }}
   {{- end }}
 {{- end -}}

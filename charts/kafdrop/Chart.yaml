@@ -1,7 +1,7 @@
 apiVersion: v2
 name: kafdrop
 description: Unofficial Helm Chart for Kafdrop
-version: 0.1.4
+version: 0.1.5
 appVersion: 3.27.0
 type: application
 home: https://github.com/obsidiandynamics/kafdrop
@@ -15,7 +15,7 @@ maintainers:
     email: sre@bedag.ch
 dependencies:
   - name: manifests
-    version: "~0.4.0"
+    version: "~0.4.11"
     repository: https://bedag.github.io/helm-charts/
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"

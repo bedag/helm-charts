@@ -41,7 +41,7 @@ spec:
     {{- end }}
     {{- $pullSecrets := include "lib.utils.globals.imagePullSecrets" (dict "pullSecrets" $values.imagePullSecrets "context" $context) }}
     {{- if $pullSecrets }}
-  imagePullSecrets: {{- toYaml $pullSecrets | indent 4 }}
+  imagePullSecrets: {{- toYaml $pullSecrets | nindent 4 }}
     {{- end }}
     {{- with $values.affinity }}
   affinity: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}

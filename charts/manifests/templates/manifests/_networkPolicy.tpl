@@ -35,7 +35,7 @@ metadata:
   labels: {{- include "lib.utils.common.labels" (dict "labels" $networkPolicy.labels "context" $context)| nindent 4 }}
 spec:
   podSelector:
-    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $networkPolicy.selector) "context" $context) | indent 6 }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $networkPolicy.selector) "context" $context) | nindent 6 }}
       {{- if or $networkPolicy.ingress $networkPolicy.egress}}
   policyTypes:
         {{- if and $networkPolicy.ingress (kindIs "slice" $networkPolicy.ingress) }}

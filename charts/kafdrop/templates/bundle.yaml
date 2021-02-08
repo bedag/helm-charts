@@ -1,0 +1,102 @@
+{{/*
+
+Copyright © 2021 Bedag Informatik AG
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/}}
+
+{{- include "bedag-lib.manifest.bundle" $ | nindent 0 }}
+
+{{/*
+  kafdrop Chart Bundle
+*/}}
+{{- define "chart.bundle" -}}
+resources:
+  {{- if $.Values.extraResources }}
+    {{- toYaml $.Values.extraResources | nindent 2 }}
+  {{- end }}
+
+  {{ $jmxExporter := (fromYaml (include "bedag-lib.utils.presets" (dict "preset" "jmxexporter" "values" $.Values.jmxExporter "context" $))) }}
+  {{- if $jmxExporter.extraResources }}
+    {{- toYaml $jmxExporter.extraResources | nindent 2 }}
+  {{- end }}
+
+  - type: "deployment"
+    values: {{ toYaml $.Values.deployment | nindent 6 }}
+    overwrites:
+      podAnnotations:
+        checksum/config: {{ (toYaml $.Values.config) | sha256sum }}
+
+      environment: {{- include "kafdrop.configuration" $ | nindent 8 }}
+        {{- if $.Values.deployment.environment }}
+          {{ include "lib.utils.lists.exceptionList" (dict "list" $.Values.deployment.environment  "exceptions" (list "KAFKA_BROKERCONNECT" "JVM_OPTS")) | nindent 8 }}
+        {{- end }}
+
+      {{/*
+        Predefined Ports
+      */}}
+      ports:
+        {{- if $.Values.deployment.ports }}
+          {{- toYaml $.Values.deployment.ports | nindent 8 }}
+        {{- end }}
+        - name: http
+          containerPort: {{ $.Values.config.server.port }}
+          protocol: TCP
+        {{- if $jmxExporter.ports }}
+          {{- toYaml $jmxExporter.ports | nindent 8 }}
+        {{- end }}
+
+      {{/*
+        Predefined Statefulset Volumes
+      */}}
+      {{- if or $.Values.deployment.volumes $jmxExporter.volumes }}
+      volumes:
+        {{- if $.Values.deployment.volumes }}
+          {{- toYaml $.Values.deployment.volumes | nindent 8 }}
+        {{- end }}
+        {{- if $jmxExporter.volumes }}
+          {{- toYaml $jmxExporter.volumes | nindent 8 }}
+        {{- end }}
+      {{- end }}
+
+      {{/*
+        Predefined Statefulset Sidecars
+      */}}
+      {{- if or $jmxExporter.container $.Values.deployment.sidecars }}
+      sidecars:
+        {{- if $.Values.deployment.sidecars }}
+          {{- toYaml $.Values.deployment.sidecars | nindent 8 }}
+        {{- end }}
+        {{- if $jmxExporter.container }}
+        - {{- toYaml $jmxExporter.container | nindent 10 }}
+        {{- end }}
+      {{- end }}
+
+  - type: "service"
+    values: {{ toYaml $.Values.service | nindent 6 }}
+
+  - type: "ingress"
+    values: {{ toYaml $.Values.ingress | nindent 6 }}
+
+  {{- if (gt (int $.Values.deployment.replicaCount) 1) }}
+  - type: "poddisruptionbudget"
+    values: {{ toYaml $.Values.pdb | nindent 6 }}
+  {{- end }}
+  - type: "horizontalpodautoscaler"
+    values: {{ toYaml $.Values.autoscaling | nindent 6 }}
+    overwrites:
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Statefulset
+        name: '{{ include "lib.utils.common.fullname" $ }}'
+{{- end -}}

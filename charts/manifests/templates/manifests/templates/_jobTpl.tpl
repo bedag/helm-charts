@@ -17,7 +17,7 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.template.job" -}}
   {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.job" .)) .job -}}
-  {{- if and $values .context -}}
+  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) .context (include "bedag-lib.utils.intern.noYamlError" .context) -}}
     {{- $context := .context }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}

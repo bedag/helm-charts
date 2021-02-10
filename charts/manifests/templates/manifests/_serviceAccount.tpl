@@ -15,41 +15,39 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */}}
-{{- define "bedag-lib.manifest.serviceaccount.values" -}}
-  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "serviceAccount" "root" .)) "context" .context) -}}
-{{- end }}
-
 {{- define "bedag-lib.manifest.serviceaccount" -}}
   {{- if .context -}}
     {{- $context := .context -}}
-    {{- $serviceAccount := (fromYaml (include "bedag-lib.manifest.serviceaccount.values" .)) -}}
-    {{- if $serviceAccount.create -}}
+    {{- $serviceAccount := mergeOverwrite (fromYaml (include "bedag-lib.values.serviceaccount" $)).serviceAccount (default dict .values) (default dict .overwrites) -}}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $serviceAccount) }}
+      {{- if $serviceAccount.create -}}
 kind: ServiceAccount
-      {{- if $serviceAccount.apiVersion }}
+        {{- if $serviceAccount.apiVersion }}
 apiVersion: {{ $serviceAccount.apiVersion }}
-      {{- else }}
+        {{- else }}
 apiVersion: v1
-      {{- end }}
+        {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.serviceAccountName" (dict "sa" $serviceAccount "context" $context) }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" $serviceAccount.labels "context" $context)| nindent 4 }}
-      {{- if $serviceAccount.annotations }}
+        {{- if $serviceAccount.annotations }}
   annotations:
-        {{- range $anno, $val := $serviceAccount.annotations }}
-          {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- range $anno, $val := $serviceAccount.annotations }}
+            {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- end }}
         {{- end }}
-      {{- end }}
-      {{- if (kindIs "bool" $serviceAccount.automountServiceAccountToken) }}
+        {{- if (kindIs "bool" $serviceAccount.automountServiceAccountToken) }}
 automountServiceAccountToken: {{ $serviceAccount.automountServiceAccountToken }}
-      {{- end }}
-      {{- if and $serviceAccount.secrets (kindIs "slice" $serviceAccount.secrets) }}
+        {{- end }}
+        {{- if and $serviceAccount.secrets (kindIs "slice" $serviceAccount.secrets) }}
 secrets: {{ toYaml $serviceAccount.secrets | nindent 2 }}
-      {{- end }}
-      {{- if or (and $serviceAccount.imagePullSecrets (kindIs "slice" $serviceAccount.imagePullSecrets)) $serviceAccount.globalPullSecrets }}
-        {{- if $serviceAccount.globalPullSecrets }}
+        {{- end }}
+        {{- if or (and $serviceAccount.imagePullSecrets (kindIs "slice" $serviceAccount.imagePullSecrets)) $serviceAccount.globalPullSecrets }}
+          {{- if $serviceAccount.globalPullSecrets }}
 imagePullSecrets: {{- include "lib.utils.globals.imagePullSecrets" (dict "pullSecrets" $serviceAccount.imagePullSecrets "context" $context)| nindent 2 }}
-        {{- else }}
+          {{- else }}
 imagePullSecrets: {{ toYaml $serviceAccount.imagePullSecrets | nindent 2 }}
+          {{- end }}
         {{- end }}
       {{- end }}
     {{- end }}

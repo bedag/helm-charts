@@ -22,37 +22,38 @@ limitations under the License.
 {{- define "bedag-lib.manifest.horizontalpodautoscaler" -}}
   {{- if .context }}
     {{- $context := .context -}}
-    {{- $hpa := (fromYaml (include "bedag-lib.manifest.horizontalpodautoscaler.values" .)) -}}
-    {{- if and $hpa.enabled (or $hpa.targetCPUUtilizationPercentage $hpa.targetMemoryUtilizationPercentage $hpa.metrics) -}}
+    {{- $hpa := mergeOverwrite (fromYaml (include "bedag-lib.values.horizontalpodautoscaler" $)).autoscaling (default dict .values) (default dict .overwrites) -}}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $hpa) }}
+      {{- if and $hpa.enabled (or $hpa.targetCPUUtilizationPercentage $hpa.targetMemoryUtilizationPercentage $hpa.metrics) -}}
 kind: HorizontalPodAutoscaler
-      {{- if $hpa.apiVersion -}}
+        {{- if $hpa.apiVersion -}}
 apiVersion: {{ $hpa.apiVersion }}
-      {{- else }}
+        {{- else }}
 apiVersion: autoscaling/v2beta2
-      {{- end }}
+        {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" $hpa.labels "context" $context) | nindent 4 }}
 spec:
-          {{- if and $hpa.behavior (kindIs "map" $hpa.behavior) }}
+        {{- if and $hpa.behavior (kindIs "map" $hpa.behavior) }}
   behavior: {{ toYaml $hpa.behavior | nindent 4 }}
-          {{- end }}
+        {{- end }}
   metrics:
-          {{- if $hpa.targetCPUUtilizationPercentage }}
+        {{- if $hpa.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
         targetAverageUtilization: {{ $hpa.targetCPUUtilizationPercentage }}
-          {{- end }}
-          {{- if $hpa.targetMemoryUtilizationPercentage }}
+        {{- end }}
+        {{- if $hpa.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
         targetAverageUtilization: {{ $hpa.targetMemoryUtilizationPercentage }}
-          {{- end }}
-          {{- if and $hpa.metrics (kindIs "slice" $hpa.metrics) }}
-            {{- toYaml $hpa.metrics | nindent 4}}
-          {{- end }}
+        {{- end }}
+        {{- if and $hpa.metrics (kindIs "slice" $hpa.metrics) }}
+          {{- toYaml $hpa.metrics | nindent 4}}
+        {{- end }}
   scaleTargetRef:
         {{- if $hpa.scaleTargetRef }}
           {{- toYaml $hpa.scaleTargetRef | nindent 4  }}
@@ -65,6 +66,7 @@ spec:
   minReplicas: {{ $hpa.minReplicas }}
         {{- end }}
   maxReplicas: {{ $hpa.maxReplicas }}
+      {{- end }}
     {{- end }}
   {{- else }}
     {{- fail "Template requires '.context' as arguments" }}

@@ -18,3 +18,11 @@ limitations under the License.
 {{- define "bedag-lib.utils.intern.docLink" -}}
 https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md
 {{- end }}
+
+{{- define "bedag-lib.utils.intern.noYamlError" -}}
+  {{- if $.Error -}}
+    {{- fail $.Error -}}
+  {{- else -}}
+    {{- true -}}
+  {{- end -}}
+{{- end -}}

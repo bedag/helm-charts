@@ -15,9 +15,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */}}
-{{- define "bedag-lib.template.persistentVolumeClaim" -}}
+{{- define "bedag-lib.template.persistentvolumeclaim" -}}
   {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.pvc" .)) .pvc -}}
-  {{- if and $values .context -}}
+  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) .context (include "bedag-lib.utils.intern.noYamlError" .context) -}}
     {{- $context := .context -}}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}

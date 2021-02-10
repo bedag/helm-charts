@@ -17,7 +17,7 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.template.pod" -}}
   {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.pod" .)) .pod -}}
-  {{- if and $values .context -}}
+  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) .context (include "bedag-lib.utils.intern.noYamlError" .context) -}}
     {{- $context := .context -}}
 metadata:
   labels: {{- include "lib.utils.common.labels" (dict "labels" $values.podLabels "versionUnspecific" "true" "context" $context)| nindent 4 }}

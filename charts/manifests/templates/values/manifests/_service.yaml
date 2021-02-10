@@ -43,6 +43,11 @@
   # @default -- http
   targetPort: ""
 
+  ## Service Protocol
+  # {{ $_.path }}protocol -- Configure Service Port Protocol
+  # @default -- TCP
+  protocol: ""
+
   ## Service Extra Ports
   # {{ $_.path }}extraPorts -- Add additional ports to the service
   extraPorts: []

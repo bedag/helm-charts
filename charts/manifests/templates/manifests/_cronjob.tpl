@@ -15,30 +15,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */}}
-{{- define "bedag-lib.manifest.cronjob.values" -}}
-  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "cronjob" "root" .)) "context" .context) -}}
-{{- end }}
-
 {{- define "bedag-lib.manifest.cronjob" -}}
   {{- if .context }}
     {{- $context := .context -}}
-    {{- $cronjob := (fromYaml (include "bedag-lib.manifest.cronjob.values" .)) -}}
-    {{- if $cronjob.enabled }}
+    {{- $cronjob := mergeOverwrite (fromYaml (include "bedag-lib.values.cronjob" $)).cronjob (default dict .values) (default dict .overwrites) -}}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $cronjob) }}
+      {{- if $cronjob.enabled }}
 kind: CronJob
-      {{- if $cronjob.apiVersion }}
+        {{- if $cronjob.apiVersion }}
 apiVersion: {{ $cronjob.apiVersion }}
-      {{- else }}
+        {{- else }}
 apiVersion: batch/v1beta1
-      {{- end }}
+        {{- end }}
 metadata:
   name:  {{ include "bedag-lib.utils.common.fullname" . }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" $cronjob.labels "context" $context)| nindent 4 }}
-      {{- if $cronjob.annotations }}
+        {{- if $cronjob.annotations }}
   annotations:
-        {{- range $anno, $val := $cronjob.annotations }}
-          {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- range $anno, $val := $cronjob.annotations }}
+            {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- end }}
         {{- end }}
-      {{- end }}
 spec:
   concurrencyPolicy: {{ $cronjob.concurrencyPolicy }}
   failedJobsHistoryLimit: {{ $cronjob.failedJobsHistoryLimit }}
@@ -47,6 +44,7 @@ spec:
   successfulJobsHistoryLimit: {{ $cronjob.successfulJobsHistoryLimit }}
   suspend: {{ $cronjob.suspend }}
   jobTemplate: {{- include "bedag-lib.template.job" (set . "job" $cronjob) | nindent 4 }}
+      {{- end }}
     {{- end }}
   {{- end }}
 {{- end -}}

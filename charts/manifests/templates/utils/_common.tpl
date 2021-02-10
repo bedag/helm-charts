@@ -49,16 +49,3 @@ limitations under the License.
     {{- fail "Template requires '.context' as arguments" }}
   {{- end }}
 {{- end -}}
-
-{{/*
-  Sprig Template - MergedValues
-*/}}
-{{- define "bedag-lib.utils.common.mergedValues" -}}
-  {{- if and .type .root -}}
-    {{- $tpl := cat "bedag-lib.values." (.type | lower) | nospace -}}
-    {{- $defaultValues := default dict (get (fromYaml (include $tpl .root.context)) ((default .type .key) | toString)) -}}
-    {{- toYaml (mergeOverwrite $defaultValues (default dict .root.values) (default dict .root.overwrites)) -}}
-  {{- else -}}
-    {{- fail "Template requires '.type' and '.root' as arguments" -}}
-  {{- end -}}
-{{- end -}}

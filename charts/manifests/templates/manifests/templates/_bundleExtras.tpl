@@ -16,6 +16,7 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.template.bundleExtras" -}}
+  {{- $merge := mergeOverwrite (dict) (default dict .values) (default dict .overwrites) -}}
   {{- if and $.values (include "bedag-lib.utils.intern.noYamlError" $.values) $.context (include "bedag-lib.utils.intern.noYamlError" $.context) -}}
     {{- if $.values.serviceAccount }}
       {{- if and $.values.serviceAccount.enabled $.values.serviceAccount.create }}
@@ -23,7 +24,7 @@ limitations under the License.
       {{- end }}
     {{- end }}
     {{- if $.values.environment }}
-      {{- $environment := $.values.environment }}
+      {{- $environment := $merge.environment }}
       {{- if (include "bedag-lib.utils.environment.hasSecrets" $environment) }}
 ---
 apiVersion: v1

@@ -2,7 +2,7 @@ apiVersion: v2
 name: manifests
 description: "Bedag's Manifest chart. Library full of basic kubernetes manifests."
 type: library
-version: 0.5.0
+version: 0.5.1
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 keywords:
 - Bedag
@@ -22,8 +22,4 @@ annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
-    - "[Added]: Support explicit chart.bundle template, for easier bundle declartion including documentation."
-    - "[Added]: Check were possible relevant YAML if it has any .Error field. Throw fail if detected."
-    - "[Changed]: Improved/Changed documentation with changed functionality/workflow."
-    - "[Fixed]: Handle empty Bundle Context causing Problems with Helm 3.5 (Function returned wrongly rendered YAML)"
-    - "[Removed]: Removed dedicated Values function for each manifest instead calling directly within the manifest"
+    - "[Fixed]: Add Overwrites to Bundle Extras"

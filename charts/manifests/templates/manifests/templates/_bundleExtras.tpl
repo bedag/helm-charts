@@ -24,7 +24,7 @@ limitations under the License.
       {{- end }}
     {{- end }}
     {{- if $values.environment }}
-      {{- $environment := $merge.environment }}
+      {{- $environment := $values.environment }}
       {{- if (include "bedag-lib.utils.environment.hasSecrets" $environment) }}
 ---
 apiVersion: v1

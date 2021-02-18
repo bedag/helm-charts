@@ -55,6 +55,10 @@ priorityClassName: ""
 # {{ $_.path }}podSecurityContext -- Pod [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
 podSecurityContext: {}
 
+## Termination Grace Period Seconds
+# {{ $_.path }}terminationGracePeriodSeconds -- Pod [terminationGracePeriodSeconds](https://v1-17.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.17/#podspec-v1-core)
+terminationGracePeriodSeconds: 
+
 ## Pod Initcontainers
 # {{ $_.path }}initContainers -- Pod [initContainers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
 initContainers: []

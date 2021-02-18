@@ -62,6 +62,9 @@ spec:
       {{- $_ := set . "sa" $values.serviceAccount }}
   serviceAccountName: {{ include "bedag-lib.utils.common.serviceAccountName" . }}
     {{- end }}
+    {{- if $values.terminationGracePeriodSeconds }}
+  terminationGracePeriodSeconds: {{ $values.terminationGracePeriodSeconds }}
+    {{- end }}
     {{- with $values.initContainers }}
   initContainers: {{- toYaml $values.initContainers | nindent 4 }}
     {{- end }}

@@ -176,7 +176,9 @@ pod:
   
   ## Pod SecurityContext Configuration
   # pod.podSecurityContext -- Pod [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
-  podSecurityContext: {}
+  podSecurityContext: 
+    runAsNonRoot: true
+    runAsUser: 65534 
   
   ## Pod Initcontainers
   # pod.initContainers -- Pod [initContainers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
@@ -541,7 +543,7 @@ service:
 
   ## Service Type
   # service.type -- Configure Service [Type](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types).
-  type: ClusterIP 
+  type: "" 
 
   ## Service Port Name
   # service.portName -- Configure Service Port name
@@ -576,7 +578,7 @@ service:
       targetPort: "https"
   ## Service NodePort ([Reference](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport))
   # service.nodePort -- Specify the nodePort value for the LoadBalancer and NodePort service types
-  nodePort: ""
+  nodePort: 
 
   ## Service Loadbalancer IP
   # service.loadBalancerIP -- Configure Service [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer). Set the LoadBalancer service type to internal only.

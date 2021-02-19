@@ -26,7 +26,7 @@ The chart is under active development and may contain bugs/unfinished documentat
 
 # How to use this Chart?
 
-You can choose between `deployment`, `statefulset`, `daemonset`. You can enable disable those like this:
+You can choose between `deployment`, `statefulset`, `daemonset`. Deployment is per default enabled. You can enable disable those like this:
 ```
 deployment:
   enabled: true
@@ -54,9 +54,3 @@ Major Changes to functions are documented with the version affected. **Before up
   Chart Values
 */}}
 {{ template "chart.valuesSection" . }}
-
-# Todos
-
-- Adding proper health-check `OPTIONS icap://127.0.0.1:1344/request ICAP/1.0`
-
-

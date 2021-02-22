@@ -1,0 +1,56 @@
+# E2guardian
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}
+
+{{ template "chart.description" . }}
+
+The chart is under active development and may contain bugs/unfinished documentation. Any testing/contributions are welcome! :)
+
+{{ template "chart.homepageLine" . }}
+
+{{/*
+  Chart Maintainers
+*/}}
+{{ template "chart.maintainersSection" . }}
+
+{{/*
+  Chart Sources
+*/}}
+{{ template "chart.sourcesSection" . }}
+
+{{/*
+  Chart Requirements
+*/}}
+{{ template "chart.requirementsSection" . }}
+
+# How to use this Chart?
+
+You can choose between `deployment`, `statefulset`, `daemonset`. Deployment is per default enabled. You can enable disable those like this:
+```
+deployment:
+  enabled: true
+statefulset:
+  enabled: false
+daemonset:
+  enabled: false
+```
+
+All important E2guardian variables are under `e2g`. Go to [Values](#Values) for more information.
+
+See the [Examples](./examples) to get a better idea, of how tests could look like.
+
+
+
+# Major Changes
+
+Major Changes to functions are documented with the version affected. **Before upgrading the dependency version, check this section out!**
+
+| **Change** | **Chart Version** | **Description** | **Commits/PRs** |
+| :--------- | :---------------- | :-------------- | :-------------- |
+|||||
+
+{{/*
+  Chart Values
+*/}}
+{{ template "chart.valuesSection" . }}

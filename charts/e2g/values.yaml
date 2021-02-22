@@ -1,0 +1,599 @@
+## Global Values 
+##
+global:
+
+  ## Global Docker Image Registry
+  # global.imageRegistry -- Global Docker Image Registry declaration. Will overwrite all child .registry fields.
+  imageRegistry: ""
+
+  ## Global Default Image Tag
+  # global.defaultTag -- Global Docker Image Tag declaration. Will be used as default tag, if no tag is given by child
+  defaultTag: ""
+
+  ## Global Docker Image PullPolicy
+  # global.imagePullPolicy -- Global Docker Image Pull Policy declaration. Will overwrite all child .pullPolicy fields.
+  imagePullPolicy: ""
+
+  ## Global StorageClass
+  # global.storageClass -- Global StorageClass declaration. Can be used to overwrite StorageClass fields.
+  storageClass: ""
+
+  ## Global Image Pull Secrets
+  # global.imagePullSecrets -- Global Docker Image Pull Secrets declaration. Added to local Docker Image Pull Secrets.
+  imagePullSecrets: []
+
+## E2g Values
+##
+e2g:
+
+  ## Define e2g stories
+  # e2g.story -- Array of e2g stories as string
+  story: []
+
+  ## Define e2g config
+  # e2g.config -- e2g config as string
+  config:
+
+  ## Define e2g lists
+  # e2g.lists -- Array of e2g stories as string
+  lists: []
+
+## Common Values
+##
+
+## Overwrite Name Template
+# nameOverride -- Overwrite "lib.internal.common.name" output
+nameOverride: ""
+
+## Overwrite Fullname Template
+# fullnameOverride -- Overwrite `lib.utils.common.fullname` output
+fullnameOverride: ""
+
+## Common Labels
+# commonLabels -- Common Labels are added to each kubernetes resource manifest.
+commonLabels: {}
+
+## Overwrite Labels
+# overwriteLabels -- Overwrites default labels, but not resource specific labels and common labels
+overwriteLabels: {}
+
+## Selector Labels
+# selectorLabels -- Define default [selectorLabels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+selectorLabels: {}
+
+## Version Capabilities
+# kubeCapabilities -- Overwrite the Kube GitVersion
+# @default -- `$.Capabilities.KubeVersion.GitVersion`
+kubeCapabilities: ""
+
+
+## Proxy Values
+##
+proxy:
+
+  ## HTTP Proxy Configuration
+  httpProxy:
+
+    ## HTTP Proxy Host Configuration
+    # proxy.httpProxy.host -- Configure HTTP Proxy Hostname/IP (without protocol://)
+    host: ""
+
+    ## HTTP Proxy Port Configuration
+    # proxy.httpProxy.port -- (int) Configure HTTP Proxy Port
+    port:
+
+    ## HTTP Proxy Protocol Configuration
+    # proxy.httpProxy.protocol -- Configure HTTP Proxy Protocol (http/https)
+    # @default -- http
+    protocol: ""
+
+  ## HTTPS Proxy Configuration
+  httpsProxy:
+
+    ## HTTPS Proxy Host Configuration
+    # proxy.httpsProxy.host -- Configure HTTPS Proxy Hostname/IP (without protocol://)
+    host: ""
+
+    ## HTTP Proxy Port Configuration
+    # proxy.httpsProxy.port -- (int) Configure HTTPS Proxy Port
+    port:
+
+    ## HTTP Proxy Protocol Configuration
+    # proxy.httpsProxy.protocol -- Configure HTTPS Proxy Protocol (http/https)
+    # @default -- http
+    protocol: ""
+
+  ## No Proxy Hosts Configuration
+  # proxy.noProxy -- Configure No Proxy Hosts
+  # noProxy: [ "localhost", "127.0.0.1" ]
+  noProxy: []
+
+## Define Container Timezone
+# timezone -- Define Container Timezone (Sets TZ Environment)
+timezone: "Europe/Zurich"
+
+#
+## - Pod
+## Reference: https://kubernetes.io/docs/concepts/workloads/pods/
+##
+pod:
+
+  ## Pod API version
+  # pod.apiVersion -- Configure the api version used for the Pod resource
+  apiVersion: ""
+
+  ## Image Pull Secrets
+  # pod.imagePullSecrets -- Define [ImagePullSecrets](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). Will be overwritten if set by global variable.
+  imagePullSecrets: []
+  
+  ## Pod Labels
+  # pod.podLabels -- Pod [labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) are only added for the pod
+  podLabels: {}
+  
+  ## Pod Annotations
+  # pod.podAnnotations -- Pod [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) are only added for the pod
+  podAnnotations: {}
+  
+  ## Pod ForceRedeploy
+  ## pod.forceRedeploy -- Adds timestamp annotation, causing your pods to be redeployed everytime a new release applied.
+  forceRedeploy: false
+  
+  ## Extra Pod Fields
+  # pod.podFields -- Add extra field to the [Pod Template](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podtemplate-v1-core) if not available as value.
+  podFields: 
+    terminationGracePeriodSeconds: 0
+  
+  ## Additional Kubernetes Volumes
+  # pod.volumes -- Additional [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
+  volumes: []
+  #  - name: share
+  #    persistentVolumeClaim:
+  #      claimName: 'shared'
+  
+  ## RestartPolicy Configuration
+  # pod.restartPolicy -- Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
+  restartPolicy: 
+  
+  ## Affinity Configuration
+  # pod.affinity -- Pod [Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)
+  affinity: {}
+  
+  ## NodeSelector Configuration
+  # pod.nodeSelector -- Pod [NodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
+  nodeSelector: {}
+  
+  ## Tolerations Configuration
+  # pod.tolerations -- Pod [Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+  tolerations: {}
+  
+  ## Priority Configuration
+  # pod.priorityClassName -- Pod [priorityClassName](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass)
+  priorityClassName: ""
+  
+  ## Pod SecurityContext Configuration
+  # pod.podSecurityContext -- Pod [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+  podSecurityContext: 
+    runAsNonRoot: true
+    runAsUser: 65534 
+  
+  ## Pod Initcontainers
+  # pod.initContainers -- Pod [initContainers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
+  initContainers: []
+  #  - name: init-myservice
+  #    image: busybox:1.28
+  #    command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+  
+  ## Pod SideCar Containers
+  # pod.sidecars -- Allows to add sidecars to your [maincar]](https://kubernetes.io/docs/concepts/workloads/pods/#using-pods)
+  sidecars: []
+  
+  #
+  ## - ServiceAccount
+  ## Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  ## API Reference: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#serviceaccount-v1-core
+  ##
+  serviceAccount:
+  
+    ## ServiceAccount Creation
+    # pod.serviceAccount.enabled -- Specifies whether a service account is enabled or not
+    enabled: false
+  
+    ## ServiceAccount Creation
+    # pod.serviceAccount.create -- Specifies whether a service account should be created
+    create: false
+  
+    ## ServiceAccount API version
+    # pod.serviceAccount.apiVersion -- Configure the api version used
+    # @default -- v1
+    apiVersion: ""
+  
+    ## ServiceAccount Labels
+    # pod.serviceAccount.labels -- Merges given labels with common labels
+    labels: {}
+  
+    ## ServiceAccount Annotations
+    # pod.serviceAccount.annotations -- Annotations to add to the service account
+    annotations: {}
+  
+    ## ServiceAccount Auto Mount Service Token
+    # pod.serviceAccount.automountServiceAccountToken -- (bool) AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted.
+    automountServiceAccountToken: true
+  
+    ## ServiceAccount Image pull secrets
+    # pod.serviceAccount.imagePullSecrets -- ImagePullSecrets is a list of references to secrets in the same namespace to use for pulling any images in pods that reference this ServiceAccount.
+    imagePullSecrets: []
+  
+    ## ServiceAccount Global PullSecrets
+    # pod.serviceAccount.globalPullSecrets -- Evaluate global set pullsecrets and mount, if set
+    globalPullSecrets: false
+  
+    ## ServiceAccount Secrets
+    # pod.serviceAccount.secrets -- Secrets is the list of secrets allowed to be used by pods running using this ServiceAccount
+    secrets: []
+  
+    ## ServiceAccount Name
+    # pod.serviceAccount.name -- If not set and create is true, a name is generated using the fullname template
+    name: ""
+  
+  
+  ## Container Configuration
+  ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#container-template
+  ## Full Configuration
+  
+  
+  #
+  ## -- Container
+  ## Reference: https://kubernetes.io/de/docs/concepts/containers/
+  ## Container API Object - https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#container-v1-core
+  #
+  
+  ## Custom Container Name
+  # pod.containerName -- Configure Container Name
+  # @default -- `.Chart.Name`
+  containerName: 
+  
+  ## Docker Image definition.
+  image:
+    # pod.image.registry -- Configure Docker Registry. Will be overwritten if set by global variable.
+    registry: docker.io
+  
+    # pod.image.repository -- Configure Docker Repository
+    repository: bedag/e2g 
+  
+    # pod.image.pullPolicy -- Configure Docker Pull Policy. Will be overwritten if set by global variable.
+    pullPolicy: 
+  
+    # pod.image.tag -- Configure Docker Image tag
+    # @default -- Tag defaults to `.Chart.Appversion`, if not set
+    tag: 
+  
+  ## Container Resources
+  # pod.resources -- Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+  resources: 
+    {}
+  #  requests:
+  #    memory: "64Mi"
+  #    cpu: "250m"
+  #  limits:
+  #    memory: "128Mi"
+  #    cpu: "500m"
+  
+  ## Container Command
+  # pod.command -- Configure executed container command
+  command: 
+    {}
+  
+  ## Container Command Args
+  # pod.args -- Configure arguments for executed command
+  args: 
+    {}
+  
+  ## Environment Variables
+  # pod.environment -- Configure Environment Variables (Refer to values.yaml)
+  environment: 
+    []
+  # - name: "MY_ENV"
+  #   value: "someValue"
+  #   secret: true
+  # - name: SOME_SPEC
+  #   valueFrom:
+  #     fieldRef:
+  #       fieldPath: spec.*
+  #
+  
+  ## Container Ports
+  # pod.ports -- Configure Container Ports
+  ports: 
+   - name: "icap"
+     containerPort: 1344 
+     protocol: TCP
+   - name: "http"
+     containerPort: 8080
+     protocol: TCP
+   - name: "https"
+     containerPort: 8443
+     protocol: TCP
+  
+  ## Additional Volume Mounts
+  # pod.volumeMounts -- Configure Container [volumeMounts](https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/)
+  volumeMounts: 
+    []
+  #  - name: "cache"
+  #    mountPath: /cache
+  #  - name: "share"
+  #    mountPath: /var/data/share
+  
+  ## Container SecurityContext
+  # pod.securityContext -- Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+  securityContext: 
+    {}
+  
+  ## ReadinessProbe Configuration
+  # pod.readinessProbe -- Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)
+  readinessProbe: 
+    tcpSocket:
+      port: 1344
+    initialDelaySeconds: 5
+    periodSeconds: 1
+  
+  ## LivenessProbe Configuration
+  # pod.livenessProbe -- Container [LivenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command)
+  livenessProbe: 
+    tcpSocket:
+      port: 1344
+    initialDelaySeconds: 15
+    periodSeconds: 1
+  
+  ## StartupProbe Configuration
+  # pod.startupProbe -- Container [StartupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes)
+  startupProbe: 
+    {}
+  #  httpGet:
+  #    path: /health
+  #    port: http
+  #  failureThreshold: 30
+  #  periodSeconds: 10
+  
+  ## Container Lifecycle Hooks
+  # pod.lifecycle -- Container [Lifecycle](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/)
+  lifecycle: 
+    {}
+  #  postStart:
+  #    exec:
+  #      command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+  
+  ## Container ExtraFields
+  # pod.containerFields -- Extra fields used on the container definition
+  containerFields: 
+    {}
+  #  stdinOnce: true
+
+#
+## - Deployment
+## Reference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+##
+deployment:
+
+  ## Deployment Enable
+  # deployment.enabled -- Enable deployment
+  enabled: true
+  ## Deployment API version
+  # deployment.apiVersion -- Configure the api version used for the Deployment resource
+  apiVersion: ""
+
+  ## Deployment Labels
+  # deployment.labels -- Merges given labels with common labels
+  labels: {}
+
+  ## Deployment Selector Labels
+  # deployment.selectorLabels -- Define SelectorLabels for the Pod Template
+  selectorLabels: {}
+
+  ## Amount of Replicas
+  # deployment.replicaCount -- Amount of Replicas deployed
+  # @default -- 1
+  replicaCount: 1
+
+  ## Deployment Update Strategy
+  # deployment.strategy -- Deployment [Update Strategy](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend). **Deployments only**
+  strategy: {}
+  #  type: RollingUpdate
+  #    maxSurge: 1
+  #    maxUnavailable: 0
+
+  ## Deployment Extra Values
+  # deployment.deploymentExtras -- Extra Fields for Deployment Manifest
+  deploymentExtras: {}
+  # progressDeadlineSeconds: "600s"
+  #
+
+  ## Pod Configuration
+  ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#pod-template
+  ## Supports all the values from the referenced template. Find all available values in the link above.
+
+#
+## - Statefulset
+## Reference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+##
+statefulset:
+
+  ## Statefulset enable
+  # statefulset.enabled -- Enable statefulset
+  enabled: false
+
+  ## Statefulset API version
+  # statefulset.apiVersion -- Configure the api version used for the Statefulset resource
+  apiVersion: ""
+
+  ## Statefulset Labels
+  # statefulset.labels -- Merges given labels with common labels
+  labels: {}
+
+  ## Statefulset Service
+  # statefulset.serviceName -- Define a Service for the Statefulset
+  serviceName: ""
+
+  ## Statefulset Selector Labels
+  # statefulset.selectorLabels -- Define SelectorLabels for the Pod Template
+  selectorLabels: {}
+
+  ## Amount of Replicas
+  # statefulset.replicaCount -- Amount of Replicas deployed
+  replicaCount: 1
+
+  ## Statefulset Pod Management Policy
+  # statefulset.podManagementPolicy -- Statefulset [Management Policy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies). **Statefulset only**
+  podManagementPolicy: ""
+
+  ## StrategyType, can be set to RollingUpdate or OnDelete by default.
+  # statefulset.updateStrategy -- Statefulset [Update Strategy](https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/#updating-statefulsets). **Statefulset only**
+  updateStrategy: RollingUpdate
+
+  ## Partition update strategy
+  # statefulset.rollingUpdatePartition -- Statefulset [Update Pratition](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#partitions). **Statefulset only**
+  rollingUpdatePartition: ""
+
+  ## Persistent Volume Template Configuration
+  # statefulset.volumeClaimTemplates -- Statefulset [volumeClaimTemplates](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#components). **Statefulset only**
+  volumeClaimTemplates: []
+  #  - metadata:
+  #      name: example
+  #      annotations: {}
+  #    spec:
+  #      accessModes: [ "ReadWriteOnce" ]
+  #      resources:
+  #        requests:
+  #          storage: "1Gi"
+  #      storageClassName: { include "lib.utils.storageClass" (dict "persistence" .Values.persistence "context" $.Values) }
+
+
+  ## Statefulset Extra Values
+  # statefulset.statefulsetExtras -- Extra Fields for Statefulset Manifest
+  statefulsetExtras: {}
+  #
+
+  ## Pod Configuration
+  ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#pod-template
+  ## Supports all the values from the referenced template. Find all available values in the link above.
+
+#
+## - DaemonSet
+## Reference: https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
+##
+daemonset:
+
+  ## DaemonSet enable
+  # daemonset.enabled -- Enable daemonset
+  enabled: false
+
+  ## DaemonSet API version
+  # daemonset.apiVersion -- Configure the api version used for the DaemonSet resource
+  apiVersion: ""
+
+  ## DaemonSet Labels
+  # daemonset.labels -- Merges given labels with common labels
+  labels: {}
+
+  ## DaemonSet Selector Labels
+  # daemonset.selectorLabels -- Define SelectorLabels for the Pod Template
+  selectorLabels: {}
+
+  ## DaemonSet minReadySeconds
+  # daemonset.minReadySeconds -- DaemonSet [Min Ready in Seconds](https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/#performing-a-rolling-update). **DaemonSet only**
+  minReadySeconds: ""
+
+  ## DaemonSet, can be set to RollingUpdate or OnDelete by default.
+  # daemonset.updateStrategy -- DaemonSet [Update Strategy](https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/#performing-a-rolling-update). **DaemonSet only**
+  updateStrategy: RollingUpdate
+
+  ## maxUnavailable update strategy
+  # daemonset.rollingUpdatePartition -- DaemonSet [Update Pratition](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/#pod-management-policies). **DaemonSet only**
+  rollingUpdatemaxUnavailable: ""
+
+  ## Pod Configuration
+  ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#pod-template
+  ## Supports all the values from the referenced template. Find all available values in the link above.
+
+#
+## - Service
+## Reference: https://kubernetes.io/docs/concepts/services-networking/service/
+##
+service:
+
+  ## Service Enable
+  # service.enabled -- Enable Service Resource
+  enabled: true
+
+  ## Service API version
+  # service.apiVersion -- Configure the api version used
+  # @default -- v1
+  apiVersion: ""
+
+  ## Service Labels
+  # service.labels -- Configure Service additional Labels
+  labels: {}
+
+  ## Service Annotations
+  # service.annotations -- Configure Service additional Annotations ([Monitor Labels](https://www.weave.works/docs/cloud/latest/tasks/monitor/configuration-k8s/))
+  annotations: {}
+
+  ## Service Type
+  # service.type -- Configure Service [Type](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types).
+  type: "" 
+
+  ## Service Port Name
+  # service.portName -- Configure Service Port name
+  # @default -- http
+  portName: "icap"
+
+  ## Service Port
+  # service.port -- Configure Service Port (Required)
+  # @default -- 80
+  port: 1344
+
+  ## Service Target Port
+  # service.targetPort -- Configure Service TargetPort
+  # @default -- http
+  targetPort: "icap"
+
+  ## Service Protocol
+  # service.protocol -- Configure Service Port Protocol
+  # @default -- TCP
+  protocol: "TCP"
+
+  ## Service Extra Ports
+  # service.extraPorts -- Add additional ports to the service
+  extraPorts: 
+    - name: "http"
+      port: 8080
+      protocol: TCP
+      targetPort: "http"
+    - name: "https"
+      port: 8443
+      protocol: TCP
+      targetPort: "https"
+  ## Service NodePort ([Reference](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport))
+  # service.nodePort -- Specify the nodePort value for the LoadBalancer and NodePort service types
+  nodePort: 
+
+  ## Service Loadbalancer IP
+  # service.loadBalancerIP -- Configure Service [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer). Set the LoadBalancer service type to internal only.
+  loadBalancerIP: ""
+
+  ## Service Load Balancer SourceRanges
+  # service.loadBalancerSourceRanges -- Configure Service [loadBalancerSourceRanges](https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service)
+  ## Example:
+  ## loadBalancerSourceRanges:
+  ## - 10.10.10.0/24
+  ##
+  loadBalancerSourceRanges: []
+
+  ## Service ClusterIP
+  # service.clusterIP -- Configure Service [clusterIP](https://kubernetes.io/docs/concepts/services-networking/service/#choosing-your-own-ip-address)
+  # @default -- None
+  # clusterIP: None
+
+  ## Service Selector
+  # service.selector -- Configure Service Selector Labels
+  selector: {}
+ 

@@ -1,0 +1,77 @@
+{{/*
+
+Copyright © 2021 Bedag Informatik AG 
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/}}
+
+{{- include "bedag-lib.manifest.bundle" $ | nindent 0 }}
+
+{{/*
+  e2g Chart Bundle
+*/}}
+{{- define "chart.bundle" -}}
+resources:
+  {{- if $.Values.statefulset.enabled }}
+  - type: "statefulset"
+    values: {{- toYaml $.Values.pod | nindent 6 }}
+    overwrites: 
+    {{ toYaml $.Values.statefulset | nindent 6 }}
+    {{- include "overwrite" $ | nindent 6 }}
+  {{- else if $.Values.daemonset.enabled }}
+  - type: "daemonset"
+    values: {{- toYaml $.Values.pod | nindent 6 }}
+    overwrites: 
+    {{ toYaml $.Values.daemonset | nindent 6 }}
+    {{- include "overwrite" $ | nindent 6 }}
+  {{- else }}
+  - type: "deployment"
+    values: {{- toYaml $.Values.pod | nindent 6 }}
+    overwrites: 
+    {{ toYaml $.Values.deployment | nindent 6 }}
+    {{- include "overwrite" $ | nindent 6 }}
+  {{- end }}
+
+  - type: "service"
+    values: {{- toYaml $.Values.service | nindent 6 }}
+  {{- if and $.Values.extraResources (kindIs "slice" $.Values.extraResources) }}
+    {{- toYaml $.Values.extraResources | nindent 2 }}
+  {{- end }}
+  
+  {{- if or ($.Values.e2g.config) ($.Values.e2g.story) ($.Values.e2g.lists) }}
+  - type: "raw"
+    manifest: |
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: e2g-config
+        labels: {{- include "lib.utils.common.labels" $| nindent 10 }}
+      data:
+    {{- if $.Values.e2g.story }}
+      {{- range $i, $e := $.Values.e2g.story }}
+        {{ $i }}.story: |-
+          {{ $e | nindent 10 }}
+      {{- end -}}
+    {{- end -}}
+    {{- if $.Values.e2g.config }}
+        e2guardian.conf: |-
+          {{ $.Values.e2g.config | nindent 10 }}
+    {{- end -}}
+    {{- if $.Values.e2g.lists }}
+      {{- range $i, $e := $.Values.e2g.lists }}
+        {{ $i }}.list: |-
+          {{ $e | nindent 10 }}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

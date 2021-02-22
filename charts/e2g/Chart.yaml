@@ -1,0 +1,35 @@
+apiVersion: v2
+name: e2g
+description: "e2guardian Chart"
+type: application
+version: 1.0.0
+appVersion: 5.3.4 
+home: "https://github.com/e2guardian/e2guardian/"
+keywords:
+  - proxy
+  - forwardproxy 
+  - e2guardian
+  - e2g
+dependencies:
+ - name: manifests
+   version: ">=0.4.0"
+   repository: "https://bedag.github.io/helm-charts/"
+maintainers:
+  - name: NOC
+    email: noc@bedag.ch
+  - name: SRE
+    email: sre@bedag.ch
+sources:
+  - https://github.com/bedag/helm-charts/tree/master/charts/e2g
+  - https://github.com/e2guardian/e2guardian/
+  - https://github.com/bedag/docker-e2g
+annotations:
+  artifacthub.io/containsSecurityUpdates: "false"
+  artifacthub.io/changes: |
+    - [Added]: init
+  artifacthub.io/prerelease: "false"
+  artifacthub.io/images: |
+    - name: e2g-5 
+      image: bedag/e2g:5
+    - name: e2g-4 
+      image: bedag/e2g:4

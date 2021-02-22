@@ -31,8 +31,8 @@ e2g:
   story: []
 
   ## Define e2g config
-  # e2g.config -- Array of e2g config as string
-  config: []
+  # e2g.config -- e2g config as string
+  config:
 
   ## Define e2g lists
   # e2g.lists -- Array of e2g stories as string

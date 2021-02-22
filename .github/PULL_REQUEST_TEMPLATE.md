@@ -11,6 +11,6 @@ Thank you for contributing to bedag/helm-charts.
 
 **Checklist**:
 
-- [ ] Added documentation in `README.md`
+- [ ] Updated documnentation `README.md.gotmpl` and used `helm-docs` 
 - [ ] Chart Version bumped
 - [ ] All commits are signed-off

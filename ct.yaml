@@ -12,5 +12,4 @@ validate-chart-schema: true
 validate-maintainers: true
 validate-yaml: false
 all: true
-excluded-charts:
-  - "manifests"
+excluded-charts: "manifests"

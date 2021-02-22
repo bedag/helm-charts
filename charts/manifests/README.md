@@ -4,6 +4,8 @@
 
 This library's purpose is to have more flexibility as chart author but at the same time have kubernetes manifests managed in a central library. This way you can avoid big surprises when Kubernetes has breaking changes in any of their APIs. Currently we support a base set of resources. Resources may be added as soon as we see or get a request that there's a need for it. This chart is still under development and testing, since it's rather complex. Feel free to use it. Our goal is to get it as reliable as possible.
 
+TEST ME
+
 ## Maintainers
 
 | Name | Email | Url |

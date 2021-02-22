@@ -17,12 +17,14 @@ dependencies:
 maintainers:
   - name: NOC
     email: noc@bedag.ch
+  - name: SRE
+    email: sre@bedag.ch
 sources:
   - https://github.com/bedag/helm-charts/tree/master/charts/e2g
   - https://github.com/e2guardian/e2guardian/
   - https://github.com/bedag/docker-e2g
 annotations:
-  artifacthub.io/containsSecurityUpdates: "true"
+  artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/changes: |
     - [Added]: init
   artifacthub.io/prerelease: "false"

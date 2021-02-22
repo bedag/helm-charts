@@ -27,6 +27,7 @@ resources:
     values: {{- toYaml $.Values.pod | nindent 6 }}
     overwrites: 
     {{ toYaml $.Values.statefulset | nindent 6 }}
+    {{- include "overwrite" $ | nindent 6 }}
   {{- else if $.Values.daemonset.enabled }}
   - type: "daemonset"
     values: {{- toYaml $.Values.pod | nindent 6 }}
@@ -54,7 +55,7 @@ resources:
       kind: ConfigMap
       metadata:
         name: e2g-config
-        labels: {{- include "lib.utils.common.labels" (dict "labels" "" "context" $)| nindent 10 }}
+        labels: {{- include "lib.utils.common.labels" $| nindent 10 }}
       data:
     {{- if $.Values.e2g.story }}
       {{- range $i, $e := $.Values.e2g.story }}

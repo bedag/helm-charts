@@ -18,6 +18,7 @@ maintainers:
   - name: NOC
     email: noc@bedag.ch
 sources:
+  - https://github.com/bedag/helm-charts/tree/master/charts/e2g
   - https://github.com/e2guardian/e2guardian/
   - https://github.com/bedag/docker-e2g
 annotations:

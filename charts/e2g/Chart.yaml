@@ -2,7 +2,7 @@ apiVersion: v2
 name: e2g
 description: "e2guardian Chart"
 type: application
-version: 1.0.0
+version: 1.0.1
 appVersion: 5.3.4 
 home: "https://github.com/e2guardian/e2guardian/"
 keywords:
@@ -26,7 +26,7 @@ sources:
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/changes: |
-    - [Added]: init
+    - "[Added]: README Documentation"
   artifacthub.io/prerelease: "false"
   artifacthub.io/images: |
     - name: e2g-5 

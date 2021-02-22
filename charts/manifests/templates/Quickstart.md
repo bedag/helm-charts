@@ -65,7 +65,7 @@ It's difficult to quickstart with this project unless you already have a deeper 
     Since we have already referenced my values in the bundle for the statefulset to `$.Values.frontend`, we will generate all values for the statefulset under this key:
 
     ```
-    helm manifests -m "statefulset" -P "frontend"
+    helm manifests -m "statefulset" -k "frontend"
     ```
 
     And append the output to the `new-chart/values.yaml`.

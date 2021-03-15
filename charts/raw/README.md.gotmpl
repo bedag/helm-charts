@@ -1,0 +1,65 @@
+# Raw 
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}
+
+{{ template "chart.description" . }}
+
+This chart is a port to Helm v3 of the original [raw chart](https://github.com/helm/charts/tree/master/incubator/raw). The chart works for the most parts the same (keep it as simple as possible). So all credits to the original authors. Don't forget to check the library functions, these can be used as well within your templates.
+It is under active development and may contain bugs/unfinished documentation. Any testing/contributions are welcome! :)
+
+{{ template "chart.homepageLine" . }}
+
+{{/*
+  Chart Maintainers
+*/}}
+{{ template "chart.maintainersSection" . }}
+
+{{/*
+  Chart Sources
+*/}}
+{{ template "chart.sourcesSection" . }}
+
+{{/*
+  Chart Requirements
+*/}}
+{{ template "chart.requirementsSection" . }}
+
+# Examples 
+
+See the following examples to see the full potential:
+
+``` 
+global:
+  imageRegistry: "company-registry/"
+
+# Consider this Image tag Mainly. But considers global imageRegistry, if set by parent chart.
+image:
+  registry: docker.io
+  repository: bitnami/apache
+
+templates: 
+  - | 
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: static-web
+        labels:
+          role: myrole
+      spec:
+        containers:
+          - name: web
+            image: \{\{ include "lib.utils.globals.image" (dict "image" .Values.image "context" $ ) }}
+            ports:
+              - name: web
+                containerPort: 80
+                protocol: TCP
+``` 
+
+A very basic example. But might get you started.
+
+
+{{/*
+  Chart Values
+*/}}
+{{ template "chart.valuesSection" . }}

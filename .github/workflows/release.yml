@@ -2,20 +2,39 @@ name: Helm Chart Release
 on:
   push:
     branches:
-      - master
+      - master 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Fetch history
-        run: git fetch --prune --unshallow
-
-      - name: Helm Chart Publish
-        uses: buttahtoast/helm-release-action@v1.1.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          kubeLinterDisable: true
-          unitTestDisable: true
+          fetch-depth: 0
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1
+
+      - name: Add dependency chart repos
+        run: |
+          helm repo add buttahtoast https://buttahtoast.github.io/helm-charts/
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add elastic https://helm.elastic.co
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo add prometheus https://prometheus-community.github.io/helm-charts
+          helm repo add deprecated-helm-stable https://charts.helm.sh/stable
+          helm repo add hashicorp https://helm.releases.hashicorp.com
+          helm repo add minio https://helm.min.io
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.2.0
+        with:
+          charts_dir: charts
+          config: cr.yaml
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

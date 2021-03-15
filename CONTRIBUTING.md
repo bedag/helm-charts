@@ -46,10 +46,10 @@ All submissions, including submissions by project members, require review. We us
 
 Your Pull Request has to fulfill the following points, to be considered:
 
+  * The title of the PR starts with the chart name (e.g. `[chart_name]: Additional options for SecurityContext`)
   * Workflows must pass.
   * DCO Check must pass.
   * All commits correspond to the requirements (See [Commits](#commits))
-  * The title of the PR starts with the chart name (e.g. `[chart_name] Additional options for SecurityContext`)
   * Changes to a chart require a version bump for that chart following [versioning conventions](#versioning).
   * New/Changed Configurations for the chart are documented in it's `README.md.gotmpl` file.
 
@@ -94,6 +94,8 @@ dependencies:
 ## Documentation
 
 The documentation for each chart is done with [helm-docs](https://github.com/norwoodj/helm-docs). This way we can ensure that values are consistent with the chart documentation.
+
+See [here](https://github.com/norwoodj/helm-docs#installation) how to install the tool. Don't forget to execute `helm-docs` before pushing ;), our workflows will check that.
 
 **NOTE**: When creating your own `README.md.gotmpl`, don't forget to add it to your `.helmignore` file.
 
@@ -185,26 +187,14 @@ artifacthub.io/changes: |
 
 The following Workflows are executed on named events.
 
-## Push
-
-On each Push [Helm-Docs](#documentation) will executed (fails on protected branches).
-
 ## Pull Requests
 
 On creating a Pull Request the following workflows will be executed:
 
-  1. Chart Linting - All Charts are linted using the [ct tool](https://github.com/helm/chart-testing).
-  2. Chart Installation - All Charts are installed to KinD instance using the [ct tool](https://github.com/helm/chart-testing).
-  3. Chart Release Dry-Run - Only charts which had changes to their **Chart.yaml** file are considered for the Release Dry-Run. No Release will be made during Dry-Run. The following checks must pass:
-    * Passed [Kube-Linter](https://github.com/stackrox/kube-linter) Tests (Required).
-    * Passed [Helm Unit-Tests](https://github.com/quintush/helm-unittest) if any are defined (Optional).
+  1. Chart Linting - All changed charts are linted using the [ct tool](https://github.com/helm/chart-testing).
+  2. Helm-Docs - All changed charts are checked if documentation is updated
+  3. Kube-Linter - All changed charts are checked by Kube-Linter with globally defined checks
+  4. Helm Unit-Tests - All changed charts execute Unit-Tests, if any are defined.
+  5. Chart Installation - All changed charts are installed to KinD instance.
 
-  See which options are available on the [Github Release Action](https://github.com/buttahtoast/helm-release-action), which is used for releases.  
-
-## Release (Master Push)
-
-On making a push on master the following workflows will be executed:
-
-  1. Chart Release - Only charts which had changes to their **Chart.yaml** file are considered for the Release.
-
-See which options are available on the [Github Release Action](https://github.com/buttahtoast/helm-release-action), which is used for releases.
+  See which options are available on the [Github Action](https://github.com/buttahtoast/helm-testing-action), which is used for chart testing.  

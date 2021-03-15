@@ -2,8 +2,8 @@ apiVersion: v2
 name: raw
 description: "Render raw kubernetes manifests managed by a helm release"
 type: application
-version: 1.0.0
-appVersion: 1.0.0 
+version: 1.1.0
+appVersion: 1.0.0
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 home: "https://github.com/bedag/helm-charts/tree/master/charts/raw"
 keywords:
@@ -22,5 +22,5 @@ sources:
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/changes: |
-    - "[Added]: Chart Initialization"
+    - "[Changed]: Don't merge templates with base (allows multiple items returned from template)"
   artifacthub.io/prerelease: "false"

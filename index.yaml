@@ -663,4 +663,35 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/manifests-0.1.0/manifests-0.1.0.tgz
     version: 0.1.0
+  raw:
+  - annotations:
+      artifacthub.io/changes: |
+        - "[Added]: Chart Initialization"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: 1.0.0
+    created: "2021-03-15T22:38:22.61579851Z"
+    dependencies:
+    - name: library
+      repository: https://buttahtoast.github.io/helm-charts/
+      version: ~0.3.0
+    description: Render raw kubernetes manifests managed by a helm release
+    digest: 730fb18435abbb1bbc5ed54bc42123bdaeea6227f1b3dc4b838154590626273b
+    home: https://github.com/bedag/helm-charts/tree/master/charts/raw
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - raw
+    - templates
+    - resources
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: raw
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/raw
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/raw-1.0.0/raw-1.0.0.tgz
+    version: 1.0.0
 generated: "2020-12-17T16:10:46.603299046Z"

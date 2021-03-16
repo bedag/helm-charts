@@ -43,7 +43,9 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'  
 
       - name: Run helm-docs validation
-        run: /scripts/docs.sh
+        run: | 
+          ls -lah /scripts
+          /scripts/docs.sh
         env: 
           CHANGED_CHARTS: "${{ steps.list-changed.outputs.changed_charts }}"
         if: steps.list-changed.outputs.changed == 'true'  

@@ -6,11 +6,8 @@ chart-dirs:
 chart-repos:
   - buttahtoast=https://buttahtoast.github.io/helm-charts/
   - bedag=https://bedag.github.io/helm-charts/
-check-version-increment: true
-debug: true
 validate-chart-schema: true
 validate-maintainers: true
 validate-yaml: false
-all: true
 excluded-charts: 
   - "manifests"

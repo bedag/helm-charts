@@ -25,19 +25,24 @@ jobs:
         id: lint
         uses: helm/chart-testing-action@v2.0.1
 
-      - name: Run chart-testing (list-changed)
+      - name: List changed charts
         id: list-changed
         run: |
+          ## If executed with debug this won't work anymore.
           changed=$(ct --config ./ct.yaml list-changed)
-          echo "CHANGED CHARTS: ${changed}"
           if [[ -n "$changed" ]]; then
             echo "::set-output name=changed::true"
+            echo "::set-output name=changed_charts::${$changed}"
           fi
 
       - name: Run chart-testing (lint)
         run: ct lint --config ./ct.yaml
 
-  
+      - name: Run unit-testing
+        run: echo "${CHANGED_CHARTS}"
+        env: 
+          CHANGED_CHARTS: "${{ steps.list-changed.output.changed_charts }}"
+        if: steps.list-changed.outputs.changed == 'true'  
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.1.0

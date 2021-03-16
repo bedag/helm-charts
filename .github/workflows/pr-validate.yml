@@ -3,16 +3,19 @@
 name: 'PR Validation'
 on:
   pull_request:
-    types:
-      - opened
-      - synchronize
+    types: [opened, edited, reopened]
+
 
 jobs:
-  publish:
-    runs-on: ubuntu-18.04
+  pr-lint:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: dylanvann/check-pull-request-title@master
+      - uses: morrisoncole/pr-lint-action@v1.5.0
         with:
-          # Match pull request titles in the form: `[chart]: Changed Something`
-          pattern: '^\[[a-zA-Z\,\_\-]+\]\:.+'
+          title-regex: "^\[[a-zA-Z\,\_\-]+\]\:.+"
+          on-failed-regex-fail-action: false
+          on-failed-regex-request-changes: false
+          on-failed-regex-create-review: true
+          on-failed-regex-comment:
+            "Pull Request validation failed `%regex%`!"
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"

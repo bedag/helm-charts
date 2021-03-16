@@ -32,7 +32,7 @@ jobs:
           changed=$(ct --config ./ct.yaml list-changed)
           if [[ -n "$changed" ]]; then
             echo "::set-output name=changed::true"
-            echo "::set-output name=changed_charts::${$changed}"
+            echo "::set-output name=changed_charts::${changed}"
           fi
 
       - name: Run chart-testing (lint)

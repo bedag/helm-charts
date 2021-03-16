@@ -40,6 +40,7 @@ jobs:
 
       - name: Run helm-docs (docs)
         uses: buttahtoast/helm-release-action@dev
+        run: /scripts/docs.sh
         env: 
           CHANGED_CHARTS: "${{ steps.list-changed.outputs.changed_charts }}"
         if: steps.list-changed.outputs.changed == 'true'  

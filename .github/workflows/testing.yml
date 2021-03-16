@@ -38,6 +38,17 @@ jobs:
       - name: Run chart-testing (lint)
         run: ct lint --config ./ct.yaml 
 
+      - name: Run helm-docs (docs)
+        run: | 
+          for chart in ${CHANGED_CHARTS}; do
+            echo "checking chart $chart"
+            shasum ${chart%/}/README.md
+          done
+
+        env: 
+          CHANGED_CHARTS: "${{ steps.list-changed.outputs.changed_charts }}"
+        if: steps.list-changed.outputs.changed == 'true'  
+
       - name: Run unit-testing
         run: echo "${CHANGED_CHARTS}"
         env: 

@@ -29,7 +29,7 @@ jobs:
         id: list-changed
         run: |
           changed=$(ct --config ./ct.yaml list-changed)
-          echo "${changed}"
+          echo "CHANGED CHARTS: ${changed}"
           if [[ -n "$changed" ]]; then
             echo "::set-output name=changed::true"
           fi

@@ -1,0 +1,18 @@
+## Reference: https://github.com/DylanVann/check-pull-request-title
+---
+name: 'PR Validation'
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  publish:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+      - uses: dylanvann/check-pull-request-title@v1
+        with:
+          # Match pull request titles in the form UI-1234 - Message.
+          pattern: '^UI-\d* - '

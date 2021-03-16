@@ -46,10 +46,10 @@ All submissions, including submissions by project members, require review. We us
 
 Your Pull Request has to fulfill the following points, to be considered:
 
+  * The title of the PR starts with the chart name (e.g. `[chart_name]: Additional options for SecurityContext`)
   * Workflows must pass.
   * DCO Check must pass.
   * All commits correspond to the requirements (See [Commits](#commits))
-  * The title of the PR starts with the chart name (e.g. `[chart_name] Additional options for SecurityContext`)
   * Changes to a chart require a version bump for that chart following [versioning conventions](#versioning).
   * New/Changed Configurations for the chart are documented in it's `README.md.gotmpl` file.
 

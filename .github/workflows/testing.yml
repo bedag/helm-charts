@@ -29,12 +29,15 @@ jobs:
         id: list-changed
         run: |
           changed=$(ct --config ./ct.yaml list-changed)
+          echo "${changed}"
           if [[ -n "$changed" ]]; then
             echo "::set-output name=changed::true"
           fi
 
       - name: Run chart-testing (lint)
         run: ct lint --config ./ct.yaml
+
+  
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.1.0

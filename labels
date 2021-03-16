@@ -1,0 +1,5 @@
+for size in XL XXL XS S M L; do
+	curl -f -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/kubernetes/kubernetes/labels/size/$size" |
+		jq '. | { "name": .name, "color": .color, "description": .description }' |
+		curl -fXPOST -d @- -H "Authorization: Bearer $GITHUB_TOKEN" https://api.github.com/repos/$REPO/labels
+done

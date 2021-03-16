@@ -1,13 +1,16 @@
 ## Reference: https://github.com/DylanVann/check-pull-request-title
 ---
-name: 'PR Validation'
-on:
-  pull_request:
-    types: [opened, edited, reopened]
-
-
+name: 'Pull Request Validation'
+on: pull_request
 jobs:
-  pr-lint:
+  size-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: size-label
+        uses: "pascalgn/size-label-action@v0.4.2"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: morrisoncole/pr-lint-action@v1.5.0
@@ -19,3 +22,6 @@ jobs:
           on-failed-regex-comment:
             "Pull Request validation failed `%regex%`!"
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
+
+
+

@@ -95,6 +95,8 @@ dependencies:
 
 The documentation for each chart is done with [helm-docs](https://github.com/norwoodj/helm-docs). This way we can ensure that values are consistent with the chart documentation.
 
+See [here](https://github.com/norwoodj/helm-docs#installation) how to install the tool. Don't forget to execute `helm-docs` before pushing ;), our workflows will check that.
+
 **NOTE**: When creating your own `README.md.gotmpl`, don't forget to add it to your `.helmignore` file.
 
 ### Major Changes

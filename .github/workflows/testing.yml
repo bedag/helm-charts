@@ -38,12 +38,17 @@ jobs:
       - name: Run chart-testing (lint)
         run: ct lint --config ./ct.yaml 
 
-      - name: Run helm-docs (docs)
+      - name: Setup Chart Validation 
         uses: buttahtoast/helm-release-action@dev
+        if: steps.list-changed.outputs.changed == 'true'  
+
+      - name: Run helm-docs validation
         run: /scripts/docs.sh
         env: 
           CHANGED_CHARTS: "${{ steps.list-changed.outputs.changed_charts }}"
         if: steps.list-changed.outputs.changed == 'true'  
+
+
 
       - name: Run unit-testing
         run: echo "${CHANGED_CHARTS}"

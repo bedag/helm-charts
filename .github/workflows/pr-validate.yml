@@ -1,7 +1,9 @@
 ## Reference: https://github.com/DylanVann/check-pull-request-title
 ---
 name: 'Pull Request Validation'
-on: pull_request
+on: 
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
 jobs:
   size-label:
     runs-on: ubuntu-latest

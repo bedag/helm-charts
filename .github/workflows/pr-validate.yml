@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: morrisoncole/pr-lint-action@v1.5.0
         with:
-          title-regex: "^\[[a-zA-Z\,\_\-]+\]\:.+"
+          title-regex: '^\[[a-zA-Z\,\_\-]+\]\:.+'
           on-failed-regex-fail-action: false
           on-failed-regex-request-changes: false
           on-failed-regex-create-review: true

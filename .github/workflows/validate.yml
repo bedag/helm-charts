@@ -24,12 +24,6 @@ jobs:
           on-failed-regex-comment:
             "Pull Request validation failed. Please checkout out the [contribution guidelines](https://github.com/bedag/helm-charts/blob/master/CONTRIBUTING.md#pull-requests). Regex did not match: `%regex%`!"
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-  enforce:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: derkinderfietsen/pr-description-enforcer@v1
-        with:
-          repo-token: '${{ secrets.GITHUB_TOKEN }}'
 
 
 

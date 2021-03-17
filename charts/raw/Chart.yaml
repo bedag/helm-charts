@@ -22,5 +22,5 @@ sources:
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/changes: |
-    - "[Added]: Chart Initialization"
+    - "[Changed]: Don't merge templates with base (allows multiple items returned from template)"
   artifacthub.io/prerelease: "false"

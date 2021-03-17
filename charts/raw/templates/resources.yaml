@@ -21,7 +21,7 @@ limitations under the License.
 ---{{- toYaml (merge . $base) | nindent 0 }}
   {{- end }}
   {{- range $.Values.templates }}
----{{- toYaml (merge (tpl . $ | fromYaml) $base) | nindent 0 }}
+---{{- (tpl . $)  | nindent 0 }}
   {{- end }}
 {{- end -}}
 

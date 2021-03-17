@@ -2,7 +2,7 @@
 name: 'PR Validation'
 on: 
   pull_request:
-    types: [edited]
+    types: [opened, synchronize, reopened, edited]
 jobs:
   lint:
     runs-on: ubuntu-latest

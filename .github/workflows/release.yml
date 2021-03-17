@@ -40,7 +40,7 @@ jobs:
           base64 -d <<< "$GPG_KEY_BASE64" > "$keyring"
           echo "CR_KEYRING=$keyring" >> "$GITHUB_ENV"
         env:
-          GPG_KEY_BASE64: "${{ secrets.GPG_KEY_64 }}"
+          GPG_KEY_BASE64: "${{ secrets.GPG_KEY_B64 }}"
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.2.0

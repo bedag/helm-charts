@@ -1,17 +1,9 @@
-## Reference: https://github.com/DylanVann/check-pull-request-title
 ---
-name: 'Pull Request Validation'
+name: 'PR Validation'
 on: 
   pull_request:
-    types: [opened, synchronize, reopened, edited]
+    types: [edited]
 jobs:
-  size-label:
-    runs-on: ubuntu-latest
-    steps:
-      - name: size-label
-        uses: "pascalgn/size-label-action@v0.4.2"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -24,7 +16,3 @@ jobs:
           on-failed-regex-comment:
             "Pull Request validation failed. Please checkout out the [contribution guidelines](https://github.com/bedag/helm-charts/blob/master/CONTRIBUTING.md#pull-requests). Regex did not match: `%regex%`!"
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-
-
-
-

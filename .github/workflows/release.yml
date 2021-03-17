@@ -31,17 +31,6 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      ## Original Source: https://github.com/grafana/helm-charts/blob/main/.github/workflows/release.yaml
-      - name: Prepare GPG key
-        run: |
-          gpg_dir=.cr-gpg
-          mkdir "$gpg_dir"
-          keyring="$gpg_dir/secring.gpg"
-          base64 -d <<< "$GPG_KEY_BASE64" > "$keyring"
-          echo "CR_KEYRING=$keyring" >> "$GITHUB_ENV"
-        env:
-          GPG_KEY_BASE64: "${{ secrets.GPG_KEY_64 }}"
-
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.2.0
         with:

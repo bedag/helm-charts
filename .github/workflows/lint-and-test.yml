@@ -1,7 +1,7 @@
 #
 # Reference: https://github.com/helm/chart-testing-action
 #
-name: Helm Chart Linting and Testing
+name: Linting and Testing
 on: pull_request
 jobs: 
   chart-test:

@@ -1,0 +1,16 @@
+## Reference: https://github.com/jrylan/github-action-stuck-pr-notifier
+name: Stuck PRs
+on:
+  schedule:
+    - cron: '5 * * * *'
+jobs:
+  stuck-prs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: jrylan/github-action-stuck-pr-notifier@main
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          #cutoff: '7 days'
+          cutoff: '5m'
+          message: 'Ping @bedag/sre, this PR appears to be stuck.'
+          search-query: 'repo: bedag/helm-charts is:pr state:open updated:<=${createdSinceCutOff} -label:${stuckLabel}'

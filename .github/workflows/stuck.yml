@@ -2,7 +2,7 @@
 name: Stuck PRs
 on:
   schedule:
-    - cron: '5 * * * *'
+    - cron: '*/5 * * * *'
 jobs:
   stuck-prs:
     runs-on: ubuntu-latest

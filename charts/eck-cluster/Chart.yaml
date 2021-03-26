@@ -1,0 +1,34 @@
+name: eck-cluster
+description: ECK Cluster Chart
+type: application
+version: 2.2.0
+apiVersion: v2
+appVersion: 1.3.0
+keywords:
+- Elasticsearch
+- Kibana
+- ECK
+home: https://github.com/elastic/cloud-on-k8s
+maintainers:
+- name: SRE
+  email: sre@bedag.ch
+dependencies:
+  - name: "elasticsearch"
+    condition: elasticsearch.enabled
+    version: ">0.0.0-0"
+  #- name: "kibana"
+  #  condition: kibana.enabled
+  #  version: ">0.0.0-0"
+  #- name: "apm"
+  #  condition: apm.enabled
+  #  version: ">0.0.0-0"
+  - name: manifests
+    version: ">=0.4.0"
+    repository: "https://bedag.github.io/helm-charts/"
+sources:
+  - https://github.com/bedag/helm-charts/tree/master/charts/eck-cluster
+annotations:
+  artifacthub.io/containsSecurityUpdates: "false"
+  artifacthub.io/changes: |
+    - "[Changed]: Don't merge templates with base (allows multiple items returned from template)"
+  artifacthub.io/prerelease: "false"

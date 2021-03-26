@@ -1,18 +1,18 @@
 ---
 name: 'PR Validation'
 on: 
-  pull_request:
-    types: [opened, synchronize, reopened, edited]
+  pull_request_target:
+    types: [opened, reopened, edited]
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: morrisoncole/pr-lint-action@v1.5.0
         with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
           title-regex: '^\[[a-zA-Z\,\_\-]+\]\:.+'
           on-failed-regex-fail-action: true
           on-failed-regex-request-changes: false
           on-failed-regex-create-review: false
           on-failed-regex-comment:
             "Pull Request validation failed. Please checkout out the [contribution guidelines](https://github.com/bedag/helm-charts/blob/master/CONTRIBUTING.md#pull-requests). Regex did not match: `%regex%`!"
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"

@@ -3,7 +3,11 @@ name: raw
 description: "Render raw kubernetes manifests managed by a helm release"
 type: application
 version: 1.1.0
+<<<<<<< HEAD
+appVersion: 1.0.12
+=======
 appVersion: 1.0.0
+>>>>>>> ed0d5a78b033409bbd27c885caea58aa7032b598
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 home: "https://github.com/bedag/helm-charts/tree/master/charts/raw"
 keywords:

@@ -1,0 +1,5 @@
+commonLabels:
+  test: "me"
+
+global:
+  imageRegistry: test-company

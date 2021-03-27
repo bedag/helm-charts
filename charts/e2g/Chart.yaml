@@ -2,7 +2,7 @@ apiVersion: v2
 name: e2g
 description: "e2guardian Chart"
 type: application
-version: 1.0.1
+version: 1.1.0
 appVersion: 5.3.4 
 home: "https://github.com/e2guardian/e2guardian/"
 keywords:

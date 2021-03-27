@@ -1,0 +1,123 @@
+## Global Values
+##
+global:
+
+  ## Global Docker Image Registry
+  # global.imageRegistry -- Global Docker Image Registry declaration. Will overwrite all child .registry fields.
+  imageRegistry: ""
+
+  ## Global Docker Image PullPolicy
+  # global.imagePullPolicy -- Global Docker Image Pull Policy declaration. Will overwrite all child .pullPolicy fields.
+  imagePullPolicy: ""
+
+  ## Global StorageClass
+  # global.storageClass -- Global StorageClass declaration. Can be used to overwrite StorageClass fields.
+  storageClass: ""
+
+  ## Global Image Pull Secrets
+  # global.imagePullSecrets -- Global Docker Image Pull Secrets declaration. Added to local Docker Image Pull Secrets.
+  imagePullSecrets: []
+
+
+  ## Labels Applied for all resources 
+  # global.labels -- Labels which are merged 
+  labels:
+    test: "test"
+
+  ## Elasticsearch/Kibana/APM common settings
+  # 
+  cluster:
+
+    ## General Clustername
+    # global.cluster.name -- Define the cluster name which will be used for all enabled resources
+    name: "logmanagement"
+
+    ## General Clustername
+    # global.cluster.version -- Define the docker image tag verison which will be used for all containers
+    version: "7.12.0"
+
+  ## Common Configuration 
+  common:
+
+    ## Proxy Values
+    ##
+    proxy:
+    
+      ## HTTP Proxy Configuration
+      httpProxy:
+    
+        ## HTTP Proxy Host Configuration
+        # proxy.httpProxy.host -- Configure HTTP Proxy Hostname/IP (without protocol://)
+        host: "test"
+    
+        ## HTTP Proxy Port Configuration
+        # proxy.httpProxy.port -- (int) Configure HTTP Proxy Port
+        port: 8080
+    
+        ## HTTP Proxy Protocol Configuration
+        # proxy.httpProxy.protocol -- Configure HTTP Proxy Protocol (http/https)
+        # @default -- http
+        protocol: ""
+    
+      ## HTTPS Proxy Configuration
+      httpsProxy:
+    
+        ## HTTPS Proxy Host Configuration
+        # proxy.httpsProxy.host -- Configure HTTPS Proxy Hostname/IP (without protocol://)
+        host: ""
+    
+        ## HTTP Proxy Port Configuration
+        # proxy.httpsProxy.port -- (int) Configure HTTPS Proxy Port
+        port:
+    
+        ## HTTP Proxy Protocol Configuration
+        # proxy.httpsProxy.protocol -- Configure HTTPS Proxy Protocol (http/https)
+        # @default -- http
+        protocol: ""
+    
+      ## No Proxy Hosts Configuration
+      # proxy.noProxy -- Configure No Proxy Hosts
+      # noProxy: [ "localhost", "127.0.0.1" ]
+      noProxy: []
+
+#
+## Persistent Volumes [Optional]
+# persistentVolumes -- Define extra Volumes which will be managed by the release
+persistentVolumes: []
+#  - name: "backup"
+#    Define the mountpath within Node [Required]
+#    mountPath: "/usr/share/elasticsearch/logs/"
+#    Define StorageClass for Persistence Volume [Required]
+#    storageClass: nfs-data
+#    Define Ressources for Persistence Volume [Required]
+#    storage: 20Gi
+
+## Extra Resources
+# extraResources -- Enter Extra Resources managed by the ECK-Cluster Release
+extraResources: []
+
+
+## ECK resources 
+# Enable/Disable Subcharts to your needs
+
+## Elasticsearch 
+# Find all the values in the subchart (./charts/elasticsearch/values.yaml)
+elasticsearch:
+  # elasticsearch.enabled -- Enable Elasticsearch Subchart (Deploy ECK compatible Elasticsearch resources)
+  enabled: true 
+
+## ECK Kibana 
+# Find all the values in the subchart (./charts/kibana/values.yaml)
+kibana:
+  # kibana.enabled -- Enable Kibana Subchart (Deploy ECK compatible Kibana resources)
+  enabled: false 
+
+## ECK APM 
+# Find all the values in the subchart (./charts/apm/values.yaml)
+apm:
+  # apm.enabled -- Enable apm Subchart (Deploy ECK compatible apm resources)
+  enabled: false 
+
+
+
+

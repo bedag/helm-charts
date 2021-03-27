@@ -1,5 +1,5 @@
 # Helm
-/charts/*/charts
+/charts/*/charts/*.tgz
 /charts/*/requirements.lock
 /charts/*/Chart.lock
 

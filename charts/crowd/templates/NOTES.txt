@@ -1,0 +1,24 @@
+  Next Steps:
+
+    1. Visit the Crowd Setup page and finish the setup manually:
+
+        {{ include "bedag-lib.utils.notes.public" (dict "ingress" $.Values.ingress "service" $.Values.service "context" $)| indent 8 }}
+
+
+    NOTE: Before you can join additional nodes go through the setup process and complete it. Otherwise you
+      will have a hard time bootstraping the Crowd cluster.
+
+    2. Confirm Crowd Setup is complete:
+
+        {{ include "bedag-lib.utils.notes.public" (dict "path" "/crowd/console/setup/setuplicense.action" "ingress" $.Values.ingress "service" $.Values.service "context" $) | indent 8 }}
+
+
+    3. Configure Crowd to your needs.
+
+  Upgrade:
+
+    To upgrade your Crowd cluster, first visit the upgrade page:
+
+      * https://confluence.atlassian.com/crowd/upgrading-crowd-22544441.html
+
+    Then you can simply change the image tag to the newer version. For more details take a look at the README.md.

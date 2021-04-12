@@ -1,0 +1,21 @@
+apiVersion: v2
+name: crowd
+description: Manage users from multiple directories - Active Directory, LDAP, OpenLDAP or Microsoft Azure AD - and control application authentication permissions in one single location
+type: application
+version: 0.4.0
+appVersion: 4.2.0
+keywords:
+  - atlassian
+  - crowd
+  - data center
+home: https://www.atlassian.com/software/crowd
+icon: https://cdn.worldvectorlogo.com/logos/jira-3.svg
+sources:
+  - https://hub.docker.com/r/atlassian/crowd
+maintainers:
+  - name: SRE
+    email: sre@bedag.ch
+dependencies:
+- name: manifests
+  version: ">= 0.4.0 < 1.0.0"
+  repository: https://bedag.github.io/helm-charts

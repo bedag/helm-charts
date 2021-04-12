@@ -1,0 +1,938 @@
+## Global Values
+##
+global:
+
+  ## Global Docker Image Registry
+  # global.imageRegistry -- Global Docker Image Registry declaration. Will overwrite all child .registry fields.
+  imageRegistry: ""
+
+  ## Global Default Image Tag
+  # global.defaultTag -- Global Docker Image Tag declaration. Will be used as default tag, if no tag is given by child
+  defaultTag: ""
+
+  ## Global Docker Image PullPolicy
+  # global.imagePullPolicy -- Global Docker Image Pull Policy declaration. Will overwrite all child .pullPolicy fields.
+  imagePullPolicy: ""
+
+  ## Global StorageClass
+  # global.storageClass -- Global StorageClass declaration. Can be used to overwrite StorageClass fields.
+  storageClass: ""
+
+  ## Global Image Pull Secrets
+  # global.imagePullSecrets -- Global Docker Image Pull Secrets declaration. Added to local Docker Image Pull Secrets.
+  imagePullSecrets: []
+
+## Crowd Configuration
+crowd:
+
+  ## crowd Instance Timezone
+  # crowd.timezone -- Define the timezone for the crowd instance
+  # @default -- "UTC"
+  timezone: "Europe/Zurich"
+
+  ## Crowd Home Directory
+  # crowd.home -- Atlassian Crowd Home Directory
+  home: "/var/atlassian/application-data/crowd"
+
+  ## crowd Persistence
+  # crowd.persistence -- Disable predefined persistence for crowd
+  persistence: true
+
+  ## ATL_TOMCAT_PORT Configuration
+  # crowd.port -- Port published on Crowd Pod
+  port: 8095
+
+  ## Memory Configuration
+  memory:
+
+    ## Minimum JVM Memory
+    # crowd.memory.min -- Minimum JVM Memory (`JVM_MINIMUM_MEMORY`)
+    min: "384m"
+
+    ## Maximum JVM Memory
+    # crowd.memory.max -- Maxium JVM Memory (`JVM_MAXIMUM_MEMORY`)
+    max: "768m"
+
+  ## JVM Agruments Options
+  # crowd.jvm_args -- Enter JVM Options which are used for the `JVM_SUPPORT_RECOMMENDED_ARGS` environment variables
+  jvm_args: []
+
+  ## Catalina Arguments Options 
+  # crowd.catalina_opts -- Enter Catalina Options which are used for the `CATALINA_OPTS` environment variables
+  catalina_opts: []
+
+  ## Crowd Data Center Configuration
+  cluster:
+
+    ## Run Crowd DataCenter Mode
+    # crowd.cluster.enabled -- Run Atlassian Crowd in Data Center Mode
+    enabled: false
+
+    ## Run Crowd DataCenter Mode
+    # crowd.cluster.nodeName -- If enabled automatically adds Pod Name as Node name for the cluster (`-Dcluster.node.name=crowd-X`)
+    nodeName: true 
+
+
+## Extra Resources
+# extraResources -- Enter Extra Resources managed by the Crowd Release
+extraResources: []
+
+## Common Values
+##
+
+## Overwrite Name Template
+# nameOverride -- Overwrite "lib.internal.common.name" output
+nameOverride: ""
+
+## Overwrite Fullname Template
+# fullnameOverride -- Overwrite `lib.utils.common.fullname` output
+fullnameOverride: ""
+
+## Common Labels
+# commonLabels -- Common Labels are added to each kubernetes resource manifest.
+commonLabels: {}
+
+## Overwrite Labels
+# overwriteLabels -- Overwrites default labels, but not resource specific labels and common labels
+overwriteLabels: {}
+
+## Selector Labels
+# selectorLabels -- Define default [selectorLabels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+selectorLabels: {}
+
+## Version Capabilities
+# kubeCapabilities -- Overwrite the Kube GitVersion
+# @default -- `$.Capabilities.KubeVersion.GitVersion`
+kubeCapabilities: ""
+
+
+## Proxy Values
+##
+proxy:
+
+  ## HTTP Proxy Configuration
+  httpProxy:
+
+    ## HTTP Proxy Host Configuration
+    # proxy.httpProxy.host -- Configure HTTP Proxy Hostname/IP (without protocol://)
+    host: ""
+
+    ## HTTP Proxy Port Configuration
+    # proxy.httpProxy.port -- (int) Configure HTTP Proxy Port
+    port:
+
+    ## HTTP Proxy Protocol Configuration
+    # proxy.httpProxy.protocol -- Configure HTTP Proxy Protocol (http/https)
+    # @default -- http
+    protocol: ""
+
+  ## HTTPS Proxy Configuration
+  httpsProxy:
+
+    ## HTTPS Proxy Host Configuration
+    # proxy.httpsProxy.host -- Configure HTTPS Proxy Hostname/IP (without protocol://)
+    host: ""
+
+    ## HTTP Proxy Port Configuration
+    # proxy.httpsProxy.port -- (int) Configure HTTPS Proxy Port
+    port:
+
+    ## HTTP Proxy Protocol Configuration
+    # proxy.httpsProxy.protocol -- Configure HTTPS Proxy Protocol (http/https)
+    # @default -- http
+    protocol: ""
+
+  ## No Proxy Hosts Configuration
+  # proxy.noProxy -- Configure No Proxy Hosts
+  # noProxy: [ "localhost", "127.0.0.1" ]
+  noProxy: []
+
+
+## - Statefulset
+## Reference: https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
+##
+statefulset:
+
+  ## Statefulset API version
+  # statefulset.apiVersion -- Configure the api version used for the Statefulset resource
+  apiVersion: ""
+
+  ## Statefulset Labels
+  # statefulset.labels -- Merges given labels with common labels
+  labels: {}
+
+  ## Statefulset Service
+  # statefulset.serviceName -- Define a Service for the Statefulset
+  serviceName: ""
+
+  ## Statefulset Selector Labels
+  # statefulset.selectorLabels -- Define SelectorLabels for the Pod Template
+  selectorLabels: {}
+
+  ## Amount of Replicas
+  # statefulset.replicaCount -- Amount of Replicas deployed
+  replicaCount: 1
+
+  ## Statefulset Pod Management Policy
+  # statefulset.podManagementPolicy -- Statefulset [Management Policy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies). **Statefulset only**
+  podManagementPolicy: ""
+
+  ## StrategyType, can be set to RollingUpdate or OnDelete by default.
+  # statefulset.updateStrategy -- Statefulset [Update Strategy](https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/#updating-statefulsets). **Statefulset only**
+  updateStrategy: RollingUpdate
+
+  ## Partition update strategy
+  # statefulset.rollingUpdatePartition -- Statefulset [Update Pratition](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#partitions). **Statefulset only**
+  rollingUpdatePartition: ""
+
+  ## Persistent Volume Template Configuration
+  # statefulset.volumeClaimTemplates -- Statefulset [volumeClaimTemplates](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#components). **Statefulset only**
+  volumeClaimTemplates: []
+  #  - metadata:
+  #      name: example
+  #      annotations: {}
+  #    spec:
+  #      accessModes: [ "ReadWriteOnce" ]
+  #      resources:
+  #        requests:
+  #          storage: "1Gi"
+  #      storageClassName: { include "lib.utils.storageClass" (dict "persistence" .Values.persistence "context" $.Values) }
+
+
+  ## Statefulset Extra Values
+  # statefulset.statefulsetExtras -- Extra Fields for Statefulset Manifest
+  statefulsetExtras: {}
+  #
+
+  ## Pod Configuration
+  ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#pod-template
+  ## Full Configuration
+
+  ## Image Pull Secrets
+  # statefulset.imagePullSecrets -- Define [ImagePullSecrets](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). Will be overwritten if set by global variable.
+  imagePullSecrets: []
+
+  ## Pod Labels
+  # statefulset.podLabels -- Pod [labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) are only added for the pod
+  podLabels: {}
+
+  ## Pod Annotations
+  # statefulset.podAnnotations -- Pod [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) are only added for the pod
+  podAnnotations: {}
+
+  ## Pod ForceRedeploy
+  ## statefulset.forceRedeploy -- Adds timestamp annotation, causing your pods to be redeployed everytime a new release applied.
+  forceRedeploy: false
+
+  ## Extra Pod Fields
+  # statefulset.podFields -- Add extra field to the [Pod Template](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podtemplate-v1-core) if not available as value.
+  podFields: {}
+  #  hostNetwork: true
+
+  ## Additional Kubernetes Volumes
+  # statefulset.volumes -- Additional [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
+  volumes: []
+  #  - name: cache
+  #    emptyDir: {}
+  #  - name: share
+  #    persistentVolumeClaim:
+  #      claimName: 'shared'
+
+  ## RestartPolicy Configuration
+  # statefulset.restartPolicy -- Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
+  restartPolicy:
+
+  ## Affinity Configuration
+  # statefulset.affinity -- Pod [Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)
+  affinity: {}
+
+  ## NodeSelector Configuration
+  # statefulset.nodeSelector -- Pod [NodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
+  nodeSelector: {}
+
+  ## Tolerations Configuration
+  # statefulset.tolerations -- Pod [Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+  tolerations: {}
+
+  ## Priority Configuration
+  # statefulset.priorityClassName -- Pod [priorityClassName](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass)
+  priorityClassName: ""
+
+  ## Pod SecurityContext Configuration
+  # statefulset.podSecurityContext -- Pod [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+  podSecurityContext: {}
+
+  ## Pod Initcontainers
+  # statefulset.initContainers -- Pod [initContainers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
+  initContainers: []
+  #  - name: init-myservice
+  #    image: busybox:1.28
+  #    command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+
+  ## Pod SideCar Containers
+  # statefulset.sidecars -- Allows to add sidecars to your [maincar]](https://kubernetes.io/docs/concepts/workloads/pods/#using-pods)
+  sidecars: []
+
+  #
+  ## - ServiceAccount
+  ## Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  ## API Reference: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#serviceaccount-v1-core
+  ##
+  serviceAccount:
+
+    ## ServiceAccount Creation
+    # statefulset.serviceAccount.enabled -- Specifies whether a service account is enabled or not
+    enabled: false
+
+    ## ServiceAccount Creation
+    # statefulset.serviceAccount.create -- Specifies whether a service account should be created
+    create: false
+
+    ## ServiceAccount API version
+    # statefulset.serviceAccount.apiVersion -- Configure the api version used
+    # @default -- v1
+    apiVersion: ""
+
+    ## ServiceAccount Labels
+    # statefulset.serviceAccount.labels -- Merges given labels with common labels
+    labels: {}
+
+    ## ServiceAccount Annotations
+    # statefulset.serviceAccount.annotations -- Annotations to add to the service account
+    annotations: {}
+
+    ## ServiceAccount Auto Mount Service Token
+    # statefulset.serviceAccount.automountServiceAccountToken -- (bool) AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted.
+    automountServiceAccountToken: true
+
+    ## ServiceAccount Image pull secrets
+    # statefulset.serviceAccount.imagePullSecrets -- ImagePullSecrets is a list of references to secrets in the same namespace to use for pulling any images in pods that reference this ServiceAccount.
+    imagePullSecrets: []
+
+    ## ServiceAccount Global PullSecrets
+    # statefulset.serviceAccount.globalPullSecrets -- Evaluate global set pullsecrets and mount, if set
+    globalPullSecrets: false
+
+    ## ServiceAccount Secrets
+    # statefulset.serviceAccount.secrets -- Secrets is the list of secrets allowed to be used by pods running using this ServiceAccount
+    secrets: []
+
+    ## ServiceAccount Name
+    # statefulset.serviceAccount.name -- If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+
+  ## Container Configuration
+  ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#container-template
+  ## Full Configuration
+
+
+  #
+  ## -- Container
+  ## Reference: https://kubernetes.io/de/docs/concepts/containers/
+  ## Container API Object - https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#container-v1-core
+  #
+
+  ## Custom Container Name
+  # statefulset.containerName -- Configure Container Name
+  # @default -- `.Chart.Name`
+  containerName:
+
+  ## Docker Image definition.
+  image:
+    # statefulset.image.registry -- Configure Docker Registry. Will be overwritten if set by global variable.
+    registry: docker.io
+
+    # statefulset.image.repository -- Configure Docker Repository
+    repository: atlassian/crowd
+
+    # statefulset.image.pullPolicy -- Configure Docker Pull Policy. Will be overwritten if set by global variable.
+    pullPolicy:
+
+    # statefulset.image.tag -- Configure Docker Image tag
+    # @default -- Tag defaults to `.Chart.Appversion`, if not set
+    tag:
+
+  ## Container Resources
+  # statefulset.resources -- Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+  resources:
+    {}
+  #  requests:
+  #    memory: "64Mi"
+  #    cpu: "250m"
+  #  limits:
+  #    memory: "128Mi"
+  #    cpu: "500m"
+
+  ## Container Command
+  # statefulset.command -- Configure executed container command
+  command:
+    {}
+
+  ## Container Command Args
+  # statefulset.args -- Configure arguments for executed command
+  args:
+    {}
+
+  ## Environment Variables
+  # statefulset.environment -- Configure Environment Variables (Refer to values.yaml)
+  environment:
+    []
+  # - name: "MY_ENV"
+  #   value: "someValue"
+  #   secret: true
+  # - name: SOME_SPEC
+  #   valueFrom:
+  #     fieldRef:
+  #       fieldPath: spec.*
+  #
+
+  ## Container Ports
+  # statefulset.ports -- Configure Container Ports
+  ports:
+    []
+  # - name: "health"
+  #   containerPort: 9090
+  #   protocol: TCP
+
+  ## Additional Volume Mounts
+  # statefulset.volumeMounts -- Configure Container [volumeMounts](https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/)
+  volumeMounts:
+    []
+  #  - name: "cache"
+  #    mountPath: /cache
+  #  - name: "share"
+  #    mountPath: /var/data/share
+
+  ## Container SecurityContext
+  # statefulset.securityContext -- Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+  securityContext:
+    {}
+
+  ## ReadinessProbe Configuration
+  # statefulset.readinessProbe -- Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)
+  readinessProbe:
+    failureThreshold: 6
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 10
+
+  ## LivenessProbe Configuration
+  # statefulset.livenessProbe -- Container [LivenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command)
+  livenessProbe:
+    failureThreshold: 6
+    httpGet:
+      path: /
+      port: http
+      scheme: HTTP
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 10
+
+  ## StartupProbe Configuration
+  # statefulset.startupProbe -- Container [StartupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes)
+  startupProbe:
+    {}
+  #  httpGet:
+  #    path: /health
+  #    port: http
+  #  failureThreshold: 30
+  #  periodSeconds: 10
+
+  ## Container Lifecycle Hooks
+  # statefulset.lifecycle -- Container [Lifecycle](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/)
+  lifecycle:
+    {}
+  #  postStart:
+  #    exec:
+  #      command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+
+  ## Container ExtraFields
+  # statefulset.containerFields -- Extra fields used on the container definition
+  containerFields:
+    {}
+  #  stdinOnce: true
+
+
+## - Service
+## Reference: https://kubernetes.io/docs/concepts/services-networking/service/
+##
+service:
+
+  ## Service Enable
+  # service.enabled -- Enable Service Resource
+  enabled: true
+
+  ## Service API version
+  # service.apiVersion -- Configure the api version used
+  # @default -- v1
+  apiVersion: ""
+
+  ## Service Labels
+  # service.labels -- Configure Service additional Labels
+  labels: {}
+
+  ## Service Annotations
+  # service.annotations -- Configure Service additional Annotations ([Monitor Labels](https://www.weave.works/docs/cloud/latest/tasks/monitor/configuration-k8s/))
+  annotations: {}
+
+  ## Service Type
+  # service.type -- Configure Service [Type](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types).
+  type: ClusterIP
+
+  ## Service Port Name
+  # service.portName -- Configure Service Port name
+  # @default -- http
+  portName: "http"
+
+  ## Service Port
+  # service.port -- Configure Service Port (Required)
+  # @default -- 80
+  port: 8095
+
+  ## Service Target Port
+  # service.targetPort -- Configure Service TargetPort
+  # @default -- http
+  targetPort: "http"
+
+  ## Service Extra Ports
+  # service.extraPorts -- Add additional ports to the service
+  extraPorts: []
+
+  ## Service NodePort ([Reference](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport))
+  # service.nodePort -- Specify the nodePort value for the LoadBalancer and NodePort service types
+  nodePort: ""
+
+  ## Service Loadbalancer IP
+  # service.loadBalancerIP -- Configure Service [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer). Set the LoadBalancer service type to internal only.
+  loadBalancerIP: ""
+
+  ## Service Load Balancer SourceRanges
+  # service.loadBalancerSourceRanges -- Configure Service [loadBalancerSourceRanges](https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service)
+  ## Example:
+  ## loadBalancerSourceRanges:
+  ## - 10.10.10.0/24
+  ##
+  loadBalancerSourceRanges: []
+
+  ## Service ClusterIP
+  # service.clusterIP -- Configure Service [clusterIP](https://kubernetes.io/docs/concepts/services-networking/service/#choosing-your-own-ip-address)
+  # @default -- None
+  # clusterIP: None
+
+  ## Service Selector
+  # service.selector -- Configure Service Selector Labels
+  selector: {}
+
+
+
+## - Ingress
+## Reference: https://kubernetes.io/docs/concepts/services-networking/ingress/
+##
+ingress:
+
+  ## Enable Ingress
+  # ingress.enabled -- Enable Ingress Resource
+  enabled: false
+
+  ## Ingress API version
+  # ingress.apiVersion -- Configure the api version used for the ingress resource.
+  apiVersion: ""
+
+  ## Ingress Labels
+  # ingress.labels -- Configure Ingress additional Labels
+  labels: {}
+
+  ## Ingress Annotations
+  # ingress.annotations -- Configure Ingress Annotations
+  annotations: {}
+  #  kubernetes.io/ingress.class: nginx (Deprecated)
+  #  kubernetes.io/tls-acme: "true"
+
+  ## Ingress Default Backend
+  # ingress.backend -- Configure a [default backend](https://kubernetes.io/docs/concepts/services-networking/ingress/#default-backend) for this ingress resource
+  backend: {}
+  # service:
+  #   name: backend
+  #   port:
+  #     number: 80
+
+  ## Ingress Default Class
+  # ingress.ingressClass -- Configure the [default ingress class](https://kubernetes.io/docs/concepts/services-networking/ingress/#default-ingress-class) for this ingress.
+  ingressClass: ""
+
+  ## Ingress HTTP Rules
+  # ingress.hosts -- Configure Ingress [Hosts](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-rules) (Required)
+  hosts: []
+
+  # ingress.hosts[0].host -- Ingress Hostname
+  #  - host: chart-example.local
+  #
+  # ingress.hosts[0].paths -- Ingress Paths
+  #    paths:
+  #
+  ## Path with service backend
+  #
+  # ingress.hosts[0].paths[0].path -- Ingress Path Context
+  #      - path: "/"
+  #
+  # ingress.hosts[0].paths[0].serviceName -- Ingress Path service backend name
+  # @default -- `bedag-lib.utils.common.fullname`
+  #        serviceName: ""
+  #
+  # ingress.hosts[0].paths[0].servicePort -- Ingress Path service backend port
+  # @default -- http
+  #        servicePort: ""
+  #
+  ## Path with resource backend
+  #
+  # ingress.hosts[0].paths[1].path -- Ingress Path Context
+  #      - path: "/storage"
+  #
+  # ingress.hosts[0].paths[1].pathType -- Ingress path [pathType](https://kubernetes.io/docs/concepts/services-networking/ingress/#path-types)
+  # @default -- Prefix
+  #        pathType: "ImplementationSpecific"
+  #
+  # ingress.hosts[0].paths[1].resource -- Ingress path resource backend
+  #        resource:
+  #          apiGroup: k8s.example.com
+  #          kind: StorageBucket
+  #          name: icon-assets
+  #
+  # ingress.hosts[0].paths[2].path -- Direct Ingress Path. Defaults to service backend.
+  #      - "/"
+  #
+
+  ## Ingress TLS Configuration
+  # ingress.tls -- Configure Ingress [TLS](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls)
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+  ## Custom Ingress Rules
+  # ingress.customRules -- Configure Custom Ingress [Rules](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend)
+  customRules: []
+  #  - http:
+  #      paths:
+  #        - path: /icons
+  #          pathType: ImplementationSpecific
+  #          backend:
+  #            resource:
+  #              apiGroup: k8s.example.com
+  #              kind: StorageBucket
+  #              name: icon-assets
+
+## - Pod disruption budget
+## Reference: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+##
+pdb:
+
+  ## Enable Pdb
+  # pdb.enabled -- Enable Pdb Resource
+  enabled: true
+
+  ## Pdb API version
+  # pdb.apiVersion -- Configure the api version used for the Pdb resource
+  apiVersion: ""
+
+  ## Pdb Labels
+  # pdb.labels -- Merges given labels with common labels
+  labels: {}
+
+  ## Pdb Selector Labels
+  # pdb.selectorLabels -- Define SelectorLabels for the pdb
+  selectorLabels: {}
+
+  ## Pdb minAvailable
+  # pdb.minAvailable -- Number or percentage of pods which must be available during a disruption. If neither `minAvailable` or `maxUnavailable` is set, de Policy defaults to `minAvailable: 1`
+  minAvailable:
+
+  ## Pdb maxUnavailable
+  # pdb.maxUnavailable -- Number or percentage of pods which is allowed to be unavailable during a disruption
+  maxUnavailable:
+
+
+#
+## - Horizontal Pod Autoscaler
+## Reference: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
+##
+autoscaling:
+
+  ## Horizontal Pod Autoscaler Enable
+  # autoscaling.enabled --  Enable HPA resource
+  enabled: true
+
+  ## Horizontal Pod Autoscaler API version
+  # autoscaling.apiVersion -- Configure the api version used for the Job resource.
+  apiVersion: ""
+
+  ## Horizontal Pod Autoscaler Labels
+  # autoscaling.labels -- Merges given labels with common labels
+  labels: {}
+
+  ## Horizontal Pod Autoscaler Annotations
+  # autoscaling.annotations -- Configure HPA Annotations
+  annotations: {}
+
+  ## Horizontal Pod Autoscaler Target
+  # autoscaling.scaleTargetRef -- scaleTargetRef points to the target resource to scale, and is used to the pods for which metrics should be collected, as well as to actually change the replica count.
+  scaleTargetRef:
+
+  ## Horizontal Pod Autoscaler minimum Replicas
+  # autoscaling.minReplicas -- minReplicas is the lower limit for the number of replicas to which the autoscaler can scale down. It defaults to 1 pod.
+  # @default -- 1
+  minReplicas:
+
+  ## Horizontal Pod Autoscaler minimum Replicas
+  # autoscaling.maxReplicas -- maxReplicas is the upper limit for the number of replicas to which the autoscaler can scale up. It cannot be less that minReplicas.
+  maxReplicas:
+
+  ## Horizontal Pod Autoscaler Target CPU
+  # autoscaling.targetCPUUtilizationPercentage -- Set the averageUtilization for the CPU resrouce as integer percentage (e.g. 50 = 50%)
+  targetCPUUtilizationPercentage:
+
+  ## Horizontal Pod Autoscaler Target Memory
+  # autoscaling.targetMemoryUtilizationPercentage -- Set the averageUtilization for the Memory resrouce as integer percentage (e.g. 50 = 50%)
+  targetMemoryUtilizationPercentage:
+
+  ## Horizontal Pod Autoscaler Custom Metric Rules
+  # autoscaling.metrics -- Define [Custom Metrics](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics) rules
+  metrics: []
+  #
+  # - type: External
+  #   external:
+  #     metric:
+  #       name: queue_messages_ready
+  #       selector: "queue=worker_tasks"
+  #     target:
+  #       type: AverageValue
+  #       averageValue: 30
+  #
+  #  - type: Object
+  #    object:
+  #      metric:
+  #        name: requests-per-second
+  #      describedObject:
+  #        apiVersion: networking.k8s.io/v1beta1
+  #        kind: Ingress
+  #        name: main-route
+  #      target:
+  #        type: Value
+  #        value: 10k
+
+  ## Horizontal Pod Autoscaler Scale Behavior
+  # autoscaling.behavior -- Define [Scaling Policies](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-configurable-scaling-behavior) for the HPA resource.
+  behavior: {}
+  #
+  #  scaleDown:
+  #    policies:
+  #    - type: Pods
+  #      value: 4
+  #      periodSeconds: 60
+  #    - type: Percent
+  #      value: 10
+  #      periodSeconds: 60
+
+
+#
+## -  Persistent Volume Claim
+## Reference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/
+##
+shared:
+
+  ## Enable PVC
+  # shared.enabled -- Enable PVC Resource
+  enabled: true
+
+  ##  PVC API version
+  # shared.apiVersion -- Configure the api version used for the Pod resource
+  apiVersion: ""
+
+  ##   PVC Labels
+  # shared.labels -- Merges given labels with common labels
+  # @default -- `bedag-lib.commonLabels`
+  labels: {}
+
+  ##  PVC Annotations
+  # shared.annotations -- Configure PVC additional Annotations ([Monitor Labels](https://www.weave.works/docs/cloud/latest/tasks/monitor/configuration-k8s/))
+  annotations: {}
+
+  ##  PVC Access Modes
+  # shared.accessModes -- Configure PVC [Access Modes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes)
+  accessModes: [ "ReadWriteMany" ]
+
+  ##  PVC Storage Class
+  # shared.storageClass -- Configure PVC [Storage Class](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1)
+  storageClass: ""
+
+  ## PersistentVolumeClaim resources
+  ## Reference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#resources
+  # shared.size -- Define requested storage size
+  size: 10Gi
+
+  ##  PVC Selector
+  # shared.selector -- Configure PVC [Selector](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector)
+  selector: {}
+
+  ##  PVC Data Sources
+  # shared.dataSource -- Data Sources are currently only supported for [CSI Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#volume-snapshot-and-restore-volume-from-snapshot-support)
+  dataSource:
+  #  name: existing-src-pvc-name
+  #  kind: PersistentVolumeClaim
+
+#
+## Home Persistence Configuration
+## Reference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#introduction
+##
+home:
+
+  ## PersistentVolumeClaim Enable
+  # home.enabled -- Enable persistent Crowd Home
+  enabled: true
+
+  ## PersistentVolumeClaim Access Mode
+  ## Reference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+  # home.accessModes -- Define Access modes for Crowd Home
+  accessModes: [ "ReadWriteOnce" ]
+
+  ## PersistentVolumeClaim resources
+  ## Reference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#resources
+  # home.size -- Define requested storage size for Crowd Home
+  size: 10Gi
+
+  ## PersistentVolumeClaim storageClass
+  ## Reference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class
+  # home.storageClass -- Define storageclass for Crowd Home Persistence
+  storageClass: ""
+
+  ## PersistentVolumeClaim Annotations
+  # home.annotations -- Define storageclass for Crowd Home Persistent Volume Claim
+  annotations: {}
+
+#
+## Cache Persistence Configuration
+## Reference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#introduction
+##
+cache:
+
+  ## PersistentVolumeClaim Enable
+  # cache.enabled -- Enable persistent Crowd Home Cache
+  enabled: false
+
+  ## PersistentVolumeClaim Access Mode
+  ## Reference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+  # cache.accessModes -- Define Access modes for Crowd Cache persistence
+  accessModes: [ "ReadWriteOnce" ]
+
+  ## PersistentVolumeClaim resources
+  ## Reference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#resources
+  # cache.size -- Define requested storage size for Crowd Cache
+  size: 2Gi
+
+  ## PersistentVolumeClaim storageClass
+  ## Reference: https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class
+  # cache.storageClass -- Define storageclass for Crowd Cache Persistence
+  storageClass: ""
+
+  ## PersistentVolumeClaim Annotations
+  # cache.annotations -- Define storageclass for Crowd Cache Persistent Volume Claim
+  annotations: {}
+
+
+
+
+
+#
+## VolumePermissions Configuration
+volumePermissions:
+
+  ## Volume Permission Enable
+  # volumePermissions.enabled -- Enables Volume Permissions
+  enabled: false
+
+  ## Volume Permission Name
+  # volumePermissions.name -- Volume Permission Container Name
+  # @default -- `permission`
+  name: ""
+
+  ## User Configuration (CHMOD User)
+  # volumePermissions.runAsUser -- (int) Configure the directory User Owner.
+  #@ @default -- `0`
+  runAsUser: 2004
+
+  ## Group Configuration (CHMOD Group)
+  # volumePermissions.runAsGroup -- (int) Configure the directory Group Owner.
+  #@ @default -- `0`
+  runAsGroup: 2004
+
+  ## Directory Mode (Optional)
+  # volumePermissions.mode -- (int) Configure permission mode (eg. 755). If not set no permission mode will be applied.
+  mode:
+
+  ## Destination Directories
+  # volumePermissions.directories -- Configure destination directories. The Change Owner/Mode operation will be applied to these directories. Can be String or Slice.
+  directories: [ "/crowd" ]
+
+  ## Container Configuration
+  ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests#container-template
+  ## Supports all the values from the referenced template. Find all available values in the link above.
+
+
+#
+## JMX Exporter Configuration
+jmxExporter:
+
+  ## Enable JMX Exporter
+  # jmxExporter.enabled -- Enables [JMX Exporter](https://github.com/bitnami/bitnami-docker-jmx-exporter) as Sidecar
+  enabled: false
+
+  ## Component Name
+  # jmxExporter.name -- Name for all component parts (ports, resources). Useful when you are using the component multiple times
+  name: "jmx"
+
+  ## Component Specific Labels
+  # jmxExporter.labels -- Component Specific Labels.
+  labels:
+    app.kubernetes.io/component: metrics
+
+  ## JMX Exporter TargetPort
+  # jmxExporter.targetPort -- Define which Port to scrape. Points to the Port where the jmx metrics are exposed on the Maincar.
+  targetPort: 5555
+
+  ## JMX Exporter Port
+  # jmxExporter.port -- Exposed JMX Exporter Port (Service and Sidecar)
+  port: 5556
+
+  ## Prometheus Endpoint Configuration
+  # jmxExporter.endpoint -- Additional Configuration for the ServiceMonitor Endpoint (Overwrites .serviceMonitor.endpoints)
+  endpoint:
+    path: "/"
+    interval: 10s
+    scrapeTimeout: 10s
+
+  ## JMX Exporter Configuration
+  # jmxExporter.config -- Configure JMX Exporter configuration. The `jmxUrl` configuration will be set automatically, if not overwritten. [See all Configurations](https://github.com/prometheus/jmx_exporter#configuration)
+  # @default -- See values.yaml
+  config:
+    lowercaseOutputName: true
+    lowercaseOutputLabelNames: true
+    ssl: false
+
+  ## Container Configuration
+  ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#container-template
+  ## Supports all the values from the referenced template. Find all available values in the link above.
+
+  ## Service Configuration
+  ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#service
+  ## Supports all the values from the referenced template. Find all available values in the link above.
+
+  ## ServiceMonitor Configuration
+  ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#servicemonitor
+  ## Supports all the values from the referenced template. Find all available values in the link above.

@@ -1,3 +1,0 @@
-{{- with $.Values.extraResources -}}
----{{- toYaml $.Values.extraResources | nindent 0 }}
-{{- end }}

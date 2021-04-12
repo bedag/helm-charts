@@ -1,0 +1,165 @@
+# Crowd
+
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}
+
+{{ template "chart.description" . }}
+
+{{ template "chart.homepageLine" . }}
+
+{{/*
+  Chart Maintainers
+*/}}
+{{ template "chart.maintainersSection" . }}
+
+{{/*
+  Chart Requirements
+*/}}
+{{ template "chart.requirementsSection" . }}
+
+{{/*
+  Chart Sources
+*/}}
+{{ template "chart.sourcesSection" . }}
+
+# Major Changes
+
+Major Changes to functions are documented with the version affected. **Before upgrading the dependency version, check this section out!**
+
+| **Change** | **Chart Version** | **Description** | **Commits/PRs** |
+| :----------- | :---------------- | :--------------------- | :-------------- |
+|||||
+
+
+{{/*
+  Chart Values
+*/}}
+{{ template "chart.valuesSection" . }}
+
+This Chart implements the Bedag Manifest Chart. Therefor there are a lot of values for you to play around.
+
+## Configuration
+
+Generally Configuration for Crowd is done via Environment variables. See all the possible configurations on the [Crowd Docker Image](https://hub.docker.com/r/atlassian/crowd). Our intent with this chart is to keep configurations and resource layout as flexible as possible. This way have the possibility the deploy Crowd to your needs.
+
+
+### Server Mode (Standalone)
+
+When running Crowd in Server Mode, you can have a single instance of Crowd running simultaneously.
+
+To Run Crowd in Server Mode, simply toggle the `crowd.cluster.enabled` option to `false`:
+
+```
+crowd:
+  cluster:
+    enabled: false
+```
+
+### Data Center Mode (Clustered)
+
+When running Crowd in Data Center Mode, you have the ability to have multiple Crowd instances running at once, providing a HA setup. For more information read about [Crowd Data Center](https://www.atlassian.com/enterprise/data-center/crowd)
+
+To run Crowd in Data Center Mode, simply toggle the `crowd.cluster.enabled` option to `true`:
+
+```
+crowd:
+  cluster:
+    enabled: true
+```
+
+By enabling clustered mode, you enable the following resources, which aren't available in standalone mode:
+
+  * [Horizontal Pod Autoscaler](https://kubernetes.io/de/docs/tasks/run-application/horizontal-pod-autoscale/)
+  * [Shared PVC](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
+
+These are only useful when running Data Center Mode.
+
+### Persistence (Server/Data Center)
+
+Read the following before configuring persistence for your Crowd instance.
+
+Currently there are three default mounts supported by this chart:
+
+  * `$.Values.home` - Mounts a volume to the entire Crowd home directory (`$.Values.crowd.home`)
+  * `$.Values.shared` - Mounts a volume to the `shared` directory in the Crowd home (Data Center only)
+
+If that doesn't fit your setup, you can add your volumes/volumemounts through given values and disable the named volumes.
+
+#### Disable Persistence
+
+Disable all the predefined persistence from the chart (Will disable all the above mentioned mounts):
+
+```
+crowd:
+  persistence: false
+```
+
+Disable persistence for the Home directory
+
+```
+home:
+  enabled: false
+```
+
+Disable persistence for the Shared directory (Data Center Only)
+
+```
+shared:
+  enabled: false
+```
+
+### Tomcat Proxy
+
+If your Crowd instance is deployed behind a reverse proxy/ingress, then you will need to specify the following environment variables
+
+```
+- name: ATL_PROXY_NAME
+  value: "{ (index .Values.ingress.hosts 0).host }"
+- name: ATL_PROXY_PORT
+  value: "443"
+- name: ATL_TOMCAT_SCHEME
+  value: "https"
+- name: ATL_TOMCAT_SECURE
+  value: "true"
+```
+
+More information about the image can be found on the [Crowd documentation](https://hub.docker.com/r/atlassian/crowd).
+
+### VolumePermissions
+
+VolumePermissions is a slim initContainer, which sets the correct permissions on all the mounts. This is effectively required only the first time the application is deployed. We recommend disabling it when having large data directories in your jira home, since the startup could extend to several minutes. Disable volumePermissions like:
+
+```
+volumePermissions:
+  enabled: false
+```
+
+## Known Issues/Solutions
+
+Here we have documented some issues and solutions while running Crowd on Kubernetes.
+
+### Data Center Setup 
+
+Here's how we got Crowd in Data Center working.
+
+  1. Spin up the first deployment with a single Pod.
+  2. Go through the setup via. Web interface (Setup license etc.)
+    * When altering the Database configuration crowd will reload itself. **Don't** touch anything while it's doing that. Watch the logs and reaccess is via Web Interface only after it says it's ready. We had very weird behaviors when not doing so.
+  3. When the instance is functional, scale up the amount of pods and confirm they are joining the cluster.
+
+If you encounter any other issues or have tips, let us know.
+
+### Database Changelog Lock
+
+This can happen when the livenessprobe kills crowd to early. You will find the following message in your pod (and it will be crashing):
+
+``` 
+[liquibase] Waiting for changelog lock....
+```
+
+You will need to do some fixing in the database. [See the following article for more](https://confluence.atlassian.com/crowdkb/crowd-server-does-not-start-could-not-acquire-change-log-lock-1019399699.html). To prevent this, increase the `initialDelaySeconds` value for the livenessProbe.
+
+
+
+

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.config_data.files.name }}
+data:
+  {{- range .Values.config_data.files.items }}
+    {{- .name | nindent 2 }}: | {{- include "isString" .content | nindent 4 }}
+  {{- end }}

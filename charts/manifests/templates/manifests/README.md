@@ -467,7 +467,7 @@ The following arguments are supported for this template. If a required argument 
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
   * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
   * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.context`
+  * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_networkPolicy.yaml)
 
@@ -627,7 +627,7 @@ The following arguments are supported for this template. If a required argument 
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
   * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
   * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.context`
+  * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_service.yaml)
 

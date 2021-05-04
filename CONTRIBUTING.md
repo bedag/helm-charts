@@ -97,6 +97,12 @@ The documentation for each chart is done with [helm-docs](https://github.com/nor
 
 See [here](https://github.com/norwoodj/helm-docs#installation) how to install the tool. Don't forget to execute `helm-docs` before pushing ;), our workflows will check that.
 
+We have a script on the repository which will execute the helm-docs docker container, so that you don't have to worry about downloading the binary etc. Simply execute the script (Bash compatible, might require sudo privileges):
+
+``` 
+bash scripts/helm-docs.sh 
+``` 
+
 **NOTE**: When creating your own `README.md.gotmpl`, don't forget to add it to your `.helmignore` file.
 
 ### Major Changes

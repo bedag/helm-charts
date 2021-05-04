@@ -1,0 +1,16 @@
+{{- if .Values.config.asSecret }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.config.name }}
+type: Opaque
+data:
+  nexus.yml: | {{- include "isString" .Values.config.content | b64enc | nindent 4 }}
+{{- else }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.config.name }}
+data:
+  nexus.yml: | {{- include "isString" .Values.config.content | nindent 4 }}
+{{- end }}  

@@ -1,0 +1,107 @@
+##
+## Global Configuration
+global:
+  imageRegistry: "company-registry.example.com"
+
+## Proxy Configuration
+proxy:
+  httpProxy:
+    host: "proxy.example.com"
+    port: 8080
+  httpsProxy:
+    host: "proxy.example.com"
+    port: 80
+  noProxy:
+    - "localhost"
+    - "127.0.0.1"
+    - "*.example.com"
+    - "{{ (index .Values.ingress.hosts 0).host }}"
+
+## Ingress Configuration
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/affinity:  cookie
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "10800" #3h
+  hosts:
+    - host: kafdrop.cluster.ingress
+      paths: [ "/" ]
+  tls:
+    - hosts:
+        - kafdrop.cluster.ingress
+
+timezone: "UTC"
+
+
+config:
+
+  ## Kafka SubElement
+  ##
+  kafka:
+
+    ## Define Connection Endpoints to Kafka
+    ## brokers. Can be of type array/slice or
+    ## a comma separated string
+    ##
+    connections:
+      - kafka.svc.cluster.local
+
+    ## Kafka Properties Configuration
+    ##
+    properties:
+      ## Optional Content for Kafka Properties
+      content: |
+        {{ toString "sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username='suchUser' password='veryS3CRET';\nsecurity.protocol=SASL_PLAINTEXT\nsasl.mechanism=PLAIN" | b64enc }}
+      destination: "kafka.properties"
+
+  ## JVM Options
+  ## Can be declared as slice or single string
+  ##
+  jvm:
+    - "-Xms128M"
+    - "-Xmx256M"
+
+deployment:
+  ## Amount of Replicas
+  # deployment.replicaCount -- Amount of Replicas deployed
+  replicaCount: 2
+
+  ## Container Resources
+  # deployment.resources -- Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+  resources:
+    {}
+  #  requests:
+  #    memory: "64Mi"
+  #    cpu: "250m"
+  #  limits:
+  #    memory: "128Mi"
+  #    cpu: "500m"
+
+
+jmxExporter:
+
+  ## Enable JMX Exporter
+  # jmxExporter.enabled -- Enables [JMX Exporter](https://github.com/bitnami/bitnami-docker-jmx-exporter) as Sidecar
+  enabled: false
+
+  ## Component Name
+  # jmxExporter.name -- Name for all component parts (ports, resources). Useful when you are using the component multiple times
+  name: "jmx"
+
+  ## JMX Exporter Configuration
+  # jmxExporter.config -- Configure JMX Exporter configuration. The `jmxUrl` configuration will be set automatically, if not overwritten. [See all Configurations](https://github.com/prometheus/jmx_exporter#configuration)
+  # @default -- See values.yaml
+  config:
+    lowercaseOutputName: true
+    lowercaseOutputLabelNames: true
+    ssl: false
+
+  # jmxExporter.resources -- Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+  resources:
+    {}
+  #  requests:
+  #    memory: "64Mi"
+  #    cpu: "250m"
+  #  limits:
+  #    memory: "128Mi"
+  #    cpu: "500m"

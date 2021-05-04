@@ -36,5 +36,3 @@ annotations:
   artifacthub.io/images: |
     - name: nexus-casc
       image: bedag/nexus-casc:3.30.1
-
-

@@ -1,4 +1,4 @@
-
+---
 # useOteemoChart -- Uses unofficial popular nexus3 helm chart
 useOteemoChart: false
 
@@ -118,4 +118,3 @@ sonatype-nexus:
   deployment: *deployment
   nexus:
     <<: *envFrom
-

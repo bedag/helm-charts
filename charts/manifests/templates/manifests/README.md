@@ -105,7 +105,7 @@ All manifests below are supported as **type**. Refer to the examples below to se
 
 To declare a resource you can use these keys:
 
-  * `.type` - Enter the name of the manifest you want to render. If not set this item will be skipped (Required). The manifest must be [supported by the library](#kubernetes-manifest-templates) otherwise it will be skipped.
+  * `.type` - Enter the name of the manifest you want to render. If not set this item will be skipped (Required). The manifest must be [supported by the library](#manifest-templates) otherwise it will be skipped.
   * `name` - Define a custom name for the resource. If this field is set and the above name, the name on item basis takes precedence. This name won't do a full overwrite (Optional).
   * `fullname` - Define a custom name with will full overwrite the resource name. Meaning the given name, will be the exact name of the resource (Optional).
   * `.values` - Render the corresponding values for the manifest. Values will be merged over the manifests default values (Optional).
@@ -467,7 +467,7 @@ The following arguments are supported for this template. If a required argument 
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
   * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
   * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.context`
+  * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_networkPolicy.yaml)
 
@@ -627,7 +627,7 @@ The following arguments are supported for this template. If a required argument 
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
   * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
   * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.context`
+  * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_service.yaml)
 

@@ -10,6 +10,9 @@ Description and Definition of all available Go Sprig Templates. Base functionali
   * [Fullname](#fullname)
   * [serviceAccountName](#serviceaccountname)
   * [mergedValues](#mergedvalues)
+* **[Configs](#configs)**
+  * [content](#content)
+  * [files](#files)   
 * **[Helpers](#helpers)**
   * [javaProxies](#javaproxies)
 * **[Environment](#environment)**
@@ -89,6 +92,210 @@ String, YAML Structure
 
 ```
 {{- $values := include "bedag-lib.utils.common.mergedValues" (dict "type" "serviceAccount" "root" .) }}
+```
+
+## [Configs](./_configs_.tpl)
+
+### Content
+---
+
+Renders Config content based on your needs
+
+#### Arguments
+
+If an as required marked argument is missing, the template engine will intentionally.
+
+  * `.config` - Config Structure [e.g. .config_files.application_properties ](Required)
+  * `.format` - Define the format when including the template. The format per config (`.config.format`) value takes precedence, if present.
+  * `.context` - Inherited Root Context (Required).
+
+
+#### Structure/Example
+
+This template supports the following key structure:
+
+
+**values.yaml**
+```
+config_files:
+
+  # Config Structure: Here we define a config file we want to render with a custom format
+  application_properties:
+
+    ## Format allows you to define your own pattern on how to format the key value pairs. 
+    ## You can use $.loop.key as placeholder for your key values and $.loop.value for the value placeholder.
+    ## This only works, when the content is kind map, otherwise it will be dumped to yaml without applying the format (Optional)
+    #
+    ## In the following example we want to use = ase key value indicator, therefor we use the following format:
+    format*: "{{ $.loop.key }}={{ tpl $.loop.value $ | quote }}"
+
+    ## For the format to apply, the content needs to be a map, otherwise it's just templated to yaml (Required)
+    content: 
+      spring.datasource.jdbcUrl: "jdbc:postgresql://postgresql:5342/postgres"
+      spring.datasource.driver-class-name: "org.postgresql.Driver"
+      spring.datasource.username: "${DB_USER}"
+      spring.datasource.password: "${DB_PASSWORD}"
+      api.auth.openid.authorizationUrlForSwagger: "{{ $.Values.config.properties.oauth.url }}"
+      
+  # Renders the given content just as yaml and allows templating
+  application_environment:
+    content: | 
+      some.environment = {
+        debug: false,
+        apiUrl: "{{ $.Values.config.properties.oauth.url }}",
+  
+        openIdConnect: {
+          redirectUri: window.location.origin + '/index.html',
+          requireHttps: false
+        }
+      }
+
+## Custom Config Structure we access from the configurations
+config:
+  properties:
+    oauth:
+      url: "https://oauth.company.com"
+```
+
+**configmap.yaml**
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-configuration
+data:
+  application.properties: | {{- include "bedag-lib.utils.configs.content" (dict "context" $ "config" $.Values.config_files.application_properties ) | nindent 4 }}
+
+  environment: | {{- include "bedag-lib.utils.configs.content" (dict "context" $ "config" $.Values.config_files.application_environment ) | nindent 4 }}
+``` 
+
+Results in this:
+
+``` 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-configuration
+data:
+  application.properties: |
+    
+    api.auth.openid.authorizationUrlForSwagger="https://oauth.company.com"
+    spring.datasource.driver-class-name="org.postgresql.Driver"
+    spring.datasource.jdbcUrl="jdbc:postgresql://postgresql:5342/postgres"
+    spring.datasource.password="${DB_PASSWORD}"
+    spring.datasource.username="${DB_USER}" 
+  
+  environment: |
+    
+    some.environment = {
+      debug: false,
+      apiUrl: "https://oauth.company.com",
+    
+      openIdConnect: {
+        redirectUri: window.location.origin + '/index.html',
+        requireHttps: false
+      }
+    }
+```
+
+#### Returns
+
+String, YAML Structure
+
+#### Usage
+
+```
+{{- include "bedag-lib.utils.configs.content" (dict "context" $ "config" $.Values.config_files.application_environment "format" "{{ $.loop.key }}={{ tpl $.loop.value $ | quote }}") | nindent 0 }}
+```
+
+### Files
+---
+
+Wrapper for the [Content Template](#template) but allows to specify a file name. Click the link to get more information on content rendering.
+
+#### Arguments
+
+If an as required marked argument is missing, the template engine will intentionally.
+
+  * `.config` - Config Structure [e.g. .config_files.application_properties ](Required)
+  * `.name` - Define the name for the file when including the template. The format per config (`.config.name`) value takes precedence, if present. Defaults to `config.yml` (Optional)
+  * `.format` - Define the format when including the template. The format per config (`.config.format`) value takes precedence, if present.
+  * `.context` - Inherited Root Context (Required).
+
+
+#### Structure/Example
+
+This template supports the following key structure:
+
+
+**values.yaml**
+```
+config_files:
+
+  # Config Structure: Here we define a config file we want to render with a custom format
+  application_properties:
+
+    ## Define the file name
+    name: "application.properties"
+
+    ## Format allows you to define your own pattern on how to format the key value pairs. 
+    ## You can use $.loop.key as placeholder for your key values and $.loop.value for the value placeholder.
+    ## This only works, when the content is kind map, otherwise it will be dumped to yaml without applying the format (Optional)
+    #
+    ## In the following example we want to use = ase key value indicator, therefor we use the following format:
+    format*: "{{ $.loop.key }}={{ tpl $.loop.value $ | quote }}"
+
+    ## For the format to apply, the content needs to be a map, otherwise it's just templated to yaml (Required)
+    content: 
+      spring.datasource.jdbcUrl: "jdbc:postgresql://postgresql:5342/postgres"
+      spring.datasource.driver-class-name: "org.postgresql.Driver"
+      spring.datasource.username: "${DB_USER}"
+      spring.datasource.password: "${DB_PASSWORD}"
+      api.auth.openid.authorizationUrlForSwagger: "{{ $.Values.config.properties.oauth.url }}"
+
+## Custom Config Structure we access from the configurations
+config:
+  properties:
+    oauth:
+      url: "https://oauth.company.com"
+``` 
+
+**configmap.yaml**
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-configuration
+data:
+  {{- include "bedag-lib.utils.configs.file" (dict "context" $ "config" $.Values.config_files.application_properties ) | nindent 2 }}
+``` 
+
+Results in this:
+
+``` 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-configuration
+data:
+  
+  application.properties: |-
+    
+    api.auth.openid.authorizationUrlForSwagger="https://oauth.company.com"
+    spring.datasource.driver-class-name="org.postgresql.Driver"
+    spring.datasource.jdbcUrl="jdbc:postgresql://postgresql:5342/postgres"
+    spring.datasource.password="${DB_PASSWORD}"
+    spring.datasource.username="${DB_USER}"
+```
+
+#### Returns
+
+String, YAML Structure
+
+#### Usage
+
+```
+{{- include "bedag-lib.utils.configs.file" (dict "context" $ "config" $.Values.config_files.application_environment "format" "{{ $.loop.key }}={{ tpl $.loop.value $ | quote }}" "name" "application.properties") | nindent 0 }}
 ```
 
 ## [Helpers](./_helpers.tpl)

@@ -49,3 +49,19 @@ limitations under the License.
     {{- fail "Template requires '.context' as arguments" }}
   {{- end }}
 {{- end -}}
+
+{{/*
+  Sprig Template - selectorLabels Template Wrapper. Uses the Bundlename as service selector if no other selector is defined.
+*/}}
+{{- define "bedag-lib.utils.common.selectorLabels" -}}
+  {{- if and $.Values.selectorLabels (kindIs "map" $.Values.selectorLabels) }}
+    {{- include "lib.utils.strings.template" (dict "value" $.Values.selectorLabels "context" $) | indent 0 }}
+  {{- else }}
+    {{- $c := . -}}
+    {{- if .bundlename }}
+app.kubernetes.io/component:  {{ .bundlename }}
+    {{- else}}
+      {{- include "lib.utils.common.selectorLabels" $c }}
+    {{- end }}
+  {{- end }}
+{{- end -}}

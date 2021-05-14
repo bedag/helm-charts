@@ -19,10 +19,10 @@ limitations under the License.
   Sprig Template - Fullname Template Wrapper. Considers the Bundlename as prefix, if defined.
 */}}
 {{- define "bedag-lib.utils.common.fullname" -}}
-   {{- $c := . -}}
-   {{- $_ := set $c "context" (default . .context) }}
-   {{- $_ := set $c "prefix" (default $c.context.bundlename .bundlename) }}
-   {{- include "lib.utils.common.fullname" $c }}
+  {{- $c := . -}}
+  {{- $_ := set $c "context" (default . .context) }}
+  {{- $_ := set $c "prefix" (default $c.context.bundlename .bundlename) }}
+  {{- include "lib.utils.common.fullname" $c }}
 {{- end }}
 
 {{/*
@@ -57,7 +57,7 @@ limitations under the License.
   {{- if and $.Values.selectorLabels (kindIs "map" $.Values.selectorLabels) }}
     {{- include "lib.utils.strings.template" (dict "value" $.Values.selectorLabels "context" $) | indent 0 }}
   {{- else }}
-    {{- $c := . -}}
+  {{- $c := . -}}
     {{- if .bundlename }}
 app.kubernetes.io/component:  {{ .bundlename }}
     {{- else}}

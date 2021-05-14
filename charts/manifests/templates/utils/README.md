@@ -9,6 +9,7 @@ Description and Definition of all available Go Sprig Templates. Base functionali
 * **[Common](#common)**
   * [Fullname](#fullname)
   * [serviceAccountName](#serviceaccountname)
+  * [selectorLabels](#selectorlabels)
   * [mergedValues](#mergedvalues)
 * **[Configs](#configs)**
   * [content](#content)
@@ -32,7 +33,7 @@ Fullname Wrapper Template. Considers bundle name as prefix.
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.`/`.context` - Inherited Root Context (Required).
   * `.bundlename` - Overwrites the prefix with the bundlename (Optional)
@@ -56,7 +57,7 @@ This function evaluates the ServiceAccount name. Matches the layout of the Servi
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.sa` - ServiceAccount Value Structure.
   * `.context` - Inherited Root Context (Required).
@@ -71,6 +72,30 @@ String
 {{- include "bedag-lib.utils.common.serviceAccountName" $ }}
 ```
 
+### SelectorLabels
+---
+
+SelectorLabel Wrapper Template. Uses the Bundlename as service selector if no other selector is defined.
+
+#### Arguments
+
+If a required argument is missing, the template engine will intentionally fail.
+
+  * `.`/`.context` - Inherited Root Context (Required).
+  * `.bundlename` - Overwrites the prefix with the bundlename (Optional)
+
+**Note**: Implements the `{{ lib.utils.common.selectorLabels }}` template and supports all it's arguments/keys.
+
+#### Returns
+
+String
+
+#### Usage
+
+```
+{{- include "bedag-lib.utils.common.selectorLabel" $ }}
+```
+
 ### MergedValues
 ---
 
@@ -78,7 +103,7 @@ This template is used for Code reduction. It's main purpose is the merge default
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.root` - Inherited Root Context (Required)
   * `.key` - Key evaluated on default values (Optional). If not set will use the value of `.type`.
@@ -103,7 +128,7 @@ Renders Config content based on your needs
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.config` - Config Structure [e.g. .config_files.application_properties ](Required)
   * `.format` - Define the format when including the template. The format per config (`.config.format`) value takes precedence, if present.
@@ -215,7 +240,7 @@ Wrapper for the [Content Template](#template) but allows to specify a file name.
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.config` - Config Structure [e.g. .config_files.application_properties ](Required)
   * `.name` - Define the name for the file when including the template. The format per config (`.config.name`) value takes precedence, if present. Defaults to `config.yml` (Optional)
@@ -307,7 +332,7 @@ Returns a Yaml defined proxy configuration in java proxy arguments.
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.proxy` - The supported Proxy key structure (optional). If not set, an empty string is returned
   * `.context` - Inherited Root Context (Required).
@@ -365,7 +390,7 @@ this template checks if an environment key structure contains any secret element
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.` - Supported environment key structure.
 
@@ -389,7 +414,7 @@ This template calls a supported Preset and returns the output. [Learn more about
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.preset` - Define which preset to render (Required).
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
@@ -416,7 +441,7 @@ This template returns a YAML Structure of all available values for a manifest or
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.` - Inherited Root Context (Required).
 
@@ -492,7 +517,7 @@ Returns the public access to the application (either by service or ingress). Dep
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.path` - Define which preset to render (Optional).
   * `.ingress` - Public Ingress Resource for the application (Key structure)

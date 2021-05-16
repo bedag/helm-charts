@@ -16,10 +16,10 @@ containerName: {{ default "" $_.data.containerName }}
 ## Docker Image definition.
 image:
   # {{ $_.path }}image.registry -- Configure Docker Registry. Will be overwritten if set by global variable.
-  registry: {{ default "docker.io" $_.data.imageRegistry }}
+  registry: {{ default "" $_.data.imageRegistry }}
 
   # {{ $_.path }}image.repository -- Configure Docker Repository
-  repository: {{ default "bitnami/apache" $_.data.imageRepository }}
+  repository: {{ default "" $_.data.imageRepository }}
 
   # {{ $_.path }}image.pullPolicy -- Configure Docker Pull Policy. Will be overwritten if set by global variable.
   pullPolicy: {{ default "" $_.data.imagePullPolicy }}
@@ -27,6 +27,10 @@ image:
   # {{ $_.path }}image.tag -- Configure Docker Image tag
   # @default -- Tag defaults to `.Chart.Appversion`, if not set
   tag: {{ default "" $_.data.imageTag }}
+
+  # {{ $_.path }}image.digest -- Configure Docker Image Digest, digest has presedence over tag.
+  # @default -- Tag defaults to `.Chart.Appversion`, if not set
+  digest: {{ default "" $_.data.imageDigest }}
 
 ## Container Resources
 # {{ $_.path }}resources -- Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)

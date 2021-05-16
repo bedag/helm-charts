@@ -15,10 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 */}}
-{{- define "bedag-lib.manifest.horizontalpodautoscaler.values" -}}
-  {{- include "lib.utils.strings.template" (dict "value" (include "bedag-lib.utils.common.mergedValues" (dict "type" "horizontalpodautoscaler" "key" "autoscaler" "root" .)) "context" .context) }}
-{{- end }}
-
 {{- define "bedag-lib.manifest.horizontalpodautoscaler" -}}
   {{- if .context }}
     {{- $context := .context -}}

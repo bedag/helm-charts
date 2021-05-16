@@ -30,25 +30,31 @@ apiVersion: autoscaling/v2beta2
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" $hpa.labels "context" $context) | nindent 4 }}
+        {{- with $hpa.annotations }}
+  annotations:
+          {{- range $anno, $val := . }}
+            {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- end }}
+        {{- end }}
 spec:
-        {{- if and $hpa.behavior (kindIs "map" $hpa.behavior) }}
-  behavior: {{ toYaml $hpa.behavior | nindent 4 }}
+        {{- with $hpa.behavior }}
+  behavior: {{ toYaml . | nindent 4 }}
         {{- end }}
   metrics:
-        {{- if $hpa.targetCPUUtilizationPercentage }}
+        {{- with $hpa.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
-        targetAverageUtilization: {{ $hpa.targetCPUUtilizationPercentage }}
+        targetAverageUtilization: {{ . }}
         {{- end }}
-        {{- if $hpa.targetMemoryUtilizationPercentage }}
+        {{- with $hpa.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
-        targetAverageUtilization: {{ $hpa.targetMemoryUtilizationPercentage }}
+        targetAverageUtilization: {{ . }}
         {{- end }}
-        {{- if and $hpa.metrics (kindIs "slice" $hpa.metrics) }}
-          {{- toYaml $hpa.metrics | nindent 4}}
+        {{- with $hpa.metrics }}
+          {{- toYaml . | nindent 4 }}
         {{- end }}
   scaleTargetRef:
         {{- if $hpa.scaleTargetRef }}
@@ -58,8 +64,8 @@ spec:
     kind: Statefulset
     name: {{ include "bedag-lib.utils.common.fullname" . }}
         {{- end }}
-        {{- if $hpa.minReplicas }}
-  minReplicas: {{ $hpa.minReplicas }}
+        {{- with $hpa.minReplicas }}
+  minReplicas: {{ . }}
         {{- end }}
   maxReplicas: {{ $hpa.maxReplicas }}
       {{- end }}

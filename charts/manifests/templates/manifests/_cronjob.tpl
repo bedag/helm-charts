@@ -30,9 +30,9 @@ apiVersion: batch/v1beta1
 metadata:
   name:  {{ include "bedag-lib.utils.common.fullname" . }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" $cronjob.labels "context" $context)| nindent 4 }}
-        {{- if $cronjob.annotations }}
+        {{- with $cronjob.annotations }}
   annotations:
-          {{- range $anno, $val := $cronjob.annotations }}
+          {{- range $anno, $val := . }}
             {{- $anno | nindent 4 }}: {{ $val | quote }}
           {{- end }}
         {{- end }}

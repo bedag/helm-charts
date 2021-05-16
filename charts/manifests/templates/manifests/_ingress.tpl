@@ -36,23 +36,23 @@ apiVersion: extensions/v1beta1
 metadata:
   name:  {{ include "bedag-lib.utils.common.fullname" . }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" $ingress.labels "context" $context)| nindent 4 }}
-        {{- if $ingress.annotations }}
+        {{- with $ingress.annotations }}
   annotations:
-          {{- range $anno, $val := $ingress.annotations }}
+          {{- range $anno, $val := . }}
             {{- $anno | nindent 4 }}: {{ $val | quote }}
           {{- end }}
         {{- end }}
 spec:
-        {{- if and $ingress.backend (kindIs "map" $ingress.backend) }}
-  backend: {{- toYaml $ingress.backend | nindent 4 }}
+        {{- with $ingress.backend }}
+  backend: {{- toYaml . | nindent 4 }}
         {{- end }}
         {{- if $context.Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
-          {{- if and $ingress.ingressClass (kindIs "string" $ingress.ingressClass) }}
-  ingressClassName: {{ $ingress.ingressClass }}
+          {{- with $ingress.ingressClass }}
+  ingressClassName: {{ . }}
           {{- end }}
         {{- end }}
         {{- with $ingress.tls }}
-  tls:  {{- toYaml . | nindent 4 }}
+  tls: {{- toYaml . | nindent 4 }}
         {{- end }}
   rules:
         {{- range $ingress.hosts }}

@@ -20,8 +20,12 @@
   labels: {}
 
   ## Pdb Selector Labels
-  # {{ $_.path }}selectorLabels -- Define SelectorLabels for the pdb
+  # {{ $_.path }}selectorLabels -- Define additional SelectorLabels for the pdb
   selectorLabels: {}
+
+  # Pdb Selector 
+  # {{ $_.path }}selector -- Overwrite Selector entirely
+  selector: {}
 
   ## Pdb minAvailable
   # {{ $_.path }}minAvailable -- Number or percentage of pods which must be available during a disruption. If neither `minAvailable` or `maxUnavailable` is set, de Policy defaults to `minAvailable: 1`

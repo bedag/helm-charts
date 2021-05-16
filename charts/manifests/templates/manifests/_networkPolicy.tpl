@@ -30,6 +30,12 @@ apiVersion: networking.k8s.io/v1
 metadata:
   name:  {{ include "bedag-lib.utils.common.fullname" . }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" $networkPolicy.labels "context" $context)| nindent 4 }}
+      {{- with $networkPolicy.annotations }}
+  annotations:
+        {{- range $anno, $val := . }}
+          {{- $anno | nindent 4 }}: {{ $val | quote }}
+        {{- end }}
+      {{- end }}
 spec:
   podSelector:
     matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $networkPolicy.selector) "context" $context) | nindent 6 }}

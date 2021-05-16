@@ -29,6 +29,12 @@ apiVersion: apps/v1
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" $deployment.labels "context" $context)| nindent 4 }}
+        {{- with $deployment.annotations }}
+  annotations:
+          {{- range $anno, $val := . }}
+            {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- end }}
+        {{- end }}
 spec:
       {{- with $deployment.strategy }}
   strategy: {{ toYaml . |  nindent 4 }}

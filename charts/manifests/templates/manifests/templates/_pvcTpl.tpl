@@ -30,15 +30,15 @@ metadata:
     {{- end }}
 spec:
   accessModes: {{ toJson $values.accessModes }}
-    {{- if $values.dataSource }}
-  dataSource: {{- toYaml $values.dataSource | nindent 4 }}
+    {{- with $values.dataSource }}
+  dataSource: {{- toYaml . | nindent 4 }}
     {{- end }}
   resources:
     requests:
       storage: {{ default "1Gi" $values.size | quote }}
   storageClassName: {{ include "lib.utils.globals.storageClass" (dict "persistence" $values.storageClass "context" $context) }}
-    {{- if $values.selector }}
-  selector: {{ toYaml $values.selector | nindent 4 }}
+    {{- with $values.selector }}
+  selector: {{ toYaml . | nindent 4 }}
     {{- end }}
   {{- end }}
 {{- end -}}

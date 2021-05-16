@@ -30,19 +30,29 @@ apiVersion: policy/v1beta1
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" $pdb.labels "context" $context)| nindent 4 }}
+        {{- with $pdb.annotations }}
+  annotations:
+          {{- range $anno, $val := . }}
+            {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- end }}
+        {{- end }}
 spec:
         {{- if or $pdb.minAvailable $pdb.maxUnavailable}}
-          {{- if $pdb.minAvailable }}
-  minAvailable: {{ $pdb.minAvailable }}
+          {{- with $pdb.minAvailable }}
+  minAvailable: {{ . }}
           {{- end }}
-          {{- if $pdb.maxUnavailable }}
-  maxUnavailable: {{ $pdb.maxUnavailable }}
+          {{- with $pdb.maxUnavailable }}
+  maxUnavailable: {{ . }}
           {{- end }}
         {{- else }}
   minAvailable: 1
         {{- end }}
   selector:
+        {{- if $pdb.selector }}
+          {{- toYaml $pdb.selector | nindent 4 }}
+        {{- else }}
     matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $pdb.selectorLabels) "context" $context) | nindent 6 }}
+        {{- end }}
       {{- end }}
     {{- end }}
   {{- end }}

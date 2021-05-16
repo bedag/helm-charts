@@ -29,6 +29,12 @@ apiVersion: apps/v1
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" $daemonset.labels "context" $context)| nindent 4 }}
+      {{- with $daemonset.annotations }}
+  annotations:
+        {{- range $anno, $val := . }}
+          {{- $anno | nindent 4 }}: {{ $val | quote }}
+        {{- end }}
+      {{- end }}
 spec:
   minReadySeconds: {{ default 0 $daemonset.minReadySeconds }}
   revisionHistoryLimit: {{ default 10 $daemonset.revisionHistoryLimit }}

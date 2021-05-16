@@ -29,28 +29,27 @@ metadata:
       {{- end }}
     {{- end }}
 spec:
-    {{- if $values.activeDeadlineSeconds }}
-  activeDeadlineSeconds: {{ $values.activeDeadlineSeconds }}
+    {{- with $values.activeDeadlineSeconds }}
+  activeDeadlineSeconds: {{ . }}
     {{- end }}
-    {{- if $values.backoffLimit }}
-  backoffLimit: {{ $values.backoffLimit }}
+    {{- with $values.backoffLimit }}
+  backoffLimit: {{ . }}
     {{- end }}
-    {{- if $values.completions }}
-  completions: {{ $values.completions }}
+    {{- with $values.completions }}
+  completions: {{ . }}
     {{- end }}
     {{- if $values.manualSelector }}
   manualSelector: true
     {{- end }}
-    {{- if $values.parallelism }}
-  parallelism: {{ $values.parallelism }}
+    {{- with $values.parallelism }}
+  parallelism: {{. }}
     {{- end }}
-    {{- if $values.ttlSecondsAfterFinished }}
-  ttlSecondsAfterFinished: {{ $values.ttlSecondsAfterFinished }}
+    {{- with $values.ttlSecondsAfterFinished }}
+  ttlSecondsAfterFinished: {{ . }}
     {{- end }}
-    {{- if $values.selector }}
-  selector: {{ toYaml $values.selector | nindent 4 }}
+    {{- with $values.selector }}
+  selector: {{ toYaml . | nindent 4 }}
     {{- end }}
-    {{- $_ := set . "pod" $values }}
   template: {{- include "bedag-lib.template.pod" (set . "pod" $values) | nindent 4 }}
   {{- else }}
     {{- fail "Template requires '.pod' and '.context' as arguments" }}

@@ -30,17 +30,17 @@ apiVersion: v1
 metadata:
   name: {{ include "bedag-lib.utils.common.serviceAccountName" (dict "sa" $serviceAccount "context" $context) }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" $serviceAccount.labels "context" $context)| nindent 4 }}
-        {{- if $serviceAccount.annotations }}
+        {{- with $serviceAccount.annotations }}
   annotations:
-          {{- range $anno, $val := $serviceAccount.annotations }}
+          {{- range $anno, $val := . }}
             {{- $anno | nindent 4 }}: {{ $val | quote }}
           {{- end }}
         {{- end }}
-        {{- if (kindIs "bool" $serviceAccount.automountServiceAccountToken) }}
-automountServiceAccountToken: {{ $serviceAccount.automountServiceAccountToken }}
+        {{- with $serviceAccount.automountServiceAccountToken) }}
+automountServiceAccountToken: {{ . }}
         {{- end }}
-        {{- if and $serviceAccount.secrets (kindIs "slice" $serviceAccount.secrets) }}
-secrets: {{ toYaml $serviceAccount.secrets | nindent 2 }}
+        {{- with $serviceAccount.secrets }}
+secrets: {{ toYaml . | nindent 2 }}
         {{- end }}
         {{- if or (and $serviceAccount.imagePullSecrets (kindIs "slice" $serviceAccount.imagePullSecrets)) $serviceAccount.globalPullSecrets }}
           {{- if $serviceAccount.globalPullSecrets }}

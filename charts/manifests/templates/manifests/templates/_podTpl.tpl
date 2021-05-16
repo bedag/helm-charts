@@ -24,7 +24,7 @@ metadata:
     {{- if or $values.podAnnotations $values.forceRedeploy }}
   annotations:
       {{- if $values.forceRedeploy }}
-      timestamp: {{ now.Unix | quote }}
+    timestamp: {{ now.Unix | quote }}
       {{- end }}
       {{- if or $values.podAnnotations }}
         {{- range $anno, $val := $values.podAnnotations }}
@@ -36,8 +36,8 @@ spec:
     {{- if $values.podFields }}
       {{- include "lib.utils.strings.template" (dict "value" $values.podFields "context" $context) | nindent 2 }}
     {{- end }}
-    {{- if $values.restartPolicy }}
-  restartPolicy: {{ $values.restartPolicy }}
+    {{- with $values.restartPolicy }}
+  restartPolicy: {{ . }}
     {{- end }}
     {{- $pullSecrets := include "lib.utils.globals.imagePullSecrets" (dict "pullSecrets" $values.imagePullSecrets "context" $context) }}
     {{- if $pullSecrets }}
@@ -67,11 +67,11 @@ spec:
     {{- end }}
   containers:
     - {{- include "bedag-lib.template.container" (set . "container" $values) | nindent 6 }}
-    {{- if $values.sidecars }}
-      {{- include "lib.utils.strings.template" (dict "value" $values.sidecars "context" $context) | nindent 4 }}
+    {{- with $values.sidecars }}
+      {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
     {{- end }}
-    {{- if $values.volumes }}
-  volumes: {{ toYaml $values.volumes | nindent 4 }}
+    {{- with $values.volumes }}
+  volumes: {{ toYaml . | nindent 4 }}
     {{- end }}
   {{- else }}
     {{- fail "Template requires '.pod' and '.context' as arguments" }}

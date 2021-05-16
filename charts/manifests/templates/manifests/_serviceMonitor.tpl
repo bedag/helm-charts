@@ -33,6 +33,12 @@ metadata:
         {{- if $serviceMonitor.namespace }}
   namespace: {{- include "lib.utils.strings.template" (dict "value" $serviceMonitor.namespace "context" $context) }}
         {{- end }}
+        {{- with $serviceMonitor.annotations }}
+  annotations:
+          {{- range $anno, $val := . }}
+            {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- end }}
+        {{- end }}
 spec:
         {{- if $serviceMonitor.additionalFields }}
           {{- toYaml $serviceMonitor.additionalFields | nindent 2 }}

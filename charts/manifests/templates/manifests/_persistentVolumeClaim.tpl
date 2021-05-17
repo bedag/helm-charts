@@ -19,15 +19,17 @@ limitations under the License.
   {{- if .context -}}
     {{- $context := .context -}}
     {{- $pvc := mergeOverwrite (fromYaml (include "bedag-lib.values.persistentvolumeclaim" $)).pvc (default dict .values) (default dict .overwrites) -}}
-    {{- if (include "bedag-lib.utils.intern.noYamlError" $pvc) }}
-      {{- if $pvc.enabled -}}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $pvc) -}}
+      {{- with $pvc -}}
+        {{- if .enabled -}}
 kind: PersistentVolumeClaim
-        {{- if $pvc.apiVersion }}
-apiVersion: {{ $pvc.apiVersion }}
-        {{- else }}
+          {{- if .apiVersion }}
+apiVersion: {{ .apiVersion }}
+          {{- else }}
 apiVersion: v1
-        {{- end }}
-        {{- include "bedag-lib.template.persistentvolumeclaim" (set . "pvc" $pvc) | nindent 0 }}
+          {{- end }}
+          {{- include "bedag-lib.template.persistentvolumeclaim" (set $ "pvc" $pvc) | nindent 0 }}
+        {{- end }}  
       {{- end }}
     {{- else }}
       {{- fail "Template requires '.context' as arguments" }}

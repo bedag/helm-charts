@@ -11,9 +11,17 @@
   # {{ $_.path }}apiVersion -- Configure the api version used for the DaemonSet resource
   apiVersion: ""
 
+  ## DaemonSet Namespace
+  ## {{ $_.path }}namespace -- Define a custom namespace to deploy the DaemonSet into
+  namespace: ""
+
   ## DaemonSet Labels
   # {{ $_.path }}labels -- Merges given labels with common labels
   labels: {}
+
+  # DaemonSet Selector 
+  # {{ $_.path }}selector -- Overwrite Selector entirely
+  selector: {}
 
   ## DaemonSet Selector Labels
   # {{ $_.path }}selectorLabels -- Define SelectorLabels for the Pod Template
@@ -30,6 +38,10 @@
   ## maxUnavailable update strategy
   # {{ $_.path }}rollingUpdatePartition -- DaemonSet [Update Pratition](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/#pod-management-policies). **DaemonSet only**
   rollingUpdatemaxUnavailable: ""
+
+  ## Extra Daemonset Fields
+  # {{ $_.path }}daemonsetFields -- Add extra field to the Daemonset resource, if not available as value.
+  daemonsetFields: {}
 
   ## Pod Configuration
   ## {{ include "bedag-lib.utils.intern.docLink" $_ }}#pod-template

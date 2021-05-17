@@ -15,6 +15,10 @@
   # {{ $_.path }}apiVersion -- Configure the api version used for the Pdb resource
   apiVersion: ""
 
+  ## Pdb Namespace
+  ## {{ $_.path }}namespace -- Define a custom namespace to deploy the Pdb into
+  namespace: ""
+
   ## Pdb Labels
   # {{ $_.path }}labels -- Merges given labels with common labels
   labels: {}

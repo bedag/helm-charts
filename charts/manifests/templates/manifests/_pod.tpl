@@ -19,16 +19,18 @@ limitations under the License.
   {{- if .context -}}
     {{- $context := .context -}}
     {{- $pod := mergeOverwrite (fromYaml (include "bedag-lib.values.pod" $)).pod (default dict .values) (default dict .overwrites) -}}
-    {{- if (include "bedag-lib.utils.intern.noYamlError" $pod) }}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $pod) -}}
+      {{- with $pod }}
 kind: Pod
-      {{- if $pod.apiVersion }}
-apiVersion: {{ $pod.apiVersion }}
-      {{- else }}
+        {{- if .apiVersion }}
+apiVersion: {{ .apiVersion }}
+        {{- else }}
 apiVersion: v1
+        {{- end }}
+        {{- $podTpl := fromYaml (include "bedag-lib.template.pod" (set $ "pod" $pod)) }}
+        {{- $_ := set $podTpl.metadata "name" (include "bedag-lib.utils.common.fullname" $) }}
+        {{- toYaml $podTpl | nindent 0 }}
       {{- end }}
-      {{- $podTpl := fromYaml (include "bedag-lib.template.pod" (set . "pod" $pod)) }}
-      {{- $_ := set $podTpl.metadata "name" (include "bedag-lib.utils.common.fullname" .) }}
-      {{- toYaml $podTpl | nindent 0 }}
     {{- end }}
   {{- else }}
     {{- fail "Template requires '.context' as arguments" }}

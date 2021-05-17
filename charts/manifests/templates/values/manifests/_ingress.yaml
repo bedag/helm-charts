@@ -15,6 +15,10 @@
   # {{ $_.path }}apiVersion -- Configure the api version used for the ingress resource.
   apiVersion: ""
 
+  ## Ingress Namespace
+  ## {{ $_.path }}namespace -- Define a custom namespace to deploy the Ingress into
+  namespace: ""
+
   ## Ingress Labels
   # {{ $_.path }}labels -- Configure Ingress additional Labels
   labels: {}

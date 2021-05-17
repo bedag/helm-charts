@@ -20,22 +20,26 @@ limitations under the License.
     {{- $context := .context -}}
     {{- $networkPolicy := mergeOverwrite (fromYaml (include "bedag-lib.values.networkpolicy" $)).networkPolicy (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $networkPolicy) }}
-      {{- if $networkPolicy.enabled }}
+      {{- with $networkPolicy -}}
+        {{- if .enabled }}
 kind: NetworkPolicy
-        {{- if $networkPolicy.apiVersion }}
-apiVersion: {{ $networkPolicy.apiVersion }}
-        {{- else }}
+          {{- if .apiVersion }}
+apiVersion: {{ .apiVersion }}
+          {{- else }}
 apiVersion: networking.k8s.io/v1
-        {{- end }}
+          {{- end }}
 metadata:
   name:  {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $networkPolicy.labels "context" $context)| nindent 4 }}
-      {{- with $networkPolicy.annotations }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
+          {{- with .namespace }}
+  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+          {{- end }}
+          {{- with .annotations }}
   annotations:
-        {{- range $anno, $val := . }}
-          {{- $anno | nindent 4 }}: {{ $val | quote }}
-        {{- end }}
-      {{- end }}
+            {{- range $anno, $val := . }}
+              {{- $anno | nindent 4 }}: {{ $val | quote }}
+            {{- end }}
+          {{- end }}
 spec:
   podSelector:
     matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $networkPolicy.selector) "context" $context) | nindent 6 }}
@@ -77,6 +81,7 @@ spec:
             {{- end }}
             {{- if .ports }}
       ports: {{- toYaml .ports | nindent 8 }}
+              {{- end }}
             {{- end }}
           {{- end }}
         {{- end }}

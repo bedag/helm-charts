@@ -19,38 +19,37 @@ limitations under the License.
   {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.job" .)) .job -}}
   {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) .context (include "bedag-lib.utils.intern.noYamlError" .context) -}}
     {{- $context := .context }}
+    {{- with $values -}}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $values.labels "context" $context)| nindent 4 }}
-    {{- if $values.annotations }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
+      {{- with .annotations }}
   annotations:
-      {{- range $anno, $val := $values.annotations }}
-        {{- $anno | nindent 4 }}: {{ $val | quote }}
+        {{- range $anno, $val := . }}
+          {{- $anno | nindent 4 }}: {{ $val | quote }}
+        {{- end }}
       {{- end }}
-    {{- end }}
 spec:
-    {{- with $values.activeDeadlineSeconds }}
+      {{- with .jobFields }}
+        {{- toYaml . | nindent 2 }}
+      {{- end }}
+      {{- with .activeDeadlineSeconds }}
   activeDeadlineSeconds: {{ . }}
-    {{- end }}
-    {{- with $values.backoffLimit }}
+      {{- end }}
+      {{- with .backoffLimit }}
   backoffLimit: {{ . }}
-    {{- end }}
-    {{- with $values.completions }}
+      {{- end }}
+      {{- with .completions }}
   completions: {{ . }}
-    {{- end }}
-    {{- if $values.manualSelector }}
-  manualSelector: true
-    {{- end }}
-    {{- with $values.parallelism }}
-  parallelism: {{. }}
-    {{- end }}
-    {{- with $values.ttlSecondsAfterFinished }}
+      {{- end }}
+      {{- with .ttlSecondsAfterFinished }}
   ttlSecondsAfterFinished: {{ . }}
-    {{- end }}
-    {{- with $values.selector }}
+      {{- end }}
+      {{- with .selector }}
   selector: {{ toYaml . | nindent 4 }}
+      {{- end }}
+  template: {{- include "bedag-lib.template.pod" (set $ "pod" .) | nindent 4 }}
     {{- end }}
-  template: {{- include "bedag-lib.template.pod" (set . "pod" $values) | nindent 4 }}
   {{- else }}
     {{- fail "Template requires '.pod' and '.context' as arguments" }}
   {{- end }}

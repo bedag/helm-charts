@@ -19,55 +19,63 @@ limitations under the License.
   {{- if .context }}
     {{- $context := .context -}}
     {{- $hpa := mergeOverwrite (fromYaml (include "bedag-lib.values.horizontalpodautoscaler" $)).autoscaling (default dict .values) (default dict .overwrites) -}}
-    {{- if (include "bedag-lib.utils.intern.noYamlError" $hpa) }}
-      {{- if and $hpa.enabled (or $hpa.targetCPUUtilizationPercentage $hpa.targetMemoryUtilizationPercentage $hpa.metrics) -}}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $hpa) -}}
+      {{- with $hpa -}}
+        {{- if and .enabled (or .targetCPUUtilizationPercentage .targetMemoryUtilizationPercentage .metrics) -}}
 kind: HorizontalPodAutoscaler
-        {{- if $hpa.apiVersion -}}
-apiVersion: {{ $hpa.apiVersion }}
-        {{- else }}
+          {{- if .apiVersion -}}
+apiVersion: {{ .apiVersion }}
+          {{- else }}
 apiVersion: autoscaling/v2beta2
-        {{- end }}
+          {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $hpa.labels "context" $context) | nindent 4 }}
-        {{- with $hpa.annotations }}
-  annotations:
-          {{- range $anno, $val := . }}
-            {{- $anno | nindent 4 }}: {{ $val | quote }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
+          {{- with .namespace }}   
+  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
           {{- end }}
-        {{- end }}
+          {{- with .annotations }}
+  annotations:
+            {{- range $anno, $val := . }}
+              {{- $anno | nindent 4 }}: {{ $val | quote }}
+            {{- end }}
+          {{- end }}
 spec:
-        {{- with $hpa.behavior }}
+          {{- if .hpaFields }}
+            {{- toYaml . | nindent 2 }}
+          {{- end }}
+          {{- with .behavior }}
   behavior: {{ toYaml . | nindent 4 }}
-        {{- end }}
+          {{- end }}
   metrics:
-        {{- with $hpa.targetCPUUtilizationPercentage }}
+          {{- with .targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
         targetAverageUtilization: {{ . }}
-        {{- end }}
-        {{- with $hpa.targetMemoryUtilizationPercentage }}
+          {{- end }}
+          {{- with .targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
         targetAverageUtilization: {{ . }}
-        {{- end }}
-        {{- with $hpa.metrics }}
-          {{- toYaml . | nindent 4 }}
-        {{- end }}
+          {{- end }}
+          {{- with .metrics }}
+            {{- toYaml . | nindent 4 }}
+          {{- end }}
   scaleTargetRef:
-        {{- if $hpa.scaleTargetRef }}
-          {{- toYaml $hpa.scaleTargetRef | nindent 4  }}
-        {{- else }}
+          {{- if .scaleTargetRef }}
+            {{- toYaml .scaleTargetRef | nindent 4  }}
+          {{- else }}
     apiVersion: apps/v1
     kind: Statefulset
-    name: {{ include "bedag-lib.utils.common.fullname" . }}
-        {{- end }}
-        {{- with $hpa.minReplicas }}
+    name: {{ include "bedag-lib.utils.common.fullname" $ }}
+          {{- end }}
+          {{- with .minReplicas }}
   minReplicas: {{ . }}
+          {{- end }}
+  maxReplicas: {{ .maxReplicas }}
         {{- end }}
-  maxReplicas: {{ $hpa.maxReplicas }}
       {{- end }}
     {{- end }}
   {{- else }}

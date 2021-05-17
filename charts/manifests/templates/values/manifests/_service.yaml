@@ -16,6 +16,10 @@
   # @default -- v1
   apiVersion: ""
 
+  ## Service Namespace
+  ## {{ $_.path }}namespace -- Define a custom namespace to deploy the Service into
+  namespace: ""
+
   ## Service Labels
   # {{ $_.path }}labels -- Configure Service additional Labels
   labels: {}

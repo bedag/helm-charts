@@ -20,38 +20,43 @@ limitations under the License.
     {{- $context := .context -}}
     {{- $pdb := mergeOverwrite (fromYaml (include "bedag-lib.values.poddisruptionbudget" $)).pdb (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $pdb) }}
-      {{- if $pdb.enabled -}}
+      {{- with $pdb -}}
+        {{- if .enabled -}}
 kind: PodDisruptionBudget
-        {{- if $pdb.apiVersion }}
-apiVersion: {{ $pdb.apiVersion }}
-        {{- else }}
+          {{- if .apiVersion }}
+apiVersion: {{ .apiVersion }}
+          {{- else }}
 apiVersion: policy/v1beta1
-        {{- end }}
+          {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $pdb.labels "context" $context)| nindent 4 }}
-        {{- with $pdb.annotations }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
+          {{- with .namespace }}   
+  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+          {{- end }}
+          {{- with .annotations }}
   annotations:
-          {{- range $anno, $val := . }}
-            {{- $anno | nindent 4 }}: {{ $val | quote }}
+            {{- range $anno, $val := . }}
+              {{- $anno | nindent 4 }}: {{ $val | quote }}
+            {{- end }}
           {{- end }}
-        {{- end }}
 spec:
-        {{- if or $pdb.minAvailable $pdb.maxUnavailable}}
-          {{- with $pdb.minAvailable }}
+          {{- if or .minAvailable .maxUnavailable}}
+            {{- with .minAvailable }}
   minAvailable: {{ . }}
-          {{- end }}
-          {{- with $pdb.maxUnavailable }}
+            {{- end }}
+            {{- with .maxUnavailable }}
   maxUnavailable: {{ . }}
-          {{- end }}
-        {{- else }}
+            {{- end }}
+          {{- else }}
   minAvailable: 1
-        {{- end }}
+          {{- end }}
   selector:
-        {{- if $pdb.selector }}
-          {{- toYaml $pdb.selector | nindent 4 }}
-        {{- else }}
-    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $pdb.selectorLabels) "context" $context) | nindent 6 }}
+          {{- if .selector }}
+            {{- toYaml .selector | nindent 4 }}
+          {{- else }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) .selectorLabels) "context" $context) | nindent 6 }}
+          {{- end }}
         {{- end }}
       {{- end }}
     {{- end }}

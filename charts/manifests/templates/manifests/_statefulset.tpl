@@ -28,40 +28,44 @@ apiVersion: {{ .apiVersion }}
 apiVersion: apps/v1
         {{- end }}
 metadata:
-  name: {{ include "bedag-lib.utils.common.fullname" . }}
+  name: {{ include "bedag-lib.utils.common.fullname" $ }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context)| nindent 4 }}
-      {{- with .annotations }}
-  annotations:
-        {{- range $anno, $val := . }}
-          {{- $anno | nindent 4 }}: {{ $val | quote }}
+        {{- with .namespace }}
+  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
         {{- end }}
-      {{- end }}
+        {{- with .annotations }}
+  annotations:
+          {{- range $anno, $val := . }}
+            {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- end }}
+        {{- end }}
 spec:
   podManagementPolicy: {{ default "OrderedReady" .podManagementPolicy }}
   updateStrategy:
-      {{- $updateStrategy := (default "RollingUpdate" .updateStrategy) }}
+        {{- $updateStrategy := (default "RollingUpdate" .updateStrategy) }}
     type: {{ $updateStrategy | quote }}
-      {{- if (eq "OnDelete" $updateStrategy) }}
+        {{- if (eq "OnDelete" $updateStrategy) }}
     rollingUpdate: null
-      {{- else if .rollingUpdatePartition }}
+        {{- else if .rollingUpdatePartition }}
     rollingUpdate:
       partition: {{ .rollingUpdatePartition }}
-      {{- end }}
+        {{- end }}
   replicas: {{ default "1" .replicaCount }}
   selector:
-      {{- if .selector }}
-        {{- include "lib.utils.strings.template" (dict "value" .selector "context" $context) | nindent 4 }}
-      {{- else }}
+        {{- if .selector }}
+          {{- include "lib.utils.strings.template" (dict "value" .selector "context" $context) | nindent 4 }}
+        {{- else }}
     matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) .selectorLabels) "context" $context) | nindent 6 }}
-      {{- end }}
-  serviceName: {{ default (include "bedag-lib.utils.common.fullname" .) .serviceName }}
-      {{- with .statefulsetExtras }}
-        {{- toYaml .statefulsetExtras | nindent 2 }}
-      {{- end }}
-  template: {{- include "bedag-lib.template.pod" (set . "pod" $statefulset) | nindent 4 }}
-      {{- if and $statefulset.volumeClaimTemplates (kindIs "slice" $statefulset.volumeClaimTemplates) }}
-  volumeClaimTemplates: {{- toYaml $statefulset.volumeClaimTemplates | nindent 4 }}
-      {{- end }}
+        {{- end }}
+  serviceName: {{ default (include "bedag-lib.utils.common.fullname" $) .serviceName }}
+        {{- with .statefulsetExtras }}
+          {{- toYaml .statefulsetExtras | nindent 2 }}
+        {{- end }}
+  template: {{- include "bedag-lib.template.pod" (set $ "pod" $statefulset) | nindent 4 }}
+        {{- with .volumeClaimTemplates }}
+  volumeClaimTemplates: {{- toYaml . | nindent 4 }}
+        {{- end }}
+      {{- end }}  
     {{- end }}  
   {{- else }}
     {{- fail "Template requires '.context' as arguments" }}

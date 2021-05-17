@@ -11,9 +11,17 @@
   # {{ $_.path }}apiVersion -- Configure the api version used for the Deployment resource
   apiVersion: ""
 
+  ## Deployment Namespace
+  ## {{ $_.path }}namespace -- Define a custom namespace to deploy the Deployment into
+  namespace: ""
+
   ## Deployment Labels
   # {{ $_.path }}labels -- Merges given labels with common labels
   labels: {}
+
+  # Deployment Selector 
+  # {{ $_.path }}selector -- Overwrite Selector entirely
+  selector: {}
 
   ## Deployment Selector Labels
   # {{ $_.path }}selectorLabels -- Define SelectorLabels for the Pod Template
@@ -32,8 +40,8 @@
   #    maxUnavailable: 0
 
   ## Deployment Extra Values
-  # {{ $_.path }}deploymentExtras -- Extra Fields for Deployment Manifest
-  deploymentExtras: {}
+  # {{ $_.path }}deploymentFields -- Extra Fields for Deployment Manifest
+  deploymentFields: {}
   # progressDeadlineSeconds: "600s"
   #
 

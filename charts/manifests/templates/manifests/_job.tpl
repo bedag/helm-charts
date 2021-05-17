@@ -20,14 +20,15 @@ limitations under the License.
     {{- $context := .context -}}
     {{- $job := mergeOverwrite (fromYaml (include "bedag-lib.values.job" $)).job (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $job) }}
-      {{- if $job.enabled }}
+      {{- with $job -}}
+        {{- if .enabled }}
 kind: Job
-        {{- if $job.apiVersion }}
-apiVersion: {{ $job.apiVersion }}
-        {{- else }}
+          {{- if .apiVersion }}
+apiVersion: {{ .apiVersion }}
+          {{- else }}
 apiVersion: batch/v1
-        {{- end }}
-{{- include "bedag-lib.template.job" (set . "job" $job) | nindent 0 }}
+          {{- end }}
+{{- include "bedag-lib.template.job" (set $ "job" .) | nindent 0 }}
       {{- end }}
     {{- end }}
   {{- end }}

@@ -20,50 +20,55 @@ limitations under the License.
     {{- $context := .context -}}
     {{- $svc := mergeOverwrite (fromYaml (include "bedag-lib.values.service" $)).service (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $svc) }}
-      {{- if $svc.enabled -}}
+      {{- with $svc -}}
+        {{- if .enabled -}}
 kind: Service
-        {{- if $svc.apiVersion }}
-apiVersion: {{ $svc.apiVersion }}
-        {{- else }}
+          {{- if .apiVersion }}
+apiVersion: {{ .apiVersion }}
+          {{- else }}
 apiVersion: v1
-        {{- end }}
+          {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $svc.labels "context" $context)| nindent 4 }}
-        {{- with $svc.annotations }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
+          {{- with .namespace }}   
+  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+          {{- end }}
+          {{- with .annotations }}
   annotations:
-          {{- range $anno, $val := . }}
-            {{- $anno | nindent 4 }}: {{ $val | quote }}
+            {{- range $anno, $val := . }}
+              {{- $anno | nindent 4 }}: {{ $val | quote }}
+            {{- end }}
           {{- end }}
-        {{- end }}
 spec:
-        {{- $type := (default "ClusterIP" $svc.type) }}
+        {{- $type := (default "ClusterIP" .type) }}
   type: {{ $type }}
-        {{- if eq $type "LoadBalancer" }}
-          {{- if $svc.loadBalancerIP }}
-  loadBalancerIP: {{ $svc.loadBalancerIP }}
+          {{- if eq $type "LoadBalancer" }}
+            {{- with .loadBalancerIP }}
+  loadBalancerIP: {{ . }}
+            {{- end }}
+            {{- with .loadBalancerSourceRanges }}
+  loadBalancerSourceRanges: {{- toYaml . | nindent 4 }}
+            {{- end }}
           {{- end }}
-          {{- if $svc.loadBalancerSourceRanges }}
-  loadBalancerSourceRanges: {{- toYaml $svc.loadBalancerSourceRanges | nindent 4 }}
+          {{- if and (eq $type "ClusterIP") .clusterIP }}
+  clusterIP: {{ .clusterIP }}
           {{- end }}
-        {{- end }}
-        {{- if and (eq $type "ClusterIP") $svc.clusterIP }}
-  clusterIP: {{ $svc.clusterIP }}
-        {{- end }}
   ports:
-    - name: {{ include "lib.utils.strings.toDns1123" (default "http" $svc.portName) }}
-      port: {{ default 80 $svc.port }}
-      protocol: {{ default "TCP" $svc.protocol }}
-      targetPort: {{ include "lib.utils.strings.toDns1123" (default "http" $svc.targetPort) }}
-        {{- if and (or (eq $type "NodePort") (eq $type "LoadBalancer")) (not (empty $svc.nodePort)) }}
-      nodePort: {{ $svc.nodePort }}
-        {{- else if eq $type "ClusterIP" }}
+    - name: {{ include "lib.utils.strings.toDns1123" (default "http" .portName) }}
+      port: {{ default 80 .port }}
+      protocol: {{ default "TCP" .protocol }}
+      targetPort: {{ include "lib.utils.strings.toDns1123" (default "http" .targetPort) }}
+          {{- if and (or (eq $type "NodePort") (eq $type "LoadBalancer")) (not (empty .nodePort)) }}
+      nodePort: {{ .nodePort }}
+          {{- else if eq $type "ClusterIP" }}
       nodePort: null
+          {{- end }}
+          {{- with .extraPorts }}
+            {{- toYaml . | nindent 4 }}
+          {{- end }}
+  selector: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) .selector) "context" $context) | nindent 4 }}
         {{- end }}
-        {{- if and $svc.extraPorts (kindIs "slice" $svc.extraPorts) }}
-          {{- toYaml $svc.extraPorts | nindent 4 }}
-        {{- end }}
-  selector: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $svc.selector) "context" $context) | nindent 4 }}
       {{- end }}
     {{- end }}
   {{- else }}

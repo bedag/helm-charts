@@ -19,59 +19,58 @@ limitations under the License.
   {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.pod" .)) .pod -}}
   {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) .context (include "bedag-lib.utils.intern.noYamlError" .context) -}}
     {{- $context := .context -}}
+    {{- with $values }}
 metadata:
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $values.podLabels "versionUnspecific" "true" "context" $context)| nindent 4 }}
-    {{- if or $values.podAnnotations $values.forceRedeploy }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .podLabels "versionUnspecific" "true" "context" $context)| nindent 4 }}
+      {{- if or .podAnnotations .forceRedeploy }}
   annotations:
-      {{- if $values.forceRedeploy }}
-      timestamp: {{ now.Unix | quote }}
-      {{- end }}
-      {{- if or $values.podAnnotations }}
-        {{- range $anno, $val := $values.podAnnotations }}
-          {{- $anno | nindent 4 }}: {{ include "lib.utils.strings.template" (dict "value" $val "context" $context) }}
+        {{- if .forceRedeploy }}
+    timestamp: {{ now.Unix | quote }}
+        {{- end }}
+        {{- with .podAnnotations }}
+          {{- range $anno, $val := . }}
+            {{- $anno | nindent 4 }}: {{ include "lib.utils.strings.template" (dict "value" $val "context" $context) }}
+          {{- end }}
         {{- end }}
       {{- end }}
-    {{- end }}
 spec:
-    {{- if $values.podFields }}
-      {{- include "lib.utils.strings.template" (dict "value" $values.podFields "context" $context) | nindent 2 }}
-    {{- end }}
-    {{- if $values.restartPolicy }}
-  restartPolicy: {{ $values.restartPolicy }}
-    {{- end }}
-    {{- $pullSecrets := include "lib.utils.globals.imagePullSecrets" (dict "pullSecrets" $values.imagePullSecrets "context" $context) }}
-    {{- if $pullSecrets }}
-  imagePullSecrets: {{- toYaml $pullSecrets | nindent 4 }}
-    {{- end }}
-    {{- with $values.affinity }}
+      {{- with .podFields }}
+        {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
+      {{- end }}
+      {{- with .restartPolicy }}
+  restartPolicy: {{ . }}
+      {{- end }}
+      {{- $pullSecrets := include "lib.utils.globals.imagePullSecrets" (dict "pullSecrets" .imagePullSecrets "context" $context) }}
+      {{- with $pullSecrets }}
+  imagePullSecrets: {{- toYaml . | nindent 4 }}
+      {{- end }}
+      {{- with .affinity }}
   affinity: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
-    {{- end }}
-    {{- with $values.nodeSelector }}
+      {{- end }}
+      {{- with .nodeSelector }}
   nodeSelector: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
-    {{- end }}
-    {{- with $values.tolerations }}
+      {{- end }}
+      {{- with .tolerations }}
   tolerations: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
-    {{- end }}
-    {{- with $values.priorityClassName }}
+      {{- end }}
+      {{- with .priorityClassName }}
   priorityClassName: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
-    {{- end }}
-    {{- with $values.podSecurityContext }}
+      {{- end }}
+      {{- with .podSecurityContext }}
   securityContext: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
-    {{- end }}
-    {{- if $values.serviceAccount }}
-      {{- $_ := set . "sa" $values.serviceAccount }}
-  serviceAccountName: {{ include "bedag-lib.utils.common.serviceAccountName" . }}
-    {{- end }}
-    {{- with $values.initContainers }}
-  initContainers: {{- toYaml $values.initContainers | nindent 4 }}
-    {{- end }}
+      {{- end }}
+  serviceAccountName: {{ default (include "bedag-lib.utils.common.serviceAccountName" (set $ "sa" (default dict .serviceAccount))) .serviceAccountName }}
+      {{- with .initContainers }}
+  initContainers: {{- toYaml . | nindent 4 }}
+      {{- end }}
   containers:
-    - {{- include "bedag-lib.template.container" (set . "container" $values) | nindent 6 }}
-    {{- if $values.sidecars }}
-      {{- include "lib.utils.strings.template" (dict "value" $values.sidecars "context" $context) | nindent 4 }}
-    {{- end }}
-    {{- if $values.volumes }}
-  volumes: {{ toYaml $values.volumes | nindent 4 }}
+    - {{- include "bedag-lib.template.container" (set $ "container" $values) | nindent 6 }}
+      {{- with $values.sidecars }}
+        {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
+      {{- end }}
+      {{- with $values.volumes }}
+  volumes: {{ toYaml . | nindent 4 }}
+      {{- end }}
     {{- end }}
   {{- else }}
     {{- fail "Template requires '.pod' and '.context' as arguments" }}

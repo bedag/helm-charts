@@ -19,61 +19,63 @@ limitations under the License.
   {{- $values := (mergeOverwrite (fromYaml (include "bedag-lib.values.template.container" .)) .container) -}}
   {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) .context (include "bedag-lib.utils.intern.noYamlError" .context) -}}
     {{- $context := .context -}}
-name: {{ default $context.Chart.Name $values.containerName }}
-image: {{ include "lib.utils.globals.image" (dict "image" $values "context" $context "default" (default $context.Chart.AppVersion .default)) }}
-imagePullPolicy: {{ include "lib.utils.globals.imagePullPolicy" (dict "pullPolicy" $values "context" $context) }}
-    {{- with $values.securityContext}}
+    {{- with $values }}
+name: {{ default $context.Chart.Name .containerName }}
+image: {{ include "lib.utils.globals.image" (dict "image" . "context" $context "default" (default $context.Chart.AppVersion $.default)) }}
+imagePullPolicy: {{ include "lib.utils.globals.imagePullPolicy" (dict "pullPolicy" . "context" $context) }}
+      {{- with .securityContext}}
 securityContext: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
-    {{- end }}
-    {{- with $values.resources }}
+      {{- end }}
+      {{- with .resources }}
 resources: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
-    {{- end }}
-    {{- if $values.containerFields }}
-      {{- include "lib.utils.strings.template" (dict "value" $values.containerFields "context" $context)  | nindent 0 }}
-    {{- end }}
+      {{- end }}
+      {{- with .containerFields }}
+        {{- include "lib.utils.strings.template" (dict "value" . "context" $context)  | nindent 0 }}
+      {{- end }}
 env: {{- include "lib.utils.extras.environment" $context | nindent 2 }}
-    {{- if and $values.environment (kindIs "slice" $values.environment) }}
-      {{- $filteredList := list -}}
-      {{- range $values.environment }}
-        {{- if .secret }}
-          {{- if $context.Bundle }}
+      {{- if and .environment (kindIs "slice" .environment) }}
+        {{- $filteredList := list -}}
+        {{- range .environment }}
+          {{- if .secret }}
+            {{- if $context.Bundle }}
   - name: {{ required "Field .name is required for environment item!" .name | quote }}
     valueFrom:
       secretKeyRef:
         name: {{ include "bedag-lib.utils.common.fullname" $ }}-env
         key: {{ .name | quote }}
+            {{- end }}
+          {{- else }}
+            {{- $filteredList = append $filteredList . -}}
           {{- end }}
-        {{- else }}
-          {{- $filteredList = append $filteredList . -}}
+        {{- end }}
+        {{- if $filteredList }}
+          {{- include "lib.utils.strings.template" (dict "value" $filteredList "context" $context) | nindent 2 }}
         {{- end }}
       {{- end }}
-      {{- if $filteredList }}
-        {{- include "lib.utils.strings.template" (dict "value" $filteredList "context" $context) | nindent 2 }}
+      {{- with .command }}
+command: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
       {{- end }}
-    {{- end }}
-    {{- if $values.command }}
-command: {{- include "lib.utils.strings.template" (dict "value" $values.command "context" $context) | nindent 2 }}
-    {{- end }}
-    {{- if $values.args }}
-args: {{- include "lib.utils.strings.template" (dict "value" $values.args "context" $context) | nindent 2 }}
-    {{- end }}
-    {{- with $values.livenessProbe }}
-livenessProbe: {{ include "lib.utils.strings.template" (dict "value" $values.livenessProbe "context" $context) | nindent 2 }}
-    {{- end }}
-    {{- with $values.readinessProbe }}
-readinessProbe: {{ include "lib.utils.strings.template" (dict "value" $values.readinessProbe "context" $context)  | nindent 2 }}
-    {{- end }}
-    {{- if $values.startupProbe }}
-startupProbe: {{ include "lib.utils.strings.template" (dict "value" $values.startupProbe "context" $context) | nindent 2 }}
-    {{- end }}
-    {{- with $values.lifecycle }}
-lifecycle: {{ include "lib.utils.strings.template" (dict "value" $values.lifecycle "context" $context) | nindent 2 }}
-    {{- end }}
-    {{- if and $values.volumeMounts (kindIs "slice" $values.volumeMounts) }}
-volumeMounts: {{- include "lib.utils.strings.template" (dict "value" $values.volumeMounts "context" $context) | nindent 2 }}
-    {{- end }}
-    {{- if and $values.ports (kindIs "slice" $values.ports) }}
-ports: {{- include "lib.utils.strings.template" (dict "value" $values.ports "context" $context) | nindent 2 }}
+      {{- with .args }}
+args: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
+      {{- end }}
+      {{- with .livenessProbe }}
+livenessProbe: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
+      {{- end }}
+      {{- with .readinessProbe }}
+readinessProbe: {{ include "lib.utils.strings.template" (dict "value" . "context" $context)  | nindent 2 }}
+      {{- end }}
+      {{- with .startupProbe }}
+startupProbe: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
+      {{- end }}
+      {{- with .lifecycle }}
+lifecycle: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
+      {{- end }}
+      {{- with .volumeMounts }}
+volumeMounts: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
+      {{- end }}
+      {{- with .ports }}
+ports: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
+      {{- end }}
     {{- end }}
   {{- end }}
 {{- end -}}

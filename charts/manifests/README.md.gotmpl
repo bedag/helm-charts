@@ -43,6 +43,22 @@ Major Changes to functions are documented with the version affected. **Before up
 
 | **Manifest** | **Chart Version** | **Change/Description** | **Commits/PRs** |
 | :----------- | :---------------- | :--------------------- | :-------------- |
+
+
+
+Removed:
+
+job.  manualSelector: true
+    {{- end }}
+    {{- with $values.parallelism }}
+  parallelism: {{. }}
+
+
+
+* `serviceMonitor.selector` moved to `serviceMonitor.selectorLabels`
+* `deployment.deploymentExtras` moved to `deployment.deploymentFields`
+
+| dependency/library | `1.0.0` | Upgraded Chart Dependency to new Major `1.0.0` | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
 | template/persistentvolumeclaim | `0.5.0` | Since all manifests/templates are lowercase, the persistentVolumeClaim template was also lowercased to have a cleaner library. The template is no longer callable via `bedag-lib.template.persistentVolumeClaim` but moved to `bedag-lib.template.persistentvolumeclaim`. | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
 
 

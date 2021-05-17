@@ -15,6 +15,10 @@
   # {{ $_.path }}apiVersion -- Configure the api version used for the Job resource.
   apiVersion: ""
 
+  ## Horizontal Pod Autoscaler Namespace
+  ## {{ $_.path }}namespace -- Define a custom namespace to deploy the Horizontal Pod Autoscaler into
+  namespace: ""
+
   ## Horizontal Pod Autoscaler Labels
   # {{ $_.path }}labels -- Merges given labels with common labels
   labels: {}
@@ -81,4 +85,8 @@
   #    - type: Percent
   #      value: 10
   #      periodSeconds: 60
+
+  ## Horizontal Pod Autoscaler Extra Values
+  # {{ $_.path }}hpaFields -- Extra Fields for Horizontal Pod Autoscaler Manifest
+  hpaFields: {}
 {{- end -}}

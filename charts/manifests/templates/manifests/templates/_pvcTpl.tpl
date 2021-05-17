@@ -19,26 +19,32 @@ limitations under the License.
   {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.pvc" .)) .pvc -}}
   {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) .context (include "bedag-lib.utils.intern.noYamlError" .context) -}}
     {{- $context := .context -}}
+      {{- with $values -}}
 metadata:
-  name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $values.labels "context" $context)| nindent 4 }}
-    {{- if $values.annotations }}
+  name: {{ include "bedag-lib.utils.common.fullname" $ }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
+        {{- with .namespace }}   
+  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+        {{- end }}
+        {{- with .annotations }}
   annotations:
-      {{- range $anno, $val := $values.annotations }}
-        {{- $anno | nindent 4 }}: {{ $val | quote }}
-      {{- end }}
-    {{- end }}
+          {{- range $anno, $val := . }}
+            {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- end }}
+        {{- end }}
 spec:
-  accessModes: {{ toJson $values.accessModes }}
-    {{- if $values.dataSource }}
-  dataSource: {{- toYaml $values.dataSource | nindent 4 }}
-    {{- end }}
+  accessModes: {{ toJson .accessModes }}
+        {{- with .dataSource }}
+  dataSource: {{- toYaml . | nindent 4 }}
+        {{- end }}
   resources:
     requests:
-      storage: {{ default "1Gi" $values.size | quote }}
-  storageClassName: {{ include "lib.utils.globals.storageClass" (dict "persistence" $values.storageClass "context" $context) }}
-    {{- if $values.selector }}
-  selector: {{ toYaml $values.selector | nindent 4 }}
+      storage: {{ default "1Gi" .size | quote }}
+  storageClassName: {{ include "lib.utils.globals.storageClass" (dict "persistence" .storageClass "context" $context) }}
+        {{- with .selector }}
+  selector: {{ toYaml . | nindent 4 }}
+        {{- end }}
+      {{- end }}
     {{- end }}
   {{- end }}
 {{- end -}}

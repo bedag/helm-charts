@@ -20,34 +20,39 @@ limitations under the License.
     {{- $context := .context -}}
     {{- $serviceAccount := mergeOverwrite (fromYaml (include "bedag-lib.values.serviceaccount" $)).serviceAccount (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $serviceAccount) }}
-      {{- if $serviceAccount.create -}}
+      {{- with $serviceAccount -}}
+        {{- if .create -}}
 kind: ServiceAccount
-        {{- if $serviceAccount.apiVersion }}
-apiVersion: {{ $serviceAccount.apiVersion }}
-        {{- else }}
-apiVersion: v1
-        {{- end }}
-metadata:
-  name: {{ include "bedag-lib.utils.common.serviceAccountName" (dict "sa" $serviceAccount "context" $context) }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $serviceAccount.labels "context" $context)| nindent 4 }}
-        {{- if $serviceAccount.annotations }}
-  annotations:
-          {{- range $anno, $val := $serviceAccount.annotations }}
-            {{- $anno | nindent 4 }}: {{ $val | quote }}
-          {{- end }}
-        {{- end }}
-        {{- if (kindIs "bool" $serviceAccount.automountServiceAccountToken) }}
-automountServiceAccountToken: {{ $serviceAccount.automountServiceAccountToken }}
-        {{- end }}
-        {{- if and $serviceAccount.secrets (kindIs "slice" $serviceAccount.secrets) }}
-secrets: {{ toYaml $serviceAccount.secrets | nindent 2 }}
-        {{- end }}
-        {{- if or (and $serviceAccount.imagePullSecrets (kindIs "slice" $serviceAccount.imagePullSecrets)) $serviceAccount.globalPullSecrets }}
-          {{- if $serviceAccount.globalPullSecrets }}
-imagePullSecrets: {{- include "lib.utils.globals.imagePullSecrets" (dict "pullSecrets" $serviceAccount.imagePullSecrets "context" $context)| nindent 2 }}
+          {{- if .apiVersion }}
+apiVersion: {{ .apiVersion }}
           {{- else }}
-imagePullSecrets: {{ toYaml $serviceAccount.imagePullSecrets | nindent 2 }}
+apiVersion: v1
           {{- end }}
+metadata:
+  name: {{ include "bedag-lib.utils.common.serviceAccountName" (dict "sa" . "context" $context) }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
+          {{- with .namespace }}
+  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+          {{- end }}
+          {{- with .annotations }}
+  annotations:
+            {{- range $anno, $val := . }}
+              {{- $anno | nindent 4 }}: {{ $val | quote }}
+            {{- end }}
+          {{- end }}
+          {{- with .automountServiceAccountToken }}
+automountServiceAccountToken: {{ . }}
+          {{- end }}
+          {{- with .secrets }}
+secrets: {{ toYaml . | nindent 2 }}
+          {{- end }}
+          {{- if or (and .imagePullSecrets (kindIs "slice" .imagePullSecrets)) .globalPullSecrets }}
+            {{- if .globalPullSecrets }}
+imagePullSecrets: {{- include "lib.utils.globals.imagePullSecrets" (dict "pullSecrets" .imagePullSecrets "context" $context) | nindent 2 }}
+            {{- else }}
+imagePullSecrets: {{ toYaml .imagePullSecrets | nindent 2 }}
+            {{- end }}
+          {{- end }}  
         {{- end }}
       {{- end }}
     {{- end }}

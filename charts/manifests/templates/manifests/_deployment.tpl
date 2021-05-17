@@ -19,27 +19,42 @@ limitations under the License.
   {{- if .context -}}
     {{- $context := .context -}}
     {{- $deployment := mergeOverwrite (fromYaml (include "bedag-lib.values.deployment" $)).deployment (default dict .values) (default dict .overwrites) -}}
-    {{- if (include "bedag-lib.utils.intern.noYamlError" $deployment) }}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $deployment) -}}
+      {{- with $deployment -}}
 kind: Deployment
-      {{- if $deployment.apiVersion }}
-apiVersion: {{ $deployment.apiVersion }}
-      {{- else }}
+        {{- if .apiVersion }}
+apiVersion: {{ .apiVersion }}
+        {{- else }}
 apiVersion: apps/v1
-      {{- end }}
+        {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $deployment.labels "context" $context)| nindent 4 }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
+        {{- with .namespace }}   
+  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+        {{- end }}
+        {{- with .annotations }}
+  annotations:
+          {{- range $anno, $val := . }}
+            {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- end }}
+        {{- end }}
 spec:
-      {{- with $deployment.strategy }}
+        {{- if .deploymentFields }}
+          {{- toYaml . | nindent 2 }}
+        {{- end }}
+        {{- with .strategy }}
   strategy: {{ toYaml . |  nindent 4 }}
-      {{- end }}
-  replicas: {{ default "1" $deployment.replicaCount }}
+        {{- end }}
+  replicas: {{ default "1" .replicaCount }}
   selector:
-    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $deployment.selectorLabels) "context" $context) | nindent 6 }}
-      {{- if $deployment.deploymentExtras }}
-        {{- toYaml $deployment.deploymentExtras | nindent 2 }}
+        {{- if .selector }}
+          {{- include "lib.utils.strings.template" (dict "value" .selector "context" $context) | nindent 4 }}
+        {{- else }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) .selectorLabels) "context" $context) | nindent 6 }}
+        {{- end }}
+  template: {{- include "bedag-lib.template.pod" (set $ "pod" .) | nindent 4 }}
       {{- end }}
-  template: {{- include "bedag-lib.template.pod" (set . "pod" $deployment) | nindent 4 }}
     {{- end }}
   {{- end }}
 {{- end -}}

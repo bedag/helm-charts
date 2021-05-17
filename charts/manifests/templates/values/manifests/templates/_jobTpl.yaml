@@ -14,10 +14,6 @@ backoffLimit: {{ default "" $_.data.backoffLimit }}
 # {{ $_.path }}completions -- (int) Specifies the desired number of successfully finished pods the job should be run with [More Info](https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/).
 completions: {{ default "" $_.data.completions }}
 
-## Job Parallelism
-# {{ $_.path }}parallelism -- (int) manualSelector controls generation of pod labels and pod selectors. Leave `manualSelector` unset unless you are certain what you are doing.
-parallelism: {{ default "" $_.data.parallelism }}
-
 ## Job Selector
 # {{ $_.path }}selector -- A label query over pods that should match the pod count. Normally, the system sets this field for you.
 selector: {{ toYaml (default dict $_.data.jobSelector) | nindent 2 }}
@@ -27,10 +23,13 @@ selector: {{ toYaml (default dict $_.data.jobSelector) | nindent 2 }}
 ttlSecondsAfterFinished: {{ default "" $_.data.ttlSecondsAfterFinished }}
 
 ## Job ExtraFields
-# {{ $_.path }}extraFields -- Extra fields used on the Job resource
-extraFields: {{ toYaml (default dict $_.data.jobExtraFields) | nindent 2 }}
+# {{ $_.path }}jobFields -- Extra fields used on the Job resource
+jobFields: {{ toYaml (default dict $_.data.jobExtraFields) | nindent 2 }}
 #  manualSelector: true
 
+  ## Horizontal Pod Autoscaler Extra Values
+  # {{ $_.path }}hpaFields -- Extra Fields for Horizontal Pod Autoscaler Manifest
+  hpaFields: {}
 
 ## Pod Configuration
 ## {{ include "bedag-lib.utils.intern.docLink" $ }}#pod-template

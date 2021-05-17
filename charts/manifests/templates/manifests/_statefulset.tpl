@@ -20,37 +20,52 @@ limitations under the License.
     {{- $context := .context -}}
     {{- $statefulset := mergeOverwrite (fromYaml (include "bedag-lib.values.statefulset" $)).statefulset (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $statefulset) }}
+      {{- with $statefulset }}
 kind: StatefulSet
-      {{- if $statefulset.apiVersion }}
-apiVersion: {{ $statefulset.apiVersion }}
-      {{- else }}
+        {{- if .apiVersion }}
+apiVersion: {{ .apiVersion }}
+        {{- else }}
 apiVersion: apps/v1
-      {{- end }}
+        {{- end }}
 metadata:
-  name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $statefulset.labels "context" $context)| nindent 4 }}
+  name: {{ include "bedag-lib.utils.common.fullname" $ }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context)| nindent 4 }}
+        {{- with .namespace }}
+  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+        {{- end }}
+        {{- with .annotations }}
+  annotations:
+          {{- range $anno, $val := . }}
+            {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- end }}
+        {{- end }}
 spec:
-  podManagementPolicy: {{ default "OrderedReady" $statefulset.podManagementPolicy }}
+  podManagementPolicy: {{ default "OrderedReady" .podManagementPolicy }}
   updateStrategy:
-      {{- $updateStrategy := (default "RollingUpdate" $statefulset.updateStrategy) }}
+        {{- $updateStrategy := (default "RollingUpdate" .updateStrategy) }}
     type: {{ $updateStrategy | quote }}
-      {{- if (eq "OnDelete" $updateStrategy) }}
+        {{- if (eq "OnDelete" $updateStrategy) }}
     rollingUpdate: null
-      {{- else if $statefulset.rollingUpdatePartition }}
+        {{- else if .rollingUpdatePartition }}
     rollingUpdate:
-      partition: {{ $statefulset.rollingUpdatePartition }}
-      {{- end }}
-  replicas: {{ default "1" $statefulset.replicaCount }}
+      partition: {{ .rollingUpdatePartition }}
+        {{- end }}
+  replicas: {{ default "1" .replicaCount }}
   selector:
-    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $statefulset.selectorLabels) "context" $context) | nindent 6 }}
-  serviceName: {{ default (include "bedag-lib.utils.common.fullname" .) $statefulset.serviceName }}
-      {{- if $statefulset.statefulsetExtras }}
-        {{- toYaml $statefulset.statefulsetExtras | nindent 2 }}
-      {{- end }}
-  template: {{- include "bedag-lib.template.pod" (set . "pod" $statefulset) | nindent 4 }}
-      {{- if and $statefulset.volumeClaimTemplates (kindIs "slice" $statefulset.volumeClaimTemplates) }}
-  volumeClaimTemplates: {{- toYaml $statefulset.volumeClaimTemplates | nindent 4 }}
-      {{- end }}
+        {{- if .selector }}
+          {{- include "lib.utils.strings.template" (dict "value" .selector "context" $context) | nindent 4 }}
+        {{- else }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) .selectorLabels) "context" $context) | nindent 6 }}
+        {{- end }}
+  serviceName: {{ default (include "bedag-lib.utils.common.fullname" $) .serviceName }}
+        {{- with .statefulsetExtras }}
+          {{- toYaml .statefulsetExtras | nindent 2 }}
+        {{- end }}
+  template: {{- include "bedag-lib.template.pod" (set $ "pod" $statefulset) | nindent 4 }}
+        {{- with .volumeClaimTemplates }}
+  volumeClaimTemplates: {{- toYaml . | nindent 4 }}
+        {{- end }}
+      {{- end }}  
     {{- end }}  
   {{- else }}
     {{- fail "Template requires '.context' as arguments" }}

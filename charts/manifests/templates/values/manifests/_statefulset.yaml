@@ -11,6 +11,10 @@
   # {{ $_.path }}apiVersion -- Configure the api version used for the Statefulset resource
   apiVersion: ""
 
+  ## Statefulset Namespace
+  ## {{ $_.path }}namespace -- Define a custom namespace to deploy the Statefulset into
+  namespace: ""
+
   ## Statefulset Labels
   # {{ $_.path }}labels -- Merges given labels with common labels
   labels: {}
@@ -22,6 +26,10 @@
   ## Statefulset Selector Labels
   # {{ $_.path }}selectorLabels -- Define SelectorLabels for the Pod Template
   selectorLabels: {}
+
+  # Statefulset Selector 
+  # {{ $_.path }}selector -- Overwrite Selector entirely
+  selector: {}
 
   ## Amount of Replicas
   # {{ $_.path }}replicaCount -- Amount of Replicas deployed

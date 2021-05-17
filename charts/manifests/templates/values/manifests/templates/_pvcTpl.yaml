@@ -5,6 +5,10 @@
 # {{ $_.path }}labels -- Merges given labels with common labels
 labels: {}
 
+## Persistent Volume Claim Namespace
+## {{ $_.path }}namespace -- Define a custom namespace to deploy the PVC into
+namespace: ""
+
 ## Persistent Volume Claim Annotations
 # {{ $_.path }}annotations -- Configure PVC additional Annotations ([Monitor Labels](https://www.weave.works/docs/cloud/latest/tasks/monitor/configuration-k8s/))
 annotations: {}

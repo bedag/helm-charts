@@ -17,8 +17,9 @@ maintainers:
     email: sre@bedag.ch
 dependencies:
 - name: manifests
-  version: "~0.5.0"
-  repository: https://bedag.github.io/helm-charts
+  version: "~0.6.0"
+  repository: "file://../manifests"
+  #repository: https://bedag.github.io/helm-charts
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/prerelease: "false"  

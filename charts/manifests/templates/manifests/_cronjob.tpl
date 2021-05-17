@@ -19,31 +19,39 @@ limitations under the License.
   {{- if .context }}
     {{- $context := .context -}}
     {{- $cronjob := mergeOverwrite (fromYaml (include "bedag-lib.values.cronjob" $)).cronjob (default dict .values) (default dict .overwrites) -}}
-    {{- if (include "bedag-lib.utils.intern.noYamlError" $cronjob) }}
-      {{- if $cronjob.enabled }}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $cronjob) -}}
+      {{- with $cronjob -}}
+        {{- if .enabled }}
 kind: CronJob
-        {{- if $cronjob.apiVersion }}
-apiVersion: {{ $cronjob.apiVersion }}
-        {{- else }}
+          {{- if .apiVersion }}
+apiVersion: {{ .apiVersion }}
+          {{- else }}
 apiVersion: batch/v1beta1
-        {{- end }}
+          {{- end }}
 metadata:
   name:  {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $cronjob.labels "context" $context)| nindent 4 }}
-        {{- if $cronjob.annotations }}
-  annotations:
-          {{- range $anno, $val := $cronjob.annotations }}
-            {{- $anno | nindent 4 }}: {{ $val | quote }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context)| nindent 4 }}
+          {{- with .namespace }}   
+  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
           {{- end }}
-        {{- end }}
+          {{- with .annotations }}
+  annotations:
+            {{- range $anno, $val := . }}
+              {{- $anno | nindent 4 }}: {{ $val | quote }}
+            {{- end }}
+          {{- end }}
 spec:
-  concurrencyPolicy: {{ $cronjob.concurrencyPolicy }}
-  failedJobsHistoryLimit: {{ $cronjob.failedJobsHistoryLimit }}
-  schedule: {{ $cronjob.schedule | quote }}
-  startingDeadlineSeconds: {{ $cronjob.startingDeadlineSeconds }}
-  successfulJobsHistoryLimit: {{ $cronjob.successfulJobsHistoryLimit }}
-  suspend: {{ $cronjob.suspend }}
-  jobTemplate: {{- include "bedag-lib.template.job" (set . "job" $cronjob) | nindent 4 }}
+          {{- with .cronJobFields }}
+            {{- toYaml . | nindent 2 }}
+          {{- end }}
+  concurrencyPolicy: {{ .concurrencyPolicy }}
+  failedJobsHistoryLimit: {{ .failedJobsHistoryLimit }}
+  schedule: {{ .schedule | quote }}
+  startingDeadlineSeconds: {{ .startingDeadlineSeconds }}
+  successfulJobsHistoryLimit: {{ .successfulJobsHistoryLimit }}
+  suspend: {{ .suspend }}
+  jobTemplate: {{- include "bedag-lib.template.job" (set $ "job" .) | nindent 4 }}
+        {{- end }}
       {{- end }}
     {{- end }}
   {{- end }}

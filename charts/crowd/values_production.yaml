@@ -3,6 +3,7 @@
 global:
   imageRegistry: "company-registry.example.com"
 
+
 ## JMX Exporter
 jmxExporter:
   enabled: true
@@ -41,6 +42,15 @@ proxy:
 
 ## Statefulset Configuration
 statefulset:
+
+  image:
+    tag: "1."
+    digest: "sha256:9de1e344a34292154ca0693c13aa629c5ad1f1764fafd895ab53032dde2ad8e4"
+  lifecycle: 
+    postStart:
+      exec:
+        command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+
 
   ## Resources
   resources:

@@ -19,38 +19,50 @@ limitations under the License.
   {{- if .context -}}
     {{- $context := .context -}}
     {{- $serviceMonitor := mergeOverwrite (fromYaml (include "bedag-lib.values.servicemonitor" $)).serviceMonitor (default dict .values) (default dict .overwrites) -}}
-    {{- if (include "bedag-lib.utils.intern.noYamlError" $serviceMonitor) }}
-      {{- if $serviceMonitor.enabled -}}
-        {{- if $serviceMonitor.apiVersion -}}
-apiVersion: {{ $serviceMonitor.apiVersion }}
-        {{- else -}}
+    {{- if (include "bedag-lib.utils.intern.noYamlError" $serviceMonitor) -}}
+      {{- with $serviceMonitor -}}
+        {{- if .enabled -}}
+          {{- if .apiVersion -}}
+apiVersion: {{ .apiVersion }}
+          {{- else -}}
 apiVersion: monitoring.coreos.com/v1
-        {{- end }}
+          {{- end }}
 kind: ServiceMonitor
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $serviceMonitor.labels "context" $context)| nindent 4 }}
-        {{- if $serviceMonitor.namespace }}
-  namespace: {{- include "lib.utils.strings.template" (dict "value" $serviceMonitor.namespace "context" $context) }}
-        {{- end }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context)| nindent 4 }}
+          {{- with .namespace }}
+  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+          {{- end }}
+          {{- with .annotations }}
+  annotations:
+            {{- range $anno, $val := . }}
+              {{- $anno | nindent 4 }}: {{ $val | quote }}
+            {{- end }}
+          {{- end }}
 spec:
-        {{- if $serviceMonitor.additionalFields }}
-          {{- toYaml $serviceMonitor.additionalFields | nindent 2 }}
-        {{- end }}
+          {{- with .additionalFields }}
+            {{- toYaml . | nindent 2 }}
+          {{- end }}
   selector:
-    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $serviceMonitor.selector) "context" $context) | nindent 6 }}
-  endpoints: {{- include "lib.utils.strings.template" (dict "value" $serviceMonitor.endpoints "context" $context) | nindent 4 }}
+          {{- if .selector -}}
+            {{- include "lib.utils.strings.template" (dict "value" .selector "context" $context) | nindent 4 }}
+          {{- else }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) .selectorLabels) "context" $context) | nindent 6 }}
+          {{- end }}
+  endpoints: {{- include "lib.utils.strings.template" (dict "value" .endpoints "context" $context) | nindent 4 }}
   namespaceSelector:
     matchNames:
-        {{- if $serviceMonitor.namespaceSelector }}
-          {{- if kindIs "slice" $serviceMonitor.namespaceSelector }}
-            {{- toYaml $serviceMonitor.namespaceSelector | nindent 6 }}
+          {{- if .namespaceSelector }}
+            {{- if kindIs "slice" .namespaceSelector }}
+              {{- toYaml .namespaceSelector | nindent 6 }}
+            {{- else }}
+      - {{ .namespaceSelector }}
+            {{- end }}
           {{- else }}
-      - {{ $serviceMonitor.namespaceSelector }}
-          {{- end }}
-        {{- else }}
       - {{ $context.Release.Namespace }}
-        {{- end }}
+          {{- end }}
+        {{- end }}  
       {{- end }}
     {{- end }}
   {{- end }}

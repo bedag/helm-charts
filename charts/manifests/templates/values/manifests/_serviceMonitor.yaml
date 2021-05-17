@@ -17,8 +17,12 @@
   apiVersion: ""
 
   ## ServiceMonitor Namespace
-  ## {{ $_.path }}namespace -- Define the namespace to deploy the srviceMonitor in
+  ## {{ $_.path }}namespace -- Define a custom namespace to deploy the serviceMonitor into
   namespace: ""
+
+  ## ServiceMonitor labels
+  # {{ $_.path }}labels -- Configure Prometheus ServiceMonitor labels
+  labels: {}
 
   ## ServiceMonitor NamespaceSelector
   # {{ $_.path }}namespaceSelector -- Define which Namespaces to watch. Can either be type string or slice
@@ -37,11 +41,12 @@
   #    interval: 10s
   #    scrapeTimeout: 10s
 
-  ## ServiceMonitor labels
-  # {{ $_.path }}labels -- Configure Prometheus ServiceMonitor labels
-  labels: {}
+  ## ServiceMonitor Selector Labels
+  # {{ $_.path }}selectorLabels -- Define additional SelectorLabels for the ServiceMonitor
+  selectorLabels: {}
 
-  ## ServiceMonitor Selector Configuration
-  # {{ $_.path }}selector -- Configure Prometheus ServiceMonitor Selector
+  # ServiceMonitordb Selector 
+  # {{ $_.path }}selector -- Overwrite Selector entirely
   selector: {}
+
 {{- end -}}

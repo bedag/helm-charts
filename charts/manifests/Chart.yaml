@@ -2,7 +2,7 @@ apiVersion: v2
 name: manifests
 description: "Bedag's Manifest chart. Library full of basic kubernetes manifests."
 type: library
-version: 0.6.0
+version: 1.0.0
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 keywords:
 - Bedag
@@ -15,7 +15,7 @@ maintainers:
   email: sre@bedag.ch
 dependencies:
 - name: "library"
-  version: "~0.3.0"
+  version: "^1.0.0"
   repository: "https://buttahtoast.github.io/helm-charts/"
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"

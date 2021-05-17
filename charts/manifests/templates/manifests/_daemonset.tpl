@@ -20,29 +20,46 @@ limitations under the License.
     {{- $context := .context -}}
     {{- $daemonset := mergeOverwrite (fromYaml (include "bedag-lib.values.daemonset" $)).daemonset (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $daemonset) }}
+      {{- with $daemonset -}}
 kind: DaemonSet
-      {{- if $daemonset.apiVersion }}
-apiVersion: {{ $daemonset.apiVersion }}
-      {{- else }}
+        {{- if .apiVersion }}
+apiVersion: {{ .apiVersion }}
+        {{- else }}
 apiVersion: apps/v1
-      {{- end }}
+        {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $daemonset.labels "context" $context)| nindent 4 }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context)| nindent 4 }}
+        {{- with .namespace }}   
+  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+        {{- end }}
+        {{- with .annotations }}
+  annotations:
+          {{- range $anno, $val := . }}
+            {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- end }}
+        {{- end }}
 spec:
-  minReadySeconds: {{ default 0 $daemonset.minReadySeconds }}
-  revisionHistoryLimit: {{ default 10 $daemonset.revisionHistoryLimit }}
+        {{- with .daemonsetFields }}
+          {{- toYaml . | nindent 2 }}
+        {{- end }}
+  template: {{- include "bedag-lib.template.pod" (set $ "pod" .) | nindent 4 }}
+  minReadySeconds: {{ default 0 .minReadySeconds }}
+  revisionHistoryLimit: {{ default 10 .revisionHistoryLimit }}
   selector:
-    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $daemonset.selectorLabels) "context" $context) | nindent 6 }}
-  template: {{- include "bedag-lib.template.pod" (set . "pod" $daemonset) | nindent 4 }}
+        {{- if .selector }}
+          {{- include "lib.utils.strings.template" (dict "value" .selector "context" $context) | nindent 4 }}
+        {{- else }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) .selectorLabels) "context" $context) | nindent 6 }}
+        {{- end }}
   updateStrategy:
-      {{- $updateStrategy := (default "RollingUpdate" $daemonset.updateStrategy) }}
+      {{- $updateStrategy := (default "RollingUpdate" .updateStrategy) }}
     type: {{ $updateStrategy | quote }}
       {{- if (eq "OnDelete" $updateStrategy) }}
     rollingUpdate: null
-      {{- else if $daemonset.rollingUpdatemaxUnavailable }}
+      {{- else if .rollingUpdatemaxUnavailable }}
     rollingUpdate:
-      maxUnavailable: {{ $daemonset.rollingUpdatemaxUnavailable }}
+      maxUnavailable: {{ .rollingUpdatemaxUnavailable }}
       {{- end }}
     {{- end }}
   {{- end -}}

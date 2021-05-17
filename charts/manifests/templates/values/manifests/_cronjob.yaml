@@ -15,6 +15,10 @@
   # {{ $_.path }}apiVersion -- Configure the api version used for the CronJob resource.
   apiVersion: ""
 
+  ## CronJob Namespace
+  ## {{ $_.path }}namespace -- Define a custom namespace to deploy the CronJob into
+  namespace: ""
+
   ## CronJob Labels
   # {{ $_.path }}labels -- Configure CronJob additional Labels
   labels: {}
@@ -49,6 +53,9 @@
   # @default -- false
   suspend:
 
+  ## Extra Cronjob Fields
+  # {{ $_.path }}cronJobFields -- Add extra field to the Cronjob resource, if not available as value.
+  cronJobFields: {}
 
   ## Pod Configuration
   ## {{ include "bedag-lib.utils.intern.docLink" $ }}#job-template

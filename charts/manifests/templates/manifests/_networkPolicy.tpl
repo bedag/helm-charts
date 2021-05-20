@@ -29,7 +29,7 @@ apiVersion: networking.k8s.io/v1
         {{- end }}
 metadata:
   name:  {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $networkPolicy.labels "context" $context)| nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $networkPolicy.labels "context" $context)| nindent 4 }}
 spec:
   podSelector:
     matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "bedag-lib.utils.common.selectorLabels" $context) $networkPolicy.selector) "context" $context) | nindent 6 }}

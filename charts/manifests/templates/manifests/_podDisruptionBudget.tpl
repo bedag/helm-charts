@@ -29,7 +29,7 @@ apiVersion: policy/v1beta1
         {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $pdb.labels "context" $context)| nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $pdb.labels "context" $context)| nindent 4 }}
 spec:
         {{- if or $pdb.minAvailable $pdb.maxUnavailable}}
           {{- if $pdb.minAvailable }}

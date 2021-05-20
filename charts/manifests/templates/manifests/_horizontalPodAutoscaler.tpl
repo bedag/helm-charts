@@ -33,7 +33,7 @@ apiVersion: autoscaling/v2beta2
         {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $hpa.labels "context" $context) | nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $hpa.labels "context" $context) | nindent 4 }}
 spec:
         {{- if and $hpa.behavior (kindIs "map" $hpa.behavior) }}
   behavior: {{ toYaml $hpa.behavior | nindent 4 }}

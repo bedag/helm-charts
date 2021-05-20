@@ -28,7 +28,7 @@ apiVersion: apps/v1
       {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $statefulset.labels "context" $context)| nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $statefulset.labels "context" $context)| nindent 4 }}
 spec:
   podManagementPolicy: {{ default "OrderedReady" $statefulset.podManagementPolicy }}
   updateStrategy:

@@ -8,8 +8,12 @@ Description and Definition of all available Go Sprig Templates. Base functionali
 
 * **[Common](#common)**
   * [Fullname](#fullname)
+  * [SelectorLabels](#selectorlabels)
+  * [DefaultLabels](#defaultlabels)
+  * [OverwriteLabels](#overwritelabels)
+  * [CommonLabels](#commonlabels)
+  * [Labels](#labels)
   * [serviceAccountName](#serviceaccountname)
-  * [selectorLabels](#selectorlabels)
   * [mergedValues](#mergedvalues)
 * **[Configs](#configs)**
   * [content](#content)
@@ -50,6 +54,126 @@ String
 {{- include "bedag-lib.utils.common.fullname" $ }}
 ```
 
+### SelectorLabels
+---
+
+SelectorLabel Wrapper Template. Adds the Bundlename to selectorLabels if defined.
+
+#### Arguments
+
+If a required argument is missing, the template engine will intentionally fail.
+
+  * `.`/`.context` - Inherited Root Context (Required).
+  * `.bundlename` - Adds the bundlename (Optional)
+
+**Note**: Implements the `{{ lib.utils.common.selectorLabels }}` template and supports all it's arguments/keys.
+
+#### Returns
+
+String
+
+#### Usage
+
+```
+{{- include "bedag-lib.utils.common.selectorLabels" $ }}
+```
+
+### DefaultLabels
+---
+
+DefaultLabels Wrapper Template. Adds the Bundlename to defaultLabels if defined.
+
+#### Arguments
+
+If a required argument is missing, the template engine will intentionally fail.
+
+  * `.`/`.context` - Inherited Root Context (Required).
+  * `.bundlename` - Adds the bundlename (Optional)
+
+**Note**: Implements the `{{ lib.utils.common.defaultLabels }}` template and supports all it's arguments/keys.
+
+#### Returns
+
+String
+
+#### Usage
+
+```
+{{- include "bedag-lib.utils.common.defaultLabels" $ }}
+```
+
+### OverwriteLabels
+---
+
+OverwriteLabels Wrapper. Adds Bundlename to OverwriteLabels, if defined.
+
+#### Arguments
+
+If a required argument is missing, the template engine will intentionally fail.
+
+  * `.`/`.context` - Inherited Root Context (Required).
+  * `.bundlename` - Adds the bundlename (Optional)
+
+**Note**: Implements the `{{ lib.utils.common.overwriteLabels }}` template and supports all it's arguments/keys.
+
+#### Returns
+
+String
+
+#### Usage
+
+```
+{{- include "bedag-lib.utils.common.overwriteLabels" $ }}
+```
+
+### CommonLabels
+---
+
+CommonLabels Wrapper. Adds Bundlename to CommonLabels, if defined.
+
+#### Arguments
+
+If a required argument is missing, the template engine will intentionally fail.
+
+  * `.`/`.context` - Inherited Root Context (Required).
+  * `.bundlename` - Adds the bundlename (Optional)
+
+**Note**: Implements the `{{ lib.utils.common.commonLabels }}` template and supports all it's arguments/keys.
+
+#### Returns
+
+String
+
+#### Usage
+
+```
+{{- include "bedag-lib.utils.common.commonLabels" $ }}
+```
+
+### Labels
+---
+
+Labels Wrapper. Adds Bundlename to Labels, if defined.
+
+#### Arguments
+
+If a required argument is missing, the template engine will intentionally fail.
+
+  * `.`/`.context` - Inherited Root Context (Required).
+  * `.bundlename` - Adds the bundlename (Optional)
+
+**Note**: Implements the `{{ lib.utils.common.labels }}` template and supports all it's arguments/keys.
+
+#### Returns
+
+String
+
+#### Usage
+
+```
+{{- include "bedag-lib.utils.common.labels" $ }}
+```
+
 ### ServiceAccountName
 ---
 
@@ -70,30 +194,6 @@ String
 
 ```
 {{- include "bedag-lib.utils.common.serviceAccountName" $ }}
-```
-
-### SelectorLabels
----
-
-SelectorLabel Wrapper Template. Uses the Bundlename as service selector if no other selector is defined.
-
-#### Arguments
-
-If a required argument is missing, the template engine will intentionally fail.
-
-  * `.`/`.context` - Inherited Root Context (Required).
-  * `.bundlename` - Overwrites the prefix with the bundlename (Optional)
-
-**Note**: Implements the `{{ lib.utils.common.selectorLabels }}` template and supports all it's arguments/keys.
-
-#### Returns
-
-String
-
-#### Usage
-
-```
-{{- include "bedag-lib.utils.common.selectorLabel" $ }}
 ```
 
 ### MergedValues

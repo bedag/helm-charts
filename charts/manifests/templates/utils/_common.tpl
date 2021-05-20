@@ -55,10 +55,9 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.utils.common.selectorLabels" -}}
   {{- $c := . -}}
-    {{- if .bundlename }}
-app.kubernetes.io/component:  {{ .bundlename }}
-    {{- else}}
-      {{- include "lib.utils.common.selectorLabels" $c }}
-    {{- end }}
+  {{- if .bundlename }}
+app.kubernetes.io/bundle:  {{ .bundlename }}
+  {{- else}}
+    {{- include "lib.utils.common.selectorLabels" $c }}
   {{- end }}
 {{- end -}}

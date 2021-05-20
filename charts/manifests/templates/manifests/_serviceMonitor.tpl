@@ -38,7 +38,7 @@ spec:
           {{- toYaml $serviceMonitor.additionalFields | nindent 2 }}
         {{- end }}
   selector:
-    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $serviceMonitor.selector) "context" $context) | nindent 6 }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "bedag-lib.utils.common.selectorLabels" $context) $serviceMonitor.selector) "context" $context) | nindent 6 }}
   endpoints: {{- include "lib.utils.strings.template" (dict "value" $serviceMonitor.endpoints "context" $context) | nindent 4 }}
   namespaceSelector:
     matchNames:

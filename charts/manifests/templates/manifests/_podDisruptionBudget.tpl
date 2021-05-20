@@ -42,7 +42,7 @@ spec:
   minAvailable: 1
         {{- end }}
   selector:
-    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $pdb.selectorLabels) "context" $context) | nindent 6 }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "bedag-lib.utils.common.selectorLabels" $context) $pdb.selectorLabels) "context" $context) | nindent 6 }}
       {{- end }}
     {{- end }}
   {{- end }}

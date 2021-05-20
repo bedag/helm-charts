@@ -35,7 +35,7 @@ spec:
       {{- end }}
   replicas: {{ default "1" $deployment.replicaCount }}
   selector:
-    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $deployment.selectorLabels) "context" $context) | nindent 6 }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "bedag-lib.utils.common.selectorLabels" $context) $deployment.selectorLabels) "context" $context) | nindent 6 }}
       {{- if $deployment.deploymentExtras }}
         {{- toYaml $deployment.deploymentExtras | nindent 2 }}
       {{- end }}

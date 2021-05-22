@@ -3,7 +3,7 @@
 It's difficult to quickstart with this project unless you already have a deeper understanding. But we will show you how to set everything for a good experience with the manifests library. For better understanding check the entire documentation.
 
 1. **Get the Helm Manifests Plugin**</br>
-    The Helm Manifests Plugin will help you generate the correct vales for all the resources you are going to   need. [Find it here](https://github.com/bedag/helm-manifests-plugin)
+    The Helm Manifests Plugin will help you generate the correct values for all the resources you are going to   need. [Find it here](https://github.com/bedag/helm-manifests-plugin)
 
 2. **Create a new Chart**</br>
     You can do this by using helm. Tough we won't need a lot of files from the helm generated chart directory.

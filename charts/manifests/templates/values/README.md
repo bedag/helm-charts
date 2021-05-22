@@ -10,4 +10,4 @@ This library ships with a Values Generator, which allows to generate values.yaml
 
 ### Plugin
 
-To make life easier, we created a dedicated helm plugin to generate values. [See the Generator Helm Plugin]((https://github.com/bedag/helm-manifests-plugin))
+To make life easier, we created a dedicated helm plugin to generate values. [See the Generator Helm Plugin](https://github.com/bedag/helm-manifests-plugin)

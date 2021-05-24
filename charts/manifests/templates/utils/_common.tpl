@@ -53,11 +53,10 @@ limitations under the License.
 
 
 {{/*
-  Sprig Template - SelectorLabels Wrapper. Adds Bundlename to selectorLabels, if defined.
+  Sprig Template - CommonLabels Wrapper. Adds Bundlename to CommonLabels, if defined.
 */}}
-{{- define "bedag-lib.utils.common.selectorLabels" -}}
-{{- $c := . -}}
-{{- include "lib.utils.common.selectorLabels" $c }}
+{{- define "bedag-lib.utils.common.commonLabels" -}}
+{{- include "lib.utils.common.overwriteLabels" . | indent 0 }}
 {{- if .bundlename }}
 app.kubernetes.io/bundle:  {{ .bundlename }}
 {{- end }}
@@ -65,45 +64,8 @@ app.kubernetes.io/bundle:  {{ .bundlename }}
 
 
 {{/*
-  Sprig Template - DefaultLabels Wrapper. Adds Bundlename to DefaultLabels, if defined.
-*/}}
-{{- define "bedag-lib.utils.common.defaultLabels" -}}
-{{- include "bedag-lib.utils.common.selectorLabels" . }}
-{{- if and .Chart.AppVersion (not .versionunspecific) }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-{{- end -}}
-
-
-{{/*
-  Sprig Template - OverwriteLabels Wrapper. Adds Bundlename to OverwriteLabels, if defined.
-*/}}
-{{- define "bedag-lib.utils.common.overwriteLabels" -}}
-  {{- if and $.Values.overwriteLabels (kindIs "map" $.Values.overwriteLabels) }}
-    {{- include "lib.utils.strings.template" (dict "value" $.Values.overwriteLabels "context" $) | nindent 0 }}
-  {{- else }}
-    {{- include "bedag-lib.utils.common.defaultLabels" . | indent 0}}
-  {{- end }}
-{{- end -}}
-
-
-{{/*
-  Sprig Template - CommonLabels Wrapper. Adds Bundlename to CommonLabels, if defined.
-*/}}
-{{- define "bedag-lib.utils.common.commonLabels" -}}
-  {{- include "bedag-lib.utils.common.overwriteLabels" . | indent 0 }}
-  {{- if and $.Values.commonLabels (kindIs "map" $.Values.commonLabels) }}
-    {{- include "lib.utils.strings.template" (dict "value" $.Values.commonLabels "context" $) | nindent 0 }}
-  {{- end }}
-{{- end -}}
-
-
-{{/*
   Sprig Template - Labels Wrapper. Adds Bundlename to Labels, if defined.
 */}}
 {{- define "bedag-lib.utils.common.labels" -}}
-  {{- $_ := set (default . .context) "versionunspecific" (default false .versionUnspecific ) -}}
-  {{- toYaml (mergeOverwrite (fromYaml (include "bedag-lib.utils.common.commonLabels" (default . .context))) (default dict .labels)) | indent 0 }}
-  {{- $_ := unset (default . .context) "versionunspecific" }}
+{{- toYaml (mergeOverwrite (fromYaml (include "bedag-lib.utils.common.commonLabels" (default . .context))) (default dict .labels)) | indent 0 }}
 {{- end -}}
-

@@ -2,7 +2,7 @@ apiVersion: v2
 name: manifests
 description: "Bedag's Manifest chart. Library full of basic kubernetes manifests."
 type: library
-version: 0.7.7
+version: 0.7.8
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 keywords:
 - Bedag
@@ -24,4 +24,4 @@ annotations:
   artifacthub.io/changes: |
     - "[Added]: Content File Template (Template & Documentation)"
     - "[Added]: Content Template (Template & Documentation)"
-    - "[Added]: Common Utils Functions (Wrapper functions, Template & Documentation)"
+    - "[Added]: Common Utils (Label Wrappers, Template & Documentation)"

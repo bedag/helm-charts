@@ -33,7 +33,7 @@ spec:
   minReadySeconds: {{ default 0 $daemonset.minReadySeconds }}
   revisionHistoryLimit: {{ default 10 $daemonset.revisionHistoryLimit }}
   selector:
-    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "bedag-lib.utils.common.selectorLabels" $context) $daemonset.selectorLabels) "context" $context) | nindent 6 }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $daemonset.selectorLabels) "context" $context) | nindent 6 }}
   template: {{- include "bedag-lib.template.pod" (set . "pod" $daemonset) | nindent 4 }}
   updateStrategy:
       {{- $updateStrategy := (default "RollingUpdate" $daemonset.updateStrategy) }}

@@ -63,7 +63,7 @@ spec:
         {{- if and $svc.extraPorts (kindIs "slice" $svc.extraPorts) }}
           {{- toYaml $svc.extraPorts | nindent 4 }}
         {{- end }}
-  selector: {{- include "lib.utils.strings.template" (dict "value" (default (include "bedag-lib.utils.common.selectorLabels" $context) $svc.selector) "context" $context) | nindent 4 }}
+  selector: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $svc.selector) "context" $context) | nindent 4 }}
       {{- end }}
     {{- end }}
   {{- else }}

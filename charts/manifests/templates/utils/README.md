@@ -8,8 +8,13 @@ Description and Definition of all available Go Sprig Templates. Base functionali
 
 * **[Common](#common)**
   * [Fullname](#fullname)
+  * [CommonLabels](#commonlabels)
+  * [Labels](#labels)
   * [serviceAccountName](#serviceaccountname)
   * [mergedValues](#mergedvalues)
+* **[Configs](#configs)**
+  * [content](#content)
+  * [files](#files)   
 * **[Helpers](#helpers)**
   * [javaProxies](#javaproxies)
 * **[Environment](#environment)**
@@ -29,7 +34,7 @@ Fullname Wrapper Template. Considers bundle name as prefix.
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.`/`.context` - Inherited Root Context (Required).
   * `.bundlename` - Overwrites the prefix with the bundlename (Optional)
@@ -46,6 +51,54 @@ String
 {{- include "bedag-lib.utils.common.fullname" $ }}
 ```
 
+### CommonLabels
+---
+
+CommonLabels Wrapper. Adds Bundlename to CommonLabels, if defined.
+
+#### Arguments
+
+If a required argument is missing, the template engine will intentionally fail.
+
+  * `.`/`.context` - Inherited Root Context (Required).
+  * `.bundlename` - Adds the bundlename (Optional)
+
+**Note**: Implements the `{{ lib.utils.common.commonLabels }}` template and supports all it's arguments/keys.
+
+#### Returns
+
+String
+
+#### Usage
+
+```
+{{- include "bedag-lib.utils.common.commonLabels" $ }}
+```
+
+### Labels
+---
+
+Labels Wrapper. Adds Bundlename to Labels, if defined.
+
+#### Arguments
+
+If a required argument is missing, the template engine will intentionally fail.
+
+  * `.`/`.context` - Inherited Root Context (Required).
+  * `.bundlename` - Adds the bundlename (Optional)
+
+**Note**: Implements the `{{ lib.utils.common.labels }}` template and supports all it's arguments/keys.
+
+#### Returns
+
+String
+
+#### Usage
+
+```
+{{- include "bedag-lib.utils.common.labels" $ }}
+```
+
 ### ServiceAccountName
 ---
 
@@ -53,7 +106,7 @@ This function evaluates the ServiceAccount name. Matches the layout of the Servi
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.sa` - ServiceAccount Value Structure.
   * `.context` - Inherited Root Context (Required).
@@ -75,7 +128,7 @@ This template is used for Code reduction. It's main purpose is the merge default
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.root` - Inherited Root Context (Required)
   * `.key` - Key evaluated on default values (Optional). If not set will use the value of `.type`.
@@ -91,6 +144,210 @@ String, YAML Structure
 {{- $values := include "bedag-lib.utils.common.mergedValues" (dict "type" "serviceAccount" "root" .) }}
 ```
 
+## [Configs](./_configs_.tpl)
+
+### Content
+---
+
+Renders Config content based on your needs
+
+#### Arguments
+
+If a required argument is missing, the template engine will intentionally fail.
+
+  * `.config` - Config Structure [e.g. .config_files.application_properties ](Required)
+  * `.format` - Define the format when including the template. The format per config (`.config.format`) value takes precedence, if present.
+  * `.context` - Inherited Root Context (Required).
+
+
+#### Structure/Example
+
+This template supports the following key structure:
+
+
+**values.yaml**
+```
+config_files:
+
+  # Config Structure: Here we define a config file we want to render with a custom format
+  application_properties:
+
+    ## Format allows you to define your own pattern on how to format the key value pairs. 
+    ## You can use $.loop.key as placeholder for your key values and $.loop.value for the value placeholder.
+    ## This only works, when the content is kind map, otherwise it will be dumped to yaml without applying the format (Optional)
+    #
+    ## In the following example we want to use = ase key value indicator, therefor we use the following format:
+    format*: "{{ $.loop.key }}={{ tpl $.loop.value $ | quote }}"
+
+    ## For the format to apply, the content needs to be a map, otherwise it's just templated to yaml (Required)
+    content: 
+      spring.datasource.jdbcUrl: "jdbc:postgresql://postgresql:5342/postgres"
+      spring.datasource.driver-class-name: "org.postgresql.Driver"
+      spring.datasource.username: "${DB_USER}"
+      spring.datasource.password: "${DB_PASSWORD}"
+      api.auth.openid.authorizationUrlForSwagger: "{{ $.Values.config.properties.oauth.url }}"
+      
+  # Renders the given content just as yaml and allows templating
+  application_environment:
+    content: | 
+      some.environment = {
+        debug: false,
+        apiUrl: "{{ $.Values.config.properties.oauth.url }}",
+  
+        openIdConnect: {
+          redirectUri: window.location.origin + '/index.html',
+          requireHttps: false
+        }
+      }
+
+## Custom Config Structure we access from the configurations
+config:
+  properties:
+    oauth:
+      url: "https://oauth.company.com"
+```
+
+**configmap.yaml**
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-configuration
+data:
+  application.properties: | {{- include "bedag-lib.utils.configs.content" (dict "context" $ "config" $.Values.config_files.application_properties ) | nindent 4 }}
+
+  environment: | {{- include "bedag-lib.utils.configs.content" (dict "context" $ "config" $.Values.config_files.application_environment ) | nindent 4 }}
+``` 
+
+Results in this:
+
+``` 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-configuration
+data:
+  application.properties: |
+    
+    api.auth.openid.authorizationUrlForSwagger="https://oauth.company.com"
+    spring.datasource.driver-class-name="org.postgresql.Driver"
+    spring.datasource.jdbcUrl="jdbc:postgresql://postgresql:5342/postgres"
+    spring.datasource.password="${DB_PASSWORD}"
+    spring.datasource.username="${DB_USER}" 
+  
+  environment: |
+    
+    some.environment = {
+      debug: false,
+      apiUrl: "https://oauth.company.com",
+    
+      openIdConnect: {
+        redirectUri: window.location.origin + '/index.html',
+        requireHttps: false
+      }
+    }
+```
+
+#### Returns
+
+String, YAML Structure
+
+#### Usage
+
+```
+{{- include "bedag-lib.utils.configs.content" (dict "context" $ "config" $.Values.config_files.application_environment "format" "{{ $.loop.key }}={{ tpl $.loop.value $ | quote }}") | nindent 0 }}
+```
+
+### Files
+---
+
+Wrapper for the [Content Template](#template) but allows to specify a file name. Click the link to get more information on content rendering.
+
+#### Arguments
+
+If a required argument is missing, the template engine will intentionally fail.
+
+  * `.config` - Config Structure [e.g. .config_files.application_properties ](Required)
+  * `.name` - Define the name for the file when including the template. The format per config (`.config.name`) value takes precedence, if present. Defaults to `config.yml` (Optional)
+  * `.format` - Define the format when including the template. The format per config (`.config.format`) value takes precedence, if present.
+  * `.context` - Inherited Root Context (Required).
+
+
+#### Structure/Example
+
+This template supports the following key structure:
+
+
+**values.yaml**
+```
+config_files:
+
+  # Config Structure: Here we define a config file we want to render with a custom format
+  application_properties:
+
+    ## Define the file name
+    name: "application.properties"
+
+    ## Format allows you to define your own pattern on how to format the key value pairs. 
+    ## You can use $.loop.key as placeholder for your key values and $.loop.value for the value placeholder.
+    ## This only works, when the content is kind map, otherwise it will be dumped to yaml without applying the format (Optional)
+    #
+    ## In the following example we want to use = ase key value indicator, therefor we use the following format:
+    format*: "{{ $.loop.key }}={{ tpl $.loop.value $ | quote }}"
+
+    ## For the format to apply, the content needs to be a map, otherwise it's just templated to yaml (Required)
+    content: 
+      spring.datasource.jdbcUrl: "jdbc:postgresql://postgresql:5342/postgres"
+      spring.datasource.driver-class-name: "org.postgresql.Driver"
+      spring.datasource.username: "${DB_USER}"
+      spring.datasource.password: "${DB_PASSWORD}"
+      api.auth.openid.authorizationUrlForSwagger: "{{ $.Values.config.properties.oauth.url }}"
+
+## Custom Config Structure we access from the configurations
+config:
+  properties:
+    oauth:
+      url: "https://oauth.company.com"
+``` 
+
+**configmap.yaml**
+```
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-configuration
+data:
+  {{- include "bedag-lib.utils.configs.file" (dict "context" $ "config" $.Values.config_files.application_properties ) | nindent 2 }}
+``` 
+
+Results in this:
+
+``` 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: application-configuration
+data:
+  
+  application.properties: |-
+    
+    api.auth.openid.authorizationUrlForSwagger="https://oauth.company.com"
+    spring.datasource.driver-class-name="org.postgresql.Driver"
+    spring.datasource.jdbcUrl="jdbc:postgresql://postgresql:5342/postgres"
+    spring.datasource.password="${DB_PASSWORD}"
+    spring.datasource.username="${DB_USER}"
+```
+
+#### Returns
+
+String, YAML Structure
+
+#### Usage
+
+```
+{{- include "bedag-lib.utils.configs.file" (dict "context" $ "config" $.Values.config_files.application_environment "format" "{{ $.loop.key }}={{ tpl $.loop.value $ | quote }}" "name" "application.properties") | nindent 0 }}
+```
+
 ## [Helpers](./_helpers.tpl)
 
 ### JavaProxies
@@ -100,7 +357,7 @@ Returns a Yaml defined proxy configuration in java proxy arguments.
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.proxy` - The supported Proxy key structure (optional). If not set, an empty string is returned
   * `.context` - Inherited Root Context (Required).
@@ -158,7 +415,7 @@ this template checks if an environment key structure contains any secret element
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.` - Supported environment key structure.
 
@@ -182,7 +439,7 @@ This template calls a supported Preset and returns the output. [Learn more about
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.preset` - Define which preset to render (Required).
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
@@ -209,7 +466,7 @@ This template returns a YAML Structure of all available values for a manifest or
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.` - Inherited Root Context (Required).
 
@@ -285,7 +542,7 @@ Returns the public access to the application (either by service or ingress). Dep
 
 #### Arguments
 
-If an as required marked argument is missing, the template engine will intentionally.
+If a required argument is missing, the template engine will intentionally fail.
 
   * `.path` - Define which preset to render (Optional).
   * `.ingress` - Public Ingress Resource for the application (Key structure)

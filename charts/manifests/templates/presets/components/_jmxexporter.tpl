@@ -45,7 +45,7 @@ extraResources:
       kind: ConfigMap
       metadata:
         name: {{ include "bedag-lib.utils.common.fullname" (dict "name" $name "context" $.context) }}
-        labels: {{- include "lib.utils.common.labels" (dict "labels" $.values.labels "context" $.context) | nindent 10 }}
+        labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $.values.labels "context" $.context) | nindent 10 }}
           manifests.bedag/component: {{ $name }}
       data:
         jmx-prometheus.yml: |-

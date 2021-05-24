@@ -29,7 +29,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $serviceMonitor.labels "context" $context)| nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $serviceMonitor.labels "context" $context)| nindent 4 }}
         {{- if $serviceMonitor.namespace }}
   namespace: {{- include "lib.utils.strings.template" (dict "value" $serviceMonitor.namespace "context" $context) }}
         {{- end }}

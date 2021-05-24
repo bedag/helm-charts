@@ -29,7 +29,7 @@ apiVersion: v1
         {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.serviceAccountName" (dict "sa" $serviceAccount "context" $context) }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $serviceAccount.labels "context" $context)| nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $serviceAccount.labels "context" $context)| nindent 4 }}
         {{- if $serviceAccount.annotations }}
   annotations:
           {{- range $anno, $val := $serviceAccount.annotations }}

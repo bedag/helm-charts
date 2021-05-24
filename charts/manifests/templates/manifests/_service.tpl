@@ -29,7 +29,7 @@ apiVersion: v1
         {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $svc.labels "context" $context)| nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $svc.labels "context" $context)| nindent 4 }}
         {{- if $svc.annotations }}
   annotations:
           {{- range $anno, $val := $svc.annotations }}

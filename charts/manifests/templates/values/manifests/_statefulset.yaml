@@ -42,21 +42,20 @@
   ## Persistent Volume Template Configuration
   # {{ $_.path }}volumeClaimTemplates -- Statefulset [volumeClaimTemplates](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#components). **Statefulset only**
   volumeClaimTemplates: []
-  #  - metadata:
-  #      name: example
-  #      annotations: {}
-  #    spec:
-  #      accessModes: [ "ReadWriteOnce" ]
-  #      resources:
-  #        requests:
-  #          storage: "1Gi"
-  #      storageClassName: { include "lib.utils.storageClass" (dict "persistence" .Values.persistence "context" $.Values) }
+    #- metadata:
+    #    name: example
+    #    annotations: {}
+    #  spec:
+    #    accessModes: [ "ReadWriteOnce" ]
+    #    resources:
+    #      requests:
+    #        storage: "1Gi"
+    #    storageClassName: { include "lib.utils.storageClass" (dict "persistence" .Values.persistence "context" $.Values) }
 
 
   ## Statefulset Extra Values
   # {{ $_.path }}statefulsetExtras -- Extra Fields for Statefulset Manifest
   statefulsetExtras: {}
-  #
 
   ## Pod Configuration
   ## {{ include "bedag-lib.utils.intern.docLink" $_ }}#pod-template

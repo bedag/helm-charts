@@ -20,16 +20,16 @@ forceRedeploy: false
 ## Extra Pod Fields
 # {{ $_.path }}podFields -- Add extra field to the [Pod Template](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podtemplate-v1-core) if not available as value.
 podFields: {}
-#  hostNetwork: true
+  #hostNetwork: true
 
 ## Additional Kubernetes Volumes
 # {{ $_.path }}volumes -- Additional [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
 volumes: []
-#  - name: cache
-#    emptyDir: {}
-#  - name: share
-#    persistentVolumeClaim:
-#      claimName: 'shared'
+  #- name: cache
+  #  emptyDir: {}
+  #- name: share
+  #  persistentVolumeClaim:
+  #    claimName: 'shared'
 
 ## RestartPolicy Configuration
 # {{ $_.path }}restartPolicy -- Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
@@ -58,9 +58,9 @@ podSecurityContext: {}
 ## Pod Initcontainers
 # {{ $_.path }}initContainers -- Pod [initContainers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
 initContainers: []
-#  - name: init-myservice
-#    image: busybox:1.28
-#    command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+  #- name: init-myservice
+  #  image: busybox:1.28
+  #  command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
 ## Pod SideCar Containers
 # {{ $_.path }}sidecars -- Allows to add sidecars to your [maincar]](https://kubernetes.io/docs/concepts/workloads/pods/#using-pods)

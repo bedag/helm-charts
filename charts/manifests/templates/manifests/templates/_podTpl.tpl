@@ -20,7 +20,7 @@ limitations under the License.
   {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) .context (include "bedag-lib.utils.intern.noYamlError" .context) -}}
     {{- $context := .context -}}
 metadata:
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $values.podLabels "versionUnspecific" "true" "context" $context)| nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $values.podLabels "versionUnspecific" "true" "context" $context)| nindent 4 }}
     {{- if or $values.podAnnotations $values.forceRedeploy }}
   annotations:
       {{- if $values.forceRedeploy }}

@@ -33,6 +33,6 @@ selector: {}
 ## Persistent Volume Claim Data Sources
 # {{ $_.path }}dataSource -- Data Sources are currently only supported for [CSI Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#volume-snapshot-and-restore-volume-from-snapshot-support)
 dataSource:
-#  name: existing-src-pvc-name
-#  kind: PersistentVolumeClaim
+  #name: existing-src-pvc-name
+  #kind: PersistentVolumeClaim
 {{- end -}}

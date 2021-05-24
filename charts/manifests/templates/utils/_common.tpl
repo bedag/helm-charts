@@ -19,11 +19,12 @@ limitations under the License.
   Sprig Template - Fullname Template Wrapper. Considers the Bundlename as prefix, if defined.
 */}}
 {{- define "bedag-lib.utils.common.fullname" -}}
-   {{- $c := . -}}
-   {{- $_ := set $c "context" (default . .context) }}
-   {{- $_ := set $c "prefix" (default $c.context.bundlename .bundlename) }}
-   {{- include "lib.utils.common.fullname" $c }}
+  {{- $c := . -}}
+  {{- $_ := set $c "context" (default . .context) }}
+  {{- $_ := set $c "prefix" (default $c.context.bundlename .bundlename) }}
+  {{- include "lib.utils.common.fullname" $c }}
 {{- end }}
+
 
 {{/*
   Sprig Template - ServiceAccountName
@@ -48,4 +49,23 @@ limitations under the License.
   {{- else }}
     {{- fail "Template requires '.context' as arguments" }}
   {{- end }}
+{{- end -}}
+
+
+{{/*
+  Sprig Template - CommonLabels Wrapper. Adds Bundlename to CommonLabels, if defined.
+*/}}
+{{- define "bedag-lib.utils.common.commonLabels" -}}
+{{- include "lib.utils.common.overwriteLabels" . | indent 0 }}
+{{- if .bundlename }}
+app.kubernetes.io/bundle:  {{ .bundlename }}
+{{- end }}
+{{- end -}}
+
+
+{{/*
+  Sprig Template - Labels Wrapper. Adds Bundlename to Labels, if defined.
+*/}}
+{{- define "bedag-lib.utils.common.labels" -}}
+{{- toYaml (mergeOverwrite (fromYaml (include "bedag-lib.utils.common.commonLabels" (default . .context))) (default dict .labels)) | indent 0 }}
 {{- end -}}

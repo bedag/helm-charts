@@ -9,7 +9,6 @@ Description and Definition of all available Go Sprig Templates. Base functionali
 * **[Common](#common)**
   * [Fullname](#fullname)
   * [SelectorLabels](#selectorlabels)
-  * [Labels](#labels)
   * [CommonLabels](#commonlabels)
   * [Labels](#labels)
   * [serviceAccountName](#serviceaccountname)

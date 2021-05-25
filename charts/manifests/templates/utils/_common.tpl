@@ -57,9 +57,9 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.utils.common.selectorLabels" -}}
 {{- include "lib.utils.common.selectorLabels" . | indent 0 }}
-{{- if .bundlename }}
-app.kubernetes.io/bundle:  {{ .bundlename }}
-{{- end }}
+  {{- if .bundlename }}
+    app.kubernetes.io/bundle: {{ .bundlename }}
+  {{- end }}
 {{- end -}}
 
 
@@ -67,10 +67,10 @@ app.kubernetes.io/bundle:  {{ .bundlename }}
   Sprig Template - CommonLabels Wrapper. Adds Bundlename to CommonLabels, if defined.
 */}}
 {{- define "bedag-lib.utils.common.commonLabels" -}}
-{{- include "lib.utils.common.overwriteLabels" . | indent 0 }}
-{{- if .bundlename }}
-app.kubernetes.io/bundle:  {{ .bundlename }}
-{{- end }}
+  {{- include "lib.utils.common.commonLabels" . | indent 0 }}
+  {{- if .bundlename }}
+    app.kubernetes.io/bundle: {{ .bundlename }}
+  {{- end }}
 {{- end -}}
 
 
@@ -78,5 +78,8 @@ app.kubernetes.io/bundle:  {{ .bundlename }}
   Sprig Template - Labels Wrapper. Adds Bundlename to Labels, if defined.
 */}}
 {{- define "bedag-lib.utils.common.labels" -}}
-{{- toYaml (mergeOverwrite (fromYaml (include "bedag-lib.utils.common.commonLabels" (default . .context))) (default dict .labels)) | indent 0 }}
+  {{- toYaml (mergeOverwrite (fromYaml (include "lib.utils.common.commonLabels" (default . .context))) (default dict .labels)) | indent 0 }}
+  {{- if .bundlename }}
+    app.kubernetes.io/bundle: {{ .bundlename }}
+  {{- end }}
 {{- end -}}

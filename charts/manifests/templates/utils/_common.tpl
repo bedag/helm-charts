@@ -56,7 +56,7 @@ limitations under the License.
   Sprig Template - SelectorLabels Wrapper. Adds Bundlename to SelectorLabelsLabels, if defined
 */}}
 {{- define "bedag-lib.utils.common.selectorLabels" -}}
-{{- include "lib.utils.common.selectorLabels" . | indent 0 }}
+  {{- include "lib.utils.common.selectorLabels" . | indent 0 }}
   {{- if .bundlename }}
     app.kubernetes.io/bundle: {{ .bundlename }}
   {{- end }}
@@ -78,8 +78,7 @@ limitations under the License.
   Sprig Template - Labels Wrapper. Adds Bundlename to Labels, if defined.
 */}}
 {{- define "bedag-lib.utils.common.labels" -}}
-  {{- toYaml (mergeOverwrite (fromYaml (include "lib.utils.common.commonLabels" (default . .context))) (default dict .labels)) | indent 0 }}
-  {{- if .bundlename }}
-    app.kubernetes.io/bundle: {{ .bundlename }}
-  {{- end }}
+  {{- $_ := set (default . .context) "versionunspecific" (default false .versionUnspecific ) -}}
+  {{- toYaml (mergeOverwrite (fromYaml (include "bedag-lib.utils.common.commonLabels" (default . .context))) (default dict .labels)) | indent 0 }}
+  {{- $_ := unset (default . .context) "versionunspecific" }}
 {{- end -}}

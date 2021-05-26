@@ -56,10 +56,10 @@ limitations under the License.
   Sprig Template - SelectorLabels Wrapper. Adds Bundlename to SelectorLabelsLabels, if defined
 */}}
 {{- define "bedag-lib.utils.common.selectorLabels" -}}
-  {{- include "lib.utils.common.selectorLabels" . | indent 0 }}
-  {{- if .bundlename }}
-    app.kubernetes.io/bundle: {{ .bundlename }}
-  {{- end }}
+{{- include "lib.utils.common.selectorLabels" . | indent 0 }}
+{{- if .bundlename }}
+app.kubernetes.io/bundle: {{ .bundlename }}
+{{- end }}
 {{- end -}}
 
 
@@ -67,10 +67,10 @@ limitations under the License.
   Sprig Template - CommonLabels Wrapper. Adds Bundlename to CommonLabels, if defined.
 */}}
 {{- define "bedag-lib.utils.common.commonLabels" -}}
-  {{- include "lib.utils.common.commonLabels" . | indent 0 }}
-  {{- if .bundlename }}
-    app.kubernetes.io/bundle: {{ .bundlename }}
-  {{- end }}
+{{- include "lib.utils.common.commonLabels" . | indent 0 }}
+{{- if .bundlename }}
+app.kubernetes.io/bundle: {{ .bundlename }}
+{{- end }}
 {{- end -}}
 
 

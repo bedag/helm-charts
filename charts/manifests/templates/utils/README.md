@@ -73,7 +73,7 @@ String
 #### Usage
 
 ```
-{{- include "bedag-lib.utils.common.commonLabels" $ }}
+{{- include "bedag-lib.utils.common.selectorLabels" $ }}
 ```
 
 ### CommonLabels

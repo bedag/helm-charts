@@ -45,7 +45,7 @@ extraResources:
       kind: ConfigMap
       metadata:
         name: {{ include "bedag-lib.utils.common.fullname" (dict "name" $name "context" $.context) }}
-        labels: {{- include "lib.utils.common.labels" (dict "labels" $.values.labels "context" $.context) | nindent 10 }}
+        labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $.values.labels "context" $.context) | nindent 10 }}
           manifests.bedag/component: {{ $name }}
       data:
         jmx-prometheus.yml: |-
@@ -122,6 +122,6 @@ serviceMonitor:
     {{- end }}
   labels: {{ toYaml $.values.labels | nindent 4 }}
     manifests.bedag/component: {{ $name }}
-  selector: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $.context) $.values.serviceMonitor.selector) "context" $.context) | nindent 4 }}
+  selector: {{- include "lib.utils.strings.template" (dict "value" (default (include "bedag-lib.utils.common.selectorLabels" $.context) $.values.serviceMonitor.selector) "context" $.context) | nindent 4 }}
     manifests.bedag/component: {{ $name }}
 {{- end }}

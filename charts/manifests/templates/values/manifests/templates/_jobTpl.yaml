@@ -29,7 +29,7 @@ ttlSecondsAfterFinished: {{ default "" $_.data.ttlSecondsAfterFinished }}
 ## Job ExtraFields
 # {{ $_.path }}extraFields -- Extra fields used on the Job resource
 extraFields: {{ toYaml (default dict $_.data.jobExtraFields) | nindent 2 }}
-#  manualSelector: true
+  #manualSelector: true
 
 
 ## Pod Configuration

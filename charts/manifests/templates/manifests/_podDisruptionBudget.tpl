@@ -29,7 +29,7 @@ apiVersion: policy/v1beta1
         {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $pdb.labels "context" $context)| nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $pdb.labels "context" $context)| nindent 4 }}
 spec:
         {{- if or $pdb.minAvailable $pdb.maxUnavailable}}
           {{- if $pdb.minAvailable }}
@@ -42,7 +42,7 @@ spec:
   minAvailable: 1
         {{- end }}
   selector:
-    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $pdb.selectorLabels) "context" $context) | nindent 6 }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "bedag-lib.utils.common.selectorLabels" $context) $pdb.selectorLabels) "context" $context) | nindent 6 }}
       {{- end }}
     {{- end }}
   {{- end }}

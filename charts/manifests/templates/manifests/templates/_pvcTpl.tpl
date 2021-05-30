@@ -21,7 +21,7 @@ limitations under the License.
     {{- $context := .context -}}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $values.labels "context" $context)| nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $values.labels "context" $context)| nindent 4 }}
     {{- if $values.annotations }}
   annotations:
       {{- range $anno, $val := $values.annotations }}

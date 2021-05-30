@@ -28,14 +28,14 @@ apiVersion: apps/v1
       {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $deployment.labels "context" $context)| nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $deployment.labels "context" $context)| nindent 4 }}
 spec:
       {{- with $deployment.strategy }}
   strategy: {{ toYaml . |  nindent 4 }}
       {{- end }}
   replicas: {{ default "1" $deployment.replicaCount }}
   selector:
-    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $deployment.selectorLabels) "context" $context) | nindent 6 }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "bedag-lib.utils.common.selectorLabels" $context) $deployment.selectorLabels) "context" $context) | nindent 6 }}
       {{- if $deployment.deploymentExtras }}
         {{- toYaml $deployment.deploymentExtras | nindent 2 }}
       {{- end }}

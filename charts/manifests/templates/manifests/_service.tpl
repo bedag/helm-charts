@@ -29,7 +29,7 @@ apiVersion: v1
         {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $svc.labels "context" $context)| nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $svc.labels "context" $context)| nindent 4 }}
         {{- if $svc.annotations }}
   annotations:
           {{- range $anno, $val := $svc.annotations }}
@@ -63,7 +63,7 @@ spec:
         {{- if and $svc.extraPorts (kindIs "slice" $svc.extraPorts) }}
           {{- toYaml $svc.extraPorts | nindent 4 }}
         {{- end }}
-  selector: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $svc.selector) "context" $context) | nindent 4 }}
+  selector: {{- include "lib.utils.strings.template" (dict "value" (default (include "bedag-lib.utils.common.selectorLabels" $context) $svc.selector) "context" $context) | nindent 4 }}
       {{- end }}
     {{- end }}
   {{- else }}

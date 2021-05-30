@@ -28,7 +28,7 @@ apiVersion: apps/v1
       {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $statefulset.labels "context" $context)| nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $statefulset.labels "context" $context)| nindent 4 }}
 spec:
   podManagementPolicy: {{ default "OrderedReady" $statefulset.podManagementPolicy }}
   updateStrategy:
@@ -42,7 +42,7 @@ spec:
       {{- end }}
   replicas: {{ default "1" $statefulset.replicaCount }}
   selector:
-    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) $statefulset.selectorLabels) "context" $context) | nindent 6 }}
+    matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "bedag-lib.utils.common.selectorLabels" $context) $statefulset.selectorLabels) "context" $context) | nindent 6 }}
   serviceName: {{ default (include "bedag-lib.utils.common.fullname" .) $statefulset.serviceName }}
       {{- if $statefulset.statefulsetExtras }}
         {{- toYaml $statefulset.statefulsetExtras | nindent 2 }}

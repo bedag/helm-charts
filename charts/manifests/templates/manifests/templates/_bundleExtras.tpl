@@ -31,7 +31,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}-env
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $values.labels "context" $.context)| nindent 4 }}
+  labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $values.labels "context" $.context)| nindent 4 }}
 type: Opaque
 data:
         {{- range $environment }}

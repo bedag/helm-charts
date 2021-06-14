@@ -56,7 +56,14 @@ environment: {{ toYaml (default list $_.data.environment) | nindent 2 }}
   #  valueFrom:
   #    fieldRef:
   #      fieldPath: spec.*
-  #
+
+## Environment from Source
+# {{ $_.path }}envFrom -- Configure Environment from Source
+envFrom: {{ toYaml (default list $_.data.envFrom) | nindent 2 }}
+  #- configMapRef:
+      #name: configmapname
+  #- secretRef:
+      #name: secretname
 
 ## Container Ports
 # {{ $_.path }}ports -- Configure Container Ports

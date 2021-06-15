@@ -51,9 +51,10 @@ env: {{- include "lib.utils.extras.environment" $context | nindent 2 }}
         {{- include "lib.utils.strings.template" (dict "value" $filteredList "context" $context) | nindent 2 }}
       {{- end }}
     {{- end }}
-    {{- if $values.command }}
+    {{- with $values.envFrom }}
 envFrom: {{- include "lib.utils.strings.template" (dict "value" $values.envFrom "context" $context) | nindent 2 }}
     {{- end }}
+    {{- if $values.command }}
 command: {{- include "lib.utils.strings.template" (dict "value" $values.command "context" $context) | nindent 2 }}
     {{- end }}
     {{- if $values.args }}

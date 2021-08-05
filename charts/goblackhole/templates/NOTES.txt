@@ -1,0 +1,6 @@
+  Next Steps
+
+    1. Check Logs with:
+      kubectl 
+        {{ include "bedag-lib.utils.notes.public" (dict "ingress" $.Values.ingress "service" $.Values.service "context" $)| indent 8 }}
+

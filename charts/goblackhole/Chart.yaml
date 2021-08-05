@@ -1,0 +1,30 @@
+apiVersion: v2
+name: goblackhole
+description: Offical Helm Chart for goblackhole
+type: application
+version: 0.0.1
+appVersion: 0.1.0
+keywords:
+  - bgp
+  - blackhole
+  - network
+home: https://github.com/bedag/goblackhole
+icon: https://raw.githubusercontent.com/bedag/goblackhole/main/media/gopher.png
+sources:
+  - https://github.com/bedag/goblackhole
+  - https://hub.docker.com/r/bedag/goblackhole
+maintainers:
+  - name: NOC
+    email: noc@bedag.ch
+dependencies:
+- name: manifests
+  version: "~0.5.0"
+  repository: https://bedag.github.io/helm-charts
+annotations:
+  artifacthub.io/containsSecurityUpdates: "false"
+  artifacthub.io/prerelease: "false"  
+  artifacthub.io/changes: |
+    - "[Added]: Chart Release"
+  artifacthub.io/images: |
+    - name: goblackhole
+      image: atlassian/goblackhole:0.1.0

@@ -3,3 +3,4 @@ checks:
   exclude:
     - (( prepend ))
     - "no-readiness-probe"
+    - "no-liveness-probe"

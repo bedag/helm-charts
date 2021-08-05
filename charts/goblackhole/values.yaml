@@ -23,7 +23,8 @@ global:
   imagePullSecrets: []
 
 ## goblackhole Configuration
-goblackhole:
+# goblackhole -- Configure Goblackhole (this will be written 1:1 to config.yaml)
+goblackhole: {}
 
 ## Extra Resources
 # extraResources -- Enter Extra Resources managed by the Crowd Release

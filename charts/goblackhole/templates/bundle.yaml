@@ -18,10 +18,28 @@ limitations under the License.
 {{- include "bedag-lib.manifest.bundle" $ | nindent 0 }}
 
 {{/*
-  Define Crowd Chart Bundle
+  Define Goblackhole Chart Bundle
 */}}
 {{- define "chart.bundle" -}}
 resources:
-  - type: "daemonset"
-    values: {{ toYaml $.Values | nindent 6 }}
+  - type: "deployment"
+    values: {{ toYaml $.Values.deployment | nindent 6 }}
+    overwrites:
+      volumeMounts:
+        - name: "goblackhole-config"
+          mountPath: "/etc/goblackhole/config.yaml"
+          subPath: config.yaml
+      volumes:
+        - name: goblackhole-config
+          configMap:
+            name: goblackhole-config
+  - type: "raw"
+    manifest: |
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: goblackhole-config
+        labels: {{- include "lib.utils.common.labels" $| nindent 10 }}
+      data:
+        config.yaml: | {{ toYaml $.Values.goblackhole | nindent 10}}
 {{- end }}

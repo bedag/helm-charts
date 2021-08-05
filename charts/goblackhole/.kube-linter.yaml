@@ -2,4 +2,3 @@
 checks:
   exclude:
     - (( prepend ))
-    - "run-as-non-root"

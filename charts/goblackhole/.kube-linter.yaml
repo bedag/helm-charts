@@ -2,3 +2,4 @@
 checks:
   exclude:
     - (( prepend ))
+    - "no-readiness-probe"

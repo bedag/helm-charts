@@ -153,7 +153,7 @@ deployment:
   ## Pod SecurityContext Configuration
   # deployment.podSecurityContext -- Pod [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
   podSecurityContext: {}
-
+  
   ## Pod Initcontainers
   # deployment.initContainers -- Pod [initContainers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
   initContainers: []
@@ -306,7 +306,7 @@ deployment:
   ## Container SecurityContext
   # deployment.securityContext -- Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
   securityContext:
-    {}
+    allowPrivilegeEscalation: false
 
   ## ReadinessProbe Configuration
   # deployment.readinessProbe -- Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)

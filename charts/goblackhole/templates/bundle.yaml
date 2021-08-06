@@ -26,10 +26,16 @@ resources:
     values: {{ toYaml $.Values.deployment | nindent 6 }}
     overwrites:
       volumeMounts:
+        {{- with $.Values.deployment.volumeMounts }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
         - name: "goblackhole-config"
           mountPath: "/etc/goblackhole/config.yaml"
           subPath: config.yaml
       volumes:
+        {{- with $.Values.deployment.volumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
         - name: goblackhole-config
           configMap:
             name: goblackhole-config
@@ -41,5 +47,5 @@ resources:
         name: goblackhole-config
         labels: {{- include "lib.utils.common.labels" $| nindent 10 }}
       data:
-        config.yaml: | {{ toYaml $.Values.goblackhole | nindent 10}}
+        config.yaml: | {{ toYaml $.Values.goblackhole.config | nindent 10}}
 {{- end }}

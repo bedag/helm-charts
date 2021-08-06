@@ -3,7 +3,7 @@ name: goblackhole
 description: Offical Helm Chart for goblackhole
 type: application
 version: 0.0.1
-appVersion: 0.1.0
+appVersion: 0.2.0
 keywords:
   - bgp
   - blackhole
@@ -27,4 +27,4 @@ annotations:
     - "[Added]: Chart Release"
   artifacthub.io/images: |
     - name: goblackhole
-      image: atlassian/goblackhole:0.1.0
+      image: bedag/goblackhole:0.1.0

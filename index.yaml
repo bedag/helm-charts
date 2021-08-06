@@ -109,6 +109,38 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/e2g-1.0.0/e2g-1.0.0.tgz
     version: 1.0.0
+  goblackhole:
+  - annotations:
+      artifacthub.io/changes: |
+        - "[Added]: Chart Release"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: 0.2.0
+    created: "2021-08-06T15:06:21.90936394Z"
+    dependencies:
+    - name: manifests
+      repository: https://bedag.github.io/helm-charts
+      version: ~0.5.0
+    description: Offical Helm Chart for goblackhole
+    digest: d2c8273ddd0992894b9b800d08a522925e6ff84b1f2a06667291850c4806dbee
+    home: https://github.com/bedag/goblackhole
+    icon: https://raw.githubusercontent.com/bedag/goblackhole/main/media/gopher.png
+    keywords:
+    - bgp
+    - blackhole
+    - network
+    maintainers:
+    - email: noc@bedag.ch
+      name: NOC
+    name: goblackhole
+    sources:
+    - https://github.com/bedag/goblackhole
+    - https://hub.docker.com/r/bedag/goblackhole
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/goblackhole-0.0.1/goblackhole-0.0.1.tgz
+    version: 0.0.1
   kafdrop:
   - annotations:
       artifacthub.io/containsSecurityUpdates: "false"
@@ -878,4 +910,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/raw-1.0.0/raw-1.0.0.tgz
     version: 1.0.0
-generated: "2021-06-15T11:33:37.466132482Z"
+generated: "2021-08-06T15:06:21.909493741Z"

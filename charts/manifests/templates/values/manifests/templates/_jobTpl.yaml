@@ -27,10 +27,6 @@ ttlSecondsAfterFinished: {{ default "" $_.data.ttlSecondsAfterFinished }}
 jobFields: {{ toYaml (default dict $_.data.jobExtraFields) | nindent 2 }}
 #  manualSelector: true
 
-  ## Horizontal Pod Autoscaler Extra Values
-  # {{ $_.path }}hpaFields -- Extra Fields for Horizontal Pod Autoscaler Manifest
-  hpaFields: {}
-
 ## Pod Configuration
 ## {{ include "bedag-lib.utils.intern.docLink" $ }}#pod-template
   {{- if $_.minimal }}
@@ -38,7 +34,6 @@ jobFields: {{ toYaml (default dict $_.data.jobExtraFields) | nindent 2 }}
   {{- else }}
 ## Full Configuration
 
-    {{- $o := set $_.data "restartPolicy" "Never" }}
-    {{- include "bedag-lib.values.template.pod" $_ | nindent 0 }}
+    {{- include "bedag-lib.values.template.pod" (set $_.data "restartPolicy" "Never") | nindent 0 }}
   {{- end }}
 {{- end }}

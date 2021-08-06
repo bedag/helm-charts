@@ -24,3 +24,6 @@ annotations:
   artifacthub.io/changes: |
     - "[Added]: Content File Template (Template & Documentation)"
     - "[Added]: Content Template (Template & Documentation)"
+    - "[Added]: (Container) - New Fields readinessProbeEnabled, livenessProbeEnabled & startupProbeEnabled"
+
+

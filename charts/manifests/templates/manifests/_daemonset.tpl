@@ -53,13 +53,14 @@ spec:
     matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) .selectorLabels) "context" $context) | nindent 6 }}
         {{- end }}
   updateStrategy:
-      {{- $updateStrategy := (default "RollingUpdate" .updateStrategy) }}
+        {{- $updateStrategy := (default "RollingUpdate" .updateStrategy) }}
     type: {{ $updateStrategy | quote }}
-      {{- if (eq "OnDelete" $updateStrategy) }}
+        {{- if (eq "OnDelete" $updateStrategy) }}
     rollingUpdate: null
-      {{- else if .rollingUpdatemaxUnavailable }}
+        {{- else if .rollingUpdatemaxUnavailable }}
     rollingUpdate:
       maxUnavailable: {{ .rollingUpdatemaxUnavailable }}
+        {{- end }}
       {{- end }}
     {{- end }}
   {{- end -}}

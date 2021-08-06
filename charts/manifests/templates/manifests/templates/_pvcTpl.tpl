@@ -19,31 +19,30 @@ limitations under the License.
   {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.pvc" .)) .pvc -}}
   {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) .context (include "bedag-lib.utils.intern.noYamlError" .context) -}}
     {{- $context := .context -}}
-      {{- with $values -}}
+    {{- with $values -}}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" $ }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
-        {{- with .namespace }}   
+      {{- with .namespace }}   
   namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
-        {{- end }}
-        {{- with .annotations }}
+      {{- end }}
+      {{- with .annotations }}
   annotations:
-          {{- range $anno, $val := . }}
-            {{- $anno | nindent 4 }}: {{ $val | quote }}
-          {{- end }}
+        {{- range $anno, $val := . }}
+          {{- $anno | nindent 4 }}: {{ $val | quote }}
         {{- end }}
+      {{- end }}
 spec:
   accessModes: {{ toJson .accessModes }}
-        {{- with .dataSource }}
+      {{- with .dataSource }}
   dataSource: {{- toYaml . | nindent 4 }}
-        {{- end }}
+      {{- end }}
   resources:
     requests:
       storage: {{ default "1Gi" .size | quote }}
   storageClassName: {{ include "lib.utils.globals.storageClass" (dict "persistence" .storageClass "context" $context) }}
-        {{- with .selector }}
+      {{- with .selector }}
   selector: {{ toYaml . | nindent 4 }}
-        {{- end }}
       {{- end }}
     {{- end }}
   {{- end }}

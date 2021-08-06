@@ -1,6 +1,6 @@
 {{- define "bedag-lib.values.cronjob" -}}
   {{- $context := (default $ .context) }}
-  {{- $_ := dict "parentKey" (default "cronjob" .key) "path" (cat (default "" (default $context.path .path)) (default "cronjob" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+  {{- $_ := dict "parentKey" (default "cronjob" .key) "path" (cat (default "" (default $context.path .path)) (default "cronjob" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) "disabled" (list "namespace") }}
 #
 ## - Cronjob
 ## Reference: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/

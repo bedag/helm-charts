@@ -14,6 +14,12 @@
   ## Job API version
   # {{ $_.path }}apiVersion -- Configure the api version used for the Job resource.
   apiVersion: ""
+  
+  {{- if not (has 4 $_.disabled) -}}
+  ## Job Namespace
+  ## {{ $_.path }}namespace -- Define a custom namespace to deploy the Job into
+  namespace: ""
+  {{- end -}}
 
   ## Job Labels
   # {{ $_.path }}labels -- Merges given labels with common labels

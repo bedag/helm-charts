@@ -62,6 +62,14 @@ job.  manualSelector: true
 | template/persistentvolumeclaim | `0.5.0` | Since all manifests/templates are lowercase, the persistentVolumeClaim template was also lowercased to have a cleaner library. The template is no longer callable via `bedag-lib.template.persistentVolumeClaim` but moved to `bedag-lib.template.persistentvolumeclaim`. | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
 
 
+Added:
+ 
+readinessProbeEnabled: true
+livenessProbeEnabled: true
+startupProbeEnabled: true
+
+
+
 {{/*
   Chart Sources
 */}}

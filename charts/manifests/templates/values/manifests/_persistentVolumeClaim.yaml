@@ -15,5 +15,9 @@
   # {{ $_.path }}apiVersion -- Configure the api version used for the Pod resource
   apiVersion: ""
 
+  ## Persistent Volume Claim Namespace
+  ## {{ $_.path }}namespace -- Define a custom namespace to deploy the Persistent Volume Claim into
+  namespace: ""
+
   {{- include "bedag-lib.values.template.pvc" $_ | nindent 2 }}
 {{- end -}}

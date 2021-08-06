@@ -58,14 +58,20 @@ command: {{- include "lib.utils.strings.template" (dict "value" . "context" $con
       {{- with .args }}
 args: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
       {{- end }}
-      {{- with .livenessProbe }}
+      {{- if .livenessProbeEnabled }}
+        {{- with .livenessProbe }}  
 livenessProbe: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
+        {{- end }}
       {{- end }}
-      {{- with .readinessProbe }}
+      {{- if .readinessProbeEnabled }}
+        {{- with .readinessProbe }}
 readinessProbe: {{ include "lib.utils.strings.template" (dict "value" . "context" $context)  | nindent 2 }}
+        {{- end }}
       {{- end }}
-      {{- with .startupProbe }}
+      {{- if .startupProbeEnabled }}
+        {{- with .startupProbe }}
 startupProbe: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
+        {{- end }}
       {{- end }}
       {{- with .lifecycle }}
 lifecycle: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}

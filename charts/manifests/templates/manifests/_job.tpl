@@ -29,6 +29,7 @@ apiVersion: {{ .apiVersion }}
 apiVersion: batch/v1
           {{- end }}
 {{- include "bedag-lib.template.job" (set $ "job" .) | nindent 0 }}
+        {{- end }}
       {{- end }}
     {{- end }}
   {{- end }}

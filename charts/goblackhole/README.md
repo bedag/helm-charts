@@ -45,6 +45,8 @@ Major Changes to functions are documented with the version affected. **Before up
 | deployment.deploymentExtras | object | `{}` | Extra Fields for Deployment Manifest |
 | deployment.envFrom | list | `[]` | Configure Environment from Source |
 | deployment.environment | list | `[]` | Configure Environment Variables (Refer to values.yaml) |
+| deployment.exec.command[0] | string | `"/usr/bin/gobgp"` |  |
+| deployment.exec.command[1] | string | `"/tmp/healthy"` |  |
 | deployment.forceRedeploy | bool | `false` |  |
 | deployment.image.pullPolicy | string | `nil` | Configure Docker Pull Policy. Will be overwritten if set by global variable. |
 | deployment.image.registry | string | `"docker.io"` | Configure Docker Registry. Will be overwritten if set by global variable. |
@@ -62,7 +64,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | deployment.podSecurityContext | object | `{"fsGroup":2000,"runAsGroup":3000,"runAsUser":1000}` | Pod [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) |
 | deployment.ports | list | `[]` | Configure Container Ports |
 | deployment.priorityClassName | string | `""` | Pod [priorityClassName](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass) |
-| deployment.readinessProbe | object | `{}` | Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) |
+| deployment.readinessProbe | string | `nil` | Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) |
 | deployment.replicaCount | int | 1 | Amount of Replicas deployed |
 | deployment.resources | object | `{"limits":{"cpu":"200m","memory":"218Mi"},"requests":{"cpu":"100m","memory":"25Mi"}}` | Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) |
 | deployment.restartPolicy | string | `nil` | Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy |
@@ -91,7 +93,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | global.imagePullSecrets | list | `[]` | Global Docker Image Pull Secrets declaration. Added to local Docker Image Pull Secrets. |
 | global.imageRegistry | string | `""` | Global Docker Image Registry declaration. Will overwrite all child .registry fields. |
 | global.storageClass | string | `""` | Global StorageClass declaration. Can be used to overwrite StorageClass fields. |
-| goblackhole | object | `{"config":{}}` | Configure Goblackhole (this will be written 1:1 to config.yaml) |
+| goblackhole.config | object | `{}` | Configure Goblackhole (this will be written 1:1 to config.yaml) |
 | kubeCapabilities | string | `$.Capabilities.KubeVersion.GitVersion` | Overwrite the Kube GitVersion |
 | nameOverride | string | `""` | Overwrite "lib.internal.common.name" output |
 | overwriteLabels | object | `{}` | Overwrites default labels, but not resource specific labels and common labels |

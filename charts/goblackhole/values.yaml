@@ -315,19 +315,20 @@ deployment:
   ## ReadinessProbe Configuration
   # deployment.readinessProbe -- Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)
   readinessProbe:
-  exec:
-    command:
-    - /usr/bin/gobgp
-    - /tmp/healthy
+    exec:
+      command:
+      - /usr/bin/gobgp
+      - neig
+    timeoutSeconds: 30
 
   ## LivenessProbe Configuration
   # deployment.livenessProbe -- Container [LivenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command)
   livenessProbe:
-    {}
-    #httpGet:
-    #  path: /health
-    #  port: http
-    #initialDelaySeconds: 60
+    exec:
+      command:
+      - /usr/bin/gobgp
+      - neig
+
 
   ## StartupProbe Configuration
   # deployment.startupProbe -- Container [StartupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes)

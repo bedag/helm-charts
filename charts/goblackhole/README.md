@@ -45,8 +45,6 @@ Major Changes to functions are documented with the version affected. **Before up
 | deployment.deploymentExtras | object | `{}` | Extra Fields for Deployment Manifest |
 | deployment.envFrom | list | `[]` | Configure Environment from Source |
 | deployment.environment | list | `[]` | Configure Environment Variables (Refer to values.yaml) |
-| deployment.exec.command[0] | string | `"/usr/bin/gobgp"` |  |
-| deployment.exec.command[1] | string | `"/tmp/healthy"` |  |
 | deployment.forceRedeploy | bool | `false` |  |
 | deployment.image.pullPolicy | string | `nil` | Configure Docker Pull Policy. Will be overwritten if set by global variable. |
 | deployment.image.registry | string | `"docker.io"` | Configure Docker Registry. Will be overwritten if set by global variable. |
@@ -56,7 +54,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | deployment.initContainers | list | `[]` | Pod [initContainers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) |
 | deployment.labels | object | `{}` | Merges given labels with common labels |
 | deployment.lifecycle | object | `{}` | Container [Lifecycle](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/) |
-| deployment.livenessProbe | object | `{}` | Container [LivenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command) |
+| deployment.livenessProbe | object | `{"exec":{"command":["/usr/bin/gobgp","neig"]}}` | Container [LivenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command) |
 | deployment.nodeSelector | object | `{}` | Pod [NodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/) |
 | deployment.podAnnotations | object | `{}` | Pod [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) are only added for the pod |
 | deployment.podFields | object | `{}` | Add extra field to the [Pod Template](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podtemplate-v1-core) if not available as value. |
@@ -64,7 +62,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | deployment.podSecurityContext | object | `{"fsGroup":2000,"runAsGroup":3000,"runAsUser":1000}` | Pod [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) |
 | deployment.ports | list | `[]` | Configure Container Ports |
 | deployment.priorityClassName | string | `""` | Pod [priorityClassName](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass) |
-| deployment.readinessProbe | string | `nil` | Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) |
+| deployment.readinessProbe | object | `{"exec":{"command":["/usr/bin/gobgp","neig"]},"timeoutSeconds":30}` | Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) |
 | deployment.replicaCount | int | 1 | Amount of Replicas deployed |
 | deployment.resources | object | `{"limits":{"cpu":"200m","memory":"218Mi"},"requests":{"cpu":"100m","memory":"25Mi"}}` | Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) |
 | deployment.restartPolicy | string | `nil` | Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy |

@@ -25,6 +25,3 @@ annotations:
   artifacthub.io/prerelease: "false"  
   artifacthub.io/changes: |
     - "[Added]: Chart Release"
-  artifacthub.io/images: |
-    - name: goblackhole
-      image: bedag/goblackhole:0.1.0

@@ -84,14 +84,14 @@ Major Changes to functions are documented with the version affected. **Before up
 | deployment.tolerations | object | `{}` | Pod [Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/) |
 | deployment.volumeMounts | list | `[]` | Configure Container [volumeMounts](https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/) |
 | deployment.volumes | list | `[]` | Additional [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/) |
-| extraResources | list | `[]` | Enter Extra Resources managed by the Crowd Release |
+| extraResources | list | `[]` | Enter Extra Resources managed by the Goblackhole Release |
 | fullnameOverride | string | `""` | Overwrite `lib.utils.common.fullname` output |
 | global.defaultTag | string | `""` | Global Docker Image Tag declaration. Will be used as default tag, if no tag is given by child |
 | global.imagePullPolicy | string | `""` | Global Docker Image Pull Policy declaration. Will overwrite all child .pullPolicy fields. |
 | global.imagePullSecrets | list | `[]` | Global Docker Image Pull Secrets declaration. Added to local Docker Image Pull Secrets. |
 | global.imageRegistry | string | `""` | Global Docker Image Registry declaration. Will overwrite all child .registry fields. |
 | global.storageClass | string | `""` | Global StorageClass declaration. Can be used to overwrite StorageClass fields. |
-| goblackhole | object | `{}` | Configure Goblackhole (this will be written 1:1 to config.yaml) |
+| goblackhole | object | `{"config":{}}` | Configure Goblackhole (this will be written 1:1 to config.yaml) |
 | kubeCapabilities | string | `$.Capabilities.KubeVersion.GitVersion` | Overwrite the Kube GitVersion |
 | nameOverride | string | `""` | Overwrite "lib.internal.common.name" output |
 | overwriteLabels | object | `{}` | Overwrites default labels, but not resource specific labels and common labels |

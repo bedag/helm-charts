@@ -23,7 +23,7 @@ global:
   imagePullSecrets: []
 
 ## goblackhole Configuration
-# goblackhole -- Configure Goblackhole (this will be written 1:1 to config.yaml)
+# goblackhole.config -- Configure Goblackhole (this will be written 1:1 to config.yaml)
 goblackhole:
   config: {}
 
@@ -315,11 +315,10 @@ deployment:
   ## ReadinessProbe Configuration
   # deployment.readinessProbe -- Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)
   readinessProbe:
-    {}
-    #httpGet:
-    #  path: /health
-    #  port: http
-    #initialDelaySeconds: 60
+  exec:
+    command:
+    - /usr/bin/gobgp
+    - /tmp/healthy
 
   ## LivenessProbe Configuration
   # deployment.livenessProbe -- Container [LivenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command)

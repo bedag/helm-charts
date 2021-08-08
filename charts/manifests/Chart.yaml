@@ -22,8 +22,8 @@ annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
-    - "[Added]: Content File Template (Template & Documentation)"
-    - "[Added]: Content Template (Template & Documentation)"
-    - "[Added]: (Container) - New Fields readinessProbeEnabled, livenessProbeEnabled & startupProbeEnabled"
-
+    - "[Added]: [template/container] - Image Digest Support via digest field"
+    - "[Added]: [template/container] - New Fields readinessProbeEnabled, livenessProbeEnabled & startupProbeEnabled. The fields allow to disable the named probes through values."
+    - "[Added/Fixed]: [manifest/*] - Added Namespace field for all manifests"
+    - "[Fixed]: Added missing values from diverse resources"
 

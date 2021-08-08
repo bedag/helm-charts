@@ -83,7 +83,7 @@ securityContext: {{ toYaml (default dict $_.data.securityContext) | nindent 2 }}
 
 ## ReadinessProbe Configuration
 # {{ $_.path }}readinessProbe -- Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)
-readinessProbe: {{ toYaml (default (dict "enabled" true) $_.data.readinessProbe) | nindent 2 }}
+readinessProbe: {{ toYaml (default dict $_.data.readinessProbe) | nindent 2 }}
 #  httpGet:
 #    path: /health
 #    port: http
@@ -95,7 +95,7 @@ readinessProbeEnabled: true
 
 ## LivenessProbe Configuration
 # {{ $_.path }}livenessProbe -- Container [LivenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command)
-livenessProbe: {{ toYaml default dict $_.data.livenessProbe) | nindent 2 }}
+livenessProbe: {{ toYaml (default dict $_.data.livenessProbe) | nindent 2 }}
 #  httpGet:
 #    path: /health
 #    port: http

@@ -43,23 +43,17 @@ Major Changes to functions are documented with the version affected. **Before up
 
 | **Manifest** | **Chart Version** | **Change/Description** | **Commits/PRs** |
 | :----------- | :---------------- | :--------------------- | :-------------- |
+| * `manifest/podDisruptionBudget` </br> * `manifest/serviceMonitor` </br> * `manifest/statefulset` </br> * `manifest/deployment` </br>  * `manifest/daemonset` | `2.0.0` | Field `selector` moved to `selectorLabels` for the named resoures. Move labels defined under `selector` to `selectorLabels`. | * [PR 52](https://github.com/bedag/helm-charts/pull/52) | 
+| `manifest/deployment` | `2.0.0` | Field `deploymentExtras` moved to `deploymentFields` for the named resoures. | * [PR 52](https://github.com/bedag/helm-charts/pull/52) | 
+| `dependency/library` | `1.0.0` | Upgraded Chart Dependency to new Major `1.0.0` | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
 
 
 
-Removed:
-
-job.  manualSelector: true
-    {{- end }}
-    {{- with $values.parallelism }}
-  parallelism: {{. }}
 
 
 
-* `serviceMonitor.selector` moved to `serviceMonitor.selectorLabels`
-* `deployment.deploymentExtras` moved to `deployment.deploymentFields`
-
-| dependency/library | `1.0.0` | Upgraded Chart Dependency to new Major `1.0.0` | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
-| template/persistentvolumeclaim | `0.5.0` | Since all manifests/templates are lowercase, the persistentVolumeClaim template was also lowercased to have a cleaner library. The template is no longer callable via `bedag-lib.template.persistentVolumeClaim` but moved to `bedag-lib.template.persistentvolumeclaim`. | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
+| `dependency/library` | `1.0.0` | Upgraded Chart Dependency to new Major `1.0.0` | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
+| `template/persistentvolumeclaim` | `0.5.0` | Since all manifests/templates are lowercase, the persistentVolumeClaim template was also lowercased to have a cleaner library. The template is no longer callable via `bedag-lib.template.persistentVolumeClaim` but moved to `bedag-lib.template.persistentvolumeclaim`. | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
 
 
 Added:

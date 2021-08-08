@@ -28,7 +28,7 @@ apiVersion: {{ .apiVersion }}
 apiVersion: v1
         {{- end }}
         {{- $podTpl := fromYaml (include "bedag-lib.template.pod" (set $ "pod" $pod)) }}
-        {{- $_ := set $podTpl.metadata "name" (include "bedag-lib.utils.common.fullname" $) }}
+        {{- $_ := set $podTpl.metadata "name" (include "bedag-lib.utils.common.fullname" $) "namespace" (default "" .namespace) }}
         {{- toYaml $podTpl | nindent 0 }}
       {{- end }}
     {{- end }}

@@ -23,7 +23,7 @@ limitations under the License.
 metadata:
   labels: {{- include "lib.utils.common.labels" (dict "labels" .podLabels "versionUnspecific" "true" "context" $context)| nindent 4 }}
       {{- with .namespace }}   
-  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+  namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) }}
       {{- end }}
       {{- if or .podAnnotations .forceRedeploy }}
   annotations:

@@ -1,0 +1,10 @@
+## Global Values
+global:
+  imageRegistry: "company-registry.example.com"
+  pullPolicy: "Always"
+  storageClass: "nfs-local-class"
+  defaultTag: "10.1.2.3"
+  imagePullSecrets:
+    - name: private-registry
+    - name: private-registry-group
+  kubeCapabilities: "1.19.0"

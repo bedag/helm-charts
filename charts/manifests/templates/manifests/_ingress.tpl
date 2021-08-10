@@ -26,9 +26,9 @@ kind: Ingress
           {{- if .apiVersion -}}
 apiVersion: {{ .apiVersion }}
           {{- else -}}
-            {{- if $context.Capabilities.APIVersions.Has "networking.k8s.io/v1beta1" }}
+            {{- if semverCompare ">=1.19-0" (include "lib.utils.common.capabilities" $context) }}
 apiVersion: networking.k8s.io/v1
-            {{- else if $context.Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+            {{- else if semverCompare ">=1.14-0" (include "lib.utils.common.capabilities" $context) }}
 apiVersion: networking.k8s.io/v1beta1
             {{- else }}
 apiVersion: extensions/v1beta1
@@ -38,7 +38,7 @@ metadata:
   name:  {{ include "bedag-lib.utils.common.fullname" $ }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
           {{- with .namespace }}   
-  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+  namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) }}
           {{- end }}
           {{- with .annotations }}
   annotations:
@@ -50,7 +50,7 @@ spec:
           {{- with .backend }}
   backend: {{- toYaml . | nindent 4 }}
           {{- end }}
-          {{- if $context.Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+          {{- if semverCompare ">=1.18-0" (include "lib.utils.common.capabilities" $context) -}}
             {{- with .ingressClass }}
   ingressClassName: {{ . }}
             {{- end }}
@@ -78,14 +78,14 @@ spec:
                 {{- end }}
               {{- end }}
           - path: {{ $p.path }}
-              {{- if $context.Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+              {{- if semverCompare ">=1.18-0" (include "lib.utils.common.capabilities" $context) }}
             pathType: {{ default "Prefix" $p.pathType }}
               {{- end }}
             backend:
               {{- if $p.resource }}
               resource: {{- toYaml $p.resource | nindent 16 }}
               {{- else }}
-                {{- if $context.Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+                {{- if semverCompare ">=1.19-0" (include "lib.utils.common.capabilities" $context) }}
               service:
                 name: {{ $p.service.name }}
                 port:

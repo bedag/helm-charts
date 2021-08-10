@@ -1,0 +1,14 @@
+## Extra Values
+proxy:
+  httpProxy:
+    host: "company-proxy.example.com"
+    port: "8080"
+    protocol: "http"
+  httpsProxy:
+    host: "company-proxy.example.com"
+    port: "8080"
+    protocol: "https"
+  noProxy:
+    - "*.example.com"
+    - "*.com"
+timezone: "Europe/Zurich"

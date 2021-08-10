@@ -1,0 +1,6 @@
+test: | {{- include "lib.utils.common.labels" $ | nindent 4 }}
+
+test2: | {{- include "lib.utils.common.defaultLabels" $ | nindent 4 }}
+
+
+test3: | {{- include "lib.utils.common.selectorLabels" $ | nindent 4 }}

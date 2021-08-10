@@ -1,0 +1,73 @@
+{{- if .Values.unit.manifests }}
+
+  {{/* CronJob */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.cronJob }}
+    {{- include "bedag-lib.manifest.cronjob" (dict "values" $.Values.unit.manifests.cronjob "context" $) | nindent 0 }}
+  {{- end }}
+
+  {{/* DaemonSet */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.daemonset }}
+    {{- include "bedag-lib.manifest.daemonset" (dict "values" $.Values.unit.manifests.daemonset "context" $) | nindent 0 }}
+  {{- end }}
+
+  {{/* Deployment */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.deployment }}
+    {{- include "bedag-lib.manifest.deployment" (dict "values" $.Values.unit.manifests.deployment "context" $) | nindent 0 }}
+  {{- end }}
+
+  {{/* HorizontalPodAutoscaler */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.hpa }}
+    {{- include "bedag-lib.manifest.horizontalpodautoscaler" (dict "values" $.Values.unit.manifests.hpa "context" $) | nindent 0 }}
+  {{- end }}
+
+  {{/* Ingress */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.ingress }}
+    {{- include "bedag-lib.manifest.ingress" (dict "values" $.Values.unit.manifests.ingress "context" $) | nindent 0 }}
+  {{- end }}
+
+  {{/* Job */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.job }}
+    {{- include "bedag-lib.manifest.job" (dict "values" $.Values.unit.manifests.job "context" $) | nindent 0 }}
+  {{- end }}
+
+  {{/* NetworkPolicy */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.networkpolicy }}
+    {{- include "bedag-lib.manifest.networkpolicy" (dict "values" $.Values.unit.manifests.networkpolicy "context" $) | nindent 0 }}
+  {{- end }}  
+
+  {{/* PersistentVolumeClaim */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.persistentvolumeclaim }}
+    {{- include "bedag-lib.manifest.persistentvolumeclaim" (dict "values" $.Values.unit.manifests.persistentvolumeclaim "context" $) | nindent 0 }}
+  {{- end }} 
+
+  {{/* Pod */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.pod }}
+    {{- include "bedag-lib.manifest.pod" (dict "values" $.Values.unit.manifests.pod "context" $) | nindent 0 }}
+  {{- end }}
+
+  {{/* PodDisruptionBudget */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.pdb }}
+    {{- include "bedag-lib.manifest.poddisruptionbudget" (dict "values" $.Values.unit.manifests.pdb "context" $) | nindent 0 }}
+  {{- end }} 
+
+  {{/* Service */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.service }}
+    {{- include "bedag-lib.manifest.service" (dict "values" $.Values.unit.manifests.service "context" $) | nindent 0 }}
+  {{- end }} 
+
+  {{/* ServiceAccount */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.serviceaccount }}
+    {{- include "bedag-lib.manifest.serviceaccount" (dict "values" $.Values.unit.manifests.serviceaccount "context" $) | nindent 0 }}
+  {{- end }} 
+
+  {{/* ServiceMonitor */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.servicemonitor }}
+    {{- include "bedag-lib.manifest.servicemonitor" (dict "values" $.Values.unit.manifests.servicemonitor "context" $) | nindent 0 }}
+  {{- end }} 
+
+  {{/* Statefulset */}}
+  {{- if or .Values.unit.manifests.all .Values.unit.manifests.statefulset }}
+    {{- include "bedag-lib.manifest.statefulset" (dict "values" $.Values.unit.manifests.statefulset "context" $) | nindent 0 }}
+  {{- end }} 
+
+{{- end }}

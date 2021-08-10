@@ -1,0 +1,283 @@
+suite: Test Service Manifest
+templates:
+  - manifests.yaml
+tests:
+
+##
+## Passing Test Scenarios
+##
+
+  ##
+  ## Service Disabled
+  - it: Disable Service
+    set:
+      unit:
+        manifests: 
+          service:
+            enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+
+  ##
+  ## Set all available Values (Check Defaults)
+  - it: Set all Values (Non Specific Service)
+    set:
+      unit:
+        manifests: 
+          service:
+            enabled: true
+            apiVersion: "v1beta1"
+            namespace: "custom-namespace"
+            port: 8888
+            extraPorts:
+              - name: discovery
+                port: 10000
+                protocol: TCP
+                targetPort: broadcast
+                nodePort: null
+            labels:
+              "test.label/1": "someLabel/1"
+              "test.label/2": "someLabel/2"
+            selector:
+              "test.selectorLabel/1": "someSelectorLabel"
+            annotations:
+              "service.beta.kubernetes.io/aws-load-balancer-backend-protocol": "http"
+              "service.beta.kubernetes.io/aws-load-balancer-ssl-ports": "443,8443"
+    asserts:
+      - isKind:
+          of: Service
+      - isAPIVersion:
+          of: v1beta1
+      - equal:
+          path: metadata.name
+          value: "RELEASE-NAME-manifests-testing"
+      - equal:
+          path: metadata.namespace
+          value: "custom-namespace"
+      - equal:
+          path: metadata.labels.[test.label/1]
+          value: "someLabel/1"
+      - equal:
+          path: metadata.labels.[test.label/2]
+          value: "someLabel/2"
+      - equal:
+          path: metadata.annotations.[service.beta.kubernetes.io/aws-load-balancer-backend-protocol]
+          value: "http"
+      - equal:
+          path: metadata.annotations.[service.beta.kubernetes.io/aws-load-balancer-ssl-ports]
+          value: "443,8443"
+      - equal:
+          path: spec.selector.[test.selectorLabel/1]
+          value: "someSelectorLabel"
+      - equal:
+          path: spec.type
+          value: "ClusterIP"
+      - contains:
+          path: spec.ports
+          content:
+            name: "http"
+            port: 8888
+            nodePort: null
+            targetPort: "http"
+            protocol: "TCP"
+      - contains:
+          path: spec.ports
+          content:
+            name: discovery
+            nodePort: null
+            port: 10000
+            protocol: TCP
+            targetPort: broadcast
+
+  ##
+  ## Implicit ClusterIP Service
+  - it: implicit ClusterIP Service
+    set:
+      unit:
+        manifests: 
+          service:
+            portName: "clusterip-svc-port"
+            type: ClusterIP
+            port: 9999
+            targetPort: discovery
+    asserts:
+      - isKind:
+          of: Service
+      - isAPIVersion:
+          of: v1
+      - equal:
+          path: metadata.name
+          value: "RELEASE-NAME-manifests-testing"
+      - equal:
+          path: spec.selector.[app.kubernetes.io/name]
+          value: "RELEASE-NAME-manifests-testing"
+      - equal:
+          path: spec.selector.[app.kubernetes.io/instance]
+          value: "RELEASE-NAME"
+      - equal:
+          path: spec.type
+          value: "ClusterIP"
+      - contains:
+          path: spec.ports
+          content:
+            name: "clusterip-svc-port"
+            port: 9999
+            nodePort: null
+            targetPort: "discovery"
+            protocol: "TCP"
+
+  ##
+  ## loadBalancerIP Service Test
+  - it: Test LoadBalancer Service (loadBalancerIP)
+    set:
+      unit:
+        manifests: 
+          service:
+            portName: "loadbalancer-svc-port"
+            type: LoadBalancer
+            loadBalancerIP: 143.231.0.10
+            port: 8181
+            targetPort: "custom-target"
+    asserts:
+      - isKind:
+          of: Service
+      - isAPIVersion:
+          of: v1
+      - equal:
+          path: metadata.name
+          value: "RELEASE-NAME-manifests-testing"
+      - equal:
+          path: spec.selector.[app.kubernetes.io/name]
+          value: "RELEASE-NAME-manifests-testing"
+      - equal:
+          path: spec.selector.[app.kubernetes.io/instance]
+          value: "RELEASE-NAME"
+      - equal:
+          path: spec.type
+          value: "LoadBalancer"
+      - equal:
+          path: spec.loadBalancerIP
+          value: "143.231.0.10"
+      - contains:
+          path: spec.ports
+          content:
+            name: "loadbalancer-svc-port"
+            port: 8181
+            targetPort: "custom-target"
+            protocol: "TCP"
+
+  ##
+  ## LoadBalancerSourceRanges Service Test
+  - it: Test LoadBalancer Service (LoadBalancerSourceRanges)
+    set:
+      unit:
+        manifests: 
+          service:
+            portName: "lb-svc-port"
+            type: LoadBalancer
+            loadBalancerSourceRanges:
+              - "143.231.0.0/16"
+              - "143.232.0.0/16"
+            port: 8282
+            protocol: "ICMP"
+    asserts:
+      - isKind:
+          of: Service
+      - isAPIVersion:
+          of: v1
+      - equal:
+          path: metadata.name
+          value: "RELEASE-NAME-manifests-testing"
+      - equal:
+          path: spec.selector.[app.kubernetes.io/name]
+          value: "RELEASE-NAME-manifests-testing"
+      - equal:
+          path: spec.selector.[app.kubernetes.io/instance]
+          value: "RELEASE-NAME"
+      - equal:
+          path: spec.type
+          value: "LoadBalancer"
+      - equal:
+          path: spec.loadBalancerSourceRanges[0]
+          value: "143.231.0.0/16"
+      - equal:
+          path: spec.loadBalancerSourceRanges[1]
+          value: "143.232.0.0/16"
+      - contains:
+          path: spec.ports
+          content:
+            name: "lb-svc-port"
+            port: 8282
+            targetPort: "http"
+            protocol: "ICMP"
+
+  ##
+  ## NodePort Service Test
+  - it: Test NodePort Service
+    set:
+      unit:
+        manifests: 
+          service:
+            type: NodePort
+            port: 8080
+            nodePort: 30007
+    asserts:
+      - isKind:
+          of: Service
+      - isAPIVersion:
+          of: v1
+      - equal:
+          path: metadata.name
+          value: "RELEASE-NAME-manifests-testing"
+      - equal:
+          path: spec.selector.[app.kubernetes.io/name]
+          value: "RELEASE-NAME-manifests-testing"
+      - equal:
+          path: spec.selector.[app.kubernetes.io/instance]
+          value: "RELEASE-NAME"
+      - equal:
+          path: spec.type
+          value: "NodePort"
+      - contains:
+          path: spec.ports
+          content:
+            name: "http"
+            port: 8080
+            targetPort: "http"
+            protocol: "TCP"
+            nodePort: 30007
+
+  ##
+  ## Minimal Configuration
+  - it: Test Minimal Service Configuration
+    set:
+      unit:
+        manifests: 
+          service:
+            enabled: true
+    asserts:
+      - isKind:
+          of: Service
+      - isAPIVersion:
+          of: v1
+      - equal:
+          path: metadata.name
+          value: "RELEASE-NAME-manifests-testing"
+      - equal:
+          path: spec.selector.[app.kubernetes.io/name]
+          value: "RELEASE-NAME-manifests-testing"
+      - equal:
+          path: spec.selector.[app.kubernetes.io/instance]
+          value: "RELEASE-NAME"
+      - equal:
+          path: spec.type
+          value: "ClusterIP"
+      - contains:
+          path: spec.ports
+          content:
+            name: http
+            port: 80
+            protocol: TCP
+            targetPort: http
+            nodePort: null

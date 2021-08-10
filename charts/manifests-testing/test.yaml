@@ -1,0 +1,20 @@
+commonLabels: 
+  "common.label": 1
+
+
+#selectorLabels: 
+#  "common.selector": 1
+
+
+nameOverride: "partial"
+fullnameOverride: "fullname"
+
+
+
+
+unit:
+  manifests: 
+    service:
+      enabled: true
+      #selector:
+      #  test: 1

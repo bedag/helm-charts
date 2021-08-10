@@ -1,0 +1,14 @@
+apiVersion: v2
+name: manifests-testing
+description: Pure Unit Testing for the Bedag Manifests Chart
+type: application
+version: 1.0.0
+appVersion: 0.0.0
+home: none
+maintainers:
+- name: SRE
+  email: sre@bedag.ch
+dependencies:
+  - name: manifests
+    version: ">=0.0.0"
+    repository: file://../manifests/

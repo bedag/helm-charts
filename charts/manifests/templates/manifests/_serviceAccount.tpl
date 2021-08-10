@@ -32,7 +32,7 @@ metadata:
   name: {{ include "bedag-lib.utils.common.serviceAccountName" (dict "sa" . "context" $context) }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
           {{- with .namespace }}
-  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+  namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) }}
           {{- end }}
           {{- with .annotations }}
   annotations:

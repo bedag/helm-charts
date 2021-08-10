@@ -18,6 +18,7 @@ limitations under the License.
 {{- define "bedag-lib.manifest.service" -}}
   {{- if .context -}}
     {{- $context := .context -}}
+    {{- $root := (set . "context" $context) }}
     {{- $svc := mergeOverwrite (fromYaml (include "bedag-lib.values.service" $)).service (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $svc) }}
       {{- with $svc -}}
@@ -29,10 +30,10 @@ apiVersion: {{ .apiVersion }}
 apiVersion: v1
           {{- end }}
 metadata:
-  name: {{ include "bedag-lib.utils.common.fullname" . }}
+  name: {{ include "bedag-lib.utils.common.fullname" $root }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
           {{- with .namespace }}   
-  namespace: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+  namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) }}
           {{- end }}
           {{- with .annotations }}
   annotations:

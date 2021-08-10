@@ -8,6 +8,14 @@ tests:
 ##
 
   ##
+  ## Set all available Values (Check Defaults)
+  - it: Full Configured (Snapshot)
+    values:
+      - ./values/manifests/service.yaml
+    asserts:
+      - matchSnapshot: {}
+
+  ##
   ## Service Disabled
   - it: Disable Service
     set:
@@ -18,77 +26,6 @@ tests:
     asserts:
       - hasDocuments:
           count: 0
-
-  ##
-  ## Set all available Values (Check Defaults)
-  - it: Set all Values (Non Specific Service)
-    set:
-      unit:
-        manifests: 
-          service:
-            enabled: true
-            apiVersion: "v1beta1"
-            namespace: "custom-namespace"
-            port: 8888
-            extraPorts:
-              - name: discovery
-                port: 10000
-                protocol: TCP
-                targetPort: broadcast
-                nodePort: null
-            labels:
-              "test.label/1": "someLabel/1"
-              "test.label/2": "someLabel/2"
-            selector:
-              "test.selectorLabel/1": "someSelectorLabel"
-            annotations:
-              "service.beta.kubernetes.io/aws-load-balancer-backend-protocol": "http"
-              "service.beta.kubernetes.io/aws-load-balancer-ssl-ports": "443,8443"
-    asserts:
-      - isKind:
-          of: Service
-      - isAPIVersion:
-          of: v1beta1
-      - equal:
-          path: metadata.name
-          value: "RELEASE-NAME-manifests-testing"
-      - equal:
-          path: metadata.namespace
-          value: "custom-namespace"
-      - equal:
-          path: metadata.labels.[test.label/1]
-          value: "someLabel/1"
-      - equal:
-          path: metadata.labels.[test.label/2]
-          value: "someLabel/2"
-      - equal:
-          path: metadata.annotations.[service.beta.kubernetes.io/aws-load-balancer-backend-protocol]
-          value: "http"
-      - equal:
-          path: metadata.annotations.[service.beta.kubernetes.io/aws-load-balancer-ssl-ports]
-          value: "443,8443"
-      - equal:
-          path: spec.selector.[test.selectorLabel/1]
-          value: "someSelectorLabel"
-      - equal:
-          path: spec.type
-          value: "ClusterIP"
-      - contains:
-          path: spec.ports
-          content:
-            name: "http"
-            port: 8888
-            nodePort: null
-            targetPort: "http"
-            protocol: "TCP"
-      - contains:
-          path: spec.ports
-          content:
-            name: discovery
-            nodePort: null
-            port: 10000
-            protocol: TCP
-            targetPort: broadcast
 
   ##
   ## Implicit ClusterIP Service

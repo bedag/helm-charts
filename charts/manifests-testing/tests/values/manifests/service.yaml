@@ -1,0 +1,21 @@
+## Service Full Configuration
+unit:
+  manifests: 
+    service:
+      enabled: true
+      apiVersion: "v1beta1"
+      namespace: "custom-namespace"
+      port: 8888
+      extraPorts:
+        - name: discovery
+          port: 10000
+          protocol: TCP
+          targetPort: broadcast
+          nodePort: null
+      labels:
+        "test.label/1": "value"
+      selector:
+        "test.selectorLabel/1": "value"
+      annotations:
+        "service.beta.kubernetes.io/aws-load-balancer-backend-protocol": "http"
+        "service.beta.kubernetes.io/aws-load-balancer-ssl-ports": "443,8443"

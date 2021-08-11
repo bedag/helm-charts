@@ -38,4 +38,8 @@
   ## Pdb maxUnavailable
   # {{ $_.path }}maxUnavailable -- Number or percentage of pods which is allowed to be unavailable during a disruption
   maxUnavailable:
+
+  ## Extra Pdb Fields
+  # {{ $_.path }}pdbFields -- Add extra fields to the Pdb resource, if not available as value.
+  pdbFields: {}
 {{- end -}}

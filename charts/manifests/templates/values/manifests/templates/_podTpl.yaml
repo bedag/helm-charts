@@ -13,6 +13,10 @@ podLabels: {}
 # {{ $_.path }}podAnnotations -- Pod [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) are only added for the pod
 podAnnotations: {}
 
+## Pod Namespace
+# {{ $_.path }}podNamespace -- Define a custom namespace to deploy the Pod into
+podNamespace: {}
+
 ## Pod ForceRedeploy
 ## {{ $_.path }}forceRedeploy -- Adds timestamp annotation, causing your pods to be redeployed everytime a new release applied.
 forceRedeploy: false
@@ -65,6 +69,10 @@ initContainers: []
 ## Pod SideCar Containers
 # {{ $_.path }}sidecars -- Allows to add sidecars to your [maincar]](https://kubernetes.io/docs/concepts/workloads/pods/#using-pods)
 sidecars: []
+
+## Pod SecurityContext Configuration
+# {{ $_.path }}serviceAccountName -- SerivceAccount used for the Pod
+serviceAccountName: ""
 
 
   {{- include "bedag-lib.values.serviceaccount" $_ | nindent 0 }}

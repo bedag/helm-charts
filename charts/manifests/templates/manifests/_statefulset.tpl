@@ -36,7 +36,7 @@ metadata:
         {{- with .annotations }}
   annotations:
           {{- range $anno, $val := . }}
-            {{- $anno | nindent 4 }}: {{ $val | quote }}
+            {{- $anno | nindent 4 }}: {{ include "lib.utils.strings.template" (dict "value" $val "context" $context) | quote }}
           {{- end }}
         {{- end }}
 spec:
@@ -58,8 +58,8 @@ spec:
     matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) .selectorLabels) "context" $context) | nindent 6 }}
         {{- end }}
   serviceName: {{ default (include "bedag-lib.utils.common.fullname" $) .serviceName }}
-        {{- with .statefulsetExtras }}
-          {{- toYaml .statefulsetExtras | nindent 2 }}
+        {{- with .statefulsetFields }}
+          {{- toYaml . | nindent 2 }}
         {{- end }}
   template: {{- include "bedag-lib.template.pod" (set $ "pod" $statefulset) | nindent 4 }}
         {{- with .volumeClaimTemplates }}

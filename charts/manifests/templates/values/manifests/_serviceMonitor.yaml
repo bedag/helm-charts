@@ -24,14 +24,18 @@
   # {{ $_.path }}labels -- Configure Prometheus ServiceMonitor labels
   labels: {}
 
+  ## ServiceMonitor Annotations
+  # {{ $_.path }}annotations -- Configure ServiceMonitor additional Annotations ([Monitor Labels](https://www.weave.works/docs/cloud/latest/tasks/monitor/configuration-k8s/))
+  annotations: {}
+
   ## ServiceMonitor NamespaceSelector
   # {{ $_.path }}namespaceSelector -- Define which Namespaces to watch. Can either be type string or slice
   # @default -- `$.Release.Namespace`
   namespaceSelector: []
 
   ## ServiceMonitor Additional Fields
-  # {{ $_.path }}additonalFields -- Define additional fields, which aren't available as seperat key (e.g. `sampleLimit`)
-  additonalFields: {}
+  # {{ $_.path }}serviceMonitorFields -- Define additional fields, which aren't available as seperat key (e.g. `sampleLimit`)
+  serviceMonitorFields: {}
 
   ## ServiceMonitor Endpoint Configuration
   # {{ $_.path }}endpoints -- Configure Prometheus ServiceMonitor [Endpoints](https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/api.md#endpoint)

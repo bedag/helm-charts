@@ -29,7 +29,7 @@ apiVersion: monitoring.coreos.com/v1
           {{- end }}
 kind: ServiceMonitor
 metadata:
-  name: {{ include "bedag-lib.utils.common.fullname" . }}
+  name: {{ include "bedag-lib.utils.common.fullname" $ }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context)| nindent 4 }}
           {{- with .namespace }}
   namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) }}
@@ -37,11 +37,11 @@ metadata:
           {{- with .annotations }}
   annotations:
             {{- range $anno, $val := . }}
-              {{- $anno | nindent 4 }}: {{ $val | quote }}
+              {{- $anno | nindent 4 }}: {{ include "lib.utils.strings.template" (dict "value" $val "context" $context) | quote }}
             {{- end }}
           {{- end }}
 spec:
-          {{- with .additionalFields }}
+          {{- with .serviceMonitorFields }}
             {{- toYaml . | nindent 2 }}
           {{- end }}
   selector:

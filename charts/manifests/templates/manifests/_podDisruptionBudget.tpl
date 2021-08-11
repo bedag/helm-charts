@@ -37,10 +37,13 @@ metadata:
           {{- with .annotations }}
   annotations:
             {{- range $anno, $val := . }}
-              {{- $anno | nindent 4 }}: {{ $val | quote }}
+              {{- $anno | nindent 4 }}: {{ include "lib.utils.strings.template" (dict "value" $val "context" $context) | quote }}
             {{- end }}
           {{- end }}
 spec:
+          {{- with .pdbFields }}
+            {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
+          {{- end }}
           {{- if or .minAvailable .maxUnavailable}}
             {{- with .minAvailable }}
   minAvailable: {{ . }}

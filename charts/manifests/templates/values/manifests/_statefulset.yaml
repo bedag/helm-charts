@@ -19,6 +19,10 @@
   # {{ $_.path }}labels -- Merges given labels with common labels
   labels: {}
 
+  ## Statefulset Annotations
+  # {{ $_.path }}annotations -- Configure Statefulset additional Annotations ([Monitor Labels](https://www.weave.works/docs/cloud/latest/tasks/monitor/configuration-k8s/))
+  annotations: {}
+
   ## Statefulset Service
   # {{ $_.path }}serviceName -- Define a Service for the Statefulset
   serviceName: ""
@@ -61,9 +65,9 @@
   #      storageClassName: { include "lib.utils.storageClass" (dict "persistence" .Values.persistence "context" $.Values) }
 
 
-  ## Statefulset Extra Values
-  # {{ $_.path }}statefulsetExtras -- Extra Fields for Statefulset Manifest
-  statefulsetExtras: {}
+  ## Statefulset Fields
+  # {{ $_.path }}statefulsetFields -- Extra Fields for Statefulset Manifest
+  statefulsetFields: {}
   #
 
   ## Pod Configuration

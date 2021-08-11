@@ -15,19 +15,5 @@
   # {{ $_.path }}apiVersion -- Configure the api version used for the Job resource.
   apiVersion: ""
   
-  {{- if not (has "namespace" $_.disabled) -}}
-  ## Job Namespace
-  ## {{ $_.path }}namespace -- Define a custom namespace to deploy the Job into
-  namespace: ""
-  {{- end -}}
-
-  ## Job Labels
-  # {{ $_.path }}labels -- Merges given labels with common labels
-  labels: {}
-
-  ## Job Annotations
-  # {{ $_.path }}annotations -- Configure Job Annotations
-  annotations: {}
-
   {{- include "bedag-lib.values.template.job" $_ | nindent 2 }}
 {{- end }}

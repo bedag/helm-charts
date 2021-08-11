@@ -22,7 +22,7 @@
 
   {{/* Ingress */}}
   {{- if or .Values.unit.manifests.all .Values.unit.manifests.ingress }}
-    {{- include "bedag-lib.manifest.ingress" (dict "values" $.Values.unit.manifests.ingress "context" $) | nindent 0 }}
+test: |    {{- include "bedag-lib.manifest.ingress" (dict "values" $.Values.unit.manifests.ingress "context" $) | nindent 4 }}
   {{- end }}
 
   {{/* Job */}}

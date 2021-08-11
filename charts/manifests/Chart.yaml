@@ -24,7 +24,13 @@ annotations:
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
     - "[Added]: [template/container] - Image Digest Support via digest field"
-    - "[Added]: [template/container] - New Fields readinessProbeEnabled, livenessProbeEnabled & startupProbeEnabled. The fields allow to disable the named probes through values."
-    - "[Added/Fixed]: [manifest/*] - Added Namespace field for all manifests"
-    - "[Fixed]: Added missing values from diverse resources"
-
+    - "[Added]: [template/container] - New Fields `.readinessProbeEnabled`, `.livenessProbeEnabled` & `.startupProbeEnabled`. The fields allow to disable the named probes through values."
+    - "[Added]: [manifest/*] - Added Namespace field for all manifests"
+    - "[Changed]: [template/job] - `.labels` moved to `.jobLabels"
+    - "[Changed]: [template/job] - `.annotations` moved to `.jobAnnotations"
+    - "[Changed]: [template/job] - `.selector` moved to `.jobSelector"
+    - "[Changed]: [manifest/ingress] - `.customRules` moved to `.extraRules`"
+    - "[Fixed]: [manifest/statefulset] - `.replicaCount` no longer defaults to 1, when set to 0"
+    - "[Fixed]: [manifest/deployment] - `.replicaCount` no longer defaults to 1, when set to 0"
+    - "[Fixed]: [manifest/ingress] - `.customRules` renders when content is of type slice"
+    - "[Removed]: [manifest/networkPolicy] - networkPolicies no longer supported as Manifest"    

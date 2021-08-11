@@ -204,7 +204,6 @@ Currently we support the following Kubernetes Manifests:
   * **[HorizontalPodAutoscaler](#horizontalpodautoscaler)**
   * **[Ingress](#ingress)**
   * **[Job](#job)**
-  * **[NetworkPolicy](#networkpolicy)**
   * **[PersistentVolumeClaim](#persistentvolumeclaim)**
   * **[Pod](#pod)**
   * **[PodDisruptionBudget](#poddisruptionbudget)**
@@ -452,45 +451,6 @@ resources:
   - type: "job"
     values: {{ toYaml $.Values.job | nindent 6 }}
     fullname: "custom-job"
-  ...
-```
-
-## NetworkPolicy
-
-This Template returns a [NetworkPolicy](https://kubernetes.io/docs/concepts/services-networking/network-policies/) Kubernetes Manifest.
-
-### Arguments
-
-The following arguments are supported for this template. If a required argument is not given, the template will fail or return empty.
-
-  * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
-  * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.context` - Inherited Root Context (Required)
-
-### [Values](../values/manifests/_networkPolicy.yaml)
-
-You can access the supported values for this kubernetes manifest through clicking on values. These values represent the default values for this manifest.
-
-### Templates
-
-Does not implement any templates.
-
-### Usage
-
-```
-{{ include "bedag-lib.manifest.networkpolicy" (dict "values" $.Values.policy "fullname" "custom-job" "context" $) }}
-```
-
-#### With Bundle
-
-```
-resources:
-  ...
-  - type: "networkPolicy"
-    values: {{ toYaml $.Values.policy | nindent 6 }}
-    fullname: "custom-policy"
   ...
 ```
 

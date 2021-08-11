@@ -2,21 +2,12 @@ suite: Test Service Manifest
 templates:
   - manifests.yaml
 tests:
-
 ##
 ## Passing Test Scenarios
 ##
 
   ##
-  ## Set all available Values (Check Defaults)
-  - it: Full Configured (Snapshot)
-    values:
-      - ./values/manifests/service.yaml
-    asserts:
-      - matchSnapshot: {}
-
   ##
-  ## Service Disabled
   - it: Disable Service
     set:
       unit:
@@ -28,7 +19,7 @@ tests:
           count: 0
 
   ##
-  ## Implicit ClusterIP Service
+  ##
   - it: implicit ClusterIP Service
     set:
       unit:
@@ -65,7 +56,7 @@ tests:
             protocol: "TCP"
 
   ##
-  ## loadBalancerIP Service Test
+  ##
   - it: Test LoadBalancer Service (loadBalancerIP)
     set:
       unit:
@@ -105,7 +96,7 @@ tests:
             protocol: "TCP"
 
   ##
-  ## LoadBalancerSourceRanges Service Test
+  ##
   - it: Test LoadBalancer Service (LoadBalancerSourceRanges)
     set:
       unit:
@@ -150,7 +141,7 @@ tests:
             protocol: "ICMP"
 
   ##
-  ## NodePort Service Test
+  ##
   - it: Test NodePort Service
     set:
       unit:
@@ -186,7 +177,7 @@ tests:
             nodePort: 30007
 
   ##
-  ## Minimal Configuration
+  ##
   - it: Test Minimal Service Configuration
     set:
       unit:

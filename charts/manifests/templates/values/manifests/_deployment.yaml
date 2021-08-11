@@ -19,6 +19,10 @@
   # {{ $_.path }}labels -- Merges given labels with common labels
   labels: {}
 
+  ## Deployment Annotations
+  # {{ $_.path }}annotations -- Configure Deployment Annotations
+  annotations: {}
+
   # Deployment Selector 
   # {{ $_.path }}selector -- Overwrite Selector entirely
   selector: {}
@@ -29,7 +33,6 @@
 
   ## Amount of Replicas
   # {{ $_.path }}replicaCount -- Amount of Replicas deployed
-  # @default -- 1
   replicaCount: 1
 
   ## Deployment Update Strategy

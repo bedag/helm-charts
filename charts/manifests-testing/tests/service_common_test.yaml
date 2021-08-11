@@ -1,12 +1,13 @@
-suite: Test Service Manifest (With Common Values)
+suite: Test Service Common Values
 templates:
   - manifests.yaml
 tests:
-
 ##
 ## Passing Test Scenarios
 ##
 
+  ##
+  ##
   - it: Common Labels & Partial Name
     values:
       - ./values/common/name.yaml
@@ -40,7 +41,8 @@ tests:
           path: spec.selector.[app.kubernetes.io/instance]
           value: "RELEASE-NAME"
 
-
+  ##
+  ##
   - it: Incluenced Common Selector Fields
     values:
       - ./values/common/name.yaml
@@ -58,7 +60,8 @@ tests:
           path: spec.selector.[common.selector/1]
           value: true
 
-  ## use COmmon Selector and Manifest Selectors
+  ##
+  ##
   - it: Service Selector prioritized over Common Selector
     values:
       - ./values/common/name.yaml
@@ -81,7 +84,8 @@ tests:
       - isEmpty:
           path: spec.selector.[common.selector/1]
 
-  ## Overwrite Fullname
+  ##
+  ##
   - it: Fullname Overwrite
     values:
       - ./values/common/fullname.yaml
@@ -115,7 +119,8 @@ tests:
           path: spec.selector.[app.kubernetes.io/instance]
           value: "RELEASE-NAME"
 
-  ## Overwrite Fullname & Labels
+  ##
+  ##
   - it: Fullname and Labels Overwrite
     values:
       - ./values/common/fullname.yaml

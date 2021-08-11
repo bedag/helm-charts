@@ -19,6 +19,10 @@
   # {{ $_.path }}labels -- Merges given labels with common labels
   labels: {}
 
+  ## DaemonSet Annotations
+  # {{ $_.path }}annotations -- Configure DaemonSet Annotations
+  annotations: {}
+
   # DaemonSet Selector 
   # {{ $_.path }}selector -- Overwrite Selector entirely
   selector: {}
@@ -29,7 +33,11 @@
 
   ## DaemonSet minReadySeconds
   # {{ $_.path }}minReadySeconds -- DaemonSet [Min Ready in Seconds](https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/#performing-a-rolling-update). **DaemonSet only**
-  minReadySeconds: ""
+  minReadySeconds: 0
+
+  ## DaemonSet revisionHistoryLimit
+  # {{ $_.path }}revisionHistoryLimit -- The number of old history to retain to allow rollback.
+  revisionHistoryLimit: 10
 
   ## DaemonSet, can be set to RollingUpdate or OnDelete by default.
   # {{ $_.path }}updateStrategy -- DaemonSet [Update Strategy](https://kubernetes.io/docs/tasks/manage-daemon/update-daemon-set/#performing-a-rolling-update). **DaemonSet only**

@@ -22,8 +22,11 @@ limitations under the License.
     {{- with $values -}} 
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
-      {{- with .annotations }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .jobLabels "context" $context) | nindent 4 }}
+      {{- with .jobNamespace }}   
+  namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+      {{- end }}
+      {{- with .jobAnnotations }}
   annotations:
         {{- range $anno, $val := . }}
           {{- $anno | nindent 4 }}: {{ $val | quote }}
@@ -45,7 +48,7 @@ spec:
       {{- with .ttlSecondsAfterFinished }}
   ttlSecondsAfterFinished: {{ . }}
       {{- end }}
-      {{- with .selector }}
+      {{- with .jobSelector }}
   selector: {{ toYaml . | nindent 4 }}
       {{- end }}
   template: {{- include "bedag-lib.template.pod" (set $ "pod" .) | nindent 6 }}

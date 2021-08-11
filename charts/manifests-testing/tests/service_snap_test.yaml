@@ -1,0 +1,9 @@
+suite: Test Service Snapshot
+templates:
+  - manifests.yaml
+tests:
+  - it: Full Configured (Snapshot)
+    values:
+      - ./values/manifests/service.yaml
+    asserts:
+      - matchSnapshot: {}

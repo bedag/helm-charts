@@ -71,9 +71,7 @@ spec:
     kind: Statefulset
     name: {{ include "bedag-lib.utils.common.fullname" $ }}
           {{- end }}
-          {{- with .minReplicas }}
-  minReplicas: {{ . }}
-          {{- end }}
+  minReplicas: {{ .minReplicas }}
   maxReplicas: {{ .maxReplicas }}
         {{- end }}
       {{- end }}

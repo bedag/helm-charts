@@ -9,15 +9,48 @@ commonLabels:
 nameOverride: "partial"
 fullnameOverride: "fullname"
 
-
+global:
+  imageRegistry: "company-registry.example.com"
+  pullPolicy: "Always"
+  storageClass: "nfs-local-class"
+  defaultTag: "10.1.2.3"
+  imagePullSecrets:
+    - name: private-registry
+    - name: private-registry-group
+  kubeCapabilities: "1.19.0"
 
 
 unit:
   manifests: 
+    ingress:
+      enabled: true
+      hosts:
+        - host: chart-example.local
+          paths: [ "/" ]
+      tls: 
+        - secretName: chart-example-tls
+          hosts:
+            - chart-example.local
+      customRules: 
+        - http:
+            paths:
+              - path: /icons
+                pathType: ImplementationSpecific
+                backend:
+                  resource:
+                    apiGroup: k8s.example.com
+                    kind: StorageBucket
+                    name: icon-assets
+
+
+
+
+
+
     serviceaccount:
       enabled: true
       create: true
-      name: ""
+      name: "overwrite"
       apiVersion: "v1beta1"
       namespace: "custom-namespace"
       labels:
@@ -25,7 +58,9 @@ unit:
       annotations:
         "test.annotations/1": "value"
       automountServiceAccountToken: true
-      imagePullSecrets: []
-      globalPullSecrets: false
+      imagePullSecrets:
+        - account-local-secret-1
+        - account-local-secret-2
+      globalPullSecrets: true
       secrets:
         - name: build-robot-token-bvbk5

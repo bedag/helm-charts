@@ -44,8 +44,8 @@ spec:
           {{- toYaml . | nindent 2 }}
         {{- end }}
   template: {{- include "bedag-lib.template.pod" (set $ "pod" .) | nindent 4 }}
-  minReadySeconds: {{ default 0 .minReadySeconds }}
-  revisionHistoryLimit: {{ default 10 .revisionHistoryLimit }}
+  minReadySeconds: {{ .minReadySeconds }}
+  revisionHistoryLimit: {{ .revisionHistoryLimit }}
   selector:
         {{- if .selector }}
           {{- include "lib.utils.strings.template" (dict "value" .selector "context" $context) | nindent 4 }}

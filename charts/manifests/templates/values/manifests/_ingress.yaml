@@ -91,8 +91,8 @@
   #      - chart-example.local
 
   ## Custom Ingress Rules
-  # {{ $_.path }}customRules -- Configure Custom Ingress [Rules](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend)
-  customRules: []
+  # {{ $_.path }}extraRules -- Configure Custom Ingress [Rules](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend)
+  extraRules: []
   #  - http:
   #      paths:
   #        - path: /icons

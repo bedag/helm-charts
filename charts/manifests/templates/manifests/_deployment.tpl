@@ -46,7 +46,7 @@ spec:
         {{- with .strategy }}
   strategy: {{ toYaml . |  nindent 4 }}
         {{- end }}
-  replicas: {{ default "1" .replicaCount }}
+  replicas: {{ .replicaCount }}
   selector:
         {{- if .selector }}
           {{- include "lib.utils.strings.template" (dict "value" .selector "context" $context) | nindent 4 }}

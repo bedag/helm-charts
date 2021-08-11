@@ -59,6 +59,11 @@ spec:
   tls: {{- toYaml . | nindent 4 }}
           {{- end }}
   rules:
+          {{- if (kindIs "slice" .extraRules) }}
+            {{- range .extraRules }}
+    - {{ include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 6 -}}
+            {{- end }}
+          {{- end }}
           {{- range .hosts }}
     - host: {{ required "Field .host required for ingress manifest" .host | quote }}
       http:

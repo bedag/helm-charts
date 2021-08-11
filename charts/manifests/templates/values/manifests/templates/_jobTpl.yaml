@@ -1,6 +1,19 @@
 {{- define "bedag-lib.values.template.job" -}}
   {{- $context := (default $ .context) }}
   {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+
+## Job Labels
+# {{ $_.path }}jobLabels -- Merges given labels with common labels
+jobLabels: {}
+
+## Job Annotations
+# {{ $_.path }}jobAnnotations -- Configure Job Annotations
+jobAnnotations: {}
+
+## Job Namespace
+## {{ $_.path }}jobNamespace -- Define a custom namespace to deploy the Job into
+jobNamespace: ""
+
 ## Job activeDeadlineSeconds
 # {{ $_.path }}activeDeadlineSeconds -- (int) Specifies the duration in seconds relative to the startTime that the job may be active before the system tries to terminate it; value must be positive integer.
 activeDeadlineSeconds: {{ default "" $_.data.activeDeadlineSeconds }}
@@ -15,8 +28,8 @@ backoffLimit: {{ default "" $_.data.backoffLimit }}
 completions: {{ default "" $_.data.completions }}
 
 ## Job Selector
-# {{ $_.path }}selector -- A label query over pods that should match the pod count. Normally, the system sets this field for you.
-selector: {{ toYaml (default dict $_.data.jobSelector) | nindent 2 }}
+# {{ $_.path }}jobSelector -- A label query over pods that should match the pod count. Normally, the system sets this field for you.
+jobSelector: {{ toYaml (default dict $_.data.jobSelector) | nindent 2 }}
 
 ## Job ttlSecondsAfterFinished
 # {{ $_.path }}ttlSecondsAfterFinished -- ttlSecondsAfterFinished limits the lifetime of a Job that has finished execution (either Complete or Failed).

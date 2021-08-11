@@ -1,0 +1,31 @@
+Full Configured (Snapshot):
+  1: |
+    apiVersion: v1beta1
+    kind: Service
+    metadata:
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+        service.beta.kubernetes.io/aws-load-balancer-ssl-ports: 443,8443
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: RELEASE-NAME-manifests-testing
+        app.kubernetes.io/version: 0.0.0
+        test.label/1: value
+      name: RELEASE-NAME-manifests-testing
+      namespace: custom-namespace
+    spec:
+      ports:
+      - name: http
+        nodePort: null
+        port: 8888
+        protocol: TCP
+        targetPort: http
+      - name: discovery
+        nodePort: null
+        port: 10000
+        protocol: TCP
+        targetPort: broadcast
+      selector:
+        test.selectorLabel/1: value
+      type: ClusterIP

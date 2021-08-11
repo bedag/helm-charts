@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - master
-      - manifests-fixes # tmp
+      - manifests-fixes
 jobs:
   release:
     runs-on: ubuntu-latest

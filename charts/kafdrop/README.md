@@ -35,7 +35,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | autoscaling.annotations | object | `{}` | Configure HPA Annotations |
 | autoscaling.apiVersion | string | `""` | Configure the api version used for the Job resource. |
 | autoscaling.behavior | object | `{}` | Define [Scaling Policies](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-configurable-scaling-behavior) for the HPA resource. |
-| autoscaling.enabled | bool | `true` | Enable HPA resource |
+| autoscaling.enabled | bool | `true` |  Enable HPA resource |
 | autoscaling.labels | object | `{}` | Merges given labels with common labels |
 | autoscaling.maxReplicas | string | `nil` | maxReplicas is the upper limit for the number of replicas to which the autoscaler can scale up. It cannot be less that minReplicas. |
 | autoscaling.metrics | list | `[]` | Define [Custom Metrics](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics) rules |

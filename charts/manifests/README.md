@@ -1,6 +1,6 @@
 # Manifests Library
 
-![Version: 0.6.0](https://img.shields.io/badge/Version-0.6.0-informational?style=flat-square) ![Type: library](https://img.shields.io/badge/Type-library-informational?style=flat-square)
+![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square) ![Type: library](https://img.shields.io/badge/Type-library-informational?style=flat-square)
 
 This library's purpose is to have more flexibility as chart author but at the same time have kubernetes manifests managed in a central library. This way you can avoid big surprises when Kubernetes has breaking changes in any of their APIs. Currently we support a base set of resources. Resources may be added as soon as we see or get a request that there's a need for it. This chart is still under development and testing, since it's rather complex. Feel free to use it. Our goal is to get it as reliable as possible.
 
@@ -40,7 +40,18 @@ Major Changes to functions are documented with the version affected. **Before up
 
 | **Manifest** | **Chart Version** | **Change/Description** | **Commits/PRs** |
 | :----------- | :---------------- | :--------------------- | :-------------- |
-| template/persistentvolumeclaim | `0.5.0` | Since all manifests/templates are lowercase, the persistentVolumeClaim template was also lowercased to have a cleaner library. The template is no longer callable via `bedag-lib.template.persistentVolumeClaim` but moved to `bedag-lib.template.persistentvolumeclaim`. | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
+| * `manifest/podDisruptionBudget` </br> * `manifest/serviceMonitor` </br> * `manifest/statefulset` </br> * `manifest/deployment` </br>  * `manifest/daemonset` | `2.0.0` | Field `selector` moved to `selectorLabels` for the named resoures. Move labels defined under `selector` to `selectorLabels`. | * [PR 52](https://github.com/bedag/helm-charts/pull/52) |
+| `manifest/deployment` | `2.0.0` | Field `deploymentExtras` moved to `deploymentFields` for the named resoures. | * [PR 52](https://github.com/bedag/helm-charts/pull/52) |
+| `dependency/library` | `1.0.0` | Upgraded Chart Dependency to new Major `1.0.0` | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
+
+| `dependency/library` | `1.0.0` | Upgraded Chart Dependency to new Major `1.0.0` | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
+| `template/persistentvolumeclaim` | `0.5.0` | Since all manifests/templates are lowercase, the persistentVolumeClaim template was also lowercased to have a cleaner library. The template is no longer callable via `bedag-lib.template.persistentVolumeClaim` but moved to `bedag-lib.template.persistentvolumeclaim`. | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
+
+Added:
+
+readinessProbeEnabled: true
+livenessProbeEnabled: true
+startupProbeEnabled: true
 
 ## Source Code
 
@@ -50,7 +61,7 @@ Major Changes to functions are documented with the version affected. **Before up
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://buttahtoast.github.io/helm-charts/ | library | ~0.3.0 |
+| https://buttahtoast.github.io/helm-charts/ | library | ~1.2.0 |
 
 # Documentation
 

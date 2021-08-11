@@ -1,0 +1,67 @@
+## Statefulset Full Configuration
+unit:
+  manifests: 
+    statefulset:
+      apiVersion: ""
+      namespace: ""
+      labels: {}
+      annotations: {}
+      serviceName: ""
+      selectorLabels: {}
+      selector: {}
+      replicaCount: 1
+      podManagementPolicy: ""
+      updateStrategy: RollingUpdate
+      rollingUpdatePartition: ""
+      volumeClaimTemplates: []
+      #  - metadata:
+      #      name: example
+      #      annotations: {}
+      #    spec:
+      #      accessModes: [ "ReadWriteOnce" ]
+      #      resources:
+      #        requests:
+      #          storage: "1Gi"
+      #      storageClassName: { include "lib.utils.storageClass" (dict "persistence" .Values.persistence "context" $.Values) }
+      statefulsetFields: {}
+
+      ## Pod Values 
+      imagePullSecrets: []
+      podLabels:
+        "pod.label/1": true
+      podAnnotations:
+        "pod.annotations/1": true
+      podNamespace: {}
+      forceRedeploy: false
+      podFields:
+        hostNetwork: true
+      volumes: 
+        - name: cache
+          emptyDir: {}
+        - name: share
+          persistentVolumeClaim:
+            claimName: 'shared'
+      restartPolicy: 
+      affinity: {}
+      nodeSelector: {}
+      tolerations: {}
+      priorityClassName: ""
+      podSecurityContext: {}
+      initContainers: 
+        - name: init-myservice
+          image: busybox:1.28
+          command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+        - name: init-myservice-2
+          image: busybox:1.28
+          command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      sidecars: 
+        - name: myservice-1
+          image: busybox:1.28
+          command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+        - name: myservice-2
+          image: busybox:1.28
+          command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+      serviceAccountName: ""
+          
+    
+    

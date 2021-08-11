@@ -1,0 +1,55 @@
+suite: ServiceMonitor Manifest Test
+templates:
+  - manifests.yaml
+tests:
+
+##
+## Passing Test Scenarios
+##
+
+  ##
+  ##
+  - it: ServiceMonitor Disabled
+    set:
+      unit:
+        manifests: 
+          servicemonitor:
+            enabled: false
+    asserts:
+      - hasDocuments:
+          count: 0
+  ##
+  ##
+  - it: Single TargetNamespace String
+    values:
+      - ./values/manifests/serviceMonitor.yaml
+    set:
+      unit:
+        manifests: 
+          servicemonitor:
+            namespaceSelector: "single"
+    asserts:
+      - contains:
+          path: spec.namespaceSelector.matchNames
+          content: "single"
+
+  ##
+  ##
+  - it: Multiple TargetNamespace Slice
+    values:
+      - ./values/manifests/serviceMonitor.yaml
+    set:
+      unit:
+        manifests: 
+          servicemonitor:
+            namespaceSelector: [ "one", "two", "three" ]
+    asserts:
+      - contains:
+          path: spec.namespaceSelector.matchNames
+          content: "one"
+      - contains:
+          path: spec.namespaceSelector.matchNames
+          content: "two"
+      - contains:
+          path: spec.namespaceSelector.matchNames
+          content: "three"

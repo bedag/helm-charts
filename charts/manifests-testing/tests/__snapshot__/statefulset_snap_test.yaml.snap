@@ -1,0 +1,33 @@
+Full Configured (Snapshot):
+  1: |
+    apiVersion: v1beta1
+    kind: ServiceMonitor
+    metadata:
+      annotations:
+        test.annotations/1: "true"
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: RELEASE-NAME-manifests-testing
+        app.kubernetes.io/version: 0.0.0
+        test.label/1: true
+      name: RELEASE-NAME-manifests-testing
+      namespace: custom-namespace
+    spec:
+      endpoints:
+      - interval: 10s
+        path: /
+        port: metrics
+        scrapeTimeout: 10s
+      namespaceSelector:
+        matchNames:
+        - NAMESPACE
+      podTargetLabels:
+      - app
+      selector:
+        matchLabels:
+          app.kubernetes.io/instance: RELEASE-NAME
+          app.kubernetes.io/name: RELEASE-NAME-manifests-testing
+Full Configured with Globals (Snapshot):
+  1: |
+    raw: Missing key '.repository' in image structure

@@ -15,7 +15,7 @@ maintainers:
   email: sre@bedag.ch
 dependencies:
 - name: "library"
-  version: "1.2.0"
+  version: "~1.2.0"
   repository: "file://../../../helm-charts-buttahtoast/charts/library/"
   #repository: "https://buttahtoast.github.io/helm-charts/"
 annotations:
@@ -34,18 +34,8 @@ annotations:
     - "Breaking! [Changed]: [manifest/serviceMonitor] - `.selector` moved to `.selectorLabels`" 
     - "Breaking! [Changed]: [manifest/statefulset] - `.selector` moved to `.selectorLabels`" 
     - "Breaking! [Changed]: [manifest/statefulset] - `.statefulsetExtras` moved to `.statefulsetFields`"     
-
     - "Breaking! [Changed]: [manifest/ingress] - `.customRules` moved to `.extraRules`"
     - "[Fixed]: [manifest/statefulset] - `.replicaCount` no longer defaults to 1, when set to 0"
     - "[Fixed]: [manifest/deployment] - `.replicaCount` no longer defaults to 1, when set to 0"
     - "[Fixed]: [manifest/ingress] - `.customRules` renders when content is of type slice"
     - "[Removed]: [manifest/networkPolicy] - networkPolicies no longer supported as Manifest"
-
-
-
-
-
-serviceMonitorFields
-
-
-

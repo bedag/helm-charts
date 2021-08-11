@@ -1,0 +1,22 @@
+## ServiceMonitor Full Configuration
+unit:
+  manifests: 
+    servicemonitor:
+      enabled: true
+      apiVersion: "v1beta1"
+      namespace: "custom-namespace"
+      labels:
+        "test.label/1": true
+      annotations:
+        "test.annotations/1": true
+      namespaceSelector: []
+      serviceMonitorFields:
+        podTargetLabels:
+          - "app"
+      endpoints:
+        - port: metrics
+          path: "/"
+          interval: 10s
+          scrapeTimeout: 10s
+      selectorLabels: {}
+      selector: {}    

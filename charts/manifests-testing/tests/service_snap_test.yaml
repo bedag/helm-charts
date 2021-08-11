@@ -1,4 +1,4 @@
-suite: Test Service Snapshot
+suite: Service Snapshot Test
 templates:
   - manifests.yaml
 tests:

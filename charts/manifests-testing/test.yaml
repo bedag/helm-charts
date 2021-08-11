@@ -2,8 +2,8 @@ commonLabels:
   "common.label": 1
 
 
-#selectorLabels: 
-#  "common.selector": 1
+selectorLabels: 
+  "common.selector": 1
 
 
 nameOverride: "partial"
@@ -22,45 +22,22 @@ global:
 
 unit:
   manifests: 
-    ingress:
+    servicemonitor:
       enabled: true
-      hosts:
-        - host: chart-example.local
-          paths: [ "/" ]
-      tls: 
-        - secretName: chart-example-tls
-          hosts:
-            - chart-example.local
-      customRules: 
-        - http:
-            paths:
-              - path: /icons
-                pathType: ImplementationSpecific
-                backend:
-                  resource:
-                    apiGroup: k8s.example.com
-                    kind: StorageBucket
-                    name: icon-assets
-
-
-
-
-
-
-    serviceaccount:
-      enabled: true
-      create: true
-      name: "overwrite"
       apiVersion: "v1beta1"
       namespace: "custom-namespace"
       labels:
         "test.label/1": "value"
       annotations:
         "test.annotations/1": "value"
-      automountServiceAccountToken: true
-      imagePullSecrets:
-        - account-local-secret-1
-        - account-local-secret-2
-      globalPullSecrets: true
-      secrets:
-        - name: build-robot-token-bvbk5
+      namespaceSelector: []
+      serviceMonitorFields:
+        podTargetLabels:
+          - "app"
+      endpoints:
+        - port: metrics
+          path: "/"
+          interval: 10s
+          scrapeTimeout: 10s
+      selectorLabels:
+        "test.selector/1": true

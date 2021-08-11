@@ -11,7 +11,7 @@ Full Configured (Snapshot):
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: RELEASE-NAME-manifests-testing
         app.kubernetes.io/version: 0.0.0
-        test.label/1: value
+        test.label/1: true
       name: RELEASE-NAME-manifests-testing
       namespace: custom-namespace
     spec:
@@ -27,5 +27,6 @@ Full Configured (Snapshot):
         protocol: TCP
         targetPort: broadcast
       selector:
-        test.selectorLabel/1: value
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/name: RELEASE-NAME-manifests-testing
       type: ClusterIP

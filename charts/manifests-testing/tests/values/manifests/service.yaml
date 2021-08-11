@@ -13,9 +13,8 @@ unit:
           targetPort: broadcast
           nodePort: null
       labels:
-        "test.label/1": "value"
-      selector:
-        "test.selectorLabel/1": "value"
+        "test.label/1": true
+      selector: {}
       annotations:
         "service.beta.kubernetes.io/aws-load-balancer-backend-protocol": "http"
         "service.beta.kubernetes.io/aws-load-balancer-ssl-ports": "443,8443"

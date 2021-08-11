@@ -1,9 +1,9 @@
-suite: ServiceAccount Snapshot Test
+suite: ServiceMonitor Snapshot Test
 templates:
   - manifests.yaml
 tests:
   - it: Full Configured (Snapshot)
     values:
-      - ./values/manifests/serviceAccount.yaml
+      - ./values/manifests/serviceMonitor.yaml
     asserts:
       - matchSnapshot: {}

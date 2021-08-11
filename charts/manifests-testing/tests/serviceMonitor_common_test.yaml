@@ -1,4 +1,4 @@
-suite: Service Common Values Test
+suite: ServiceMonitor Common Values Test
 templates:
   - manifests.yaml
 tests:
@@ -12,7 +12,7 @@ tests:
     values:
       - ./values/common/name.yaml
       - ./values/common/labels.yaml
-      - ./values/manifests/service.yaml
+      - ./values/manifests/serviceMonitor.yaml
     asserts:
       - equal:
           path: metadata.name
@@ -34,66 +34,18 @@ tests:
       - isNotEmpty:
           path: metadata.labels.[app.kubernetes.io/managed-by] 
       - equal:
-          path: spec.selector.[app.kubernetes.io/name]
+          path: spec.selector.matchLabels.[app.kubernetes.io/name]
           value: "RELEASE-NAME-partial"
       - equal:
-          path: spec.selector.[app.kubernetes.io/instance]
+          path: spec.selector.matchLabels.[app.kubernetes.io/instance]
           value: "RELEASE-NAME"
-
-  ##
-  ##
-  - it: Incluenced Common Selector Fields
-    values:
-      - ./values/common/name.yaml
-      - ./values/common/selector.yaml
-    set:
-      unit:
-        manifests: 
-          service:
-            enabled: true
-    asserts:
-      - equal:
-          path: metadata.name
-          value: "RELEASE-NAME-partial"
-      - equal:
-          path: spec.selector.[common.selector/1]
-          value: true
-
-  ##
-  ##
-  - it: Service Selector prioritized over Common Selector
-    values:
-      - ./values/common/name.yaml
-      - ./values/common/labels.yaml
-      - ./values/common/selector.yaml
-    set:
-      unit:
-        manifests: 
-          service:
-            enabled: true
-            selector:
-              "service.selector/1": true
-    asserts:
-      - equal:
-          path: metadata.name
-          value: "RELEASE-NAME-partial"
-      - equal:
-          path: spec.selector.[service.selector/1]
-          value: true
-      - isEmpty:
-          path: spec.selector.[common.selector/1]
 
   ##
   ##
   - it: Fullname Overwrite
     values:
       - ./values/common/fullname.yaml
-      - ./values/common/labels.yaml
-    set:
-      unit:
-        manifests: 
-          service:
-            enabled: true
+      - ./values/manifests/serviceMonitor.yaml
     asserts:
       - equal:
           path: metadata.name
@@ -105,17 +57,17 @@ tests:
           path: metadata.labels.[app.kubernetes.io/instance]
           value: "RELEASE-NAME"
       - equal:
-          path: metadata.labels.[common.label/1]
-          value: true
+          path: metadata.labels.[app.kubernetes.io/instance]
+          value: "RELEASE-NAME"
       - isNotEmpty:
           path: metadata.labels.[app.kubernetes.io/version] 
       - isNotEmpty:
           path: metadata.labels.[app.kubernetes.io/managed-by] 
       - equal:
-          path: spec.selector.[app.kubernetes.io/name]
+          path: spec.selector.matchLabels.[app.kubernetes.io/name]
           value: "fullname"
       - equal:
-          path: spec.selector.[app.kubernetes.io/instance]
+          path: spec.selector.matchLabels.[app.kubernetes.io/instance]
           value: "RELEASE-NAME"
 
   ##
@@ -124,11 +76,7 @@ tests:
     values:
       - ./values/common/fullname.yaml
       - ./values/common/overwrites.yaml
-    set:
-      unit:
-        manifests: 
-          service:
-            enabled: true
+      - ./values/manifests/serviceMonitor.yaml
     asserts:
       - equal:
           path: metadata.name
@@ -142,11 +90,60 @@ tests:
           path: metadata.labels.[app.kubernetes.io/version] 
       - isEmpty:
           path: metadata.labels.[app.kubernetes.io/managed-by] 
-      - equal:
-          path: spec.selector.[app.kubernetes.io/name]
-          value: "fullname"
-      - equal:
-          path: spec.selector.[app.kubernetes.io/instance]
-          value: "RELEASE-NAME"
       - isEmpty:
           path: metadata.labels.[common.label/1] 
+
+
+  ##
+  ##
+  - it: Common Selector
+    values:
+      - ./values/common/selector.yaml
+      - ./values/manifests/serviceMonitor.yaml
+    asserts:
+      - equal:
+          path: spec.selector.matchLabels.[common.selector/1]
+          value: true
+
+  ##
+  ##
+  - it: Selector has priority over SelectorLabels and Common Selector
+    values:
+      - ./values/common/selector.yaml
+      - ./values/manifests/serviceMonitor.yaml
+    set:
+      unit:
+        manifests: 
+          servicemonitor:
+            selectorLabels:
+              "test.selector/1": true
+            selector: 
+              matchExpressions:
+                - {key: es-node, operator: In, values: [data-1, data-2, data-3]}  
+    asserts:
+      - contains:
+          path: spec.selector.matchExpressions
+          content:
+            key: es-node
+            operator: In
+            values:
+            - data-1
+            - data-2
+            - data-3
+
+  ##
+  ##
+  - it: Label Selector
+    values:
+      - ./values/common/selector.yaml
+      - ./values/manifests/serviceMonitor.yaml
+    set:
+      unit:
+        manifests: 
+          servicemonitor:
+            selectorLabels:
+              "test.selector/1": true
+    asserts:
+      - equal:
+          path: spec.selector.matchLabels.[test.selector/1]
+          value: true

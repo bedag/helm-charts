@@ -1,0 +1,5 @@
+suite: Service Common Values Test
+templates:
+  - bundle.yaml
+tests:
+  

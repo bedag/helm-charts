@@ -30,11 +30,6 @@
     {{- include "bedag-lib.manifest.job" (dict "values" $.Values.unit.manifests.job "context" $) | nindent 0 }}
   {{- end }}
 
-  {{/* NetworkPolicy */}}
-  {{- if or .Values.unit.manifests.all .Values.unit.manifests.networkpolicy }}
-    {{- include "bedag-lib.manifest.networkpolicy" (dict "values" $.Values.unit.manifests.networkpolicy "context" $) | nindent 0 }}
-  {{- end }}  
-
   {{/* PersistentVolumeClaim */}}
   {{- if or .Values.unit.manifests.all .Values.unit.manifests.persistentvolumeclaim }}
     {{- include "bedag-lib.manifest.persistentvolumeclaim" (dict "values" $.Values.unit.manifests.persistentvolumeclaim "context" $) | nindent 0 }}

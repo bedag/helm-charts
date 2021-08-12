@@ -21,6 +21,10 @@ global:
 
 
 unit:
+  bundle:
+    enabled: true
+    overwrites: {}
+
   manifests: 
     servicemonitor:
       enabled: true

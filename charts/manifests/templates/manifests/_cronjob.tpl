@@ -17,7 +17,7 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.manifest.cronjob" -}}
   {{- if .context }}
-    {{- $context := .context -}}
+    {{- $context := set .context "name" (default "" .name) (default "" .fullname) -}}
     {{- $cronjob := mergeOverwrite (fromYaml (include "bedag-lib.values.cronjob" $)).cronjob (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $cronjob) -}}
       {{- with $cronjob -}}
@@ -29,7 +29,7 @@ apiVersion: {{ .apiVersion }}
 apiVersion: batch/v1beta1
           {{- end }}
 metadata:
-  name:  {{ include "bedag-lib.utils.common.fullname" . }}
+  name:  {{ include "bedag-lib.utils.common.fullname" $context }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context)| nindent 4 }}
           {{- with .namespace }}   
   namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) }}
@@ -50,7 +50,7 @@ spec:
   startingDeadlineSeconds: {{ .startingDeadlineSeconds }}
   successfulJobsHistoryLimit: {{ .successfulJobsHistoryLimit }}
   suspend: {{ .suspend }}
-  jobTemplate: {{- include "bedag-lib.template.job" (set $ "job" .) | nindent 4 }}
+  jobTemplate: {{- include "bedag-lib.template.job" (set $context "job" .) | nindent 4 }}
         {{- end }}
       {{- end }}
     {{- end }}

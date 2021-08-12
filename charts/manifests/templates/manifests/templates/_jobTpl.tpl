@@ -17,8 +17,8 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.template.job" -}}
   {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.job" .)) .job -}}
-  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) .context (include "bedag-lib.utils.intern.noYamlError" .context) -}}
-    {{- $context := .context }}
+  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) . (include "bedag-lib.utils.intern.noYamlError" .) -}}
+    {{- $context := . }}
     {{- with $values -}} 
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}
@@ -51,7 +51,7 @@ spec:
       {{- with .jobSelector }}
   selector: {{ toYaml . | nindent 4 }}
       {{- end }}
-  template: {{- include "bedag-lib.template.pod" (set $ "pod" .) | nindent 6 }}
+  # template: {{- include "bedag-lib.template.pod" (set $ "pod" .) | nindent 6 }}
     {{- end }}
   {{- else }}
     {{- fail "Template requires '.pod' and '.context' as arguments" }}

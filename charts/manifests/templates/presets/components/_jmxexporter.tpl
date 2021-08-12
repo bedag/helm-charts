@@ -23,7 +23,7 @@ limitations under the License.
     {{- if $.values.enabled }}
       {{- $name := (include "lib.utils.strings.toDns1123" $.values.name) }}
       {{- $_ := set . "container" .values }}
-container: {{- include "bedag-lib.template.container" . | nindent 2 }}
+container: {{- include "bedag-lib.template.container" (set . "container" .values) | nindent 2 }}
       {{- $_ := unset . "container" }}
 
 ports:

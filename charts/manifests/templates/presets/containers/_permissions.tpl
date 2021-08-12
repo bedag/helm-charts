@@ -21,9 +21,7 @@ limitations under the License.
 {{- define "bedag-lib.presets.permissions" -}}
   {{- if and .values .context }}
     {{- if .values.enabled }}
-      {{- $_ := set . "container" .values }}
-{{- include "bedag-lib.template.container" . }}
-      {{- $_ := unset . "container" }}
+{{- include "bedag-lib.template.container" (set . "container" .values) }}
     {{- end }}
   {{- else }}
     {{- fail "Module requires '.module' and '.context' in the key structure" }}

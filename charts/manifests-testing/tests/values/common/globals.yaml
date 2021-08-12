@@ -1,7 +1,7 @@
 ## Global Values
 global:
   imageRegistry: "company-registry.example.com"
-  pullPolicy: "Always"
+  imagePullPolicy: "Always"
   storageClass: "nfs-local-class"
   defaultTag: "10.1.2.3"
   imagePullSecrets:

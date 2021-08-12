@@ -15,9 +15,9 @@ maintainers:
   email: sre@bedag.ch
 dependencies:
 - name: "library"
-  version: "~1.2.0"
-  #repository: "file://../../../helm-charts-buttahtoast/charts/library/"
-  repository: "https://buttahtoast.github.io/helm-charts/"
+  version: "2.0.0"
+  repository: "file://../../../helm-charts-buttahtoast/charts/library/"
+  #repository: "https://buttahtoast.github.io/helm-charts/"
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/prerelease: "false"

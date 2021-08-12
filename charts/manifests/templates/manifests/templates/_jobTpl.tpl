@@ -16,20 +16,19 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.template.job" -}}
-  {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.job" .)) .job -}}
-  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) . (include "bedag-lib.utils.intern.noYamlError" .) -}}
-    {{- $context := . }}
+  {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.job" $)) $.job -}}
+  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) . (include "bedag-lib.utils.intern.noYamlError" $) -}}
     {{- with $values -}} 
 metadata:
-  name: {{ include "bedag-lib.utils.common.fullname" . }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" .jobLabels "context" $context) | nindent 4 }}
+  name: {{ include "bedag-lib.utils.common.fullname" $ }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .jobLabels "context" $) | nindent 4 }}
       {{- with .jobNamespace }}   
-  namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+  namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $) }}
       {{- end }}
       {{- with .jobAnnotations }}
   annotations:
         {{- range $anno, $val := . }}
-          {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- $anno | nindent 4 }}: {{ include "lib.utils.strings.template" (dict "value" $val "context" $) | quote }}
         {{- end }}
       {{- end }}
 spec:
@@ -51,7 +50,7 @@ spec:
       {{- with .jobSelector }}
   selector: {{ toYaml . | nindent 4 }}
       {{- end }}
-  # template: {{- include "bedag-lib.template.pod" (set $ "pod" .) | nindent 6 }}
+  template: {{- include "bedag-lib.template.pod" (set $ "pod" .) | nindent 4 }}
     {{- end }}
   {{- else }}
     {{- fail "Template requires '.pod' and '.context' as arguments" }}

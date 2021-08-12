@@ -1,0 +1,27 @@
+{{- if .Values.unit.bundle }}
+test: | {{- include "simple.bundle2" $ | nindent 2 }}
+{{- end -}}
+{{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "simple.bundle2" $)) "context" $) | nindent 0 }}
+
+{{- define "simple.bundle2" -}}
+name: "bundleName"
+resources:
+  - type: "job"
+      {{- with $.Values.unit.manifests.job }}
+    values: {{ toYaml . | nindent 6 }}
+      {{- end }}
+    name: "job-local-1"
+  - type: "job"
+      {{- with $.Values.unit.manifests.job }}
+    values: {{ toYaml . | nindent 6 }}
+      {{- end }}
+    name: "job-local-2"
+  - type: "pod"
+    name: "pod-local-2"
+    values:
+      serviceAccount:
+        enabled: true
+        create: true
+        # name: test
+
+{{- end }}

@@ -17,7 +17,7 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.manifest.job" -}}
   {{- if .context -}}
-    {{- $context := .context -}}
+    {{- $context := set (set .context "name" (default "" .name)) "fullname" (default "" .fullname) -}}
     {{- $job := mergeOverwrite (fromYaml (include "bedag-lib.values.job" $)).job (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $job) }}
       {{- with $job -}}
@@ -27,8 +27,8 @@ kind: Job
 apiVersion: {{ .apiVersion }}
           {{- else }}
 apiVersion: batch/v1
-          {{- end }}
-{{- include "bedag-lib.template.job" (set $ "job" .) | nindent 0 }}
+          {{- end -}}
+{{- include "bedag-lib.template.job" (set $context "job" .) | nindent 0 }}
         {{- end }}
       {{- end }}
     {{- end }}

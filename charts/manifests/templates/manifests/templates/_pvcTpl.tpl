@@ -16,20 +16,19 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.template.persistentvolumeclaim" -}}
-  {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.pvc" .)) .pvc -}}
-  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) .context (include "bedag-lib.utils.intern.noYamlError" .context) -}}
-    {{- $context := .context -}}
+  {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.pvc" $)) $.pvc -}}
+  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) (include "bedag-lib.utils.intern.noYamlError" $) -}}
     {{- with $values -}}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" $ }}
-  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $) | nindent 4 }}
       {{- with .namespace }}   
-  namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+  namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $) }}
       {{- end }}
       {{- with .annotations }}
   annotations:
         {{- range $anno, $val := . }}
-          {{- $anno | nindent 4 }}: {{ $val | quote }}
+          {{- $anno | nindent 4 }}: {{ include "lib.utils.strings.template" (dict "value" $val "context" $) | quote }}
         {{- end }}
       {{- end }}
 spec:
@@ -40,7 +39,7 @@ spec:
   resources:
     requests:
       storage: {{ default "1Gi" .size | quote }}
-  storageClassName: {{ include "lib.utils.globals.storageClass" (dict "persistence" .storageClass "context" $context) }}
+  storageClassName: {{ include "lib.utils.globals.storageClass" (dict "persistence" .storageClass "context" $) }}
       {{- with .selector }}
   selector: {{ toYaml . | nindent 4 }}
       {{- end }}

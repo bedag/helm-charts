@@ -17,7 +17,7 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.manifest.statefulset" -}}
   {{- if .context -}}
-    {{- $context := .context -}}
+    {{- $context := set (set .context "name" (default "" .name)) "fullname" (default "" .fullname) -}}
     {{- $statefulset := mergeOverwrite (fromYaml (include "bedag-lib.values.statefulset" $)).statefulset (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $statefulset) }}
       {{- with $statefulset }}
@@ -28,7 +28,7 @@ apiVersion: {{ .apiVersion }}
 apiVersion: apps/v1
         {{- end }}
 metadata:
-  name: {{ include "bedag-lib.utils.common.fullname" $ }}
+  name: {{ include "bedag-lib.utils.common.fullname" $context }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context)| nindent 4 }}
         {{- with .namespace }}
   namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) }}
@@ -57,11 +57,11 @@ spec:
         {{- else }}
     matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) .selectorLabels) "context" $context) | nindent 6 }}
         {{- end }}
-  serviceName: {{ default (include "bedag-lib.utils.common.fullname" $) .serviceName }}
+  serviceName: {{ default (include "bedag-lib.utils.common.fullname" $context) .serviceName }}
         {{- with .statefulsetFields }}
           {{- toYaml . | nindent 2 }}
         {{- end }}
-  template: {{- include "bedag-lib.template.pod" (set $ "pod" $statefulset) | nindent 4 }}
+  template: {{- include "bedag-lib.template.pod" (set $context "pod" .) | nindent 4 }}
         {{- with .volumeClaimTemplates }}
   volumeClaimTemplates: {{- toYaml . | nindent 4 }}
         {{- end }}

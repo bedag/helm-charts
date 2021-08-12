@@ -16,14 +16,14 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.template.pod" -}}
-  {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.pod" .)) .pod -}}
-  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) .context (include "bedag-lib.utils.intern.noYamlError" .context) -}}
-    {{- $context := .context -}}
-    {{- with $values }}
+  {{- $values := mergeOverwrite (fromYaml (include "bedag-lib.values.template.pod" $)) .pod -}}
+  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) . (include "bedag-lib.utils.intern.noYamlError" $) -}}
+    {{- with $values -}}
 metadata:
-  labels: {{- include "lib.utils.common.labels" (dict "labels" .podLabels "versionUnspecific" "true" "context" $context)| nindent 4 }}
+  name: {{ include "bedag-lib.utils.common.fullname" $ }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" .podLabels "versionUnspecific" "true" "context" $)| nindent 4 }}
       {{- with .podNamespace }}   
-  namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) }}
+  namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $) }}
       {{- end }}
       {{- if or .podAnnotations .forceRedeploy }}
   annotations:
@@ -32,35 +32,35 @@ metadata:
         {{- end }}
         {{- with .podAnnotations }}
           {{- range $anno, $val := . }}
-            {{- $anno | nindent 4 }}: {{ include "lib.utils.strings.template" (dict "value" $val "context" $context) }}
+            {{- $anno | nindent 4 }}: {{ include "lib.utils.strings.template" (dict "value" $val "context" $) }}
           {{- end }}
         {{- end }}
       {{- end }}
 spec:
       {{- with .podFields }}
-        {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
+        {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 2 }}
       {{- end }}
       {{- with .restartPolicy }}
   restartPolicy: {{ . }}
       {{- end }}
-      {{- $pullSecrets := include "lib.utils.globals.imagePullSecrets" (dict "pullSecrets" .imagePullSecrets "context" $context) }}
+      {{- $pullSecrets := fromYaml (include "lib.utils.globals.imagePullSecrets" (dict "pullSecrets" .imagePullSecrets "context" $)) }}
       {{- with $pullSecrets }}
-  imagePullSecrets: {{- toYaml . | nindent 4 }}
+        {{- toYaml . | nindent 2 }}
       {{- end }}
       {{- with .affinity }}
-  affinity: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
+  affinity: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 4 }}
       {{- end }}
       {{- with .nodeSelector }}
-  nodeSelector: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
+  nodeSelector: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 4 }}
       {{- end }}
       {{- with .tolerations }}
-  tolerations: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
+  tolerations: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 4 }}
       {{- end }}
       {{- with .priorityClassName }}
-  priorityClassName: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
+  priorityClassName: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 4 }}
       {{- end }}
       {{- with .podSecurityContext }}
-  securityContext: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
+  securityContext: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 4 }}
       {{- end }}
   serviceAccountName: {{ default (include "bedag-lib.utils.common.serviceAccountName" (set $ "sa" (default dict .serviceAccount))) .serviceAccountName }}
       {{- with .initContainers }}
@@ -69,7 +69,7 @@ spec:
   containers:
     - {{- include "bedag-lib.template.container" (set $ "container" $values) | nindent 6 }}
       {{- with $values.sidecars }}
-        {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 4 }}
+        {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 4 }}
       {{- end }}
       {{- with $values.volumes }}
   volumes: {{ toYaml . | nindent 4 }}

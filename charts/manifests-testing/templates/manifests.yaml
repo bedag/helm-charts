@@ -1,4 +1,4 @@
-{{- if .Values.unit.manifests }}
+{{- if .Values.unit.manifests.enabled }}
 
   {{/* CronJob */}}
   {{- if or .Values.unit.manifests.all .Values.unit.manifests.cronJob }}

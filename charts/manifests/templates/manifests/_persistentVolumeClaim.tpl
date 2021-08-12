@@ -17,7 +17,7 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.manifest.persistentvolumeclaim" -}}
   {{- if .context -}}
-    {{- $context := .context -}}
+    {{- $context := set (set .context "name" (default "" .name)) "fullname" (default "" .fullname) -}}
     {{- $pvc := mergeOverwrite (fromYaml (include "bedag-lib.values.persistentvolumeclaim" $)).pvc (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $pvc) -}}
       {{- with $pvc -}}
@@ -27,8 +27,8 @@ kind: PersistentVolumeClaim
 apiVersion: {{ .apiVersion }}
           {{- else }}
 apiVersion: v1
-          {{- end }}
-          {{- include "bedag-lib.template.persistentvolumeclaim" (set $ "pvc" $pvc) | nindent 0 }}
+          {{- end -}}
+          {{- include "bedag-lib.template.persistentvolumeclaim" (set $context "pvc" .) | nindent 0 }}
         {{- end }}  
       {{- end }}
     {{- else }}

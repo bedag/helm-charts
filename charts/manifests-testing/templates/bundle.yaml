@@ -1,5 +1,5 @@
 {{- if .Values.unit.bundle }}
-  {{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "simple.bundle" $)) "context" $) | nindent 0 }}
+test: | {{- include "simple.bundle" $ | nindent 2 }}
 {{- end -}}
 
 {{- define "simple.bundle" -}}
@@ -10,92 +10,92 @@ name: {{ . }}
 common: {{ include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 2 }}
   {{- end }}
 resources:
+{{/*
+  ## Cronjob
+  - type: "cronjob"
+    {{- if $.Values.unit.manifests }}
+      {{- with $.Values.unit.manifests.cronjob }}
+    values: {{ toYaml . | nindent 6 }}
+      {{- end }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.overwrites.cronjob }}
+    overwrites: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 6 }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.resourcesName }}
+    name: {{ . }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.resourcesFullname }}
+    fullname: {{ . }}
+    {{- end }}
 
-#   ## Cronjob
-#   - type: "cronjob"
-#     {{- if $.Values.unit.manifests }}
-#       {{- with $.Values.unit.manifests.cronjob }}
-#     values: {{ toYaml . | nindent 6 }}
-#       {{- end }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.overwrites.cronjob }}
-#     overwrites: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 6 }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.resourcesName }}
-#     name: {{ . }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.resourcesFullname }}
-#     fullname: {{ . }}
-#     {{- end }}
-# 
-#   ## DaemonSet
-#   - type: "daemonset"
-#     {{- if $.Values.unit.manifests }}
-#       {{- with $.Values.unit.manifests.daemonset }}
-#     values: {{ toYaml . | nindent 6 }}
-#       {{- end }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.overwrites.daemonset }}
-#     overwrites: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 6 }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.resourcesName }}
-#     name: {{ . }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.resourcesFullname }}
-#     fullname: {{ . }}
-#     {{- end }}
-# 
-#   ## Deployment
-#   - type: "deployment"
-#     {{- if $.Values.unit.manifests }}
-#       {{- with $.Values.unit.manifests.deployment }}
-#     values: {{ toYaml . | nindent 6 }}
-#       {{- end }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.overwrites.deployment }}
-#     overwrites: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 6 }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.resourcesName }}
-#     name: {{ . }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.resourcesFullname }}
-#     fullname: {{ . }}
-#     {{- end }}
-# 
-#   ## HorizontalPodAutoscaler
-#   - type: "horizontalpodautoscaler"
-#     {{- if $.Values.unit.manifests }}
-#       {{- with $.Values.unit.manifests.hpa }}
-#     values: {{ toYaml . | nindent 6 }}
-#       {{- end }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.overwrites.hpa }}
-#     overwrites: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 6 }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.resourcesName }}
-#     name: {{ . }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.resourcesFullname }}
-#     fullname: {{ . }}
-#     {{- end }}
-# 
-#   ## Ingress
-#   - type: "ingress"
-#     {{- if $.Values.unit.manifests }}
-#       {{- with $.Values.unit.manifests.ingress }}
-#     values: {{ toYaml . | nindent 6 }}
-#       {{- end }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.overwrites.ingress }}
-#     overwrites: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 6 }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.resourcesName }}
-#     name: {{ . }}
-#     {{- end }}
-#     {{- with $.Values.unit.bundle.resourcesFullname }}
-#     fullname: {{ . }}
-#     {{- end }}
+  ## DaemonSet
+  - type: "daemonset"
+    {{- if $.Values.unit.manifests }}
+      {{- with $.Values.unit.manifests.daemonset }}
+    values: {{ toYaml . | nindent 6 }}
+      {{- end }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.overwrites.daemonset }}
+    overwrites: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 6 }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.resourcesName }}
+    name: {{ . }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.resourcesFullname }}
+    fullname: {{ . }}
+    {{- end }}
 
+  ## Deployment
+  - type: "deployment"
+    {{- if $.Values.unit.manifests }}
+      {{- with $.Values.unit.manifests.deployment }}
+    values: {{ toYaml . | nindent 6 }}
+      {{- end }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.overwrites.deployment }}
+    overwrites: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 6 }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.resourcesName }}
+    name: {{ . }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.resourcesFullname }}
+    fullname: {{ . }}
+    {{- end }}
+
+  ## HorizontalPodAutoscaler
+  - type: "horizontalpodautoscaler"
+    {{- if $.Values.unit.manifests }}
+      {{- with $.Values.unit.manifests.hpa }}
+    values: {{ toYaml . | nindent 6 }}
+      {{- end }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.overwrites.hpa }}
+    overwrites: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 6 }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.resourcesName }}
+    name: {{ . }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.resourcesFullname }}
+    fullname: {{ . }}
+    {{- end }}
+
+  ## Ingress
+  - type: "ingress"
+    {{- if $.Values.unit.manifests }}
+      {{- with $.Values.unit.manifests.ingress }}
+    values: {{ toYaml . | nindent 6 }}
+      {{- end }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.overwrites.ingress }}
+    overwrites: {{- include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 6 }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.resourcesName }}
+    name: {{ . }}
+    {{- end }}
+    {{- with $.Values.unit.bundle.resourcesFullname }}
+    fullname: {{ . }}
+    {{- end }}
+/*}}    
   ## Job
   - type: "job"
     {{- if $.Values.unit.manifests }}
@@ -112,7 +112,7 @@ resources:
     {{- with $.Values.unit.bundle.resourcesFullname }}
     fullname: {{ . }}
     {{- end }}
-
+{{/*
 #   ## PersistentVolumeClaim
 #   - type: "persistentvolumeclaim"
 #     {{- if $.Values.unit.manifests }}
@@ -214,4 +214,5 @@ resources:
 #     {{- with $.Values.unit.bundle.resourcesFullname }}
 #     fullname: {{ . }}
 #    {{- end }}
+*/}}
 {{- end }}

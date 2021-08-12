@@ -7,11 +7,11 @@ selectorLabels:
 
 
 nameOverride: "partial"
-fullnameOverride: "fullname"
+fullnameOverride: "fullnameOverride"
 
 global:
   imageRegistry: "company-registry.example.com"
-  pullPolicy: "Always"
+  imagePullPolicy: "Always"
   storageClass: "nfs-local-class"
   defaultTag: "10.1.2.3"
   imagePullSecrets:
@@ -23,25 +23,10 @@ global:
 unit:
   bundle:
     enabled: true
+    resourcesFullname: "Fullname"
     overwrites: {}
 
   manifests: 
-    servicemonitor:
+    enabled: false
+    job:
       enabled: true
-      apiVersion: "v1beta1"
-      namespace: "custom-namespace"
-      labels:
-        "test.label/1": "value"
-      annotations:
-        "test.annotations/1": "value"
-      namespaceSelector: []
-      serviceMonitorFields:
-        podTargetLabels:
-          - "app"
-      endpoints:
-        - port: metrics
-          path: "/"
-          interval: 10s
-          scrapeTimeout: 10s
-      selectorLabels:
-        "test.selector/1": true

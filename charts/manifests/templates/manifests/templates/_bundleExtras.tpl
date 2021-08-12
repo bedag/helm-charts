@@ -16,11 +16,12 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.template.bundleExtras" -}}
+  {{- $context := set (set .context "name" (default "" .name)) "fullname" (default "" .fullname) -}}
   {{- $values := mergeOverwrite (dict) (default dict .values) (default dict .overwrites) -}}
-  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) $.context (include "bedag-lib.utils.intern.noYamlError" $.context) -}}
+  {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) (include "bedag-lib.utils.intern.noYamlError" $context) -}}
     {{- if $values.serviceAccount }}
       {{- if and $values.serviceAccount.enabled $values.serviceAccount.create }}
----{{- include "bedag-lib.manifest.serviceaccount" (dict "values" $values.serviceAccount "context" $.context) | nindent 0 }}
+---{{- include "bedag-lib.manifest.serviceaccount" (dict "values" $values.serviceAccount "context" $context) | nindent 0 }}
       {{- end }}
     {{- end }}
     {{- if $values.environment }}
@@ -31,12 +32,12 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}-env
-  labels: {{- include "lib.utils.common.labels" (dict "labels" $values.labels "context" $.context)| nindent 4 }}
+  labels: {{- include "lib.utils.common.labels" (dict "labels" $values.labels "context" $context)| nindent 4 }}
 type: Opaque
 data:
         {{- range $environment }}
           {{- if .secret }}
-            {{- .name | nindent 2 }}: {{ include "lib.utils.strings.template" (dict "value" .value "context" $.context) | b64enc }}
+            {{- .name | nindent 2 }}: {{ include "lib.utils.strings.template" (dict "value" .value "context" $context) | b64enc }}
           {{- end }}
         {{- end }}
       {{- end }}

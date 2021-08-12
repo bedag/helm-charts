@@ -17,7 +17,7 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.manifest.deployment" -}}
   {{- if .context -}}
-    {{- $context := .context -}}
+    {{- $context := set (set .context "name" (default "" .name)) "fullname" (default "" .fullname) -}}
     {{- $deployment := mergeOverwrite (fromYaml (include "bedag-lib.values.deployment" $)).deployment (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $deployment) -}}
       {{- with $deployment -}}
@@ -28,7 +28,7 @@ apiVersion: {{ .apiVersion }}
 apiVersion: apps/v1
         {{- end }}
 metadata:
-  name: {{ include "bedag-lib.utils.common.fullname" . }}
+  name: {{ include "bedag-lib.utils.common.fullname" $context }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
         {{- with .namespace }}   
   namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) }}
@@ -36,7 +36,7 @@ metadata:
         {{- with .annotations }}
   annotations:
           {{- range $anno, $val := . }}
-            {{- $anno | nindent 4 }}: {{ $val | quote }}
+            {{- $anno | nindent 4 }}: {{ include "lib.utils.strings.template" (dict "value" $val "context" $context) | quote }}
           {{- end }}
         {{- end }}
 spec:
@@ -53,7 +53,7 @@ spec:
         {{- else }}
     matchLabels: {{- include "lib.utils.strings.template" (dict "value" (default (include "lib.utils.common.selectorLabels" $context) .selectorLabels) "context" $context) | nindent 6 }}
         {{- end }}
-  template: {{- include "bedag-lib.template.pod" (set $ "pod" .) | nindent 4 }}
+  template: {{- include "bedag-lib.template.pod" (set $context "pod" .) | nindent 4 }}
       {{- end }}
     {{- end }}
   {{- end }}

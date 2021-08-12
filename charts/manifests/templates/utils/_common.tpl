@@ -17,19 +17,16 @@ limitations under the License.
 */
 {{/*
   Sprig Template - Fullname Template Wrapper. Considers the Bundlename as prefix, if defined.
+  NOTE: Wrapper was refactored but still exists, to prevent further breaking changes
 */}}
 {{- define "bedag-lib.utils.common.fullname" -}}
-   {{- $c := . -}}
-   {{- $_ := set $c "context" (default . .context) }}
-   {{- $_ := set $c "prefix" (default $c.context.bundlename .bundlename) }}
-   {{- include "lib.utils.common.fullname" $c }}
+   {{- include "lib.utils.common.fullname" $ }}
 {{- end }}
 
 {{/*
   Sprig Template - ServiceAccountName
 */}}
 {{- define "bedag-lib.utils.common.serviceAccountName" -}}
-  {{- if .context }}
     {{- if .sa }}
       {{- if or .sa.enabled .sa.create }}
         {{- if .sa.enabled }}
@@ -45,7 +42,4 @@ limitations under the License.
     {{- else }}
       {{- printf "%s" "default" }}
     {{- end }}
-  {{- else }}
-    {{- fail "Template requires '.context' as arguments" }}
-  {{- end }}
 {{- end -}}

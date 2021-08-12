@@ -16,10 +16,10 @@ containerName: {{ default "" $_.data.containerName }}
 ## Docker Image definition.
 image:
   # {{ $_.path }}image.registry -- Configure Docker Registry. Will be overwritten if set by global variable.
-  registry: {{ default "" $_.data.imageRegistry }}
+  registry: {{ default "docker.io" $_.data.imageRegistry }}
 
   # {{ $_.path }}image.repository -- Configure Docker Repository
-  repository: {{ default "" $_.data.imageRepository }}
+  repository: {{ default "bitnami/nginx" $_.data.imageRepository }}
 
   # {{ $_.path }}image.pullPolicy -- Configure Docker Pull Policy. Will be overwritten if set by global variable.
   pullPolicy: {{ default "" $_.data.imagePullPolicy }}

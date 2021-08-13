@@ -17,7 +17,7 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.manifest.serviceaccount" -}}
   {{- if .context -}}
-    {{- $context := set (set .context "name" (default "" .name)) "fullname" (default "" .fullname) -}}
+    {{- $context := set (set (set .context "name" .name) "fullname" .fullname) "prefix" .prefix -}}
     {{- $serviceAccount := mergeOverwrite (fromYaml (include "bedag-lib.values.serviceaccount" $)).serviceAccount (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $serviceAccount) }}
       {{- with $serviceAccount -}}
@@ -29,7 +29,7 @@ apiVersion: {{ .apiVersion }}
 apiVersion: v1
           {{- end }}
 metadata:
-  name: {{ include "bedag-lib.utils.common.serviceAccountName" (dict "sa" . "context" $context) }}
+  name: {{ include "bedag-lib.utils.common.serviceAccountName" (set $context "sa" .) }}
   labels: {{- include "lib.utils.common.labels" (dict "labels" .labels "context" $context) | nindent 4 }}
           {{- with .namespace }}
   namespace: {{ include "lib.utils.strings.template" (dict "value" . "context" $context) }}

@@ -17,10 +17,11 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.manifest.pod" -}}
   {{- if .context -}}
-    {{- $context := set (set .context "name" (default "" .name)) "fullname" (default "" .fullname) -}}
+    {{- $context := set (set (set .context "name" .name) "fullname" .fullname) "prefix" .prefix -}}
     {{- $pod := mergeOverwrite (fromYaml (include "bedag-lib.values.pod" $)).pod (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $pod) -}}
       {{- with $pod }}
+        {{ $.Values}}
 kind: Pod
         {{- if .apiVersion }}
 apiVersion: {{ .apiVersion }}

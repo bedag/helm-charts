@@ -18,7 +18,7 @@ limitations under the License.
 {{- define "bedag-lib.manifest.bundle" -}}
   {{- $manifestPath := "bedag-lib.manifest." -}}
   {{- $bundle := (default dict .bundle) }}
-  {{- $i_context := (default . .context) }}
+  {{- $i_context := set (default . .context) "Bundle" $bundle }}
   {{- if not $bundle }}
     {{- $bundle = (fromYaml (include "chart.bundle" $i_context)) }}
   {{- end -}}
@@ -26,7 +26,6 @@ limitations under the License.
     {{- if and (kindIs "map" $i_context) (include "bedag-lib.utils.intern.noYamlError" $i_context) (kindIs "map" $bundle) (include "bedag-lib.utils.intern.noYamlError" $bundle) -}}
       {{- $context := mergeOverwrite $i_context (dict "Values" (default dict $bundle.common)) -}}
       {{- if (include "bedag-lib.utils.intern.noYamlError" $context) }}
-        {{- $_ := set $context "Bundle" $bundle -}}
         {{- if $bundle.resources -}}
           {{- range $bundle.resources -}}
             {{- $type := required "Missing required field '.type' for resource in bundle" .type | lower }}
@@ -34,7 +33,7 @@ limitations under the License.
             {{- if and (eq $type "raw") .manifest }}
 ---{{- include "lib.utils.strings.template" (dict "value" .manifest "context" $context) | nindent 0 }}
             {{- else }}
-              {{- $parameters := (dict "name" .name "fullname" (default .fullname $bundle.fullname) "prefix" $bundle.name "values" (default dict .values) "overwrites" (default dict .overwrites) "context" $context) }}
+              {{- $parameters := (dict "name" (default $bundle.name .name) "fullname" (default $bundle.fullname .fullname) "prefix" (default $bundle.prefix .prefix) "values" (default dict .values) "overwrites" (default dict .overwrites) "context" $context) }}
               {{- $resource := include $manifest $parameters }}
               {{- if $resource }}
 ---{{- $resource | nindent 0 }}

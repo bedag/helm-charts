@@ -17,7 +17,7 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.manifest.cronjob" -}}
   {{- if .context }}
-    {{- $context := set (set .context "name" (default "" .name)) "fullname" (default "" .fullname) -}}
+    {{- $context := set (set (set .context "name" .name) "fullname" .fullname) "prefix" .prefix -}}
     {{- $cronjob := mergeOverwrite (fromYaml (include "bedag-lib.values.cronjob" $)).cronjob (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $cronjob) -}}
       {{- with $cronjob -}}

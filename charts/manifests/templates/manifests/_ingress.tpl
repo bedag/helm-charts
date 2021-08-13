@@ -17,7 +17,7 @@ limitations under the License.
 */}}
 {{- define "bedag-lib.manifest.ingress" -}}
   {{- if .context -}}
-    {{- $context := set (set .context "name" (default "" .name)) "fullname" (default "" .fullname) -}}
+    {{- $context := set (set (set .context "name" .name) "fullname" .fullname) "prefix" .prefix -}}
     {{- $ingress := mergeOverwrite (fromYaml (include "bedag-lib.values.ingress" $)).ingress (default dict .values) (default dict .overwrites) -}}
     {{- if (include "bedag-lib.utils.intern.noYamlError" $ingress) }}
       {{- with $ingress -}}

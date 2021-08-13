@@ -2,8 +2,9 @@
 
 In the following sections we explain how to use the manifest.
 
+  * **[Overview](#overview)**
   * **[Bundles](#bundles)**
-  * **[Manifest Templates](#manifest-templates)**
+  * **[Manifest Templates](#manifest)**
   * **[Templates](#resource-templates)**
   * **[Examples](#examples)**
 
@@ -25,16 +26,25 @@ We recommend using Bundles. A Bundle describes a list of resources you want to r
 The following structure is used to define a bundle:
 
 ```
+identifier: ""
 name: ""
+fullname: ""
+prefix: ""
 common: {}
 resources: []
 ```
 
 Explanation of the above keys:
 
-  - `.name` - Sets a name for the entire bundle (bundlename). Each resource will use the bundlename as prefix, when using the `bedag-lib.fullname` template (Optional).
-  - `.common` - Allows to overwrite the given `.context`. With this functionality you can influence values which aren't scoped on a single resource but the entire chart (Optional).
-  - `.resources` - A list of resources you want to have included in this bundle. To see how declare resources, [see resource types](#resource-types) (Required).
+identifier
+
+
+  - `.identifier` - The identifier is added as value for the label `bundle.bedag.ch/id` for each resource managed by the Bundle
+  - `.name` - Define prefix for each resource managed by the Bundle
+  - `.fullname` - Overwrite Fullname for each resource managed by the Bundle
+  - `.prefix` - Define prefix for each resource managed by the Bundle
+  - `.common` - Allows to overwrite the given `.context`. With this functionality you can influence values which aren't scoped on a single resource but the entire chart (Optional)
+  - `.resources` - A list of resources you want to have included in this bundle. To see how declare resources, [see resource types](#resource-types) (Required)
 
 
 ## Usage
@@ -190,7 +200,11 @@ environment:
 
 **Note:** Secret Environment variables are only supported/rendered if the resource is part of a bundle. If the resource is not part of a bundle the secrets are removed, to prevent exposing them.
 
-# Manifest Templates
+
+
+
+
+# Manifests
 
 With the Manifest templates you have the possibility to get a single resource. The layout is controlled by the values given to it. So there's a lot of flexibility built in for you to play with.
 
@@ -222,8 +236,9 @@ The following arguments are supported for this template. If a required argument 
 
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_cronjob.yaml)
@@ -263,8 +278,9 @@ The following arguments are supported for this template. If a required argument 
 
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/daemonset.yaml)
@@ -304,8 +320,9 @@ The following arguments are supported for this template. If a required argument 
 
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_deployment.yaml)
@@ -345,8 +362,9 @@ The following arguments are supported for this template. If a required argument 
 
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname  
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_horizontalPodAutoscaler.yaml)
@@ -384,8 +402,9 @@ The following arguments are supported for this template. If a required argument 
 
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname  
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_ingress.yaml)
@@ -423,8 +442,9 @@ The following arguments are supported for this template. If a required argument 
 
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_job.yaml)
@@ -464,8 +484,9 @@ The following arguments are supported for this template. If a required argument 
 
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_persistentVolumeClaim.yaml)
@@ -505,8 +526,9 @@ The following arguments are supported for this template. If a required argument 
 
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname  
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_pod.yaml)
@@ -546,8 +568,9 @@ The following arguments are supported for this template. If a required argument 
 
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_podDisruptionBudget.yaml)
@@ -585,8 +608,9 @@ The following arguments are supported for this template. If a required argument 
 
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname  
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_service.yaml)
@@ -624,8 +648,9 @@ The following arguments are supported for this template. If a required argument 
 
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname  
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_serviceAccount.yaml)
@@ -663,8 +688,9 @@ The following arguments are supported for this template. If a required argument 
 
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname  
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_serviceMonitor.yaml)
@@ -702,8 +728,9 @@ The following arguments are supported for this template. If a required argument 
 
   * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
   * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
-  * `.name` - Partial name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the manifest, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname  
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/_statefulset.yaml)
@@ -746,8 +773,9 @@ Template renders a container structure, reusable for `sideCars`, `initContainers
 The following arguments are supported for this template. If a required argument is not given, the template will fail or return empty.
 
   * `.container` - Supported values structure for this template (See below). Will be merged over the default values for this template (Optional).
-  * `.name` - Partial name for the template, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the template, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname  
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/templates/_containerTpl.yaml)
@@ -773,8 +801,9 @@ Template renders a job structure without `kind` and `apiVersion`.
 The following arguments are supported for this template. If a required argument is not given, the template will fail or return empty.
 
   * `.job` - Supported values structure for this template (See below). Will be merged over the default values for this template (Optional).
-  * `.name` - Partial name for the template, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the template, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname  
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/templates/_jobTpl.yaml)
@@ -802,8 +831,9 @@ Template renders a pod structure without `kind` and `apiVersion`.
 The following arguments are supported for this template. If a required argument is not given, the template will fail or return empty.
 
   * `.pod` - Supported values structure for this template (See below). Will be merged over the default values for this template (Optional).
-  * `.name` - Partial name for the template, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the template, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname  
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/templates/_podTpl.yaml)
@@ -831,8 +861,9 @@ Template renders a pvc structure without `kind` and `apiVersion`.
 The following arguments are supported for this template. If a required argument is not given, the template will fail or return empty.
 
   * `.pvc` - Supported values structure for this template (See below). Will be merged over the default values for this template (Optional).
-  * `.name` - Partial name for the template, influences the result of the `bedag-lib.fullname` template (Optional).
-  * `.fullname` - Full name for the template, influences the result of the `bedag-lib.fullname` template (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname  
   * `.context` - Inherited Root Context (Required)
 
 ### [Values](../values/manifests/templates/_pvcTpl.yaml)

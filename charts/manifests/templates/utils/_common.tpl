@@ -24,6 +24,24 @@ limitations under the License.
 {{- end }}
 
 {{/*
+  Sprig Template - DefaultLabels (Overwrites Library Template)
+*/}}
+{{- define "lib.utils.common.defaultLabels" -}}
+{{- include "lib.utils.common.defaultSelectorLabels" $ | nindent 0 }}
+  {{- if and .Chart.AppVersion (not .versionunspecific) }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+  {{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+  {{- with .Bundle }}
+    {{- with .identifier }}
+bundle.bedag.ch/id: {{ . }}
+    {{- end }}
+  {{- end }}
+{{- end -}}
+
+
+
+{{/*
   Sprig Template - ServiceAccountName
 */}}
 {{- define "bedag-lib.utils.common.serviceAccountName" -}}
@@ -31,7 +49,7 @@ limitations under the License.
       {{- if or .sa.enabled .sa.create }}
         {{- if .sa.enabled }}
           {{- if .sa.create -}}
-            {{- printf "%s" (default (include "bedag-lib.utils.common.fullname" .) .sa.name) }}
+            {{- printf "%s" (default (include "bedag-lib.utils.common.fullname" $) .sa.name) }}
           {{- else -}}
             {{- printf "%s" (default "default" .sa.name) }}
           {{- end -}}
@@ -42,4 +60,4 @@ limitations under the License.
     {{- else }}
       {{- printf "%s" "default" }}
     {{- end }}
-{{- end -}}
+{{- end -}}     

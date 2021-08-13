@@ -4,7 +4,10 @@ test: | {{- include "simple.bundle2" $ | nindent 2 }}
 {{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "simple.bundle2" $)) "context" $) | nindent 0 }}
 
 {{- define "simple.bundle2" -}}
-name: "bundleName"
+identifier: "frontend"
+# name: "bname"
+prefix: "bprefix"
+# fullname: "bfullname"
 resources:
   - type: "job"
       {{- with $.Values.unit.manifests.job }}
@@ -15,9 +18,35 @@ resources:
       {{- with $.Values.unit.manifests.job }}
     values: {{ toYaml . | nindent 6 }}
       {{- end }}
-    name: "job-local-2"
+
+  - type: "serviceaccount"
+    name: "custom"
+    prefix: ""
+    values:
+      serviceAccount:
+        enabled: true
+        create: true
+        # name: test
+
+  - type: "job"
+    prefix: "kaka"  
+    values:
+      serviceAccount:
+        enabled: true
+        create: true
+        # name: test
+    fullname: "job-local-full"
+
+
   - type: "pod"
     name: "pod-local-2"
+    values:
+      serviceAccount:
+        enabled: true
+        create: true
+        # name: test
+
+  - type: "pod"
     values:
       serviceAccount:
         enabled: true

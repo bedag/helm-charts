@@ -16,12 +16,12 @@ limitations under the License.
 
 */}}
 {{- define "bedag-lib.template.bundleExtras" -}}
-  {{- $context := set (set .context "name" (default "" .name)) "fullname" (default "" .fullname) -}}
+  {{- $context := set (set (set .context "name" .name) "fullname" .fullname) "prefix" .prefix -}}
   {{- $values := mergeOverwrite (dict) (default dict .values) (default dict .overwrites) -}}
   {{- if and $values (include "bedag-lib.utils.intern.noYamlError" $values) (include "bedag-lib.utils.intern.noYamlError" $context) -}}
     {{- if $values.serviceAccount }}
       {{- if and $values.serviceAccount.enabled $values.serviceAccount.create }}
----{{- include "bedag-lib.manifest.serviceaccount" (dict "values" $values.serviceAccount "context" $context) | nindent 0 }}
+---{{- include "bedag-lib.manifest.serviceaccount" (dict "values" $values.serviceAccount "prefix" .prefix "name" .name "fullname" .fullname  "context" $context) | nindent 0 }}
       {{- end }}
     {{- end }}
     {{- if $values.environment }}

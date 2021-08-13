@@ -22,9 +22,8 @@ limitations under the License.
   {{- if and $.values $.context }}
     {{- if $.values.enabled }}
       {{- $name := (include "lib.utils.strings.toDns1123" $.values.name) }}
-      {{- $_ := set . "container" .values }}
 container: {{- include "bedag-lib.template.container" (set . "container" .values) | nindent 2 }}
-      {{- $_ := unset . "container" }}
+
 
 ports:
   - containerPort: {{ $.values.targetPort }}

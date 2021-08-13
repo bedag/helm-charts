@@ -12,6 +12,16 @@ Don't forget to take a look at Presets as well:
 
   * **[Presets](../presets/README.md)**
 
+# Overview 
+
+
+
+## Name Inheritance
+
+
+
+
+
 # Bundles
 
 We recommend using Bundles. A Bundle describes a list of resources you want to render together your chart. This allows you to implement resource Grouping within your Helm Chart. A bundle returns a kubernetes list with all the given resources rendered, which then can be applied to the kubernetes API. Each chart can have n amount of bundles. This construct was designed to improve code visibility.

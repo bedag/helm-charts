@@ -21,9 +21,13 @@ volumes:
   configMap:
     name: e2g-config
   {{- end }}
-{{ toYaml $.Values.pod.volumes }}
+  {{ with $.Values.pod.volumes }}
+    {{ toYaml . | nindent 0 }}
+  {{- end }}
 volumeMounts:
-{{ toYaml $.Values.pod.volumeMounts}}
+  {{ with $.Values.pod.volumeMounts }}
+    {{ toYaml . | nindent 0 }}
+  {{- end }}
   {{- if $.Values.e2g.story }}
     {{- range $i, $e := $.Values.e2g.story }}
 - mountPath: /usr/local/e2guardian/etc/e2guardian/{{ $i }}.story

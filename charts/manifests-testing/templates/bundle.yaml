@@ -1,18 +1,16 @@
 {{- if .Values.unit.bundle }}
-test: | {{- include "simple.bundle" $ | nindent 2 }}
+test: | {{- include "bedag-lib.manifest.bundle" $ | nindent 2 }}
 {{- end -}}
 
-{{- define "simple.bundle" -}}
+{{- define "chart.bundle" -}}
   {{- with $.Values.unit.bundle.name -}}
 name: {{ . }}
   {{- end }}
   {{- with $.Values.unit.bundle.common -}}
 common: {{ include "lib.utils.strings.template" (dict "value" . "context" $) | nindent 2 }}
   {{- end }}
-resources:
-{{/*
-  ## Cronjob
-  - type: "cronjob"
+resources: 
+  - type: "cron"
     {{- if $.Values.unit.manifests }}
       {{- with $.Values.unit.manifests.cronjob }}
     values: {{ toYaml . | nindent 6 }}
@@ -27,7 +25,7 @@ resources:
     {{- with $.Values.unit.bundle.resourcesFullname }}
     fullname: {{ . }}
     {{- end }}
-
+ {{/*
   ## DaemonSet
   - type: "daemonset"
     {{- if $.Values.unit.manifests }}

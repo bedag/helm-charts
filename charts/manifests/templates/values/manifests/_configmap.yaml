@@ -1,0 +1,46 @@
+{{- define "bedag-lib.values.configmap" -}}
+  {{- $context := (default $ .context) }}
+  {{- $_ := dict "parentKey" (default "configmap" .key) "path" (cat (default "" (default $context.path .path)) (default "configmap" .key) "." | nospace) "context" $context "data" (default dict .data) "minimal" (default false .minimal) "disabled" (list "namespace") }}
+#
+## - Configmap
+## Reference: https://kubernetes.io/docs/concepts/configuration/configmap/
+##
+{{ $_.parentKey }}:
+
+  ## Configmap Enable
+  # {{ $_.path }}enabled -- Enable Configmap Resource
+  enabled: true
+
+  ## Configmap API version
+  # {{ $_.path }}apiVersion -- Configure the api version used for the Configmap resource.
+  apiVersion: ""
+
+  ## Configmap Namespace
+  ## {{ $_.path }}namespace -- Define a custom namespace to deploy the Configmap into
+  namespace: ""
+
+  ## Configmap Labels
+  # {{ $_.path }}labels -- Configure Configmap additional Labels
+  labels: {}
+
+  ## Configmap Annotations
+  # {{ $_.path }}annotations -- Configure Configmap Annotations
+  annotations: {}
+
+  ## Configmap Data 
+  # {{ $_.path }}data -- Implements the config function (https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/utils#configs)
+  data: 
+
+    ## Configmap Plain Data 
+    # {{ $_.path }}data.plain -- if enabled, only the content field is templated in the data part of the configmap
+    plain: false
+
+     # Configmap Content 
+    # {{ $_.path }}data.content -- the actual content for the data part. Can also use references like $.Values.config
+    content: {}
+
+    ## Content Format
+    # {{ $_.path }}data.format -- Define the format for the configmap generations
+    format: "{{ $.loop.key }}: {{ tpl $.loop.value $ | quote }}"
+{{- end -}}
+

@@ -22,7 +22,12 @@ limitations under the License.
         {{- $context := $ }}
         {{- $resource := "" }}
         {{- if $.Values.doc.manifest }}
-          {{- $resource = cat "bedag-lib.values." ($.Values.doc.manifest | lower) | nospace }}
+          {{- $type := include "bedag-lib.utils.helpers.manifest.dict.search" (required "Missing required field '.type' for resource in bundle" .type | lower) -}}
+          {{- if $type -}}
+            {{- $resource = cat "bedag-lib.values." $type | nospace }}
+          {{- else -}}
+            {{- fail (cat "Manifest not found " $.Values.doc.manifest) -}}
+          {{- end -}}  
         {{- else }}
           {{- $resource = cat "bedag-lib.presets.values." ($.Values.doc.preset | lower) | nospace }}
         {{- end }}

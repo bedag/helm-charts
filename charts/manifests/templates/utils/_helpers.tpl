@@ -29,3 +29,38 @@ limitations under the License.
     {{- printf "-Dhttp.proxyHost=\"%s\" -Dhttp.proxyPort=\"%s\" -Dhttp.nonProxyHosts=\"%s\" -Dhttps.proxyHost=\"%s\" -Dhttps.proxyPort=\"%s\" -Dhttps.nonProxyHosts=\"%s\"" (default "" $proxies.httpProxy.host) (default "" $proxies.httpProxy.port) $noproxies (default "" $proxies.httpsProxy.host) (default "" $proxies.httpsProxy.port) $noproxies -}}
   {{- end -}}
 {{- end -}}
+
+{{/*
+  Sprig Template - Manifests Dictionary
+   Contains all supported manifests with their aliases
+*/}}
+{{ define "bedag-lib.utils.helpers.manifest.dict" -}}
+configmap: [ "configmap", "cm" ]
+cronjob: [ "cronjob", "cron", "cj" ]
+daemonset: [ "daemonset", "daemon", "ds" ]
+deployment: [ "deployment", "deploy" ]
+horizontalpodautoscaler: [ "horizontalpodautoscaler", "hpa" ]
+ingress: [ "ingress", "ing" ]
+persistentvolumeclaim: [ "persistentvolumeclaim", "pvc" ]
+poddisruptionbudget: [ "poddisruptionbudget", "pdb" ]
+service: [ "service", "svc" ]
+serviceaccount: [ "serviceaccount", "sa" ]
+servicemonitor: [ "servicemonitor", "sm" ]
+statefulset: [ "statefulset", "sts" ]
+{{- end -}}
+
+{{/*
+  Sprig Template - Manifests Dictionary Search
+*/}}
+{{ define "bedag-lib.utils.helpers.manifest.dict.search" -}}
+{{- $search := . }}
+{{- $return := "" }}
+{{- $manifests := fromYaml (include "bedag-lib.utils.helpers.manifest.dict" $) -}}
+{{- range $key, $aliases := $manifests -}}
+  {{ if (has $search $aliases) -}}
+     {{- $return = $key -}}
+  {{- end -}}
+{{- end -}}
+{{- $return -}}
+{{- end -}}
+

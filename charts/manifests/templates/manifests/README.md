@@ -236,6 +236,50 @@ Currently we support the following Kubernetes Manifests:
   * **[Statefulset](#statefulset)**
 
 
+## Configmap
+
+This Template returns a [Configmap](https://kubernetes.io/docs/concepts/configuration/configmap/) Kubernetes Manifest.
+
+### Arguments
+
+The following arguments are supported for this template. If a required argument is not given, the template will fail or return empty.
+
+  * `.values` - Supported key structure for this manifest (See below). Will be merged over the default values for this manifest (Optional).
+  * `.overwrites` - Supported key structure overwriting the structure given to `.values` (Optional).
+  * `.name` - Partial name for the manifest.
+  * `.fullname` - Full name for the manifest.
+  * `.prefix` - Prefix which is always prepended to the name or fullname  
+  * `.context` - Inherited Root Context (Required)
+
+### [Values](../values/manifests/_configmap.yaml)
+
+You can access the supported values for this kubernetes manifest through clicking on values. These values represent the default values for this manifest.
+
+### Templates
+
+Does not implement any templates.
+
+### Usage
+
+```
+{{ include "bedag-lib.manifest.configmap" (dict "values" $.Values.cm "fullname" "custom-cm" "context" $) }}
+```
+
+#### With Bundle
+
+Supported values for type to get the cronjob manifest via bundle are `configmap` or `cm`:
+
+```
+resources:
+  ...
+  - type: "configmap"
+    values: {{ toYaml $.Values.cm | nindent 6 }}
+    fullname: "custom-cm"
+  ...
+```
+
+
+
 ## Cronjob
 
 This Template returns a [Cronjob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) Kubernetes Manifest.
@@ -268,6 +312,8 @@ Implements the following templates:
 ```
 
 #### With Bundle
+
+Supported values for type to get the cronjob manifest via bundle are `cronjob`, `cron` or `cj`:
 
 ```
 resources:
@@ -311,6 +357,8 @@ Implements the following templates:
 
 #### With Bundle
 
+Supported values for type to get the cronjob manifest via bundle are `daemonset`, `daemon` or `ds`:
+
 ```
 resources:
   ...
@@ -353,6 +401,8 @@ Implements the following templates:
 
 #### With Bundle
 
+Supported values for type to get the cronjob manifest via bundle are `deployment` or `deploy`:
+
 ```
 resources:
   ...
@@ -393,6 +443,8 @@ Does not implement any templates.
 
 #### With Bundle
 
+Supported values for type to get the cronjob manifest via bundle are `horizontalpodautoscaler` or `hpa`:
+
 ```
 resources:
   ...
@@ -432,6 +484,8 @@ Does not implement any templates.
 ```
 
 #### With Bundle
+
+Supported values for type to get the cronjob manifest via bundle are `ingress` or `ing`:
 
 ```
 resources:
@@ -475,6 +529,8 @@ Implements the following templates:
 
 #### With Bundle
 
+Supported values for type to get the cronjob manifest via bundle are `job`:
+
 ```
 resources:
   ...
@@ -516,6 +572,8 @@ Implements the following templates:
 ```
 
 #### With Bundle
+
+Supported values for type to get the cronjob manifest via bundle are `persistentvolumeclaim` or `pvc`:
 
 ```
 resources:
@@ -559,6 +617,8 @@ Implements the following templates:
 
 #### With Bundle
 
+Supported values for type to get the cronjob manifest via bundle are `pod`:
+
 ```
 resources:
   ...
@@ -598,6 +658,8 @@ Does not implement any templates.
 ```
 
 #### With Bundle
+
+Supported values for type to get the cronjob manifest via bundle are `poddisruptionbudget` or `pdb`:
 
 ```
 resources:
@@ -639,6 +701,8 @@ Does not implement any templates.
 
 #### With Bundle
 
+Supported values for type to get the cronjob manifest via bundle are `service` or `svc`:
+
 ```
 resources:
   ...
@@ -679,6 +743,8 @@ Does not implement any templates.
 
 #### With Bundle
 
+Supported values for type to get the cronjob manifest via bundle are `serviceaccount` or `sa`:
+
 ```
 resources:
   ...
@@ -718,6 +784,8 @@ Does not implement any templates.
 ```
 
 #### With Bundle
+
+Supported values for type to get the cronjob manifest via bundle are `servicemonitor` or `sm`:
 
 ```
 resources:
@@ -760,6 +828,8 @@ Implements the following templates:
 ```
 
 #### With Bundle
+
+Supported values for type to get the cronjob manifest via bundle are `statefulset` or `sts`:
 
 ```
 resources:

@@ -10,7 +10,7 @@ jobs:
       - uses: morrisoncole/pr-lint-action@v1.5.0
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          title-regex: '^\[[a-zA-Z\,\_\-]+\]\:.+'
+          title-regex: '^\[[a-zA-Z0-9\,\_\-]+\]\:.+'
           on-failed-regex-fail-action: true
           on-failed-regex-request-changes: false
           on-failed-regex-create-review: false

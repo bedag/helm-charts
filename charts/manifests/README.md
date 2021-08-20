@@ -61,7 +61,7 @@ startupProbeEnabled: true
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://buttahtoast.github.io/helm-charts/ | library | ~1.2.0 |
+| https://buttahtoast.github.io/helm-charts/ | library | 2.0.0 |
 
 # Documentation
 

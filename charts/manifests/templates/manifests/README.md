@@ -869,7 +869,7 @@ Does not implement any templates.
 ### Usage
 
 ```
-{{ include "bedag-lib.template.container" (dict  "container" $.Values.extraContainer "context" $) }}
+{{ include "bedag-lib.template.container" (set (set $ "container" $.Values.extraContainer) "fullname" "main") }}
 ```
 
 ## Job Template
@@ -899,7 +899,7 @@ Implements the following templates:
 ### Usage
 
 ```
-{{ $cleanup := fromYaml (include "bedag-lib.template.job" (dict  "name" "cleanup-job" "job" $.Values.cleanup "context" $)) }}
+{{ $cleanup := fromYaml (include "bedag-lib.template.job" (set (set $ "job" $.Values.cleanup) "name" "cleanup-job") }}
 ```
 
 ## Pod Template
@@ -929,7 +929,7 @@ Implements the following templates:
 ### Usage
 
 ```
-{{ $body := fromYaml (include "bedag-lib.template.pod" (dict  "name" "body" "pod" $.Values.statefulset "context" $)) }}
+{{ $body := fromYaml (include "bedag-lib.template.pod" (set (set $ "pod" $.Values.sidecar) "fullname" "sidecar") }}
 ```
 
 ## PVC Template
@@ -957,7 +957,7 @@ Does not implement any templates.
 ### Usage
 
 ```
-{{ include "bedag-lib.template.pvc" (dict "pvc" $.Values.persistence "context" $) | nindent 2 }}
+{{- include "bedag-lib.template.persistentvolumeclaim" (set (set $ "pvc" $.Values.persistence) "fullname" "home") | nindent 10 }}
 ```
 
 # Examples
@@ -972,7 +972,7 @@ Here's a simple example using a single bundle. You need a single file the implem
 
 **templates/bundle.yaml**
 ```
-{{- include "bedag-lib.manifest.bundle" (dict "bundle" (fromYaml (include "chart.bundle" $)) "context" $) | nindent 0 }}
+{{- include "bedag-lib.manifest.bundle" $ | nindent 0 }}
 
 {{- define "chart.bundle" }}
 common:

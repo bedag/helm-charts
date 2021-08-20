@@ -123,7 +123,8 @@ resources:
       {{- end }}
 
       {{/*
-        Predefined Statefulset VolumeClaimTemplates
+        Predefined Statefulset VolumeClaimTemplates {{- include "bedag-lib.template.persistentvolumeclaim" (dict "pvc" $.Values.home "fullname" "home" "context" $) | nindent 10 }}
+   
       */}}
       volumeClaimTemplates:
       {{- if $.Values.statefulset.volumeClaimTemplates }}
@@ -131,7 +132,7 @@ resources:
       {{- end }}
       {{- if $.Values.crowd.persistence }}
         {{- if $.Values.home.enabled }}
-        - {{- include "bedag-lib.template.persistentvolumeclaim" (dict "pvc" $.Values.home "fullname" "home" "context" $) | nindent 10 }}
+        - {{- include "bedag-lib.template.persistentvolumeclaim" (set (set $ "pvc" $.Values.home) "fullname" "home") | nindent 10 }}
         {{- end }}
       {{- end }}
 

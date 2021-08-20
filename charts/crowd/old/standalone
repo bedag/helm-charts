@@ -1,0 +1,187 @@
+---
+# Source: crowd/templates/bundle.yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: release-name-crowd
+  labels:
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/name: crowd
+    app.kubernetes.io/part-of: crowd
+    app.kubernetes.io/version: 4.2.3
+    atlassian.com/component: crowd
+    atlassian.com/mode: standalone
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8095
+      protocol: TCP
+      targetPort: http
+      nodePort: null
+  selector:
+    
+    app.kubernetes.io/name: crowd
+    app.kubernetes.io/instance: RELEASE-NAME
+---
+# Source: crowd/templates/bundle.yaml
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: release-name-crowd
+  labels:
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/name: crowd
+    app.kubernetes.io/part-of: crowd
+    app.kubernetes.io/version: 4.2.3
+    atlassian.com/component: crowd
+    atlassian.com/mode: standalone
+spec:
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: "RollingUpdate"
+  replicas: 1
+  selector:
+    matchLabels:
+      
+      app.kubernetes.io/name: crowd
+      app.kubernetes.io/instance: RELEASE-NAME
+  serviceName: release-name-crowd
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/name: crowd
+        app.kubernetes.io/part-of: crowd
+        atlassian.com/component: crowd
+        atlassian.com/mode: standalone
+    spec:
+      serviceAccountName: default
+      containers:
+        -
+          name: crowd
+          image: docker.io/atlassian/crowd:4.2.1
+          imagePullPolicy: 
+          resources:
+            limits:
+              cpu: 1
+              memory: 3Gi
+            requests:
+              cpu: 0.5
+              memory: 1Gi
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_SERVICE_ACCOUNT
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+            - name: "TZ"
+              value: "Europe/Zurich"
+            - name: ATL_PROXY_NAME
+              value: 'crowd.cluster.ingress'
+            - name: ATL_PROXY_PORT
+              value: "443"
+            - name: ATL_TOMCAT_SCHEME
+              value: https
+            - name: ATL_TOMCAT_SECURE
+              value: "true"
+            - name: JVM_MINIMUM_MEMORY
+              value: 768m
+            - name: JVM_MAXIMUM_MEMORY
+              value: 1536m
+            - name: CROWD_HOME
+              value: /var/atlassian/application-data/crowd
+            - name: ATL_TOMCAT_PORT
+              value: "8095"
+            - name: JVM_SUPPORT_RECOMMENDED_ARGS
+              value: ' -Dhttp.proxyHost="" -Dhttp.proxyPort="" -Dhttp.nonProxyHosts="" -Dhttps.proxyHost=""
+                -Dhttps.proxyPort="" -Dhttps.nonProxyHosts=""'
+            - name: CATALINA_OPTS
+              value: ""
+          livenessProbe: 
+            failureThreshold: 6
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          readinessProbe: 
+            failureThreshold: 6
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          volumeMounts:
+            - mountPath: /var/atlassian/application-data/crowd
+              name: home
+          ports:
+            - containerPort: 8095
+              name: http
+              protocol: TCP
+  volumeClaimTemplates:
+    - metadata:
+        labels:
+          app.kubernetes.io/instance: RELEASE-NAME
+          app.kubernetes.io/name: crowd
+          app.kubernetes.io/version: 4.2.3
+        name: home
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: null
+---
+# Source: crowd/templates/bundle.yaml
+kind: Ingress
+apiVersion: networking.k8s.io/v1beta1
+metadata:
+  name:  release-name-crowd
+  labels:
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/name: crowd
+    app.kubernetes.io/part-of: crowd
+    app.kubernetes.io/version: 4.2.3
+    atlassian.com/component: crowd
+    atlassian.com/mode: standalone
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "10800"
+spec:
+  tls:
+    - hosts:
+        - "crowd.cluster.ingress"
+      secretName: 
+  rules:
+    - host: "crowd.cluster.ingress"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              serviceName: release-name-crowd
+              servicePort: http

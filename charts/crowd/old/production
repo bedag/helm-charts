@@ -1,0 +1,356 @@
+---
+# Source: crowd/templates/bundle.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: release-name-jmx
+  labels:
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/name: crowd
+    app.kubernetes.io/version: 4.2.3
+    manifests.bedag/component: jmx
+data:
+  jmx-prometheus.yml: |-
+    jmxUrl: service:jmx:rmi:///jndi/rmi://127.0.0.1:5555/jmxrmi
+    lowercaseOutputLabelNames: true
+    lowercaseOutputName: true
+    ssl: false
+---
+# Source: crowd/templates/bundle.yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: release-name-shared
+  labels:
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/name: crowd
+    app.kubernetes.io/part-of: crowd
+    app.kubernetes.io/version: 4.2.3
+    atlassian.com/component: crowd
+    atlassian.com/mode: clustered
+spec:
+  accessModes: ["ReadWriteMany"]
+  resources:
+    requests:
+      storage: "5Gi"
+  storageClassName: "nfs-backend"
+---
+# Source: crowd/templates/bundle.yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: release-name-jmx
+  labels:
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/name: crowd
+    app.kubernetes.io/part-of: crowd
+    app.kubernetes.io/version: 4.2.3
+    atlassian.com/component: crowd
+    atlassian.com/mode: clustered
+    manifests.bedag/component: jmx
+  annotations:
+    prometheus.io/path: "/"
+    prometheus.io/port: "5556"
+    prometheus.io/scrape: "true"
+spec:
+  type: ClusterIP
+  ports:
+    - name: metrics
+      port: 5556
+      protocol: TCP
+      targetPort: 5556
+      nodePort: null
+  selector:
+    
+    app.kubernetes.io/name: crowd
+    app.kubernetes.io/instance: RELEASE-NAME
+---
+# Source: crowd/templates/bundle.yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: release-name-crowd
+  labels:
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/name: crowd
+    app.kubernetes.io/part-of: crowd
+    app.kubernetes.io/version: 4.2.3
+    atlassian.com/component: crowd
+    atlassian.com/mode: clustered
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8095
+      protocol: TCP
+      targetPort: http
+      nodePort: null
+  selector:
+    
+    app.kubernetes.io/name: crowd
+    app.kubernetes.io/instance: RELEASE-NAME
+---
+# Source: crowd/templates/bundle.yaml
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: release-name-crowd
+  labels:
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/name: crowd
+    app.kubernetes.io/part-of: crowd
+    app.kubernetes.io/version: 4.2.3
+    atlassian.com/component: crowd
+    atlassian.com/mode: clustered
+spec:
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: "RollingUpdate"
+  replicas: 1
+  selector:
+    matchLabels:
+      
+      app.kubernetes.io/name: crowd
+      app.kubernetes.io/instance: RELEASE-NAME
+  serviceName: release-name-crowd
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/name: crowd
+        app.kubernetes.io/part-of: crowd
+        atlassian.com/component: crowd
+        atlassian.com/mode: clustered
+    spec:
+      serviceAccountName: default
+      containers:
+        -
+          name: crowd
+          image: company-registry.example.com/atlassian/crowd:1.
+          imagePullPolicy: 
+          resources:
+            limits:
+              cpu: 2
+              memory: 3Gi
+            requests:
+              cpu: 0.5
+              memory: 1Gi
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_SERVICE_ACCOUNT
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.serviceAccountName
+            - name: "TZ"
+              value: "Europe/Zurich"
+            - name: "HTTP_PROXY"
+              value: "http://proxy.example.com:8080"
+            - name: "HTTPS_PROXY"
+              value: "http://proxy.example.com:8080"
+            - name: "NO_PROXY"
+              value: "localhost, 127.0.0.1, *.example.com, crowd.cluster.ingress"
+            - name: ATL_PROXY_NAME
+              value: 'crowd.cluster.ingress'
+            - name: ATL_PROXY_PORT
+              value: "443"
+            - name: ATL_TOMCAT_SCHEME
+              value: https
+            - name: ATL_TOMCAT_SECURE
+              value: "true"
+            - name: JVM_MINIMUM_MEMORY
+              value: 768m
+            - name: JVM_MAXIMUM_MEMORY
+              value: 1536m
+            - name: CROWD_HOME
+              value: /var/atlassian/application-data/crowd
+            - name: ATL_TOMCAT_PORT
+              value: "8095"
+            - name: JVM_SUPPORT_RECOMMENDED_ARGS
+              value: -Dcom.sun.management.jmxremote.port=5555  -Dcom.sun.management.jmxremote.ssl=false  -Dcom.sun.management.jmxremote.authenticate=false  -Dcom.sun.management.jmxremote.rmi.port=5555  -Djava.rmi.server.hostname=127.0.0.1
+                -Dhttp.proxyHost="proxy.example.com" -Dhttp.proxyPort="8080" -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.example.com|crowd.cluster.ingress"
+                -Dhttps.proxyHost="proxy.example.com" -Dhttps.proxyPort="8080" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.example.com|crowd.cluster.ingress"
+            - name: CATALINA_OPTS
+              value: -Dcluster.node.name="$POD_NAME"
+          livenessProbe: 
+            failureThreshold: 6
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          readinessProbe: 
+            failureThreshold: 6
+            httpGet:
+              path: /
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 10
+          lifecycle: 
+            postStart:
+              exec:
+                command:
+                - /bin/sh
+                - -c
+                - echo Hello from the postStart handler > /usr/share/message
+          volumeMounts:
+            - mountPath: /var/atlassian/application-data/crowd
+              name: home
+            - mountPath: /var/atlassian/application-data/crowd/shared
+              name: shared
+          ports:
+            - containerPort: 5555
+              name: jmx
+              protocol: TCP
+            - containerPort: 8095
+              name: http
+              protocol: TCP
+        - command:
+          - java
+          - -XX:+UnlockExperimentalVMOptions
+          - -XX:+UseCGroupMemoryLimitForHeap
+          - -XX:MaxRAMFraction=1
+          - -XshowSettings:vm
+          - -jar
+          - jmx_prometheus_httpserver.jar
+          - "5556"
+          - /opt/jmx-config/jmx-prometheus.yml
+          env:
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: POD_SERVICE_ACCOUNT
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.serviceAccountName
+          - name: HTTP_PROXY
+            value: http://proxy.example.com:8080
+          - name: HTTPS_PROXY
+            value: http://proxy.example.com:8080
+          - name: NO_PROXY
+            value: localhost, 127.0.0.1, *.example.com, crowd.cluster.ingress
+          image: company-registry.example.com/bitnami/jmx-exporter:0.13.0-debian-10-r52
+          imagePullPolicy: null
+          name: jmx
+          ports:
+          - containerPort: 5556
+            name: jmx
+          volumeMounts:
+          - mountPath: /opt/jmx-config
+            name: jmx-config
+      volumes: 
+        - configMap:
+            name: release-name-jmx
+          name: jmx-config
+        - name: shared
+          persistentVolumeClaim:
+            claimName: release-name-shared
+  volumeClaimTemplates:
+    - metadata:
+        labels:
+          app.kubernetes.io/instance: RELEASE-NAME
+          app.kubernetes.io/name: crowd
+          app.kubernetes.io/version: 4.2.3
+        name: home
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: local
+---
+# Source: crowd/templates/bundle.yaml
+kind: Ingress
+apiVersion: networking.k8s.io/v1beta1
+metadata:
+  name:  release-name-crowd
+  labels:
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/name: crowd
+    app.kubernetes.io/part-of: crowd
+    app.kubernetes.io/version: 4.2.3
+    atlassian.com/component: crowd
+    atlassian.com/mode: clustered
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "10800"
+spec:
+  tls:
+    - hosts:
+        - "crowd.cluster.ingress"
+      secretName: 
+  rules:
+    - host: "crowd.cluster.ingress"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              serviceName: release-name-crowd
+              servicePort: http
+---
+# Source: crowd/templates/bundle.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: release-name-jmx
+  labels:
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/name: crowd
+    app.kubernetes.io/part-of: crowd
+    app.kubernetes.io/version: 4.2.3
+    atlassian.com/component: crowd
+    atlassian.com/mode: clustered
+    manifests.bedag/component: jmx
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: RELEASE-NAME
+      app.kubernetes.io/name: crowd
+      manifests.bedag/component: jmx
+  endpoints:
+    - interval: 10s
+      path: /
+      port: metrics
+      scrapeTimeout: 10s
+  namespaceSelector:
+    matchNames:
+      - default

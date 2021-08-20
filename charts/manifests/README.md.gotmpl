@@ -45,24 +45,52 @@ Major Changes to functions are documented with the version affected. **Before up
 | :----------- | :---------------- | :--------------------- | :-------------- |
 | * `manifest/podDisruptionBudget` </br> * `manifest/serviceMonitor` </br> * `manifest/statefulset` </br> * `manifest/deployment` </br>  * `manifest/daemonset` | `2.0.0` | Field `selector` moved to `selectorLabels` for the named resoures. Move labels defined under `selector` to `selectorLabels`. | * [PR 52](https://github.com/bedag/helm-charts/pull/52) | 
 | `manifest/deployment` | `2.0.0` | Field `deploymentExtras` moved to `deploymentFields` for the named resoures. | * [PR 52](https://github.com/bedag/helm-charts/pull/52) | 
-| `dependency/library` | `1.0.0` | Upgraded Chart Dependency to new Major `1.0.0` | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
 
 
+
+
+{{ include "bedag-lib.template.container" (set (set $ "container" $.Values.extraContainer) "fullname" "main") }}
+
+
+
+| `template/container` | `1.0.0` | Templates no longer validate for a dedicated context key. Instead the entire dict with the supported values is given to template. So if you have included the template like this: `{{- include "bedag-lib.template.container" (dict "container" $.Values.container "fullname" "side" "context" $) }}` you have to change it to something like this `{{- include "bedag-lib.template.container" (set (set $ "container" $.Values.container) "fullname" "side") }}`. Otherwise the template will throw errors. | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
+| `template/job` | `1.0.0` | Templates no longer validate for a dedicated context key. Instead the entire dict with the supported values is given to template. So if you have included the template like this: `{{- include "bedag-lib.template.job" (dict "job" $.Values.job "fullname" "side" "context" $) }}` you have to change it to something like this `{{- include "bedag-lib.template.container" (set (set $ "container" $.Values.container) "fullname" "side") }}`. Otherwise the template will throw errors. | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
+| `template/pod` | `1.0.0` | Templates no longer validate for a dedicated context key. Instead the entire dict with the supported values is given to template. So if you have included the template like this: `{{- include "bedag-lib.template.pod" (dict "pod" $.Values.pod "fullname" "side" "context" $) }}` you have to change it to something like this `{{- include "bedag-lib.template.pod" (set (set $ "pod" $.Values.pod) "fullname" "side") }}`. Otherwise the template will throw errors. | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
+| `template/persistentvolumeclaim` | `1.0.0` | Templates no longer validate for a dedicated context key. Instead the entire dict with the supported values is given to template. So if you have included the template like this: `{{- include "bedag-lib.template.persistentvolumeclaim" (dict "pvc" $.Values.home "fullname" "home" "context" $) }}` you have to change it to something like this `{{- include "bedag-lib.template.persistentvolumeclaim" (set (set $ "pvc" $.Values.home) "fullname" "home") }}`. Otherwise the template will throw errors. | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
+| `dependency/library` | `1.0.0` | Upgraded Chart Dependency to new Major `2.0.0` | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
+
+
+
+
+{{ $body := fromYaml (include "bedag-lib.template.pod" (set (set $ "pod" $.Values.sidecar) "fullname" "sidecar") }}
+```
+
+
+{{- define "bedag-lib.template.pod" (set (set $ "pod" $.Values.sidecar) "fullname" "sidecar") -}}
+
+
+
+
+
+
+
+{{- include "bedag-lib.template.persistentvolumeclaim" (dict "pvc" $.Values.home "fullname" "home" "context" $) | nindent 10 }}
+   
+      */}}
+      volumeClaimTemplates:
+      {{- if $.Values.statefulset.volumeClaimTemplates }}
+        {{- toYaml $.Values.statefulset.volumeClaimTemplates | nindent 8 }}
+      {{- end }}
+      {{- if $.Values.crowd.persistence }}
+        {{- if $.Values.home.enabled }}
+        - {{- include "bedag-lib.template.persistentvolumeclaim" (set (set $ "pvc" $.Values.home) "fullname" "home") | nindent 10 }}
+        
 
 
 
 
 | `dependency/library` | `1.0.0` | Upgraded Chart Dependency to new Major `1.0.0` | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
 | `template/persistentvolumeclaim` | `0.5.0` | Since all manifests/templates are lowercase, the persistentVolumeClaim template was also lowercased to have a cleaner library. The template is no longer callable via `bedag-lib.template.persistentVolumeClaim` but moved to `bedag-lib.template.persistentvolumeclaim`. | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
-
-
-Added:
- 
-readinessProbeEnabled: true
-livenessProbeEnabled: true
-startupProbeEnabled: true
-
-
 
 {{/*
   Chart Sources

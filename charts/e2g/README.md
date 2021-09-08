@@ -151,7 +151,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | statefulset.enabled | bool | `false` | Enable statefulset |
 | statefulset.labels | object | `{}` | Merges given labels with common labels |
 | statefulset.podManagementPolicy | string | `""` | Statefulset [Management Policy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies). **Statefulset only** |
-| statefulset.replicaCount | int | `1` | Amount of Replicas deployed |
+| statefulset.replicaCount | int | `3` | Amount of Replicas deployed |
 | statefulset.rollingUpdatePartition | string | `""` | Statefulset [Update Pratition](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#partitions). **Statefulset only** |
 | statefulset.selectorLabels | object | `{}` | Define SelectorLabels for the Pod Template |
 | statefulset.serviceName | string | `""` | Define a Service for the Statefulset |

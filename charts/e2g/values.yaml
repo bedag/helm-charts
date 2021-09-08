@@ -403,7 +403,7 @@ deployment:
   ## Amount of Replicas
   # deployment.replicaCount -- Amount of Replicas deployed
   # @default -- 1
-  replicaCount: 1
+  replicaCount: 3
 
   ## Deployment Update Strategy
   # deployment.strategy -- Deployment [Update Strategy](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend). **Deployments only**
@@ -450,7 +450,7 @@ statefulset:
 
   ## Amount of Replicas
   # statefulset.replicaCount -- Amount of Replicas deployed
-  replicaCount: 1
+  replicaCount: 3
 
   ## Statefulset Pod Management Policy
   # statefulset.podManagementPolicy -- Statefulset [Management Policy](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#pod-management-policies). **Statefulset only**

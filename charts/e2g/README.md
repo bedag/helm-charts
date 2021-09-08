@@ -69,7 +69,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | deployment.labels | object | `{}` | Merges given labels with common labels |
 | deployment.replicaCount | int | 1 | Amount of Replicas deployed |
 | deployment.selectorLabels | object | `{}` | Define SelectorLabels for the Pod Template |
-| deployment.strategy | object | `{}` | Deployment [Update Strategy](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend). **Deployments only** |
+| deployment.strategy | object | `{"type":"RollingUpdate"}` | Deployment [Update Strategy](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend). **Deployments only** |
 | e2g.config | string | `nil` | e2g config mounted in e2guardian.conf |
 | e2g.filtergroups | list | `[]` | Array of e2g config for a filgergroup mounted as /usr/local/e2guardian/etc/e2guardian/e2guardianf{{ id }}.conf |
 | e2g.lists | list | `[]` | Array of e2g stories as string mounted in /usr/local/e2guardian/etc/e2guardian/listen/{{ $i }}.list |

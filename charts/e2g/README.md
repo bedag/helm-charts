@@ -70,9 +70,10 @@ Major Changes to functions are documented with the version affected. **Before up
 | deployment.replicaCount | int | 1 | Amount of Replicas deployed |
 | deployment.selectorLabels | object | `{}` | Define SelectorLabels for the Pod Template |
 | deployment.strategy | object | `{}` | Deployment [Update Strategy](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend). **Deployments only** |
-| e2g.config | string | `nil` | e2g config as string |
-| e2g.lists | list | `[]` | Array of e2g stories as string |
-| e2g.story | list | `[]` | Array of e2g stories as string |
+| e2g.config | string | `nil` | e2g config mounted in e2guardian.conf |
+| e2g.filtergroups | list | `[]` | Array of e2g config for a filgergroup mounted as /usr/local/e2guardian/etc/e2guardian/e2guardianf{{ id }}.conf |
+| e2g.lists | list | `[]` | Array of e2g stories as string mounted in /usr/local/e2guardian/etc/e2guardian/listen/{{ $i }}.list |
+| e2g.story | list | `[]` | Array of e2g stories as string mounted in /usr/local/e2guardian/etc/e2guardian/{{ $i }}.story |
 | fullnameOverride | string | `""` | Overwrite `lib.utils.common.fullname` output |
 | global.defaultTag | string | `""` | Global Docker Image Tag declaration. Will be used as default tag, if no tag is given by child |
 | global.imagePullPolicy | string | `""` | Global Docker Image Pull Policy declaration. Will overwrite all child .pullPolicy fields. |
@@ -102,13 +103,13 @@ Major Changes to functions are documented with the version affected. **Before up
 | pod.podAnnotations | object | `{}` | Pod [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) are only added for the pod |
 | pod.podFields | object | `{"terminationGracePeriodSeconds":0}` | Add extra field to the [Pod Template](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podtemplate-v1-core) if not available as value. |
 | pod.podLabels | object | `{}` | Pod [labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) are only added for the pod |
-| pod.podSecurityContext | object | `{"runAsNonRoot":true,"runAsUser":65534}` | Pod [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) |
+| pod.podSecurityContext | object | `{"fsGroup":65534,"runAsNonRoot":true,"runAsUser":65534}` | Pod [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) |
 | pod.ports | list | `[{"containerPort":1344,"name":"icap","protocol":"TCP"},{"containerPort":8080,"name":"http","protocol":"TCP"},{"containerPort":8443,"name":"https","protocol":"TCP"}]` | Configure Container Ports |
 | pod.priorityClassName | string | `""` | Pod [priorityClassName](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass) |
 | pod.readinessProbe | object | `{"initialDelaySeconds":5,"periodSeconds":1,"tcpSocket":{"port":1344}}` | Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes) |
 | pod.resources | object | `{}` | Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) |
 | pod.restartPolicy | string | `nil` | Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy |
-| pod.securityContext | object | `{}` | Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) |
+| pod.securityContext | object | `{"allowPrivilegeEscalation":false,"runAsGroup":65534,"runAsUser":65534}` | Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) |
 | pod.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | pod.serviceAccount.apiVersion | string | v1 | Configure the api version used |
 | pod.serviceAccount.automountServiceAccountToken | bool | `true` | (bool) AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted. |

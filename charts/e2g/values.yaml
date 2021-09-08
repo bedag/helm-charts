@@ -27,16 +27,24 @@ global:
 e2g:
 
   ## Define e2g stories
-  # e2g.story -- Array of e2g stories as string
+  # e2g.story -- Array of e2g stories as string mounted in /usr/local/e2guardian/etc/e2guardian/{{ $i }}.story
   story: []
 
   ## Define e2g config
-  # e2g.config -- e2g config as string
+  # e2g.config -- e2g config mounted in e2guardian.conf
   config:
 
   ## Define e2g lists
-  # e2g.lists -- Array of e2g stories as string
+  # e2g.lists -- Array of e2g stories as string mounted in /usr/local/e2guardian/etc/e2guardian/listen/{{ $i }}.list
   lists: []
+
+  ## Define e2g filtergroup config
+  # e2g.filtergroups -- Array of e2g config for a filgergroup mounted as /usr/local/e2guardian/etc/e2guardian/e2guardianf{{ id }}.conf
+  filtergroups: []
+  #  - id: 1
+  #    config: | 
+  #     deepurlanalysis = off
+
 
 ## Common Values
 ##
@@ -174,6 +182,7 @@ pod:
   # pod.podSecurityContext -- Pod [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
   podSecurityContext: 
     runAsNonRoot: true
+    fsGroup: 65534
     runAsUser: 65534 
   
   ## Pod Initcontainers
@@ -326,7 +335,9 @@ pod:
   ## Container SecurityContext
   # pod.securityContext -- Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
   securityContext: 
-    {}
+    runAsUser: 65534
+    runAsGroup: 65534
+    allowPrivilegeEscalation: false
   
   ## ReadinessProbe Configuration
   # pod.readinessProbe -- Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)

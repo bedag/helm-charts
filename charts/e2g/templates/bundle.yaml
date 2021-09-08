@@ -73,5 +73,11 @@ resources:
           {{ $e | nindent 10 }}
       {{- end -}}
     {{- end -}}
+    {{- if $.Values.e2g.filtergroups }}
+      {{- range $i, $e := $.Values.e2g.filtergroups }}
+        e2guardianf{{ .id }}.conf: |-
+          {{ .config | nindent 10 }}
+      {{- end -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}

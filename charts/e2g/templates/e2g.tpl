@@ -43,15 +43,15 @@ volumeMounts:
   {{ with $.Values.pod.volumeMounts }}
     {{ toYaml . | nindent 0 }}
   {{- end }}
-  {{- if $.Values.e2g.story }}
-    {{- range $i, $e := $.Values.e2g.story }}
+  {{- with $.Values.e2g.story }}
+    {{- range $i, $e := . }}
 - mountPath: /usr/local/e2guardian/etc/e2guardian/{{ $i }}.story
   name: e2g-story
   subPath: {{ $i }}.story
       {{- end }}
   {{- end }}
-  {{- if $.Values.e2g.lists }}
-    {{- range $i, $e := $.Values.e2g.lists }}
+  {{- with $.Values.e2g.lists }}
+    {{- range $i, $e := . }}
 - mountPath: /usr/local/e2guardian/etc/e2guardian/listen/{{ $i }}.list
   name: e2g-lists
   subPath: {{ $i }}.list

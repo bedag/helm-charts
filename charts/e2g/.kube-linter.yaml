@@ -1,0 +1,5 @@
+---
+checks:
+  exclude:
+    - (( prepend ))
+    - "use-namespace"

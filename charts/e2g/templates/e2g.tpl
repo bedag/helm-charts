@@ -16,10 +16,25 @@ limitations under the License.
 */}}
 {{- define "overwrite" -}}
 volumes:
-  {{- if or ($.Values.e2g.config) ($.Values.e2g.story)  ($.Values.e2g.lists) ($.Values.e2g.filtergroups) }}
+  {{- if or ($.Values.e2g.config)  }}
 - name: "e2g-config"
   configMap:
     name: e2g-config
+  {{- end }}
+  {{- if or ($.Values.e2g.story)  }}
+- name: "e2g-story"
+  configMap:
+    name: e2g-story
+  {{- end }}
+  {{- if or ($.Values.e2g.lists)  }}
+- name: "e2g-lists"
+  configMap:
+    name: e2g-lists
+  {{- end }}
+  {{- if or ($.Values.e2g.filtergroups)  }}
+- name: "e2g-filtergroups"
+  configMap:
+    name: e2g-filtergroups
   {{- end }}
   {{ with $.Values.pod.volumes }}
     {{ toYaml . | nindent 0 }}
@@ -31,14 +46,14 @@ volumeMounts:
   {{- if $.Values.e2g.story }}
     {{- range $i, $e := $.Values.e2g.story }}
 - mountPath: /usr/local/e2guardian/etc/e2guardian/{{ $i }}.story
-  name: e2g-config
+  name: e2g-story
   subPath: {{ $i }}.story
       {{- end }}
   {{- end }}
   {{- if $.Values.e2g.lists }}
     {{- range $i, $e := $.Values.e2g.lists }}
 - mountPath: /usr/local/e2guardian/etc/e2guardian/listen/{{ $i }}.list
-  name: e2g-config
+  name: e2g-lists
   subPath: {{ $i }}.list
     {{- end }}
   {{- end }}
@@ -47,10 +62,10 @@ volumeMounts:
   name: e2g-config
   subPath: e2guardian.conf
   {{- end }}
-  {{ if $.Values.e2g.filtergroups }}
-    {{- range $i := $.Values.e2g.filtergroups }}
+  {{ with $.Values.e2g.filtergroups }}
+    {{- range  . }}
 - mountPath: /usr/local/e2guardian/etc/e2guardian/e2guardianf{{ .id }}.conf
-  name: e2g-config
+  name: e2g-filtergroups
   subPath: e2guardianf{{ .id }}.conf
     {{- end }}
   {{- end }}

@@ -48,7 +48,7 @@ resources:
     {{- toYaml $.Values.extraResources | nindent 2 }}
   {{- end }}
   
-  {{- if or ($.Values.e2g.config)}}
+  {{- if  $.Values.e2g.config }}
   - type: "raw"
     manifest: |
       apiVersion: v1
@@ -60,7 +60,7 @@ resources:
         e2guardian.conf: |-
     {{ $.Values.e2g.config | nindent 10 }}
   {{- end -}}
-  {{- if or ($.Values.e2g.lists)}}
+  {{- if $.Values.e2g.lists }}
   - type: "raw"
     manifest: |
       apiVersion: v1
@@ -74,7 +74,7 @@ resources:
           {{ $e | nindent 10 }}
     {{- end -}}
   {{- end -}}
-  {{- if or ($.Values.e2g.story)}}
+  {{- if $.Values.e2g.story }}
   - type: "raw"
     manifest: |
       apiVersion: v1
@@ -88,7 +88,7 @@ resources:
           {{ $e | nindent 10 }}
     {{- end -}}
   {{- end -}}
-  {{- if or ($.Values.e2g.filtergroups)}}
+  {{- if  $.Values.e2g.filtergroups }}
   - type: "raw"
     manifest: |
       apiVersion: v1

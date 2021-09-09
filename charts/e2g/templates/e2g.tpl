@@ -16,22 +16,22 @@ limitations under the License.
 */}}
 {{- define "overwrite" -}}
 volumes:
-  {{- if or ($.Values.e2g.config)  }}
+  {{- if $.Values.e2g.config  }}
 - name: "e2g-config"
   configMap:
     name: e2g-config
   {{- end }}
-  {{- if or ($.Values.e2g.story)  }}
+  {{- if $.Values.e2g.story  }}
 - name: "e2g-story"
   configMap:
     name: e2g-story
   {{- end }}
-  {{- if or ($.Values.e2g.lists)  }}
+  {{- if $.Values.e2g.lists  }}
 - name: "e2g-lists"
   configMap:
     name: e2g-lists
   {{- end }}
-  {{- if or ($.Values.e2g.filtergroups)  }}
+  {{- if $.Values.e2g.filtergroups  }}
 - name: "e2g-filtergroups"
   configMap:
     name: e2g-filtergroups

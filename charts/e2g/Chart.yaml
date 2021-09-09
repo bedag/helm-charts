@@ -3,7 +3,8 @@ name: e2g
 description: "e2guardian Chart"
 type: application
 version: 1.2.0
-appVersion: 5.4
+appVersion: "5.4"
+icon: "http://e2guardian.org/cms/images/banners/logo-guardian.png"
 home: "https://github.com/e2guardian/e2guardian/"
 keywords:
   - proxy

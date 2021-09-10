@@ -69,7 +69,7 @@ volumeMounts:
   subPath: e2guardianf{{ .id }}.conf
     {{- end }}
   {{- end }}
-  {{- if or ($.Values.e2g.config) ($.Values.e2g.story)  ($.Values.e2g.lists) }}
+  {{- if or ($.Values.e2g.config) ($.Values.e2g.story)  ($.Values.e2g.lists) ($.Values.e2g.filtergroups) }}
 podAnnotations:
   checksum/config: {{ tpl (toYaml .Values.e2g) . | sha256sum }}
   {{- end }}

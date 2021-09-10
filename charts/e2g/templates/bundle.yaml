@@ -83,7 +83,7 @@ resources:
         name: e2g-story
         labels: {{- include "lib.utils.common.labels" $| nindent 10 }}
       data:
-    {{- range $.Values.e2g.story }}
+    {{- range $i, $e := $.Values.e2g.story }}
         {{ $i }}.story: |-
           {{ $e | nindent 10 }}
     {{- end -}}
@@ -97,7 +97,7 @@ resources:
         name: e2g-filtergroups
         labels: {{- include "lib.utils.common.labels" $| nindent 10 }}
       data:
-    {{- range $i, $e := $.Values.e2g.filtergroups }}
+    {{- range $.Values.e2g.filtergroups }}
         e2guardianf{{ .id }}.conf: |-
           {{ .config | nindent 10 }}
     {{- end -}}

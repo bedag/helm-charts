@@ -2,8 +2,9 @@ apiVersion: v2
 name: e2g
 description: "e2guardian Chart"
 type: application
-version: 1.1.0
-appVersion: 5.3.4 
+version: 1.2.0
+appVersion: "5.4"
+icon: "http://e2guardian.org/cms/images/banners/logo-guardian.png"
 home: "https://github.com/e2guardian/e2guardian/"
 keywords:
   - proxy
@@ -26,8 +27,8 @@ sources:
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/changes: |
-    - "[BugFix]: additional volume mounts"
-    - "[Feature]: Bump e2g version"
+    - "[Added]: filtergroups config"
+    - "[Bump] e2g to 5.4"
   artifacthub.io/prerelease: "false"
   artifacthub.io/images: |
     - name: e2g-5 

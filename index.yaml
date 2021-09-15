@@ -39,6 +39,44 @@ entries:
   e2g:
   - annotations:
       artifacthub.io/changes: |
+        - "[Added]: filtergroups config"
+        - "[Bump] e2g to 5.4"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/images: "- name: e2g-5 \n  image: bedag/e2g:5\n- name: e2g-4
+        \n  image: bedag/e2g:4\n"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: "5.4"
+    created: "2021-09-15T08:40:28.849889934Z"
+    dependencies:
+    - name: manifests
+      repository: https://bedag.github.io/helm-charts/
+      version: '>=0.4.0'
+    description: e2guardian Chart
+    digest: cd151bff4146afa7a0263b0da0eacc081f6e2627c8f8fca80eee64bbbdc38da1
+    home: https://github.com/e2guardian/e2guardian/
+    icon: http://e2guardian.org/cms/images/banners/logo-guardian.png
+    keywords:
+    - proxy
+    - forwardproxy
+    - e2guardian
+    - e2g
+    maintainers:
+    - email: noc@bedag.ch
+      name: NOC
+    - email: sre@bedag.ch
+      name: SRE
+    name: e2g
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/e2g
+    - https://github.com/e2guardian/e2guardian/
+    - https://github.com/bedag/docker-e2g
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/e2g-1.2.0/e2g-1.2.0.tgz
+    version: 1.2.0
+  - annotations:
+      artifacthub.io/changes: |
         - "[BugFix]: additional volume mounts"
         - "[Feature]: Bump e2g version"
       artifacthub.io/containsSecurityUpdates: "false"
@@ -947,4 +985,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/raw-1.0.0/raw-1.0.0.tgz
     version: 1.0.0
-generated: "2021-08-19T07:21:19.743761455Z"
+generated: "2021-09-15T08:40:28.850041538Z"

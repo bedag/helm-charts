@@ -1,0 +1,19 @@
+##
+## Global Configuration
+global: {}
+  #  imageRegistry: "company-registry.example.com"
+
+## goblackhole Configuration
+goblackhole:
+  config:
+    Peers:
+      - remote_as: 64512
+        remote_ip: "10.1.1.1"
+    local_id: 10.217.133.15
+    local_as: 65001
+    LogLevel: Info 
+    Blocklist: https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt
+    Community: 
+    - 666
+  deployment:
+    replicas: 10

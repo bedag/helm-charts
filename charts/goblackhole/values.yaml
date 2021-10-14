@@ -1,0 +1,355 @@
+## Global Values
+##
+global:
+
+  ## Global Docker Image Registry
+  # global.imageRegistry -- Global Docker Image Registry declaration. Will overwrite all child .registry fields.
+  imageRegistry: ""
+
+  ## Global Default Image Tag
+  # global.defaultTag -- Global Docker Image Tag declaration. Will be used as default tag, if no tag is given by child
+  defaultTag: ""
+
+  ## Global Docker Image PullPolicy
+  # global.imagePullPolicy -- Global Docker Image Pull Policy declaration. Will overwrite all child .pullPolicy fields.
+  imagePullPolicy: ""
+
+  ## Global StorageClass
+  # global.storageClass -- Global StorageClass declaration. Can be used to overwrite StorageClass fields.
+  storageClass: ""
+
+  ## Global Image Pull Secrets
+  # global.imagePullSecrets -- Global Docker Image Pull Secrets declaration. Added to local Docker Image Pull Secrets.
+  imagePullSecrets: []
+
+## goblackhole Configuration
+# goblackhole.config -- Configure Goblackhole (this will be written 1:1 to config.yaml)
+goblackhole:
+  config: {}
+
+## Extra Resources
+# extraResources -- Enter Extra Resources managed by the Goblackhole Release
+extraResources: []
+
+## Common Values
+##
+
+## Overwrite Name Template
+# nameOverride -- Overwrite "lib.internal.common.name" output
+nameOverride: ""
+
+## Overwrite Fullname Template
+# fullnameOverride -- Overwrite `lib.utils.common.fullname` output
+fullnameOverride: ""
+
+## Common Labels
+# commonLabels -- Common Labels are added to each kubernetes resource manifest.
+commonLabels: 
+
+## Overwrite Labels
+# overwriteLabels -- Overwrites default labels, but not resource specific labels and common labels
+overwriteLabels: {}
+
+## Selector Labels
+# selectorLabels -- Define default [selectorLabels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/)
+selectorLabels: {}
+
+## Version Capabilities
+# kubeCapabilities -- Overwrite the Kube GitVersion
+# @default -- `$.Capabilities.KubeVersion.GitVersion`
+kubeCapabilities: ""
+
+
+# Source: values/templates/values-generator.yaml
+#
+## - Deployment
+## Reference: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/
+##
+deployment:
+
+  ## Deployment API version
+  # deployment.apiVersion -- Configure the api version used for the Deployment resource
+  apiVersion: ""
+
+  ## Deployment Labels
+  # deployment.labels -- Merges given labels with common labels
+  labels: {}
+
+  ## Deployment Selector Labels
+  # deployment.selectorLabels -- Define SelectorLabels for the Pod Template
+  selectorLabels: {}
+
+  ## Amount of Replicas
+  # deployment.replicaCount -- Amount of Replicas deployed
+  # @default -- 1
+  replicaCount: 1
+
+  ## Deployment Update Strategy
+  # deployment.strategy -- Deployment [Update Strategy](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend). **Deployments only**
+  strategy: {}
+    #type: RollingUpdate
+    #  maxSurge: 1
+    #  maxUnavailable: 0
+
+  ## Deployment Extra Values
+  # deployment.deploymentExtras -- Extra Fields for Deployment Manifest
+  deploymentExtras: {}
+    # progressDeadlineSeconds: "600s"
+    #
+
+  ## Pod Configuration
+  ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#pod-template
+  ## Full Configuration
+
+  ## Image Pull Secrets
+  # deployment.imagePullSecrets -- Define [ImagePullSecrets](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). Will be overwritten if set by global variable.
+  imagePullSecrets: []
+
+  ## Pod Labels
+  # deployment.podLabels -- Pod [labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) are only added for the pod
+  podLabels: {}
+
+  ## Pod Annotations
+  # deployment.podAnnotations -- Pod [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) are only added for the pod
+  podAnnotations: {}
+
+  ## Pod ForceRedeploy
+  ## deployment.forceRedeploy -- Adds timestamp annotation, causing your pods to be redeployed everytime a new release applied.
+  forceRedeploy: false
+
+  ## Extra Pod Fields
+  # deployment.podFields -- Add extra field to the [Pod Template](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podtemplate-v1-core) if not available as value.
+  podFields: {}
+    #hostNetwork: true
+
+  ## Additional Kubernetes Volumes
+  # deployment.volumes -- Additional [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
+  volumes: []
+    #- name: cache
+    #  emptyDir: {}
+    #- name: share
+    #  persistentVolumeClaim:
+    #    claimName: 'shared'
+
+  ## RestartPolicy Configuration
+  # deployment.restartPolicy -- Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
+  restartPolicy:
+
+  ## Affinity Configuration
+  # deployment.affinity -- Pod [Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)
+  affinity: {}
+
+  ## NodeSelector Configuration
+  # deployment.nodeSelector -- Pod [NodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
+  nodeSelector: {}
+
+  ## Tolerations Configuration
+  # deployment.tolerations -- Pod [Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
+  tolerations: {}
+
+  ## Priority Configuration
+  # deployment.priorityClassName -- Pod [priorityClassName](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass)
+  priorityClassName: ""
+
+  ## Pod SecurityContext Configuration
+  # deployment.podSecurityContext -- Pod [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+  podSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+
+  ## Pod Initcontainers
+  # deployment.initContainers -- Pod [initContainers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
+  initContainers: []
+    #- name: init-myservice
+    #  image: busybox:1.28
+    #  command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
+
+  ## Pod SideCar Containers
+  # deployment.sidecars -- Allows to add sidecars to your [maincar]](https://kubernetes.io/docs/concepts/workloads/pods/#using-pods)
+  sidecars: []
+
+  #
+  ## - ServiceAccount
+  ## Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+  ## API Reference: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#serviceaccount-v1-core
+  ##
+  serviceAccount:
+
+    ## ServiceAccount Creation
+    # deployment.serviceAccount.enabled -- Specifies whether a service account is enabled or not
+    enabled: false
+
+    ## ServiceAccount Creation
+    # deployment.serviceAccount.create -- Specifies whether a service account should be created
+    create: false
+
+    ## ServiceAccount API version
+    # deployment.serviceAccount.apiVersion -- Configure the api version used
+    # @default -- v1
+    apiVersion: ""
+
+    ## ServiceAccount Labels
+    # deployment.serviceAccount.labels -- Merges given labels with common labels
+    labels: {}
+
+    ## ServiceAccount Annotations
+    # deployment.serviceAccount.annotations -- Annotations to add to the service account
+    annotations: {}
+
+    ## ServiceAccount Auto Mount Service Token
+    # deployment.serviceAccount.automountServiceAccountToken -- (bool) AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted.
+    automountServiceAccountToken: true
+
+    ## ServiceAccount Image pull secrets
+    # deployment.serviceAccount.imagePullSecrets -- ImagePullSecrets is a list of references to secrets in the same namespace to use for pulling any images in pods that reference this ServiceAccount.
+    imagePullSecrets: []
+
+    ## ServiceAccount Global PullSecrets
+    # deployment.serviceAccount.globalPullSecrets -- Evaluate global set pullsecrets and mount, if set
+    globalPullSecrets: false
+
+    ## ServiceAccount Secrets
+    # deployment.serviceAccount.secrets -- Secrets is the list of secrets allowed to be used by pods running using this ServiceAccount
+    secrets: []
+
+    ## ServiceAccount Name
+    # deployment.serviceAccount.name -- If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+
+  ## Container Configuration
+  ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#container-template
+  ## Full Configuration
+
+
+  #
+  ## -- Container
+  ## Reference: https://kubernetes.io/de/docs/concepts/containers/
+  ## Container API Object - https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#container-v1-core
+  #
+
+  ## Custom Container Name
+  # deployment.containerName -- Configure Container Name
+  # @default -- `.Chart.Name`
+  containerName: goblackhole
+
+  ## Docker Image definition.
+  image:
+    # deployment.image.registry -- Configure Docker Registry. Will be overwritten if set by global variable.
+    registry: docker.io
+
+    # deployment.image.repository -- Configure Docker Repository
+    repository: bedag/goblackhole
+
+    # deployment.image.pullPolicy -- Configure Docker Pull Policy. Will be overwritten if set by global variable.
+    pullPolicy:
+
+    # deployment.image.tag -- Configure Docker Image tag
+    # @default -- Tag defaults to `.Chart.Appversion`, if not set
+    tag:
+
+  ## Container Resources
+  # deployment.resources -- Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+  resources:
+    requests:
+     memory: "25Mi"
+     cpu: "100m"
+    limits:
+     memory: "218Mi"
+     cpu: "200m"
+
+  ## Container Command
+  # deployment.command -- Configure executed container command
+  command:
+    {}
+
+  ## Container Command Args
+  # deployment.args -- Configure arguments for executed command
+  args:
+    {}
+
+  ## Environment Variables
+  # deployment.environment -- Configure Environment Variables (Refer to values.yaml)
+  environment:
+    []
+    #- name: "MY_ENV"
+    #  value: "someValue"
+    #  secret: true
+    #- name: SOME_SPEC
+    #  valueFrom:
+    #    fieldRef:
+    #      fieldPath: spec.*
+
+  ## Environment from Source
+  # deployment.envFrom -- Configure Environment from Source
+  envFrom:
+    []
+    #- configMapRef:
+        #name: configmapname
+    #- secretRef:
+        #name: secretname
+
+  ## Container Ports
+  # deployment.ports -- Configure Container Ports
+  ports:
+    []
+    #- name: "health"
+    #  containerPort: 9090
+    #  protocol: TCP
+
+  ## Additional Volume Mounts
+  # deployment.volumeMounts -- Configure Container [volumeMounts](https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/)
+  volumeMounts:
+    []
+    #- name: "cache"
+    #  mountPath: /cache
+    #- name: "share"
+    #  mountPath: /var/data/share
+
+  ## Container SecurityContext
+  # deployment.securityContext -- Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
+  securityContext:
+    allowPrivilegeEscalation: false
+
+  ## ReadinessProbe Configuration
+  # deployment.readinessProbe -- Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)
+  readinessProbe:
+    exec:
+      command:
+      - /usr/bin/gobgp
+      - neig
+    timeoutSeconds: 30
+
+  ## LivenessProbe Configuration
+  # deployment.livenessProbe -- Container [LivenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command)
+  livenessProbe:
+    exec:
+      command:
+      - /usr/bin/gobgp
+      - neig
+
+
+  ## StartupProbe Configuration
+  # deployment.startupProbe -- Container [StartupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes)
+  startupProbe:
+    {}
+    #httpGet:
+    #  path: /health
+    #  port: http
+    #failureThreshold: 30
+    #periodSeconds: 10
+
+  ## Container Lifecycle Hooks
+  # deployment.lifecycle -- Container [Lifecycle](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/)
+  lifecycle:
+    {}
+    #postStart:
+    #  exec:
+    #    command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+
+  ## Container ExtraFields
+  # deployment.containerFields -- Extra fields used on the container definition
+  containerFields:
+    {}
+    #stdinOnce: true

@@ -18,10 +18,10 @@ limitations under the License.
 {{- define "bedag-lib.manifest.bundle" -}}
   {{- $manifestPath := "bedag-lib.manifest." -}}
   {{- $bundle := (default dict .bundle) }}
-  {{- $i_context := set (default . .context) "Bundle" $bundle }}
   {{- if not $bundle }}
-    {{- $bundle = (fromYaml (include "chart.bundle" $i_context)) }}
+    {{- $bundle = (fromYaml (include "chart.bundle" .context)) }}
   {{- end -}}
+  {{- $i_context := set (default . .context) "Bundle" $bundle }}
   {{- if (include "bedag-lib.utils.intern.noYamlError" .) }}
     {{- if and (kindIs "map" $i_context) (include "bedag-lib.utils.intern.noYamlError" $i_context) (kindIs "map" $bundle) (include "bedag-lib.utils.intern.noYamlError" $bundle) -}}
       {{- $context := mergeOverwrite $i_context (dict "Values" (default dict $bundle.common)) -}}

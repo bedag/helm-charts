@@ -41,6 +41,118 @@ dependencies:
 
 Major Changes to functions are documented with the version affected. **Before upgrading the dependency version, check this section out!**
 
+
+## >= 1.0.0
+
+The following Pull Requests correspond to this release:
+
+  * [https://github.com/bedag/helm-charts/pull/33](https://github.com/bedag/helm-charts/pull/33)
+
+
+It's recommended to recreate the values file for the new values fo each resources.
+
+### Features
+
+Use new Shortcuts for resources as shown here:
+
+`configmap` -> `configmap` or `cm` ]
+`cronjob` -> `cronjob`, `cron` or `cj`
+`daemonset` -> `daemonset`, `daemon` or `ds`
+`deployment` ->  `deployment` or `deploy`
+`horizontalpodautoscaler` -> `horizontalpodautoscaler` or `hpa`
+`ingress` -> `ingress` or `ing`
+`persistentvolumeclaim` -> `persistentvolumeclaim` or `pvc`
+`poddisruptionbudget` -> `poddisruptionbudget` or `pdb`
+`service` ->  `service` or `svc`
+`serviceaccount` -> `serviceaccount` or `sa`
+`servicemonitor` -> `servicemonitor` or `sm`
+`statefulset` -> `statefulset` or `sts`
+
+Probes for container templates can now be en/-disabled:
+
+ * [template/container] - `.readinessProbeEnabled` added 
+ * [template/container] - `.livenessProbeEnabled` added 
+ * [template/container] - `.startupProbeEnabled` added
+
+### Breaking Changes 
+
+See breaking changes when updating to this version
+
+ * [template/job] - `.labels` moved to `.jobLabels
+ * [template/job] - `.annotations` moved to `.jobAnnotations
+ * [template/job] - `.selector` moved to `.jobSelector
+ * [manifest/bundle] - `.name` functionality moved to `.prefix`. `.name` will render a different name layout.
+ * [manifest/daemonset] - `.selector` moved to `.selectorLabels
+ * [manifest/deployment] - `.additionalFields` moved to `.serviceMonitorFields
+ * [manifest/deployment] - `.deploymentExtras` moved to `.deploymentFields
+ * [manifest/job] - `.extraFields` moved to `.jobFields`
+ * [manifest/podDisruptionBudget] - `.selector` moved to `.selectorLabels`
+ * [manifest/serviceMonitor] - `.selector` moved to `.selectorLabels`
+ * [manifest/serviceMonitor] - `.additionalFields` moved to `.serviceMonitorFields`
+ * [manifest/statefulset] - `.selector` moved to `.selectorLabels`
+ * [manifest/statefulset] - `.statefulsetExtras` moved to `.statefulsetFields`
+ * [manifest/ingress] - `.customRules` moved to `.extraRules`
+
+**All Templates changed the way how they are called.** 
+
+
+You might receive such errors:
+
+```
+helm template . --debug
+install.go:178: [debug] Original chart version: ""
+install.go:199: [debug] CHART PATH: /home/pariah/Projects/Bedag/helm-charts-1/charts/crowd
+
+Error: execution error at (crowd/templates/bundle.yaml:18:4): Template requires '.context' as argument
+helm.go:88: [debug] execution error at (crowd/templates/bundle.yaml:18:4): Template requires '.context' as argument
+```
+
+In this case you must change the following:
+
+```
+{{ $jmxExporter := (fromYaml (include "bedag-lib.utils.presets" (dict "preset" "jmxexporter" "values" $.Values.jmxExporter "context" $))) }}
+  
+{{- if $jmxExporter.extraResources }}
+  {{- toYaml $jmxExporter.extraResources | nindent 2 }}
+{{- end }}
+```
+
+to 
+
+(set (set $ "pod" $.Values.pod) "fullname" "side")
+
+```
+
+
+
+{{ include "bedag-lib.utils.presets" (set (set $ "container" $.Values.extraContainer) "fullname" "main") }}
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+**`NetworkPolicy` is no longer supported as manifest.**
+
+
+### Dependencies 
+
+[Upgraded Dependency `library` to new Major `2.0.0`](https://github.com/bedag/helm-charts/pull/33)
+
+
+
+
 | **Manifest** | **Chart Version** | **Change/Description** | **Commits/PRs** |
 | :----------- | :---------------- | :--------------------- | :-------------- |
 | * `manifest/podDisruptionBudget` </br> * `manifest/serviceMonitor` </br> * `manifest/statefulset` </br> * `manifest/deployment` </br>  * `manifest/daemonset` | `2.0.0` | Field `selector` moved to `selectorLabels` for the named resoures. Move labels defined under `selector` to `selectorLabels`. | * [PR 52](https://github.com/bedag/helm-charts/pull/52) | 
@@ -87,10 +199,16 @@ Major Changes to functions are documented with the version affected. **Before up
         
 
 
+## >= 0.5.0
 
+It's recommended to recreate the values file for the new values fo each resources.
 
-| `dependency/library` | `1.0.0` | Upgraded Chart Dependency to new Major `1.0.0` | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
-| `template/persistentvolumeclaim` | `0.5.0` | Since all manifests/templates are lowercase, the persistentVolumeClaim template was also lowercased to have a cleaner library. The template is no longer callable via `bedag-lib.template.persistentVolumeClaim` but moved to `bedag-lib.template.persistentvolumeclaim`. | * [PR 33](https://github.com/bedag/helm-charts/pull/33) |
+### Breaking Changes 
+
+See breaking changes when updating to this version
+
+ * [template/persistentvolumeclaim] -  Since all manifests/templates are lowercase, the persistentVolumeClaim template was also lowercased to have a cleaner library. The template is no longer callable via `bedag-lib.template.persistentVolumeClaim` but moved to `bedag-lib.template.persistentvolumeclaim`
+
 
 {{/*
   Chart Sources

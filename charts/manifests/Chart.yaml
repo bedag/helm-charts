@@ -1,8 +1,8 @@
 apiVersion: v2
 name: manifests
-description: "Bedag's Manifest chart. Library full of basic kubernetes manifests."
+description: "Bedag's Manifest chart. Library full of basic kubernetes manifests"
 type: library
-version: 1.0.0
+version: 1.0.0-rc.0
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 keywords:
 - Bedag
@@ -20,7 +20,7 @@ dependencies:
   repository: "https://buttahtoast.github.io/helm-charts/"
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
-  artifacthub.io/prerelease: "false"
+  artifacthub.io/prerelease: "true"
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
     - "[Added]: [template/container] - Image Digest Support via digest field"
@@ -46,8 +46,9 @@ annotations:
     - "Breaking! [Changed]: [template/job] - `.annotations` moved to `.jobAnnotations"
     - "Breaking! [Changed]: [template/job] - `.selector` moved to `.jobSelector"
     - "Breaking! [Changed]: [manifest/bundle] - `.name` functionality moved to `.prefix`. `.name` will render a different name layout."
-
-    - "Breaking! [Changed]: [manifest/serviceMonitor] - `.additionalFields` moved to `.serviceMonitorFields"
+    - "Breaking! [Changed]: [manifest/daemonset] - `.selector` moved to `.selectorLabels"
+    - "Breaking! [Changed]: [manifest/deployment] - `.additionalFields` moved to `.serviceMonitorFields"
+    - "Breaking! [Changed]: [manifest/serviceMonitor] - `.selector` moved to `.selectorLabels"
     - "Breaking! [Changed]: [manifest/podDisruptionBudget] - `.selector` moved to `.selectorLabels`"
     - "Breaking! [Changed]: [manifest/serviceMonitor] - `.selector` moved to `.selectorLabels`" 
     - "Breaking! [Changed]: [manifest/statefulset] - `.selector` moved to `.selectorLabels`" 
@@ -56,4 +57,4 @@ annotations:
     - "[Fixed]: [manifest/statefulset] - `.replicaCount` no longer defaults to 1, when set to 0"
     - "[Fixed]: [manifest/deployment] - `.replicaCount` no longer defaults to 1, when set to 0"
     - "[Fixed]: [manifest/ingress] - `.customRules` renders when content is of type slice"
-    - "[Removed]: [manifest/networkPolicy] - networkPolicies no longer supported as Manifest"
+    - "Breaking! [Removed]: [manifest/networkPolicy] - networkPolicies no longer supported as Manifest"

@@ -21,6 +21,7 @@ limitations under the License.
   Define Crowd Chart Bundle
 */}}
 {{- define "chart.bundle" -}}
+identifier: "kaka"
 common:
   commonLabels: {{- include "crowd.Labels" $ | nindent 4 }}
   {{- if $.Values.crowd.timezone }}

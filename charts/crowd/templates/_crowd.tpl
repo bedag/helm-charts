@@ -29,7 +29,7 @@ app.kubernetes.io/part-of: "crowd"
 Crowd Home
 */}}
 {{- define "crowd.home" -}}
-{{ .Values.crowd.home | trimSuffix "/" }}
+/help
 {{- end -}}
 
 {{/*

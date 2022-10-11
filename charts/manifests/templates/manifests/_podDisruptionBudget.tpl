@@ -25,7 +25,11 @@ kind: PodDisruptionBudget
         {{- if $pdb.apiVersion }}
 apiVersion: {{ $pdb.apiVersion }}
         {{- else }}
+          {{- if semverCompare ">=1.21-0" (include "lib.utils.common.capabilities" $context) }}
+apiVersion: policy/v1
+          {{- else }}
 apiVersion: policy/v1beta1
+          {{- end }}
         {{- end }}
 metadata:
   name: {{ include "bedag-lib.utils.common.fullname" . }}

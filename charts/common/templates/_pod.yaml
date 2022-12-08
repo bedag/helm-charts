@@ -1,0 +1,123 @@
+{{- define "common.pod" -}}
+
+{{- /*
+Distinguish between sensitive and non-sensitive config, first initialize empty dictionaries
+(We need to know this here also, to specify the volumes or not)
+*/ -}}
+{{- $configFiles := .controller.configFiles }}
+{{- $secretConfigs := dict }}
+{{- $nonSecretConfigs := dict }}
+{{- /* now separating the configs */ -}}
+{{- range $key, $val := $configFiles }}
+  {{- if $val.secret }}
+    {{- $secretConfigs := merge $secretConfigs (dict $key $val) }}
+  {{- else }}
+    {{- $nonSecretConfigs := merge $nonSecretConfigs (dict $key $val) }}
+  {{- end }}
+{{- end }}
+
+{{- $root := .root }}
+{{- $name := .name }}
+{{- if .controller.serviceAccountName }}
+serviceAccountName: {{ .controller.serviceAccountName | quote }}
+{{- end }}
+automountServiceAccountToken: {{ .controller.automountServiceAccountToken | default false }}
+{{- if .controller.priorityClassName }}
+priorityClassName: {{ .controller.priorityClassName | quote }}
+{{- end }}
+{{- if .controller.restartPolicy }}
+restartPolicy: {{ .controller.restartPolicy | quote }}
+{{- end }}
+{{- if .controller.containers }}
+containers:
+{{- range $containerName, $containerValues := .controller.containers }}
+{{- include "common.container" (dict "root" $root "componentName" $name "containerName" $containerName "containerValues" $containerValues "configFiles" $configFiles) | indent 2 }}
+{{- end }}
+{{- end }}
+{{- if .controller.initContainers }}
+initContainers:
+{{- range $containerName, $containerValues := .controller.initContainers }}
+{{- include "common.container" (dict "root" $root "componentName" $name "containerName" $containerName "containerValues" $containerValues "configFiles" $configFiles) | indent 2 }}
+{{- end }}
+{{- end }}
+{{- if .controller.podSecurityContext }}
+{{- if .controller.podSecurityContext.enabled }}
+securityContext: {{- omit .controller.podSecurityContext "enabled" | toYaml | nindent 2 }}
+{{- end }}
+{{- end }}
+volumes:
+  {{- range .controller.volumes }}
+  {{- if and .name .type }}
+  - name: {{ template "library.name" $root }}-{{ .name }}
+  {{- if eq .type "secret" }}
+    secret:
+      secretName: {{ template "library.name" $root }}-{{ .name }}
+      {{- if .defaultMode }}
+      defaultMode: {{ .defaultMode }}
+      {{- end }}
+  {{- else if eq .type "configMap" }}
+    configMap:
+      name: {{ template "library.name" $root }}-{{ .name }}
+      {{- if .defaultMode }}
+      defaultMode: {{ .defaultMode }}
+      {{- end }}
+  {{- else if eq .type "persistentVolumeClaim" }}
+    persistentVolumeClaim:
+      claimName: {{ template "library.name" $root }}-{{ .claimNameSuffix }}
+      {{- if .readOnly }}
+      readOnly: {{ .readOnly }}
+      {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- if or .controller.containers .controller.initContainers }}
+  {{- $containers := merge (.controller.containers | default dict) (.controller.initContainers | default dict) }}
+  {{- range $containerName, $containerValues := $containers }}
+  {{- $configFiles := $containerValues.configFiles }}
+  {{- if $configFiles }}
+  {{- $secretConfigs := dict }}
+  {{- $nonSecretConfigs := dict }}
+  {{- /* now separating the configs */ -}}
+  {{- range $key, $val := $configFiles }}
+  {{- if $val.secret }}
+    {{- $secretConfigs := merge $secretConfigs (dict $key $val) }}
+  {{- else }}
+    {{- $nonSecretConfigs := merge $nonSecretConfigs (dict $key $val) }}
+  {{- end }}
+  {{- end }}
+  {{- if $nonSecretConfigs }}
+  - name: {{ $containerName }}-configfiles
+    configMap:
+      name: {{ template "library.name" $root }}-{{ $name }}-{{ $containerName }}-configfiles
+  {{- end }}
+  {{- if $secretConfigs }}
+  - name: {{ $containerName }}-secret-configfiles
+    secret:
+      secretName: {{ template "library.name" $root }}-{{ $name }}-{{ $containerName }}-secret-configfiles
+  {{- end }}
+  {{- end }}
+  {{- $binaryFiles := $containerValues.binaryFiles }}
+  {{- if $binaryFiles }}
+  - name: {{ $containerName }}-binaryfiles
+    secret:
+      secretName: {{ template "library.name" $root }}-{{ $name }}-{{ $containerName }}-binaryfile
+  {{- end }}
+  {{- end }}
+  {{- end }}
+{{- with .controller.nodeSelector }}
+nodeSelector:
+{{ toYaml . | indent 2 }}
+{{- end }}
+{{- with .controller.affinity }}
+affinity:
+{{ toYaml . | indent 2 }}
+{{- end }}
+{{- with .controller.tolerations }}
+tolerations:
+{{ toYaml . | indent 2 }}
+{{- end }}
+{{- if $root.Values.secrets.data.registry.pullSecret }}
+imagePullSecrets:
+  - name: {{ template "library.name" $root }}-registry-pull-secret
+{{- end }}
+{{- end -}}

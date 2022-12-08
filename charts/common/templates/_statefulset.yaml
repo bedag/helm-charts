@@ -1,0 +1,103 @@
+{{- define "common.statefulset" -}}
+{{- $root := . }}
+{{- range $name, $component := .Values.components }}
+{{- if $component.controller }}
+{{- if eq $component.controller.type "StatefulSet" }}
+{{- $statefulset := $component.controller }}
+{{- if $statefulset.deploy }}
+---
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: {{ template "library.name" $root }}-{{ $name }}
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ $name }}
+spec:
+  replicas: {{ $statefulset.replicas | default 1 }}
+  revisionHistoryLimit: {{ $statefulset.revisionHistoryLimit | default 3 }}
+  serviceName: {{ template "library.name" $root }}-{{ $name }}
+  updateStrategy:
+    type: {{ $statefulset.updateStrategy | default "RollingUpdate" }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "library.name" $root }}
+      app.kubernetes.io/instance: {{ $root.Release.Name }}
+      app.kubernetes.io/component: {{ $name }}
+  template:
+    metadata:
+      labels:
+{{ include "library.labels.stable" $root | indent 8 }}
+        app.kubernetes.io/component: {{ $name }}
+        {{- range $key, $value := $statefulset.extraLabels }}
+        {{ $key }}: {{ $value }}
+        {{- end }}
+        {{- if $statefulset.gatherMetrics }}
+        gatherMetrics: "enabled"
+        {{- end }}
+      annotations:
+        {{- if $statefulset.forceRedeploy }}
+        # timestamp using "now.Unix" makes "helm update" always mark the statefulset as changed
+        # and thus re-pull the image even if the tag has not changed (if imagePullPolicy = Always)
+        timestamp: {{ now.Unix | quote}}
+        {{- end }}
+        {{- range $key, $value := $statefulset.extraAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+        {{- range $statefulset.extraChecksumAnnotations }}
+        {{ .key }}: {{ include (print $.Template.BasePath .checksumFrom) $root | sha256sum }}
+        {{- end }}
+        {{- if or $statefulset.containers $statefulset.initContainers }}
+        {{- $containers := merge ($statefulset.containers | default dict) ($statefulset.initContainers | default dict) }}
+        {{- range $containerName, $containerValues := $containers }}
+        {{- $configMap := $containerValues.envConfigMap }}
+        {{- if and $configMap (not $statefulset.disableChecksumAnnotations) }}
+        checksum/envConfigMap: {{ print $configMap | sha256sum }}
+        {{- end }}
+        {{- $secret := $containerValues.envSecret }}
+        {{- if and $secret (not $statefulset.disableChecksumAnnotations) }}
+        checksum/envSecret: {{ print $secret | sha256sum }}
+        {{- end }}
+        {{- $configFiles := $containerValues.configFiles }}
+        {{- if and $configFiles (not $statefulset.disableChecksumAnnotations) }}
+        checksum/configFiles: {{ print $configFiles | sha256sum }}
+        {{- end }}
+        {{- $binaryFiles := $containerValues.binaryFiles }}
+        {{- if and $binaryFiles (not $statefulset.disableChecksumAnnotations) }}
+        checksum/binaryFiles: {{ print $binaryFiles | sha256sum }}
+        {{- end }}
+        {{- end }}
+        {{- end }}
+    spec:
+{{- include "common.pod" (dict "root" $root "controller" $statefulset "name" $name) | indent 6 }}
+{{- if or $statefulset.logPersistence $statefulset.extraVolumeClaimTemplates }}
+  volumeClaimTemplates:
+  {{- if $statefulset.logPersistence }}
+  {{- if $statefulset.logPersistence.enabled }}
+  - metadata:
+      name: log
+      labels:
+{{ include "library.labels.stable" $root | indent 8 }}
+        app.kubernetes.io/component: {{ $name }}
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ $statefulset.logPersistence.size | quote }}
+      {{- if $statefulset.logPersistence.storageClass }}
+      storageClassName: "{{ $statefulset.logPersistence.storageClass }}"
+      {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- if $statefulset.extraVolumeClaimTemplates }}
+  {{- with $statefulset.extraVolumeClaimTemplates }}
+  {{- toYaml . | nindent 2 }}
+  {{- end -}}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

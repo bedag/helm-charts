@@ -1,0 +1,30 @@
+{{- define "common.servicemonitor.headless.service" -}}
+{{- $root := . }}
+{{- if .Values.servicemonitor }}
+{{- if .Values.servicemonitor.deploy }}
+{{- range .Values.servicemonitor.endpoints }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "library.name" $root }}-{{ .componentSelector.value }}-headless
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ .componentSelector.value }}
+    headless: "true"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: http
+      port: 80
+      targetPort: {{ .headlessTargetPort | default "8080" }}
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ template "library.name" $root }}
+    {{ .componentSelector.key }}: {{ .componentSelector.value }}
+    gatherMetrics: "enabled"
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

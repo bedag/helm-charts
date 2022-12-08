@@ -1,0 +1,600 @@
+## Default values for common.
+## This is a YAML-formatted file.
+## Declare variables to be passed into your templates.
+
+## The following values are mandatory when using "helm lint --strict"
+#global:
+#  name: ""
+#  namePrefix: ""
+#  nameSuffix: ""
+#  fullnamePrefix: ""
+#  fullnameSuffix: ""
+#namePrefix: ""
+#nameSuffix: ""
+#fullnamePrefix: ""
+#fullnameSuffix: ""
+#nameOverride: ""
+#fullnameOverride: ""
+
+# defaultTag is used when no imageTag is specified in .Values.components.*.controller.image.tag
+defaultTag: latest
+
+# timezone to set as environment variable 'TZ' in each pod. Comment out for using default ("Europe/Zurich")
+#timezone: "Europe/Zurich"
+
+# secrets contains the pullSecret for the container registry to pull images.
+# In a Bedag namespace this value does not have to be set for Dockerhub or the Bedag registry
+secrets:
+  data:
+    registry:
+      pullSecret: ""
+
+# start common.networkpolicy
+# networkpolicy restricts all access between the pods. To configure allowed connections, go to components.*.networkpolicy.podSelector
+networkpolicy:
+  # deploy has to be set to true for rendering to be applied
+  deploy: true
+# end common.networkpolicy
+
+# start common.ingress
+# ingress is used for access from outside of kubernetes
+ingress:
+  # deploy has to be set to true for rendering to be applied
+  deploy: false
+  # IngressClassName, defines the class of the ingress controller. For Bedag classes see https://confluence.se.bedag.ch/display/KUBERNETES/Service+Katalog
+  ingressClassName: ""
+  # rules is a list of host rules used to configure the Ingress
+  rules:
+    # host is the URL which ingress is listening
+    - host: myapp.cluster.local
+      # http is a list of http selectors pointing to backends
+      http:
+        # paths is a list of paths that map requests to backends
+        paths:
+          # backend defines the referenced service endpoint to which the traffic will be forwarded to
+          - backend:
+              # serviceNameSuffix describes the suffix of the serviceName
+              serviceNameSuffix: component-1
+              # servicePort describes the port where the service is listening at (can be either a string or a number)
+              servicePort: http
+            # path which ingress is listening
+            path: "/"
+            # pathType Each path in an Ingress is required to have a corresponding path type. Comment out for using default ("ImplementationSpecific")
+            #pathType: "ImplementationSpecific"
+
+  # annotations is a dictionary for defining ingress controller specific annotations
+  annotations:
+    # nginx.ingress.kubernetes.io/proxy-buffer-size known to be necessary for keycloak because defaults are too small
+    #nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+    # nginx.ingress.kubernetes.io/ssl-redirect needs to be set to 'true' when using SSL/TLS offloading with a LB outside of Kubernetes
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  # tls configuration
+  tls:
+    # define your type of tls certificate, it can be one of:
+    # none: tls will be disabled
+    # existing: use an existing secret already present in the namespace. Requires secret name to be specified
+    # provided: use an officially generated certificate/key
+    # k8s: use the default k8s-ingress tls. no further configuration needed
+    # self: generate a self signed certificate, which is stored as secret. Needs commonName and validityDuration at least
+    type: "none"
+    # depending on the type you have further configuration options:
+    self:
+      # commonName of the certificate (mandatory)
+      commonName: "*.cluster.local"
+      # ipAddresses is an optional list of IP addresses to add in the Subject Alternative Names (SAN) section
+      ipAddresses: []
+      #  - "10.0.0.1"
+      # alternativeDnsNames is an optional list of DNS names to add in the Subject Alternative Names (SAN) sectiom
+      alternativeDnsNames: []
+      #  - "foo.com"
+      # validityDuration defines how long the certificate is valid (in days)
+      validityDuration: 365
+    existing:
+      # name of an existing secret with tls.crt & tls.key content
+      secret: ""
+    provided:
+      # If SSL is terminated on ingress and you have a generated (preferrably CERT-001) certificate/key
+      # Has to be base64 encoded and should be encrypted in the ejson vault
+      # Add Variable to your CI/CD Settings "SKIP_DECRYPT" with value "" that it doesnt decrypt the cert and fails. bsp. (https://git.mgmtbi.ch/kubernetes/applications/a51_capitastra_bbv/-/jobs/2055510#L70)
+      cert: ""
+      # The key must not have a passphrase
+      key: ""
+# end common.ingress
+
+# start common.servicemonitor
+# servicemonitor is from CoreOS and lets you scrape metrics with the prometheus-operators
+# Hint: The output of the metrics endpoint must be correctly formatted, see https://github.com/prometheus/docs/blob/master/content/docs/instrumenting/exposition_formats.md
+# - /actuator/metrics in Spring Boot based applications from Bedag, this endpoint is not served (plain json output)
+# - /metrics in Spring Boot based applications from Bedag this is the correct endpoint to scrape metrics
+servicemonitor:
+  # deploy has to be set to true for rendering to be applied
+  deploy: false
+  # basicAuth is a dictionary for defining values for setting up basic Authentication
+  basicAuth:
+    # enabled when set to 'true', adds basic authentication to all endpoints
+    enabled: false
+    # existingSecret if not empty (""), points to an existing secret (matching name of the resource)
+    existingSecret: ""
+    # newSecret is a dictionary for defining key/value pairs to be stored in a new secret
+    newSecret: {}
+      #username: bedag
+      #password: changeit
+      #custom-username: bedag-custom
+      #custom-password: changeit-custom
+    # userKey is the default key to grab the username in the secret
+    userKey: username
+    # passwordKey is the default key to grab the password in the secret
+    passwordKey: password
+  # endpoints is a dictionary of one or more endpoints to configure
+  endpoints: {}
+    # komponente is a sample endpoint
+    #komponente:
+      # componentSelector is used for selecting specific pods
+      #componentSelector:
+        # key is the name of the label
+        #key: app.kubernetes.io/component
+        # value is the value of the label
+        #value: komponente
+      # headlessTargetPort is the port for the headless service. Comment out for using default ("8080")
+      #headlessTargetPort: 8080
+      # path is the path to scrape metrics from. Comment out for using default ("/metrics")
+      #path: /metrics
+      # interval sets the scrape interval. Comment out for using default ("30s")
+      #interval: 30s
+      # port is used for matching the headless service. Comment out for using default ("http")
+      #port: http
+    # custom-komponente is a sample endpoint
+    #custom-komponente:
+      # overrideUserKey is used for overriding the default userKey (.Values.servicemonitor.basicAuth.userKey)
+      #overrideUserKey: custom-username
+      # overridePasswordKey is used for overriding the default passwordKey (.Values.servicemonitor.basicAuth.passwordKey)
+      #overridePasswordKey: custom-password
+      # componentSelector is used for selecting specific pods
+      #componentSelector:
+        # key is the name of the label
+        #key: app.kubernetes.io/component
+        # value is the value of the label
+        #value: custom-komponente
+      # headlessTargetPort is the port for the headless service. Comment out for using default ("8080")
+      #headlessTargetPort: 8080
+      # path is the path to scrape metrics from. Comment out for using default ("/metrics")
+      #path: /metrics
+      # interval sets the scrape interval. Comment out for using default ("30s")
+      #interval: 30s
+      # port is used for matching the headless service. Comment out for using default ("http")
+      #port: http
+# end common.servicemonitor
+
+# start common.pvcs
+# pvcs is used to create pvcs outside of deployments/statefulsets and is not bound to components
+pvcs:
+  # specify the name of the pvc
+  #- name: name-of-pvc
+  # size is optional with a default value of "1Gi"
+    #size: 10Gi
+  # accessModes is an optional list with a default list with the following slice: "ReadWriteOnce"
+    #accessModes:
+    #  - ReadWriteMany
+  # storageClassName is optional with a default value of ""
+    #storageClassName: "nfs-data"
+# end common.pvcs
+
+# components are a dictionary of single components to be configured
+components:
+  # specify the name of the component
+  component-1:
+    # start common.service
+    services:
+      # specify the name of the service
+      service-1:
+        # deploy has to be set to true for rendering to be applied
+        deploy: false
+        # type is optional with a default value of "ClusterIP"
+        #type:
+        # name is optional with a default value of "http"
+        #name:
+        # port is optional with a default value of "80"
+        #port:
+        # targetPort is optional with a default value of "http"
+        #targetPort:
+        # protocol is optional with a default value of "TCP"
+        #protocol:
+        # overrideSelectors is optional for overridding the default labels: 'app.kubernetes.io/name' & 'app.kubernetes.io/component'
+        #overrideSelectors:
+        #  label2.1: "label2"
+        #  label2.2: "label2"
+        # sessionAffinity supports "ClientIP" and "None". Used to maintain session affinity. Default value is "None".
+        #sessionAffinity: "ClientIP"
+    # end common.service
+    # start common.networkpolicy
+    # networkpolicy allows access from outside of the namespace or from other pods
+    networkpolicy:
+      # deploy has to be set to true for rendering to be applied
+      deploy: false
+      # trusted is optional with a default value of "false"
+      # when "true", access from Bedag platformspecific services (e.g. Ingress Controller) to the pods of the component is allowed
+      #trusted: "true"
+      # podSelector is a optional list of matchLabels maps. All pods matching the labels are allowed to access the pods of this component
+      #podSelector:
+      #- matchLabels:
+      #    app.kubernetes.io/name: appname
+      #    app.kubernetes.io/component: component-2
+      # ingressPort is optional with a default value of "80"
+      #ingressPort:
+    # end common.networkpolicy
+
+    # controller is used for deploying pods via Deployment, StatefulSet, Job or CronJob ressources
+    controller:
+      # deploy has to be set to true for rendering to be applied
+      deploy: false
+
+      #type has to be "Deployment", "StatefulSet", "Job" or "CronJob"
+      type: "Deployment"
+
+      # Extra annotations on all Pods
+      # We use this for example to set the prometheus annotations.
+      extraAnnotations: {}
+        # foo: bar
+        # prometheus.io/path: /metrics
+        # prometheus.io/port: "8080"
+        # prometheus.io/scrape: "true"
+
+      # Extra labels on all Pods
+      # We use this for example to set the Loki logging tenant.
+      extraLabels: {}
+        # foo: bar
+        # tenant.nsm.bedag.ch/xOrgId: MyTenant
+
+      # gatherMetrics is true: service get a label which triggers serviceMonitor to gather metrics
+      gatherMetrics: false
+
+      # START ONLY FOR STATEFULSETS OR DEPLOYMENTS
+      # replicas is number of replicas to deploy via statefulset or deployment. Comment out for using default (1)
+      #replicas: 2
+
+      # revisionHistoryLimit is the number of helm release revisions to retain. Comment out for using default (3)
+      #revisionHistoryLimit: 3
+
+      # forceRedeploy forces a new pull of the image and therefore always triggers a complete deployment (pullPolicy has to be set to 'Always')
+      # How it works:
+      # 1. In the annotations of the pods a timestamp is set; When there is a new deployment the Kubernetes resource (e.g. Statefulset) will redeploy its pods because the timestamp has changed.
+      # 2. If the pullPolicy is set to 'Always' the image is always downloaded again and no cache ist used to get old image (useful when developing with imagetag latest).
+      forceRedeploy: false
+
+      # By default a component will be restarted during a deployment if the content of envSecret or envConfigMap changes.
+      # Normally we want that but there may be edge cases where we need the ability to disable this behavior (disableChecksumAnnotations: true).
+      disableChecksumAnnotations: false
+
+      # extraChecksumAnnotations let us define additional checksum annotations for custom content (eg. a ConfigMap) outside the common chart.
+      # key:          The key of the podAnnotation to store the checksum on.
+      # checksumFrom: The sha256 checksum is calculated from the file specified here. The directory "templates" in your custom helm chart is the ROOT dir.
+      #               So when you place your file in myChart/templates/app-a/config.yaml, use the example below:
+      extraChecksumAnnotations: []
+      # - key: checksum/myconfig
+      #   checksumFrom: /app-a/config.yaml
+      ## END ONLY FOR STATEFULSETS OR DEPLOYMENTS
+
+      # START ONLY FOR STATEFULSETS
+      # updateStrategy of statefulset. Can be "RollingUpdate" or "OnDelete". Comment out for using default ("RollingUpdate")
+      #updateStrategy: "OnDelete"
+
+      extraVolumeClaimTemplates: []
+        #- metadata:
+        #    name: foobar
+        #  spec:
+        #    accessModes: [ "ReadWriteOnce" ]
+        #    storageClassName: myStorageClass
+        #    resources:
+        #      requests:
+        #        storage: 2Gi
+      # END ONLY FOR STATEFULSETS
+
+      # START ONLY FOR DEPLOYMENTS
+      # strategy is a dictionary for specifying properties about the strategy on deployment updates
+      strategy: {}
+        # type of deployment. Can be "Recreate" or "RollingUpdate". Comment out for using default ("Recreate")
+        #type: "RollingUpdate"
+        # maxSurge is only needed when type is "RollingUpdate". The maximum number of pods that can be scheduled above the desired number of pods. Value can be an absolute number (ex: 5) or a percentage of desired pods (ex: 10%). Comment out for using default (1)
+        #maxSurge: 2
+        # maxUnavailable is only needed when type is "RollingUpdate". The maximum number of pods that can be unavailable during the update. Value can be an absolute number (ex: 5) or a percentage of desired pods (ex:10%). Comment out for using default (1)
+        #maxUnavailable: 50%
+      # END ONLY FOR DEPLOYMENTS
+
+      # START ONLY FOR JOBS OR CRONJOBS
+      # see https://v1-23.docs.kubernetes.io/docs/reference/kubernetes-api/workload-resources/job-v1/ for more details
+
+      # completions specifies the desired number of successfully finished pods the job should be run with. Comment out for using default (nil)
+      #completions: 5
+
+      # CompletionMode specifies how Pod completions are tracked. Comment out for using default ("NonIndexed")
+      #completionMode: "Indexed"
+
+      # backoffLimit specifies the number of retries before marking this job failed. Comment out for using default (6)
+      #backoffLimit: 4
+
+      # activeDeadlineSeconds specifies the duration in seconds relative to the startTime that the job may be continuously active before the system tries to terminate it; value must be positive integer. If a Job is suspended (at creation or through an update), this timer will effectively be stopped and reset when the Job is resumed again. Comment out for using default (nil)
+      #activeDeadlineSeconds: 120
+
+      # ttlSecondsAfterFinished limits the lifetime of a Job that has finished execution (either Complete or Failed). If this field is set, ttlSecondsAfterFinished after the Job finishes, it is eligible to be automatically deleted. When the Job is being deleted, its lifecycle guarantees (e.g. finalizers) will be honored. If this field is unset, the Job won't be automatically deleted. If this field is set to zero, the Job becomes eligible to be deleted immediately after it finishes. Comment out for using default (nil)
+      #ttlSecondsAfterFinished: 0
+
+      # Suspend specifies whether the Job controller should create Pods or not. If a Job is created with suspend set to true, no Pods are created by the Job controller. If a Job is suspended after creation (i.e. the flag goes from false to true), the Job controller will delete all active Pods associated with this Job. Users must design their workload to gracefully handle this. Suspending a Job will reset the StartTime field of the Job, effectively resetting the ActiveDeadlineSeconds timer too. Comment out for using default (false).
+      #suspend: true
+
+      # parallelism specifies the maximum desired number of pods the job should run at any given time. Comment out for using default (1)
+      #parallelism: 2
+      # END ONLY FOR JOBS
+
+      # START ONLY FOR CRONJOB
+      # The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron, Comment out for using default ("* * * * *")
+      #schedule: "* * * * *"
+
+      # concurrencyPolicy specifies how to treat concurrent executions of a Job. Comment out for using default (Allow)
+      #concurrencyPolicy: "Forbid"
+
+      # failedJobsHistoryLimit: The number of failed finished jobs to retain. Value must be non-negative integer. Defaults to 1.
+      #failedJobsHistoryLimit: 2
+
+      # startingDeadlineSeconds: Optional deadline in seconds for starting the job if it misses scheduled time for any reason. Missed jobs executions will be counted as failed ones.
+      #startingDeadlineSeconds: 60
+
+      # successfulJobsHistoryLimit: The number of successful finished jobs to retain. Value must be non-negative integer. Defaults to 3.
+      #successfulJobsHistoryLimit: 4
+      # END ONLY FOR CRONJOB
+
+      # start pod
+      # if a pod needs a different ServiceAccount than "default" then you can specify it here
+      # serviceAccountName: myserviceaccount
+
+      # automountServiceAccountToken indicates whether a service account token should be automatically mounted.
+      # By default, kubernetes mounts service account token at "/run/secrets/kubernetes.io/serviceaccount/".
+      # We turn this off by default as 99% of all applications simply do not communicate with the kubernetes API.
+      automountServiceAccountToken: false
+
+      # Priority indicates the importance of a Pod relative to other Pods. If a Pod cannot be scheduled,
+      # the scheduler tries to preempt (evict) lower priority Pods to make scheduling of the pending Pod possible.
+      #priorityClassName: bronze-tier-priority
+
+      # Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always.
+      #restartPolicy: "Never"
+
+      # podSecurityContext holds pod-level security attributes and common container settings.
+      # Some fields are also present in container.securityContext. Field values of containerSecurityContext take precedence over field values of podSecurityContext.
+      # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podsecuritycontext-v1-core
+      podSecurityContext:
+        enabled: false
+        # fsGroup: 2001
+        # runAsGroup: 1001
+        # runAsNonRoot: true
+        # runAsUser: 1001
+        # supplementalGroups: []
+
+      nodeSelector: {}
+      tolerations: []
+      affinity: {}
+
+      # volumes is a list of volumes to be created as secret or configMap
+      volumes: []
+        # name of the volume
+        #- name: generic-name
+        # type can either be "secret", "configMap" or "persistentVolumeClaim"
+        #  type: "secret"
+        # START ONLY FOR SECRET or CONFIGMAP
+        # filePath is optional for specifying a filePath in the helm chart where the file is located.
+        #  filePath: "files/xy.yml"
+        # defaultMode mode bits to use on created files by default. Must be a value between 0 and 0777. Comment out for not setting any and using default (0644)
+        #  defaultMode: 0644
+        # END ONLY FOR SECRET or CONFIGMAP
+        # START ONLY FOR PERSISTENTVOLUMECLAIM
+        # claimNameSuffix has to be the same as .pvcs.[].name
+        #  claimNameSuffix: "name-of-pvc"
+        # readOnly will force the ReadOnly setting in VolumeMounts. Comment out for using default (false)
+        #  readOnly: true
+        # END ONLY FOR PERSISTENTVOLUMECLAIM
+      # end pod
+
+      # start containers
+      # dictionary of containers in a pod
+      containers: {}
+        #container-1:
+          # image is a dictionary for specifying properties about the container image
+          #image:
+            # repository is the path to the image repository including container image name
+            #repository: registry-group.mgmtbi.ch/docker_base/nginx
+            # tag specifies the imagetag of the container to use. Set to "" for using .Values.defaultTag
+            #tag: "1.16"
+            # pullPolicy can be set to "Always". Comment out for using default ("IfNotPresent")
+            #pullPolicy: Always
+
+          # command Entrypoint array. Not executed within a shell. The docker image's ENTRYPOINT is used if this is not provided.
+          #command: []
+
+          # args Arguments to the entrypoint. The docker image's CMD is used if this is not provided.
+          #args: []
+
+          # containerSecurityContext holds security configuration that will be applied to a container.
+          # Some fields are present in both containerSecurityContext and podSecurityContext. When both are set, the values in containerSecurityContext take precedence.
+          # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#securitycontext-v1-core
+          # Values that are not commented out should be implemented in every setup to increase security.
+          #containerSecurityContext:
+          #  enabled: false
+          #  capabilities:
+          #    # add: []
+          #    drop:
+          #    - ALL
+          #  allowPrivilegeEscalation: false
+          #  privileged: false
+          #  readOnlyRootFilesystem: true
+          #  runAsGroup: 1001
+          #  runAsNonRoot: true
+          #  runAsUser: 1001
+
+          # env is an array of environment variables
+          #env: {}
+          #
+          # You can define environment variables as slice
+          #  - name: foo
+          #    value: bar
+          #
+          # You can define environment variables as map
+          #  foo: bar
+
+          # envSecret is a dictionary of environment variables, key: value
+          #envSecret: {}
+
+          # envConfigMap is a dictionary of environment variables, key: value
+          #envConfigMap: {}
+
+          # configFiles is a dictionary of arbitrary config files in the structure below
+          # format has to be "key=value", "yaml" or "simple". Default: "key=value"
+          # secret is optional for specifying if file should be created as a Secret (= true) or ConfigMap (= false or not specified)
+          # mountPath the path where you want to mount the file
+          # content is where you define the file content based on the used format
+          #configFiles: {}
+            #application.properties:
+            #  format: "key=value"
+            #  secret: true
+            #  mountPath: /opt/application.properties
+            #  content:
+            #    key1: foo
+            #    key2: bar
+
+            #roleset.properties:
+            #  mountPath: /opt/roleset.properties
+            #  content:
+            #    default1: "value1"
+
+            #application.yml:
+            #  format: "yaml"
+            #  mountPath: /opt/application.yml
+            #  content:
+            #    yaml1: val1
+            #    yaml2: val2
+            #    yaml3: val3
+            #    yaml4:
+            #      subkey1: subval1
+
+            #application.conf:
+            #  format: "simple"
+            #  mountPath: /opt/application.conf
+            #  content: |
+            #    [general]
+            #    foo = bar
+            #
+            #    [custom]
+            #    mitz = mau
+
+          # binaryFiles contains a list of binary files, each defining mountPath and content (whereas content must be base64 encoded). Usefull for licenses, keystores, etc.
+          #binaryFiles: {}
+            #binaryFilename:
+            #  mountPath: /opt/my-binary-license
+            #  content: 'base64 encoded data'
+
+          # specify the port(s) of the container.
+          #containerPorts:
+          #  - name: "http"
+          #    containerPort: 80
+
+          ## Configure extra options for liveness, readiness and startup probes
+          ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes)
+          #livenessProbe:
+            #enabled: true
+            #initialDelaySeconds: 5
+            #periodSeconds: 5
+            #timeoutSeconds: 1
+            #failureThreshold: 3
+            #successThreshold: 1
+            # START ONLY HTTPGET
+            #path: "/index.html"
+            #port: 80
+            # END ONLY HTTPGET
+            # START ONLY EXECCOMMAND
+            #execCommand: [ "/bin/true" ]
+            # END ONLY EXECCOMMAND
+            # START ONLY TCPSOCKET
+            #tcpSocket:
+            # port is either a name or a number
+            #  port: 80
+            # END ONLY TCPSOCKET
+
+          #readinessProbe:
+            #enabled: true
+            #initialDelaySeconds: 5
+            #periodSeconds: 5
+            #timeoutSeconds: 1
+            #failureThreshold: 3
+            #successThreshold: 1
+            # START ONLY HTTPGET
+            #path: "/index.html"
+            #port: 80
+            # END ONLY HTTPGET
+            # START ONLY EXECCOMMAND
+            #execCommand: [ "/bin/true" ]
+            # END ONLY EXECCOMMAND
+            # START ONLY TCPSOCKET
+            #tcpSocket:
+            # port is either a name or a number
+            #  port: 80
+            # END ONLY TCPSOCKET
+
+          #startupProbe:
+            #enabled: true
+            #initialDelaySeconds: 5
+            #periodSeconds: 5
+            #timeoutSeconds: 1
+            #failureThreshold: 3
+            #successThreshold: 1
+            # START ONLY HTTPGET
+            #path: "/index.html"
+            #port: 80
+            # END ONLY HTTPGET
+            # START ONLY EXECCOMMAND
+            #execCommand: [ "/bin/true" ]
+            # END ONLY EXECCOMMAND
+            # START ONLY TCPSOCKET
+            #tcpSocket:
+            # port is either a name or a number
+            #  port: 80
+            # END ONLY TCPSOCKET
+
+          # logPersistence is a dictionary for specifying properties about a log directory to persist. Global values .Values.logPersistence can be overriden here
+          #logPersistence:
+            # enabled when set to 'true', adds volume for this component writing log files to
+            #enabled: false
+            # storageClass to use when claming persistence volume
+            #storageClass: ""
+            # size for persistence volume to claim
+            #size: 1Gi
+            # directory to mount the persistence volume claim into
+            #logMountpoint: /var/log/nginx
+
+          #resources: {}
+            # We usually recommend not to specify default resources and to leave this as a conscious
+            # choice for the user. This also increases chances charts run on environments with little
+            # resources, such as Minikube. If you do want to specify resources, uncomment the following
+            # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+            # limits:
+            #  cpu: 100m
+            #  memory: 128Mi
+            # requests:
+            #  cpu: 100m
+            #  memory: 128Mi
+
+          # volumeMounts is a list of volumes to be mounted in the container of the pod
+          #volumeMounts: []
+            # name of the volume, same as in components.controller.volumes.name
+            # path where the volume should be mounted
+            # subPath is an optional path within the volume from which the container's volume should be mounted. Useful for single files instead of directories
+            # readOnly mounted read-only if true, read-write otherwise (false or unspecified). Comment out for using default (false)
+            # clearNamePrefix when true, only value of "name" is used, otherwise (and by default) the templated manifest is prefixed with "library.name".
+            #- name: test1
+            #  path: /tmp/test1
+            #  subPath: test1.yml
+            #  readOnly: true
+            #  clearNamePrefix: false
+      # end containers
+
+      # start initContainers
+      # dictionary of initContainers in a pod
+      initContainers: {}
+      # end initContainers

@@ -1,0 +1,152 @@
+{{- define "common.container" -}}
+{{- $root := .root }}
+{{- $componentName := .componentName }}
+{{- $containerName := .containerName }}
+{{- $containerValues := .containerValues }}
+{{- $configFiles := .configFiles }}
+- name: {{ $containerName }}
+  image: "{{ $containerValues.image.repository }}:{{ $containerValues.image.tag | default $root.Values.defaultTag }}"
+  imagePullPolicy: {{ default "IfNotPresent" $containerValues.image.pullPolicy | quote }}
+  {{- with $containerValues.command }}
+  command: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $containerValues.args }}
+  args: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  env:
+    - name: TZ
+      value: {{ default "Europe/Zurich" $root.Values.timezone | quote }}
+  {{- with $containerValues.env  }}
+    {{- if (kindIs "slice" .) }}
+      {{- toYaml . | nindent 4 }}
+    {{- else }}
+      {{- range $key, $value := . }}
+    - name: {{ $key }}
+      value: {{ $value }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  ports:
+  {{- with $containerValues.containerPorts  }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  resources: {{- toYaml $containerValues.resources | nindent 4 }}
+  {{- if $containerValues.containerSecurityContext }}
+  {{- if $containerValues.containerSecurityContext.enabled }}
+  securityContext: {{- omit $containerValues.containerSecurityContext "enabled" | toYaml | nindent 4 }}
+  {{- end }}
+  {{- end }}
+  {{- if or $containerValues.logPersistence $containerValues.volumeMounts $containerValues.configFiles $containerValues.binaryFiles }}
+  volumeMounts:
+    {{- if $containerValues.logPersistence }}
+    {{- if $containerValues.logPersistence.enabled }}
+    - name: log
+      mountPath: {{ $containerValues.logPersistence.logMountpoint | quote }}
+    {{- end }}
+    {{- end }}
+    {{- if $containerValues.volumeMounts }}
+    {{- range $containerValues.volumeMounts }}
+    {{- if .clearNamePrefix }}
+    - name: {{ .name }}
+    {{- else }}
+    - name: {{ template "library.name" $root }}-{{ .name }}
+    {{- end }}
+      mountPath: {{ .path }}
+    {{- if .subPath }}
+      subPath: {{ .subPath }}
+    {{- end }}
+      readOnly: {{ .readOnly | default false }}
+    {{- end }}
+    {{- end }}
+    {{- range $key, $val := $containerValues.configFiles }}
+    {{- if $val.secret }}
+    - name: {{ $containerName }}-secret-configfiles
+    {{- else }}
+    - name: {{ $containerName }}-configfiles
+    {{- end }}
+      readOnly: true
+      mountPath: {{ $val.mountPath }}
+      subPath: {{ $key }}
+    {{- end }}
+    {{- range $key, $val := $containerValues.binaryFiles }}
+    - name: {{ $containerName }}-binaryfiles
+      readOnly: true
+      mountPath: {{ $val.mountPath }}
+      subPath: {{ $key }}
+    {{- end }}
+  {{- end }}
+  {{- if or $containerValues.envSecret $containerValues.envConfigMap }}
+  envFrom:
+    {{- if $containerValues.envSecret }}
+    - secretRef:
+        name: {{ template "library.name" $root }}-{{ $componentName }}-{{ $containerName }}
+    {{- end }}
+    {{- if $containerValues.envConfigMap }}
+    - configMapRef:
+        name: {{ template "library.name" $root }}-{{ $componentName }}-{{ $containerName }}
+    {{- end }}
+  {{- end }}
+  {{- if $containerValues.readinessProbe }}
+  {{- if $containerValues.readinessProbe.enabled }}
+  readinessProbe:
+    initialDelaySeconds: {{ $containerValues.readinessProbe.initialDelaySeconds | default 5 }}
+    periodSeconds: {{ $containerValues.readinessProbe.periodSeconds | default 5 }}
+    timeoutSeconds: {{ $containerValues.readinessProbe.timeoutSeconds | default 1 }}
+    successThreshold: {{ $containerValues.readinessProbe.successThreshold | default 1 }}
+    failureThreshold: {{ $containerValues.readinessProbe.failureThreshold | default 3 }}
+    {{- if $containerValues.readinessProbe.execCommand }}
+    exec:
+      command: {{ toYaml $containerValues.readinessProbe.execCommand | nindent 8 }}
+    {{- else if $containerValues.readinessProbe.tcpSocket }}
+    tcpSocket:
+      port: {{ $containerValues.readinessProbe.tcpSocket.port }}
+    {{- else }}
+    httpGet:
+      path: {{ $containerValues.readinessProbe.path | default "/index.html" | quote }}
+      port: {{ $containerValues.readinessProbe.port | default 80 }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- if $containerValues.livenessProbe }}
+  {{- if $containerValues.livenessProbe.enabled }}
+  livenessProbe:
+    initialDelaySeconds: {{ $containerValues.livenessProbe.initialDelaySeconds | default 5 }}
+    periodSeconds: {{ $containerValues.livenessProbe.periodSeconds | default 5 }}
+    timeoutSeconds: {{ $containerValues.livenessProbe.timeoutSeconds | default 1 }}
+    successThreshold: {{ $containerValues.livenessProbe.successThreshold | default 1 }}
+    failureThreshold: {{ $containerValues.livenessProbe.failureThreshold | default 3 }}
+    {{- if $containerValues.livenessProbe.execCommand }}
+    exec:
+      command: {{ toYaml $containerValues.livenessProbe.execCommand | nindent 8 }}
+    {{- else if $containerValues.livenessProbe.tcpSocket }}
+    tcpSocket:
+      port: {{ $containerValues.livenessProbe.tcpSocket.port }}
+    {{- else }}
+    httpGet:
+      path: {{ $containerValues.livenessProbe.path | default "/index.html" | quote }}
+      port: {{ $containerValues.livenessProbe.port | default 80 }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- if $containerValues.startupProbe }}
+  {{- if $containerValues.startupProbe.enabled }}
+  startupProbe:
+    initialDelaySeconds: {{ $containerValues.startupProbe.initialDelaySeconds | default 5 }}
+    periodSeconds: {{ $containerValues.startupProbe.periodSeconds | default 5 }}
+    timeoutSeconds: {{ $containerValues.startupProbe.timeoutSeconds | default 1 }}
+    successThreshold: {{ $containerValues.startupProbe.successThreshold | default 1 }}
+    failureThreshold: {{ $containerValues.startupProbe.failureThreshold | default 3 }}
+    {{- if $containerValues.startupProbe.execCommand }}
+    exec:
+      command: {{ toYaml $containerValues.startupProbe.execCommand | nindent 8 }}
+    {{- else if $containerValues.startupProbe.tcpSocket }}
+    tcpSocket:
+      port: {{ $containerValues.startupProbe.tcpSocket.port }}
+    {{- else }}
+    httpGet:
+      path: {{ $containerValues.startupProbe.path | default "/index.html" | quote }}
+      port: {{ $containerValues.startupProbe.port | default 80 }}
+    {{- end }}
+  {{- end }}
+  {{- end }}
+{{- end }}

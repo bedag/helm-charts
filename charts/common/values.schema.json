@@ -1,0 +1,953 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://s3.mgmtbi.ch/json-schemas/helm/common/x.y.z/values.schema.json",
+  "type": "object",
+  "$defs": {
+    "container": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "object",
+          "required": [
+            "repository",
+            "tag"
+          ],
+          "properties": {
+            "repository": {
+              "type": "string",
+              "pattern": "^(registry-group|registry|release-registry)\\.mgmtbi\\.ch\\/[a-z0-9-_]+[a-z0-9-_\\/]+$",
+              "examples": [
+                "registry-group.mgmtbi.ch/docker_base/nginx"
+              ]
+            },
+            "tag": {
+              "title": "SemVer check",
+              "description": "https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string using ECMA compatible regex with double escaping (\\) and option for 'latest' but then be compatible with postgres-tag format of XX.MM (without patch part)",
+              "type": "string",
+              "pattern": "^$|-SNAPSHOT$|^development$|^latest$|^(?:.+\/)?([^:]+)(?::.+)?$",
+              "examples": [
+                "latest",
+                "1.0.0"
+              ]
+            }
+          }
+        },
+        "command": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "containerSecurityContext": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "capabilities": {
+              "type": "object",
+              "properties": {
+                "add": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "drop": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "allowPrivilegeEscalation": {
+              "type": "boolean"
+            },
+            "privileged": {
+              "type": "boolean"
+            },
+            "readOnlyRootFilesystem": {
+              "type": "boolean"
+            },
+            "runAsGroup": {
+              "type": "integer"
+            },
+            "runAsNonRoot": {
+              "type": "boolean"
+            },
+            "runAsUser": {
+              "type": "integer"
+            }
+          }
+        },
+        "env": {
+          "type": ["array", "object"]
+        },
+        "envSecret": {
+          "type": "object"
+        },
+        "envConfigMap": {
+          "type": "object"
+        },
+        "configFiles": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "$ref": "#/$defs/configFile"
+            }
+          }
+        },
+        "binaryFiles": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "$ref": "#/$defs/binaryFile"
+            }
+          }
+        },
+        "containerPorts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "containerPort"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "containerPort": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "livenessProbe": {
+          "type": "object",
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "execCommand": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "readinessProbe": {
+          "type": "object",
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "execCommand": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "startupProbe": {
+          "type": "object",
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "execCommand": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "logPersistence": {
+          "type": "object",
+          "required": [
+            "enabled"
+          ],
+          "if": {
+            "properties": {
+              "enabled": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "size",
+              "logMountpoint"
+            ]
+          },
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "storageClass": {
+              "type": "string"
+            },
+            "size": {
+              "type": "string"
+            },
+            "logMountpoint": {
+              "type": "string"
+            }
+          }
+        },
+        "resources": {
+          "type": "object"
+        },
+        "volumeMounts": {
+          "type": "array",
+          "items": {
+            "$id": "#/properties/ingress/properties/rules/items",
+            "type": "object",
+            "required": [
+              "name",
+              "path"
+            ]
+          }
+        }
+      },
+      "required": [
+        "image",
+        "resources"
+      ]
+    },
+    "configFile": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "type": "string",
+          "enum": [
+            "key=value",
+            "yaml",
+            "simple"
+          ],
+          "default": "key=value"
+        },
+        "mountPath": {
+          "type": "string"
+        },
+        "secret": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "content",
+        "mountPath"
+      ]
+    },
+    "binaryFile": {
+      "type": "object",
+      "properties": {
+        "mountPath": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "mountPath",
+        "content"
+      ]
+    },
+    "servicemonitorEndpoint": {
+      "type": "object",
+      "required": [
+        "componentSelector"
+      ],
+      "properties": {
+        "componentSelector": {
+          "type": "object",
+          "required": [
+            "key",
+            "value"
+          ],
+          "properties": {
+            "key": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "headlessTargetPort": {
+          "default": 8080
+        },
+        "interval": {
+          "type": "string",
+          "default": "30s"
+        },
+        "overrideUserKey": {
+          "type": "string"
+        },
+        "overridePasswordKey": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string",
+          "default": "/metrics"
+        },
+        "port": {
+          "default": "http"
+        }
+      }
+    }
+  },
+  "properties": {
+    "defaultTag": {
+      "$id": "#/properties/defaultTag",
+      "title": "SemVer check",
+      "description": "https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string using ECMA compatible regex with double escaping (\\) and option for 'latest' but then be compatible with postgres-tag format of XX.MM (without patch part)",
+      "type": "string",
+      "pattern": "^$|-SNAPSHOT$|^development$|^latest$|^(?:.+\/)?([^:]+)(?::.+)?$",
+      "examples": [
+        "latest",
+        "1.0.0"
+      ]
+    },
+    "secrets": {
+      "$id": "#/properties/secrets",
+      "type": "object",
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "$id": "#/properties/secrets/properties/data",
+          "type": "object",
+          "required": [
+            "registry"
+          ],
+          "properties": {
+            "registry": {
+              "$id": "#/properties/secrets/properties/data/properties/registry",
+              "type": "object",
+              "required": [
+                "pullSecret"
+              ],
+              "properties": {
+                "pullSecret": {
+                  "$id": "#/properties/secrets/properties/data/properties/registry/properties/pullSecret",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "networkpolicy": {
+      "$id": "#/properties/networkpolicy",
+      "type": "object",
+      "required": [
+        "deploy"
+      ],
+      "properties": {
+        "deploy": {
+          "$id": "#/properties/networkpolicy/properties/deploy",
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "ingress": {
+      "$id": "#/properties/ingress",
+      "type": "object",
+      "required": [
+        "deploy"
+      ],
+      "if": {
+        "properties": {
+          "deploy": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "rules",
+          "annotations",
+          "tls"
+        ]
+      },
+      "properties": {
+        "deploy": {
+          "type": "boolean",
+          "default": false
+        },
+        "ingressClassName": {
+          "type": "string"
+        },
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "host",
+              "http"
+            ],
+            "properties": {
+              "host": {
+                "type": "string",
+                "examples": [
+                  "myapp.cluster.local"
+                ]
+              },
+              "http": {
+                "type": "object",
+                "required": [
+                  "paths"
+                ],
+                "properties": {
+                  "paths": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "backend",
+                        "path"
+                      ],
+                      "properties": {
+                        "backend": {
+                          "type": "object",
+                          "required": [
+                            "serviceNameSuffix",
+                            "servicePort"
+                          ],
+                          "properties": {
+                            "serviceNameSuffix": {
+                              "type": "string"
+                            },
+                            "servicePort": {
+                              "type": [
+                                "number",
+                                "string"
+                              ]
+                            }
+                          }
+                        },
+                        "path": {
+                          "type": "string",
+                          "examples": [
+                            "/"
+                          ]
+                        },
+                        "pathType": {
+                          "type": "string",
+                          "default": "ImplementationSpecific",
+                          "examples": [
+                            "ImplementationSpecific",
+                            "Exact",
+                            "Prefix"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "annotations": {
+          "type": "object"
+        },
+        "tls": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "default": "none"
+            },
+            "existing": {
+              "type": "object",
+              "required": [
+                "secret"
+              ],
+              "properties": {
+                "secret": {
+                  "type": "string"
+                }
+              }
+            },
+            "provided": {
+              "type": "object",
+              "required": [
+                "cert",
+                "key"
+              ],
+              "properties": {
+                "cert": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                }
+              }
+            },
+            "self": {
+              "type": "object",
+              "required": [
+                "commonName",
+                "validityDuration"
+              ],
+              "properties": {
+                "commonName": {
+                  "type": "string"
+                },
+                "ipAddresses": {
+                  "type": "array"
+                },
+                "alternativeDnsNames": {
+                  "type": "array"
+                },
+                "validityDuration": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "servicemonitor": {
+      "type": "object",
+      "required": [
+        "deploy"
+      ],
+      "if": {
+        "properties": {
+          "deploy": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "basicAuth",
+          "endpoints"
+        ]
+      },
+      "properties": {
+        "deploy": {
+          "type": "boolean",
+          "default": false
+        },
+        "basicAuth": {
+          "type": "object",
+          "required": [
+            "enabled"
+          ],
+          "if": {
+            "properties": {
+              "enabled": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "existingSecret",
+              "newSecret",
+              "userKey",
+              "passwordKey"
+            ]
+          },
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false
+            },
+            "existingSecret": {
+              "type": "string"
+            },
+            "newSecret": {
+              "type": "object"
+            },
+            "userKey": {
+              "type": "string"
+            },
+            "passwordKey": {
+              "type": "string"
+            }
+          }
+        },
+        "endpoints": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "$ref": "#/$defs/servicemonitorEndpoint"
+            }
+          }
+        }
+      }
+    },
+    "pvcs": {
+      "$id": "#/properties/pvcs",
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$id": "#/properties/pvcs/items",
+        "type": "object",
+        "properties": {
+          "name": {
+            "$id": "#/properties/pvcs/items/name",
+            "type": "string",
+            "examples": [
+              "name-of-pvc"
+            ]
+          },
+          "size": {
+            "$id": "#/properties/pvcs/items/size",
+            "type": "string",
+            "default": "1Gi"
+          },
+          "accessModes": {
+            "$id": "#/properties/pvcs/items/accessModes",
+            "type": "array",
+            "items": {}
+          },
+          "storageClassName": {
+            "$id": "#/properties/pvcs/items/storageClassName",
+            "type": "string",
+            "examples": [
+              "nfs-data"
+            ]
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    },
+    "components": {
+      "$id": "#/properties/components",
+      "type": "object",
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "required": [
+            "services",
+            "controller"
+          ],
+          "properties": {
+            "services": {
+              "type": "object",
+              "patternProperties": {
+                "^.*$": {
+                  "type": "object",
+                  "required": [
+                    "deploy"
+                  ],
+                  "properties": {
+                    "deploy": {
+                      "type": "boolean",
+                      "default": false
+                    }
+                  }
+                }
+              }
+            },
+            "networkpolicy": {
+              "type": "object",
+              "required": [
+                "deploy"
+              ],
+              "properties": {
+                "deploy": {
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            },
+            "controller": {
+              "type": "object",
+              "required": [
+                "deploy",
+                "type"
+              ],
+              "properties": {
+                "deploy": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "Deployment",
+                    "StatefulSet",
+                    "Job",
+                    "CronJob"
+                  ]
+                },
+                "gatherMetrics": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "extraAnnotations": {
+                  "type": "object"
+                },
+                "extraLabels": {
+                  "type": "object"
+                },
+                "replicas": {
+                  "type": "integer",
+                  "default": 1
+                },
+                "revisionHistoryLimit": {
+                  "type": "integer",
+                  "default": 3
+                },
+                "forceRedeploy": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "updateStrategy": {
+                  "type": "string",
+                  "default": "RollingUpdate"
+                },
+                "extraVolumeClaimTemplates": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "metadata": {
+                        "type": "object",
+                        "required": [
+                          "name"
+                        ]
+                      },
+                      "spec": {
+                        "type": "object",
+                        "properties": {
+                          "accessModes": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "storageClassName": {
+                            "type": "string"
+                          },
+                          "resources": {
+                            "type": "object"
+                          }
+                        },
+                        "required": [
+                          "accessModes",
+                          "storageClassName",
+                          "resources"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "metadata",
+                      "spec"
+                    ]
+                  }
+                },
+                "strategy": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "default": "Recreate"
+                    },
+                    "maxSurge": {
+                      "type": "string",
+                      "default": "1"
+                    },
+                    "maxUnavailable": {
+                      "type": "string",
+                      "default": "1"
+                    }
+                  }
+                },
+                "completions": {
+                  "type": "integer"
+                },
+                "completionMode": {
+                  "type": "string",
+                  "enum": [
+                    "NonIndexed",
+                    "Indexed"
+                  ]
+                },
+                "backoffLimit": {
+                  "type": "integer"
+                },
+                "activeDeadlineSeconds": {
+                  "type": "integer"
+                },
+                "ttlSecondsAfterFinished": {
+                  "type": "integer"
+                },
+                "suspend": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "parallelism": {
+                  "type": "integer"
+                },
+                "schedule": {
+                  "type": "string",
+                  "default": "* * * * *"
+                },
+                "concurrencyPolicy": {
+                  "type": "string",
+                  "enum": [
+                    "Allow",
+                    "Forbid",
+                    "Replace"
+                  ]
+                },
+                "failedJobsHistoryLimit": {
+                  "type": "integer"
+                },
+                "startingDeadlineSeconds": {
+                  "type": "integer"
+                },
+                "successfulJobsHistoryLimit": {
+                  "type": "integer"
+                },
+                "disableChecksumAnnotations": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "extraChecksumAnnotations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "key": {
+                        "type": "string",
+                        "minLength": 3,
+                        "maxLength": 253
+                      },
+                      "checksumFrom": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "key",
+                      "checksumFrom"
+                    ]
+                  }
+                },
+                "serviceAccountName": {
+                  "type": "string"
+                },
+                "automountServiceAccountToken": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "priorityClassName": {
+                  "type": "string"
+                },
+                "restartPolicy": {
+                  "type": "string",
+                  "enum": [
+                    "Always",
+                    "Never",
+                    "OnFailure"
+                  ]
+                },
+                "podSecurityContext": {
+                  "type": "object",
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "fsGroup": {
+                      "type": "integer"
+                    },
+                    "runAsGroup": {
+                      "type": "integer"
+                    },
+                    "runAsNonRoot": {
+                      "type": "boolean"
+                    },
+                    "runAsUser": {
+                      "type": "integer"
+                    },
+                    "supplementalGroups": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                },
+                "nodeSelector": {
+                  "type": "object"
+                },
+                "tolerations": {
+                  "type": "array"
+                },
+                "affinity": {
+                  "type": "object"
+                },
+                "volumes": {
+                  "type": "array",
+                  "items": {
+                    "$id": "#/properties/ingress/properties/rules/items",
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "type"
+                    ]
+                  }
+                },
+                "containers": {
+                  "type": "object",
+                  "patternProperties": {
+                    "^.*$": {
+                      "$ref": "#/$defs/container"
+                    }
+                  }
+                },
+                "initContainers": {
+                  "type": "object",
+                  "patternProperties": {
+                    "^.*$": {
+                      "$ref": "#/$defs/container"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,8 +1,10 @@
 apiVersion: v2
 name: manifests
-description: "Bedag's Manifest chart. Library full of basic kubernetes manifests."
+# The manifests chart is deprecated and no longer maintained.
+deprecated: true
+description: "DEPRECATED Bedag's Manifest chart. Library full of basic kubernetes manifests."
 type: library
-version: 0.8.2
+version: 0.8.3
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 keywords:
 - Bedag

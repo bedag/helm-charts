@@ -1,4 +1,5 @@
 # Manifests Library
+> **:exclamation: This Helm Chart is deprecated!**
 
 ![Version: 0.8.2](https://img.shields.io/badge/Version-0.8.2-informational?style=flat-square) ![Type: library](https://img.shields.io/badge/Type-library-informational?style=flat-square)
 

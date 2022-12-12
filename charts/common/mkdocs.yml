@@ -1,8 +1,0 @@
-site_name: Changelog
-pages:
-  - Changelog: index.md
-theme: readthedocs
-site_dir: public
-markdown_extensions:
-  - toc:
-      permalink: True

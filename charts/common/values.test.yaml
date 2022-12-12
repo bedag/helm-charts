@@ -43,7 +43,7 @@ components:
       containers:
         container-1:
           image:
-            repository: registry-group.mgmtbi.ch/docker_base/nginx
+            repository: nginx
             tag: "1.16"
           command:
             - foo
@@ -80,7 +80,7 @@ components:
             # END ONLY EXECCOMMAND
         container-2:
           image:
-            repository: registry-group.mgmtbi.ch/docker_base/nginx
+            repository: nginx
             tag: "1.18"
           env:
             foo: bar
@@ -142,7 +142,7 @@ components:
       containers:
         container-1:
           image:
-            repository: registry-group.mgmtbi.ch/docker_base/nginx
+            repository: nginx
             tag: "1.16"
           resources: {}
           volumeMounts:
@@ -159,7 +159,7 @@ components:
       initContainers:
         initContainer-1:
           image:
-            repository: registry-group.mgmtbi.ch/docker_base/nginx
+            repository: nginx
             tag: "1.16"
           envSecret:
             foo: bar

@@ -23,7 +23,7 @@ defaultTag: latest
 #timezone: "Europe/Zurich"
 
 # secrets contains the pullSecret for the container registry to pull images.
-# In a Bedag namespace this value does not have to be set for Dockerhub or the Bedag registry
+# In a Bedag namespace this value does not have to be set for Dockerhub.
 secrets:
   data:
     registry:
@@ -41,7 +41,7 @@ networkpolicy:
 ingress:
   # deploy has to be set to true for rendering to be applied
   deploy: false
-  # IngressClassName, defines the class of the ingress controller. For Bedag classes see https://confluence.se.bedag.ch/display/KUBERNETES/Service+Katalog
+  # IngressClassName, defines the class of the ingress controller.
   ingressClassName: ""
   # rules is a list of host rules used to configure the Ingress
   rules:
@@ -95,7 +95,7 @@ ingress:
     provided:
       # If SSL is terminated on ingress and you have a generated (preferrably CERT-001) certificate/key
       # Has to be base64 encoded and should be encrypted in the ejson vault
-      # Add Variable to your CI/CD Settings "SKIP_DECRYPT" with value "" that it doesnt decrypt the cert and fails. bsp. (https://git.mgmtbi.ch/kubernetes/applications/a51_capitastra_bbv/-/jobs/2055510#L70)
+      # Add Variable to your CI/CD Settings "SKIP_DECRYPT" with value "" that it doesnt decrypt the cert and fails.
       cert: ""
       # The key must not have a passphrase
       key: ""
@@ -400,7 +400,7 @@ components:
           # image is a dictionary for specifying properties about the container image
           #image:
             # repository is the path to the image repository including container image name
-            #repository: registry-group.mgmtbi.ch/docker_base/nginx
+            #repository: nginx
             # tag specifies the imagetag of the container to use. Set to "" for using .Values.defaultTag
             #tag: "1.16"
             # pullPolicy can be set to "Always". Comment out for using default ("IfNotPresent")

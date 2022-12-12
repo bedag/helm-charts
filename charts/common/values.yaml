@@ -299,7 +299,7 @@ components:
       # END ONLY FOR DEPLOYMENTS
 
       # START ONLY FOR JOBS OR CRONJOBS
-      # see https://v1-23.docs.kubernetes.io/docs/reference/kubernetes-api/workload-resources/job-v1/ for more details
+      # see https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/job-v1/ for more details
 
       # completions specifies the desired number of successfully finished pods the job should be run with. Comment out for using default (nil)
       #completions: 5

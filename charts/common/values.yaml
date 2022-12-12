@@ -358,7 +358,7 @@ components:
 
       # podSecurityContext holds pod-level security attributes and common container settings.
       # Some fields are also present in container.securityContext. Field values of containerSecurityContext take precedence over field values of podSecurityContext.
-      # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#podsecuritycontext-v1-core
+      # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
       podSecurityContext:
         enabled: false
         # fsGroup: 2001
@@ -412,7 +412,7 @@ components:
 
           # containerSecurityContext holds security configuration that will be applied to a container.
           # Some fields are present in both containerSecurityContext and podSecurityContext. When both are set, the values in containerSecurityContext take precedence.
-          # ref: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.23/#securitycontext-v1-core
+          # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
           # Values that are not commented out should be implemented in every setup to increase security.
           #containerSecurityContext:
           #  enabled: false

@@ -15,7 +15,7 @@ Example output:
 library.labels.standard prints the standard Helm labels.
 The standard labels are frequently used in metadata.
 
-Based on https://docs.helm.sh/chart_best_practices/#standard-labels
+Based on https://helm.sh/docs/chart_best_practices/#standard-labels
 */ -}}
 {{- define "library.labels.standard" -}}
 app.kubernetes.io/name: {{ template "library.name" . }}

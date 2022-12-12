@@ -103,7 +103,7 @@ ingress:
 # start common.servicemonitor
 # servicemonitor is from CoreOS and lets you scrape metrics with the prometheus-operators
 # Hint: The output of the metrics endpoint must be correctly formatted, see https://github.com/prometheus/docs/blob/main/content/docs/instrumenting/exposition_formats.md
-# - /actuator/metrics in Spring Boot based applications from Bedag, this endpoint is not served (plain json output)
+# - /actuator/metrics in Spring Boot based applications, this endpoint is not served (plain json output)
 # - /metrics in Spring Boot based applications, this is the correct endpoint to scrape metrics
 servicemonitor:
   # deploy has to be set to true for rendering to be applied
@@ -116,9 +116,9 @@ servicemonitor:
     existingSecret: ""
     # newSecret is a dictionary for defining key/value pairs to be stored in a new secret
     newSecret: {}
-      #username: bedag
+      #username: username
       #password: changeit
-      #custom-username: bedag-custom
+      #custom-username: username-custom
       #custom-password: changeit-custom
     # userKey is the default key to grab the username in the secret
     userKey: username
@@ -211,7 +211,6 @@ components:
       # deploy has to be set to true for rendering to be applied
       deploy: false
       # trusted is optional with a default value of "false"
-      # when "true", access from Bedag platformspecific services (e.g. Ingress Controller) to the pods of the component is allowed
       #trusted: "true"
       # podSelector is a optional list of matchLabels maps. All pods matching the labels are allowed to access the pods of this component
       #podSelector:

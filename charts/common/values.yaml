@@ -23,7 +23,6 @@ defaultTag: latest
 #timezone: "Europe/Zurich"
 
 # secrets contains the pullSecret for the container registry to pull images.
-# In a Bedag namespace this value does not have to be set for Dockerhub.
 secrets:
   data:
     registry:
@@ -105,7 +104,7 @@ ingress:
 # servicemonitor is from CoreOS and lets you scrape metrics with the prometheus-operators
 # Hint: The output of the metrics endpoint must be correctly formatted, see https://github.com/prometheus/docs/blob/main/content/docs/instrumenting/exposition_formats.md
 # - /actuator/metrics in Spring Boot based applications from Bedag, this endpoint is not served (plain json output)
-# - /metrics in Spring Boot based applications from Bedag this is the correct endpoint to scrape metrics
+# - /metrics in Spring Boot based applications, this is the correct endpoint to scrape metrics
 servicemonitor:
   # deploy has to be set to true for rendering to be applied
   deploy: false

@@ -24,3 +24,4 @@
 .helmignore
 # gitlab files
 .gitlab-ci.yml
+README.md.gotmpl

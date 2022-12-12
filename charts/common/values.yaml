@@ -240,10 +240,8 @@ components:
         # prometheus.io/scrape: "true"
 
       # Extra labels on all Pods
-      # We use this for example to set the Loki logging tenant.
       extraLabels: {}
         # foo: bar
-        # tenant.nsm.bedag.ch/xOrgId: MyTenant
 
       # gatherMetrics is true: service get a label which triggers serviceMonitor to gather metrics
       gatherMetrics: false

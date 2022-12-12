@@ -2,13 +2,23 @@ apiVersion: v2
 name: common
 description: "Bedag's common Helm chart to use for creating other Helm charts"
 version: 7.0.0
+# A chart can be either an 'application' or a 'library' chart.
+#
+# Application charts are a collection of templates that can be packaged into versioned archives
+# to be deployed.
+#
+# Library charts provide useful utilities or functions for the chart developer. They're included as
+# a dependency of application charts to inject those utilities and functions into the rendering
+# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+
+# Because linting (in helm-v3.0.0) doesnt work correctly we use type application
 type: application
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 keywords:
 - Bedag
 - Common
 sources:
-- https://github.com/bedag/helm-charts/tree/master/charts/manifests
+- https://github.com/bedag/helm-charts/tree/master/charts/common
 maintainers:
   - email: sre@bedag.ch
     name: Site Reliability Engineering
@@ -17,4 +27,4 @@ annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
-    - "[Added]: Functionality for environment from source"
+    - "[Added]: Initial release"

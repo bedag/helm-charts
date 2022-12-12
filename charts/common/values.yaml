@@ -103,7 +103,7 @@ ingress:
 
 # start common.servicemonitor
 # servicemonitor is from CoreOS and lets you scrape metrics with the prometheus-operators
-# Hint: The output of the metrics endpoint must be correctly formatted, see https://github.com/prometheus/docs/blob/master/content/docs/instrumenting/exposition_formats.md
+# Hint: The output of the metrics endpoint must be correctly formatted, see https://github.com/prometheus/docs/blob/main/content/docs/instrumenting/exposition_formats.md
 # - /actuator/metrics in Spring Boot based applications from Bedag, this endpoint is not served (plain json output)
 # - /metrics in Spring Boot based applications from Bedag this is the correct endpoint to scrape metrics
 servicemonitor:

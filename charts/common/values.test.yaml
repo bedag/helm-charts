@@ -10,7 +10,7 @@ servicemonitor:
     enabled: true
     existingSecret: ""
     newSecret:
-      username: bedag
+      username: username
       password: changeit
   endpoints:
     komponente:
@@ -213,7 +213,7 @@ components:
       containers:
         job:
           image:
-            repository: registry-group.mgmtbi.ch/perl
+            repository: perl
             tag: "5.34.0"
           command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
           containerSecurityContext:
@@ -277,7 +277,7 @@ components:
       containers:
         job:
           image:
-            repository: registry-group.mgmtbi.ch/busybox
+            repository: busybox
             tag: "1.28"
           command: ["/bin/sh",  "-c", "date; echo Hello from the Kubernetes cluster"]
           containerSecurityContext:

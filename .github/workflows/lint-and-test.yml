@@ -2,10 +2,10 @@ name: helm-test
 on:
   pull_request:
     branches:
-      - 'main'
+      - 'master'
     paths:
-      - 'charts/tf-controller/**'
-      - '.github/workflows/helm-test.yaml'
+      - 'charts/**'
+      - '.github/workflows/lint-and-test.yaml'
 
 permissions: read-all
 

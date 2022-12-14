@@ -1,19 +1,15 @@
 ## Reference: https://github.com/helm/chart-testing/blob/master/doc/ct_lint-and-install.md
 ##
 remote: origin
+target-branch: master
 chart-dirs:
   - charts
 chart-repos:
   - buttahtoast=https://buttahtoast.github.io/helm-charts/
   - bedag=https://bedag.github.io/helm-charts/
-  - bitnami=https://charts.bitnami.com/bitnami
-  - elastic=https://helm.elastic.co
-  - grafana=https://grafana.github.io/helm-charts
-  - prometheus=https://prometheus-community.github.io/helm-charts
-  - hashicorp=https://helm.releases.hashicorp.com
-  - minio=https://helm.min.io
 validate-chart-schema: true
 validate-maintainers: true
 validate-yaml: false
-excluded-charts: 
+exclude-deprecated: true
+excluded-charts:
   - "manifests"

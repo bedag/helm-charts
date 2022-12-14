@@ -74,36 +74,38 @@ By adding `WIP: *` as prefix for your pull request title, your pull request is c
 
 When creating a Pull Request is automatically assigned. If your Pull Request does not have any activity after certain days, feel free to comment a reminder (it might happen that we forget about it, since we maintain this repository part time). Your Pull Request requires approve to be mergeable.
 
-# Chart Requirements
-
+# Development
 There are certain requirements charts have to match, to be maintained in your Helm Repository. Most of the requirements are relevant when you are planning to add a new chart to the repository.
-
-## Manifests Library
-
-**Important**: All of the maintained charts in this repository should make use of the [Bedag Manifests Library](./charts/manifests). There might be exceptions.
-
-When adding the Bedag Manifests Library as dependency, we don't add it as local dependency (aka via `file://..`) since the library itself has dependencies, which are not included that way. Therefor you must declare the dependency from the repository itself:
-
-```
-dependencies:
-  - name: manifests
-    version: "~0.4.0"
-    repository: https://bedag.github.io/helm-charts/
-```
 
 ## Documentation
 
 The documentation for each chart is done with [helm-docs](https://github.com/norwoodj/helm-docs). This way we can ensure that values are consistent with the chart documentation.
 
-See [here](https://github.com/norwoodj/helm-docs#installation) how to install the tool. Don't forget to execute `helm-docs` before pushing ;), our workflows will check that.
-
-We have a script on the repository which will execute the helm-docs docker container, so that you don't have to worry about downloading the binary etc. Simply execute the script (Bash compatible, might require sudo privileges):
+Generate helm documentation, requires docker:
 
 ``` 
-bash scripts/helm-docs.sh 
+make helm-docs
 ``` 
 
 **NOTE**: When creating your own `README.md.gotmpl`, don't forget to add it to your `.helmignore` file.
+
+### Testing
+
+Chart changes can be tested local with [ct](https://github.com/helm/chart-testing). Requires docker:
+
+```
+make helm-lint
+```
+
+# Pre-Commit
+
+The above mentioned actions can be automated when using [pre-commit](https://pre-commit.com/). After clone you need to install the hook script manually:
+
+```
+pre-commit install
+```
+
+
 
 ### Major Changes
 

@@ -1,6 +1,6 @@
 # Raw
 
-![Version: 1.1.0](https://img.shields.io/badge/Version-1.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 2.0.0](https://img.shields.io/badge/Version-2.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Render raw kubernetes manifests managed by a helm release
 
@@ -13,7 +13,7 @@ It is under active development and may contain bugs/unfinished documentation. An
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| SRE | sre@bedag.ch |  |
+| SRE | <sre@bedag.ch> |  |
 
 ## Source Code
 
@@ -23,7 +23,7 @@ It is under active development and may contain bugs/unfinished documentation. An
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://buttahtoast.github.io/helm-charts/ | library | ~0.3.0 |
+| https://buttahtoast.github.io/helm-charts/ | library | 3.0.0-rc.3 |
 
 # Examples
 

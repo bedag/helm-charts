@@ -1,7 +1,7 @@
 apiVersion: v2
 name: kafdrop
 description: Unofficial Helm Chart for Kafdrop
-version: 0.2.3
+version: 0.3.0
 appVersion: 3.27.0
 type: application
 home: https://github.com/obsidiandynamics/kafdrop
@@ -10,6 +10,7 @@ keywords:
   - Apache Kafka
   - Kafdrop
   - Browsing
+deprecated: true
 maintainers:
   - name: SRE
     email: sre@bedag.ch
@@ -20,6 +21,8 @@ dependencies:
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/prerelease: "false"
+  artifacthub.io/changes: |
+    - "[security]: add deprecation notice"
   artifacthub.io/images: |
     - name: kafdrop
       image: obsidiandynamics/kafdrop:3.27.0

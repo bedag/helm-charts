@@ -12,8 +12,8 @@ The chart is under active development and may contain bugs/unfinished documentat
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| NOC | noc@bedag.ch |  |
-| SRE | sre@bedag.ch |  |
+| NOC | <noc@bedag.ch> |  |
+| SRE | <sre@bedag.ch> |  |
 
 ## Source Code
 
@@ -112,7 +112,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | pod.securityContext | object | `{"allowPrivilegeEscalation":false,"runAsGroup":65534,"runAsUser":65534}` | Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) |
 | pod.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | pod.serviceAccount.apiVersion | string | v1 | Configure the api version used |
-| pod.serviceAccount.automountServiceAccountToken | bool | `true` | (bool) AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted. |
+| pod.serviceAccount.automountServiceAccountToken | bool | `true` | AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted. |
 | pod.serviceAccount.create | bool | `false` | Specifies whether a service account should be created |
 | pod.serviceAccount.enabled | bool | `false` | Specifies whether a service account is enabled or not |
 | pod.serviceAccount.globalPullSecrets | bool | `false` | Evaluate global set pullsecrets and mount, if set |
@@ -139,7 +139,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | service.extraPorts | list | `[{"name":"http","port":8080,"protocol":"TCP","targetPort":"http"},{"name":"https","port":8443,"protocol":"TCP","targetPort":"https"}]` | Add additional ports to the service |
 | service.labels | object | `{}` | Configure Service additional Labels |
 | service.loadBalancerIP | string | `""` | Configure Service [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer). Set the LoadBalancer service type to internal only. |
-| service.loadBalancerSourceRanges | list | `[]` | Configure Service [loadBalancerSourceRanges](https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service) |
+| service.loadBalancerSourceRanges | list | `[]` | Configure Service [loadBalancerSourceRanges](https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service) # Example: # loadBalancerSourceRanges: # - 10.10.10.0/24 # |
 | service.nodePort | string | `nil` | Specify the nodePort value for the LoadBalancer and NodePort service types |
 | service.port | int | 80 | Configure Service Port (Required) |
 | service.portName | string | http | Configure Service Port name |

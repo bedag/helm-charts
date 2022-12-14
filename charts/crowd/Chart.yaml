@@ -2,7 +2,7 @@ apiVersion: v2
 name: crowd
 description: Manage users from multiple directories - Active Directory, LDAP, OpenLDAP or Microsoft Azure AD - and control application authentication permissions in one single location
 type: application
-version: 0.4.0
+version: 0.5.0
 appVersion: 4.2.3
 keywords:
   - atlassian
@@ -15,15 +15,16 @@ sources:
 maintainers:
   - name: SRE
     email: sre@bedag.ch
+deprecated: true
 dependencies:
 - name: manifests
   version: "~0.5.0"
   repository: https://bedag.github.io/helm-charts
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
-  artifacthub.io/prerelease: "false"  
+  artifacthub.io/prerelease: "false"
   artifacthub.io/changes: |
-    - "[Added]: Chart Release"
+    - "[security]: add deprecation notice"
   artifacthub.io/images: |
     - name: crowd
       image: atlassian/crowd:4.2.3

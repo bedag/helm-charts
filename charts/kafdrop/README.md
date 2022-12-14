@@ -1,6 +1,8 @@
 # kafdrop
 
-![Version: 0.2.3](https://img.shields.io/badge/Version-0.2.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+> **:exclamation: This Helm Chart is deprecated!**
+
+![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Unofficial Helm Chart for Kafdrop
 
@@ -8,11 +10,16 @@ The chart is under active development and may contain bugs/unfinished documentat
 
 **Homepage:** <https://github.com/obsidiandynamics/kafdrop>
 
+## :warning: Deprecation and Archive Notice
+
+We are announcing the deprecation of this chart.
+This chart is no longer actively maintained and will be archived on 31.12.2022.
+
 ## Maintainers
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| SRE | sre@bedag.ch |  |
+| SRE | <sre@bedag.ch> |  |
 
 ## Requirements
 
@@ -151,7 +158,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | jmxExporter.service.extraPorts | list | `[]` | Add additional ports to the service |
 | jmxExporter.service.labels | object | `{}` | Configure Service additional Labels |
 | jmxExporter.service.loadBalancerIP | string | `""` | Configure Service [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer). Set the LoadBalancer service type to internal only. |
-| jmxExporter.service.loadBalancerSourceRanges | list | `[]` | Configure Service [loadBalancerSourceRanges](https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service) |
+| jmxExporter.service.loadBalancerSourceRanges | list | `[]` | Configure Service [loadBalancerSourceRanges](https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service) # Example: # loadBalancerSourceRanges: # - 10.10.10.0/24 # |
 | jmxExporter.service.nodePort | string | `""` | Specify the nodePort value for the LoadBalancer and NodePort service types |
 | jmxExporter.service.port | string | 80 | Configure Service Port (Required) |
 | jmxExporter.service.portName | string | http | Configure Service Port name |

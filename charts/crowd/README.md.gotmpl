@@ -8,6 +8,11 @@
 
 {{ template "chart.homepageLine" . }}
 
+## :warning: Deprecation and Archive Notice
+
+We are announcing the deprecation of this chart.
+This chart is no longer actively maintained and will be archived on 31.12.2022.
+
 {{/*
   Chart Maintainers
 */}}
@@ -139,7 +144,7 @@ volumePermissions:
 
 Here we have documented some issues and solutions while running Crowd on Kubernetes.
 
-### Data Center Setup 
+### Data Center Setup
 
 Here's how we got Crowd in Data Center working.
 
@@ -154,12 +159,8 @@ If you encounter any other issues or have tips, let us know.
 
 This can happen when the livenessprobe kills crowd to early. You will find the following message in your pod (and it will be crashing):
 
-``` 
+```
 [liquibase] Waiting for changelog lock....
 ```
 
 You will need to do some fixing in the database. [See the following article for more](https://confluence.atlassian.com/crowdkb/crowd-server-does-not-start-could-not-acquire-change-log-lock-1019399699.html). To prevent this, increase the `initialDelaySeconds` value for the livenessProbe.
-
-
-
-

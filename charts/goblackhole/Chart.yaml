@@ -2,7 +2,7 @@ apiVersion: v2
 name: goblackhole
 description: Offical Helm Chart for goblackhole
 type: application
-version: 0.0.1
+version: 0.0.2
 appVersion: 0.2.0
 keywords:
   - bgp
@@ -22,6 +22,6 @@ dependencies:
   repository: https://bedag.github.io/helm-charts
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
-  artifacthub.io/prerelease: "false"  
+  artifacthub.io/prerelease: "false"
   artifacthub.io/changes: |
     - "[Added]: Chart Release"

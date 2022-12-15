@@ -37,10 +37,6 @@ spec:
     - Ingress
   ingress:
     - from:
-      - namespaceSelector:
-          matchLabels:
-            # trusted label is used by Bedag on platformspecific services (e.g. Ingress Controller) for them to access the selected pods
-            trusted: {{ default "false" ($networkpolicy.trusted | quote) }}
       {{- if and $networkpolicy.podSelector }}
       {{- range $networkpolicy.podSelector }}
       {{- if and .matchLabels }}

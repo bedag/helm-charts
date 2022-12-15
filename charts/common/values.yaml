@@ -203,8 +203,6 @@ components:
     networkpolicy:
       # deploy has to be set to true for rendering to be applied
       deploy: false
-      # trusted is optional with a default value of "false"
-      #trusted: "true"
       # podSelector is a optional list of matchLabels maps. All pods matching the labels are allowed to access the pods of this component
       #podSelector:
       #- matchLabels:

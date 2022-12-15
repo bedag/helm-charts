@@ -57,7 +57,7 @@ crowd:
   # crowd.jvm_args -- Enter JVM Options which are used for the `JVM_SUPPORT_RECOMMENDED_ARGS` environment variables
   jvm_args: []
 
-  ## Catalina Arguments Options 
+  ## Catalina Arguments Options
   # crowd.catalina_opts -- Enter Catalina Options which are used for the `CATALINA_OPTS` environment variables
   catalina_opts: []
 
@@ -70,7 +70,7 @@ crowd:
 
     ## Run Crowd DataCenter Mode
     # crowd.cluster.nodeName -- If enabled automatically adds Pod Name as Node name for the cluster (`-Dcluster.node.name=crowd-X`)
-    nodeName: true 
+    nodeName: true
 
 
 ## Extra Resources

@@ -98,4 +98,3 @@ Major Changes to functions are documented with the version affected. **Before up
 | selectorLabels | object | `{}` | Define default [selectorLabels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) |
 
 This Chart implements the Bedag Manifest Chart. Therefor there are a lot of values for you to play around.
-

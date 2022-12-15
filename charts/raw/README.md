@@ -62,7 +62,7 @@ A very basic example. But might get you started.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| commonLabels | object | `{}` | Common Labels are added to each kubernetes resource manifest.  |
+| commonLabels | object | `{}` | Common Labels are added to each kubernetes resource manifest. |
 | overwriteLabels | object | `{}` | Overwrites default labels, but not resource specific labels and common labels |
-| resources | list | `[]` | Define resources to be deployed by the raw chart  |
-| templates | list | `[]` | Define templates which will be executed using the `tpl` function   |
+| resources | list | `[]` | Define resources to be deployed by the raw chart |
+| templates | list | `[]` | Define templates which will be executed using the `tpl` function |

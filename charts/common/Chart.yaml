@@ -20,8 +20,8 @@ keywords:
 sources:
 - https://github.com/bedag/helm-charts/tree/master/charts/common
 maintainers:
-  - email: sre@bedag.ch
-    name: Site Reliability Engineering
+  - name: SRE
+    email: sre@bedag.ch
 annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/prerelease: "false"

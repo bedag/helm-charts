@@ -24,4 +24,3 @@ limitations under the License.
 ---{{- (tpl . $)  | nindent 0 }}
   {{- end }}
 {{- end -}}
-

@@ -44,7 +44,7 @@ fullnameOverride: ""
 
 ## Common Labels
 # commonLabels -- Common Labels are added to each kubernetes resource manifest.
-commonLabels: 
+commonLabels:
 
 ## Overwrite Labels
 # overwriteLabels -- Overwrites default labels, but not resource specific labels and common labels

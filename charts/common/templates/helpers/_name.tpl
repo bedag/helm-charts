@@ -1,5 +1,5 @@
 {{- /*
-name defines a template for the name of the chart. It should be used for the `app` label. 
+name defines a template for the name of the chart. It should be used for the `app` label.
 This is common practice in many Kubernetes manifests, and is not Helm-specific.
 The prevailing wisdom is that names should only contain a-z, 0-9 plus dot (.) and dash (-), and should
 not exceed 63 characters.

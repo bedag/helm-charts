@@ -1,8 +1,13 @@
 ---
 name: 'PR Labels'
-on: 
+on:
   pull_request_target:
     types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   size-label:
     runs-on: ubuntu-latest

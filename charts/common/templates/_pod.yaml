@@ -116,8 +116,14 @@ affinity:
 tolerations:
 {{ toYaml . | indent 2 }}
 {{- end }}
+{{- if $root.Values.secrets }}
+{{- if $root.Values.secrets.data }}
+{{- if $root.Values.secrets.data.registry }}
 {{- if $root.Values.secrets.data.registry.pullSecret }}
 imagePullSecrets:
   - name: {{ template "library.name" $root }}-registry-pull-secret
+{{- end }}
+{{- end }}
+{{- end }}
 {{- end }}
 {{- end -}}

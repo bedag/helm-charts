@@ -9,8 +9,7 @@
         "image": {
           "type": "object",
           "required": [
-            "repository",
-            "tag"
+            "repository"
           ],
           "properties": {
             "repository": {
@@ -332,9 +331,6 @@
     "secrets": {
       "$id": "#/properties/secrets",
       "type": "object",
-      "required": [
-        "data"
-      ],
       "properties": {
         "data": {
           "$id": "#/properties/secrets/properties/data",

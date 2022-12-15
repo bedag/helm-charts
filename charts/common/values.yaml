@@ -4,17 +4,11 @@
 
 ## The following values are mandatory when using "helm lint --strict"
 #global:
-#  name: ""
 #  namePrefix: ""
 #  nameSuffix: ""
-#  fullnamePrefix: ""
-#  fullnameSuffix: ""
 #namePrefix: ""
 #nameSuffix: ""
-#fullnamePrefix: ""
-#fullnameSuffix: ""
 #nameOverride: ""
-#fullnameOverride: ""
 
 # defaultTag is used when no imageTag is specified in .Values.components.*.controller.image.tag
 defaultTag: latest

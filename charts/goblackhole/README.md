@@ -1,6 +1,6 @@
 # Goblackhole
 
-![Version: 0.0.2](https://img.shields.io/badge/Version-0.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.0.3](https://img.shields.io/badge/Version-0.0.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Offical Helm Chart for goblackhole
 
@@ -98,4 +98,3 @@ Major Changes to functions are documented with the version affected. **Before up
 | selectorLabels | object | `{}` | Define default [selectorLabels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) |
 
 This Chart implements the Bedag Manifest Chart. Therefor there are a lot of values for you to play around.
-

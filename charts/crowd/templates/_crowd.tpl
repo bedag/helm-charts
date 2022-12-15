@@ -43,7 +43,7 @@ Crowd Home
   Crowd Catalina Options
 */}}
 {{- define "crowd.catalina_opts" -}}
-{{ if $.Values.crowd.cluster.enabled }}{{ if $.Values.crowd.cluster.nodeName }}-Dcluster.node.name="$POD_NAME"{{ end }}{{ end }}{{ if $.Values.crowd.catalina_opts }}{{- include "lib.utils.strings.stringify" (dict "list" $.Values.crowd.catalina_opts "delimiter" "  " "context" $) }}{{- end }} 
+{{ if $.Values.crowd.cluster.enabled }}{{ if $.Values.crowd.cluster.nodeName }}-Dcluster.node.name="$POD_NAME"{{ end }}{{ end }}{{ if $.Values.crowd.catalina_opts }}{{- include "lib.utils.strings.stringify" (dict "list" $.Values.crowd.catalina_opts "delimiter" "  " "context" $) }}{{- end }}
 {{- end -}}
 
 

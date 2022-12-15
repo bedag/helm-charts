@@ -1,0 +1,30 @@
+{{- define "common.controller.binaryFiles" -}}
+{{- $root := . }}
+{{- range $componentName, $componentValues := .Values.components }}
+{{- if $componentValues.controller }}
+{{- if $componentValues.controller.deploy }}
+{{- if or $componentValues.controller.containers $componentValues.controller.initContainers }}
+{{- $containers := merge ($componentValues.controller.containers | default dict) ($componentValues.controller.initContainers | default dict) }}
+{{- range $containerName, $containerValues := $containers }}
+{{- $configBinarys := $containerValues.binaryFiles }}
+{{- if $configBinarys }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "library.name" $root }}-{{ $componentName }}-{{ $containerName }}-binaryfiles
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ $componentName }}-{{ $containerName }}
+type: Opaque
+data:
+{{- range $fileName, $definition := $configBinarys }}
+  {{ $fileName }}: {{ $definition.content | trim }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

@@ -1,0 +1,43 @@
+{{- define "common.jobspec" -}}
+{{- $root := .root }}
+{{- $name := .name }}
+{{- $job := .job }}
+{{- if $job.completions }}
+completions: {{ $job.completions }}
+{{- end }}
+{{- if $job.completionMode }}
+completionMode: {{ $job.completionMode | quote }}
+{{- end }}
+{{- if $job.backoffLimit }}
+backoffLimit: {{ $job.backoffLimit }}
+{{- end }}
+{{- if $job.activeDeadlineSeconds }}
+activeDeadlineSeconds: {{ $job.activeDeadlineSeconds }}
+{{- end }}
+{{- if kindIs "float64" $job.ttlSecondsAfterFinished }}
+ttlSecondsAfterFinished: {{ $job.ttlSecondsAfterFinished }}
+{{- end }}
+suspend: {{ $job.suspend | default false }}
+{{- if $job.parallelism }}
+parallelism: {{ $job.parallelism }}
+{{- end }}
+template:
+  metadata:
+    labels:
+{{ include "library.labels.stable" $root | indent 6 }}
+      app.kubernetes.io/component: {{ $name }}
+      {{- range $key, $value := $job.extraLabels }}
+      {{ $key }}: {{ $value }}
+      {{- end }}
+      {{- if $job.gatherMetrics }}
+      gatherMetrics: "enabled"
+      {{- end }}
+    {{- if $job.extraAnnotations }}
+    annotations:
+      {{- range $key, $value := $job.extraAnnotations }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    {{- end }}
+  spec:
+{{- include "common.pod" (dict "root" $root "controller" $job "name" $name) | indent 4 }}
+{{- end -}}

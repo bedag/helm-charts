@@ -2,7 +2,7 @@ apiVersion: v2
 name: goblackhole
 description: Offical Helm Chart for goblackhole
 type: application
-version: 0.0.2
+version: 0.0.3
 appVersion: 0.2.0
 keywords:
   - bgp

@@ -1,0 +1,37 @@
+{{- define "common.service" -}}
+{{- $root := . }}
+{{- range $componentname, $component := .Values.components }}
+{{- if $component.services }}
+{{- range $servicename, $service := $component.services }}
+{{- if $service.deploy }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "library.name" $root }}-{{ $componentname }}-{{ $servicename }}
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ $componentname }}
+spec:
+  type: {{ $service.type | default "ClusterIP" }}
+  ports:
+    - name: {{ $service.name | default "http" }}
+      port: {{ $service.port | default "80" }}
+      targetPort: {{ $service.targetPort | default "http" }}
+      protocol: {{ $service.protocol | default "TCP" }}
+  selector:
+{{- if not $service.overrideSelectors }}
+    app.kubernetes.io/name: {{ template "library.name" $root }}
+    app.kubernetes.io/instance: {{ $root.Release.Name }}
+    app.kubernetes.io/component: {{ $componentname }}
+{{- else }}
+{{- range $key, $val := $service.overrideSelectors }}
+    {{ $key }}: {{ $val | quote }}
+{{- end }}
+{{- end }}
+  sessionAffinity: {{ $service.sessionAffinity | default "None" }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

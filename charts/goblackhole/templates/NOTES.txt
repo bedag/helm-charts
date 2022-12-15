@@ -3,4 +3,3 @@
     1. Check Logs with:
       kubectl -n {{ $.Release.Namespace }} logs --selector=app.kubernetes.io/name=goblackhole
         {{ include "bedag-lib.utils.notes.public" (dict "ingress" $.Values.ingress "service" $.Values.service "context" $)| indent 8 }}
-

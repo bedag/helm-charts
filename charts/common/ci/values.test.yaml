@@ -1,0 +1,306 @@
+# start common.ingress
+ingress:
+  deploy: true
+# end common.ingress
+
+# start common.servicemonitor
+servicemonitor:
+  deploy: true
+  basicAuth:
+    enabled: true
+    existingSecret: ""
+    newSecret:
+      username: username
+      password: changeit
+  endpoints:
+    komponente:
+      componentSelector:
+        key: app.kubernetes.io/component
+        value: komponente
+# end common.servicemonitor
+
+# start common.pvcs
+pvcs:
+  - name: name-of-pvc
+# end common.pvcs
+
+# components are a dictionary of single components to be configured
+components:
+  component-1:
+    # start common.service
+    services:
+      service-1:
+        deploy: true
+    # end common.service
+    # start common.networkpolicy
+    networkpolicy:
+      deploy: true
+    # end common.networkpolicy
+    controller:
+      deploy: true
+      type: "Deployment"
+
+      containers:
+        container-1:
+          image:
+            repository: nginx
+          command:
+            - foo
+          args:
+            - bar
+          env:
+            - name: "foo"
+              value: "bar"
+          envConfigMap:
+            foo: bar
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          livenessProbe:
+            enabled: true
+            # START ONLY EXECCOMMAND
+            execCommand: [ "/bin/true" ]
+            # END ONLY EXECCOMMAND
+
+          readinessProbe:
+            enabled: true
+            # START ONLY EXECCOMMAND
+            execCommand: [ "/bin/true" ]
+            # END ONLY EXECCOMMAND
+
+          startupProbe:
+            enabled: true
+            # START ONLY EXECCOMMAND
+            execCommand: [ "/bin/true" ]
+            # END ONLY EXECCOMMAND
+        container-2:
+          image:
+            repository: nginx
+            tag: "1.18"
+          env:
+            foo: bar
+          configFiles:
+            application.properties:
+              format: "key=value"
+              mountPath: /opt/application.properties
+              content:
+                key1: foo
+                key2: bar
+            application.properties2:
+              format: "key=value"
+              mountPath: /opt/application.properties
+              secret: true
+              content:
+                key1: foo
+                key2: bar
+          binaryFiles:
+            binaryFilename:
+              mountPath: /opt/my-binary-license
+              content: 'base64 encoded data'
+            binaryFilename2:
+              mountPath: /opt/my-binary-license
+              content: 'base64 encoded data'
+          resources: {}
+  component-2:
+    # start common.service
+    services:
+      service-2:
+        deploy: true
+    # end common.service
+    # start common.networkpolicy
+    networkpolicy:
+      deploy: true
+    # end common.networkpolicy
+    controller:
+      deploy: true
+      type: "StatefulSet"
+
+      extraVolumeClaimTemplates:
+        - metadata:
+            name: foobar
+          spec:
+            accessModes: [ "ReadWriteOnce" ]
+            storageClassName: myStorageClass
+            resources:
+              requests:
+                storage: 2Gi
+
+      # volumes is a list of volumes to be created as secret or configMap
+      volumes:
+        # name of the volume
+        - name: generic-name
+        # type can either be "secret", "configMap" or "persistentVolumeClaim"
+          type: "persistentVolumeClaim"
+        # claimNameSuffix has to be the same as .pvcs.[].name
+          claimNameSuffix: "name-of-pvc"
+
+      containers:
+        container-1:
+          image:
+            repository: nginx
+            tag: "1.16"
+          resources: {}
+          volumeMounts:
+            # name of the volume, same as in components.controller.volumes.name
+            # path where the volume should be mounted
+            # subPath is an optional path within the volume from which the container's volume should be mounted. Useful for single files instead of directories
+            # readOnly mounted read-only if true, read-write otherwise (false or unspecified). Comment out for using default (false)
+            # clearNamePrefix when true, only value of "name" is used, otherwise (and by default) the templated manifest is prefixed with "library.name".
+            - name: generic-name
+              path: /tmp/test1
+              subPath: test1.yml
+            #  readOnly: true
+            #  clearNamePrefix: false
+      initContainers:
+        initContainer-1:
+          image:
+            repository: nginx
+            tag: "1.16"
+          envSecret:
+            foo: bar
+          env:
+            foo: bar
+          resources: {}
+          containerSecurityContext:
+            enabled: true
+            capabilities:
+              # add: []
+              drop:
+              - ALL
+          #  readOnlyRootFilesystem: true
+          #  runAsGroup: 1001
+          #  runAsNonRoot: true
+          #  runAsUser: 1001
+  component3:
+    # start common.service
+    services:
+      # specify the name of the service
+      service1:
+        deploy: true
+    # end common.service
+    # start common.networkpolicy
+    networkpolicy:
+      deploy: true
+    # end common.networkpolicy
+    controller:
+      deploy: true
+      type: "Job"
+      completions: 5
+      completionMode: "Indexed"
+      backoffLimit: 2
+      activeDeadlineSeconds: 120
+      ttlSecondsAfterFinished: 0
+      automountServiceAccountToken: false
+      restartPolicy: "Never"
+
+      # podSecurityContext holds pod-level security attributes and common container settings.
+      # Some fields are also present in container.securityContext. Field values of containerSecurityContext take precedence over field values of podSecurityContext.
+      # ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+      podSecurityContext:
+        enabled: true
+        fsGroup: 2001
+        runAsGroup: 1001
+        runAsNonRoot: true
+        runAsUser: 1001
+
+      # start containers
+      # dictionary of containers in a pod
+      containers:
+        job:
+          image:
+            repository: perl
+            tag: "5.34.0"
+          command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+          containerSecurityContext:
+            enabled: true
+            capabilities:
+              # add: []
+              drop:
+              - ALL
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+
+          containerPorts:
+            - name: "http"
+              containerPort: 80
+
+          resources:
+            # We usually recommend not to specify default resources and to leave this as a conscious
+            # choice for the user. This also increases chances charts run on environments with little
+            # resources, such as Minikube. If you do want to specify resources, uncomment the following
+            # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+            limits:
+              cpu: 0
+              memory: 0
+            requests:
+              cpu: 0
+              memory: 0
+      # end containers
+
+  component4:
+    # start common.service
+    services:
+      # specify the name of the service
+      service1:
+        deploy: false
+    # end common.service
+    # start common.networkpolicy
+    networkpolicy:
+      deploy: false
+    # end common.networkpolicy
+
+    controller:
+      deploy: true
+      type: "CronJob"
+      restartPolicy: "OnFailure"
+      schedule: "12 00 * * *"
+      concurrencyPolicy: "Forbid"
+      failedJobsHistoryLimit: 2
+      podSecurityContext:
+        enabled: true
+        fsGroup: 2001
+        runAsGroup: 1001
+        runAsNonRoot: true
+        runAsUser: 1001
+
+      # start containers
+      # dictionary of containers in a pod
+      containers:
+        job:
+          image:
+            repository: busybox
+            tag: "1.28"
+          command: ["/bin/sh",  "-c", "date; echo Hello from the Kubernetes cluster"]
+          containerSecurityContext:
+            enabled: true
+            capabilities:
+              # add: []
+              drop:
+              - ALL
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+
+          resources:
+            # We usually recommend not to specify default resources and to leave this as a conscious
+            # choice for the user. This also increases chances charts run on environments with little
+            # resources, such as Minikube. If you do want to specify resources, uncomment the following
+            # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+            limits:
+              cpu: 0
+              memory: 0
+            requests:
+              cpu: 0
+              memory: 0
+      # end containers

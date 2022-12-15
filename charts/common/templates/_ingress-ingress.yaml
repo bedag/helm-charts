@@ -1,0 +1,53 @@
+{{- define "common.ingress.ingress" -}}
+{{- $root := . }}
+{{- $ingress := .Values.ingress }}
+{{- if $ingress.deploy }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "library.name" . }}-ingress
+  labels:
+{{ include "library.labels.standard" . | indent 4 }}
+    app.kubernetes.io/component: ingress
+{{- if $ingress.annotations }}
+  annotations:
+{{ toYaml $ingress.annotations | indent 4 }}
+{{- end }}
+spec:
+  ingressClassName: {{ $ingress.ingressClassName }}
+  rules:
+    {{- range $ingress.rules }}
+    - host: {{ .host }}
+      http:
+        paths:
+          {{- range .http.paths }}
+          - backend:
+              service:
+                name: {{ template "library.name" $root }}-{{ .backend.serviceNameSuffix }}
+                port:
+                  {{- if kindIs "float64" .backend.servicePort }}
+                  number: {{ .backend.servicePort }}
+                  {{- else }}
+                  name: {{ .backend.servicePort | quote }}
+                  {{- end }}
+            path: {{ .path | default "/" | quote }}
+            pathType: {{ .pathType | default "ImplementationSpecific" | quote }}
+          {{- end }}
+    {{- end }}
+  {{- if $ingress.tls }}
+  {{- if and (ne $ingress.tls.type "none") (ne $ingress.tls.type "") }}
+  tls:
+    - hosts:
+      {{- range $ingress.rules }}
+        - {{ .host }}
+      {{- end }}
+      {{- if or (eq $ingress.tls.type "self") (eq $ingress.tls.type "provided") }}
+      secretName: {{ template "library.name" . }}-ingress-tls
+      {{- else if eq $ingress.tls.type "existing" }}
+      secretName: {{ $ingress.tls.existing.secret }}
+      {{- end }}
+  {{- end }}
+  {{- end }}
+{{- end }}
+{{- end -}}

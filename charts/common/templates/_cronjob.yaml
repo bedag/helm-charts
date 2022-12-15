@@ -1,0 +1,51 @@
+{{- define "common.cronjob" -}}
+{{- $root := . }}
+{{- range $name, $component := .Values.components }}
+{{- if $component.controller }}
+{{- if eq $component.controller.type "CronJob" }}
+{{- $cronjob := $component.controller }}
+{{- if $cronjob.deploy }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ template "library.name" $root }}-{{ $name }}
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ $name }}
+spec:
+  schedule: {{ $cronjob.schedule | default "* * * * *" | quote }}
+  {{- if $cronjob.concurrencyPolicy }}
+  concurrencyPolicy: {{ $cronjob.concurrencyPolicy | quote }}
+  {{- end }}
+  {{- if $cronjob.failedJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ $cronjob.failedJobsHistoryLimit }}
+  {{- end }}
+  {{- if $cronjob.startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ $cronjob.startingDeadlineSeconds }}
+  {{- end }}
+  {{- if $cronjob.successfulJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ $cronjob.successfulJobsHistoryLimit }}
+  {{- end }}
+  jobTemplate:
+    metadata:
+      labels:
+{{ include "library.labels.stable" $root | indent 8 }}
+        app.kubernetes.io/component: {{ $name }}
+        {{- range $key, $value := $cronjob.extraLabels }}
+        {{ $key }}: {{ $value }}
+        {{- end }}
+        {{- if $cronjob.gatherMetrics }}
+        gatherMetrics: "enabled"
+        {{- end }}
+      annotations:
+        {{- range $key, $value := $cronjob.extraAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+    spec:
+{{- include "common.jobspec" (dict "root" $root "job" $cronjob "name" $name) | indent 6 }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

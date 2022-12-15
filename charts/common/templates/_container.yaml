@@ -22,7 +22,7 @@
     {{- else }}
       {{- range $key, $value := . }}
     - name: {{ $key }}
-      value: {{ $value }}
+      value: {{ $value | quote }}
       {{- end }}
     {{- end }}
   {{- end }}

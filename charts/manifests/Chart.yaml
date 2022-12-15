@@ -2,7 +2,7 @@ apiVersion: v2
 name: manifests
 description: "Bedag's Manifest chart. Library full of basic kubernetes manifests."
 type: library
-version: 0.8.2
+version: 1.0.0
 icon: "https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg"
 keywords:
 - Bedag
@@ -10,6 +10,7 @@ keywords:
 - Library
 sources:
 - https://github.com/bedag/helm-charts/tree/master/charts/manifests
+deprecated: true
 maintainers:
 - name: SRE
   email: sre@bedag.ch
@@ -22,4 +23,4 @@ annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
-    - "[Added]: Functionality for environment from source"
+    - "[security]: add deprecation notice"

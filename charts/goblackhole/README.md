@@ -1,6 +1,6 @@
 # Goblackhole
 
-![Version: 0.0.1](https://img.shields.io/badge/Version-0.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.0.2](https://img.shields.io/badge/Version-0.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Offical Helm Chart for goblackhole
 
@@ -10,7 +10,7 @@ Offical Helm Chart for goblackhole
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| NOC | noc@bedag.ch |  |
+| NOC | <noc@bedag.ch> |  |
 
 ## Requirements
 
@@ -70,7 +70,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | deployment.selectorLabels | object | `{}` | Define SelectorLabels for the Pod Template |
 | deployment.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | deployment.serviceAccount.apiVersion | string | v1 | Configure the api version used |
-| deployment.serviceAccount.automountServiceAccountToken | bool | `true` | (bool) AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted. |
+| deployment.serviceAccount.automountServiceAccountToken | bool | `true` | AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted. |
 | deployment.serviceAccount.create | bool | `false` | Specifies whether a service account should be created |
 | deployment.serviceAccount.enabled | bool | `false` | Specifies whether a service account is enabled or not |
 | deployment.serviceAccount.globalPullSecrets | bool | `false` | Evaluate global set pullsecrets and mount, if set |

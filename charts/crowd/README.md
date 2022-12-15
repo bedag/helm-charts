@@ -1,16 +1,23 @@
 # Crowd
 
-![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+> **:exclamation: This Helm Chart is deprecated!**
+
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Manage users from multiple directories - Active Directory, LDAP, OpenLDAP or Microsoft Azure AD - and control application authentication permissions in one single location
 
 **Homepage:** <https://www.atlassian.com/software/crowd>
 
+## :warning: Deprecation and Archive Notice
+
+We are announcing the deprecation of this chart.
+This chart is no longer actively maintained and will be archived on 31.12.2022.
+
 ## Maintainers
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| SRE | sre@bedag.ch |  |
+| SRE | <sre@bedag.ch> |  |
 
 ## Requirements
 
@@ -112,7 +119,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | service.extraPorts | list | `[]` | Add additional ports to the service |
 | service.labels | object | `{}` | Configure Service additional Labels |
 | service.loadBalancerIP | string | `""` | Configure Service [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer). Set the LoadBalancer service type to internal only. |
-| service.loadBalancerSourceRanges | list | `[]` | Configure Service [loadBalancerSourceRanges](https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service) |
+| service.loadBalancerSourceRanges | list | `[]` | Configure Service [loadBalancerSourceRanges](https://kubernetes.io/docs/tasks/access-application-cluster/configure-cloud-provider-firewall/#restrict-access-for-loadbalancer-service) # Example: # loadBalancerSourceRanges: # - 10.10.10.0/24 # |
 | service.nodePort | string | `""` | Specify the nodePort value for the LoadBalancer and NodePort service types |
 | service.port | int | 80 | Configure Service Port (Required) |
 | service.portName | string | http | Configure Service Port name |
@@ -162,7 +169,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | statefulset.selectorLabels | object | `{}` | Define SelectorLabels for the Pod Template |
 | statefulset.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | statefulset.serviceAccount.apiVersion | string | v1 | Configure the api version used |
-| statefulset.serviceAccount.automountServiceAccountToken | bool | `true` | (bool) AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted. |
+| statefulset.serviceAccount.automountServiceAccountToken | bool | `true` | AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted. |
 | statefulset.serviceAccount.create | bool | `false` | Specifies whether a service account should be created |
 | statefulset.serviceAccount.enabled | bool | `false` | Specifies whether a service account is enabled or not |
 | statefulset.serviceAccount.globalPullSecrets | bool | `false` | Evaluate global set pullsecrets and mount, if set |
@@ -183,8 +190,8 @@ Major Changes to functions are documented with the version affected. **Before up
 | volumePermissions.enabled | bool | `false` | Enables Volume Permissions |
 | volumePermissions.mode | int | `nil` | Configure permission mode (eg. 755). If not set no permission mode will be applied. |
 | volumePermissions.name | string | `permission` | Volume Permission Container Name |
-| volumePermissions.runAsGroup | int | `2004` | (int) Configure the directory Group Owner. |
-| volumePermissions.runAsUser | int | `2004` | (int) Configure the directory User Owner. |
+| volumePermissions.runAsGroup | int | `2004` | Configure the directory Group Owner. @ @default -- `0` |
+| volumePermissions.runAsUser | int | `2004` | Configure the directory User Owner. @ @default -- `0` |
 
 This Chart implements the Bedag Manifest Chart. Therefor there are a lot of values for you to play around.
 
@@ -307,4 +314,3 @@ This can happen when the livenessprobe kills crowd to early. You will find the f
 ```
 
 You will need to do some fixing in the database. [See the following article for more](https://confluence.atlassian.com/crowdkb/crowd-server-does-not-start-could-not-acquire-change-log-lock-1019399699.html). To prevent this, increase the `initialDelaySeconds` value for the livenessProbe.
-

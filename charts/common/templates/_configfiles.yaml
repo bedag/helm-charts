@@ -1,0 +1,81 @@
+{{- /*
+Generate config structure, at this point it does not matter if we put it in a Secret or a ConfigMap.
+*/ -}}
+{{- define "common.configFile" -}}
+{{- $root := .root }}
+{{- range $fileName, $definition := .configs }}
+{{- $format := $definition.format | default "key=value" }}
+{{ $fileName }}: |-
+  {{- if eq $format "key=value" }}
+  {{- range $key, $value := $definition.content }}
+  {{ $key }}={{ tpl $value $root }}
+  {{- end }}
+  {{- else if eq $format "yaml" }}
+  {{- tpl (toYaml $definition.content) $root | trim | nindent 2 }}
+  {{- else if eq $format "simple" }}
+  {{- tpl $definition.content $root | trim | nindent 2 }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{- /*
+Generate the real Kubernetes manifests.
+Sensitive configs goes inside a Secret and non-sensitive configs are put in a ConfigMap.
+*/ -}}
+{{- define "common.controller.configFiles" -}}
+{{- $root := . }}
+{{- range $componentName, $componentValues := .Values.components }}
+{{- if $componentValues.controller }}
+{{- if $componentValues.controller.deploy }}
+{{- if or $componentValues.controller.containers $componentValues.controller.initContainers }}
+{{- $containers := merge ($componentValues.controller.containers | default dict) ($componentValues.controller.initContainers | default dict) }}
+{{- range $containerName, $containerValues := $containers }}
+{{- $configFiles := $containerValues.configFiles }}
+{{- if $configFiles }}
+
+{{- /* Distinguish between sensitive and non-sensitive config, first initialize empty dictionaries */ -}}
+{{- $secretConfigs := dict }}
+{{- $nonSecretConfigs := dict }}
+{{- /* now separating the configs */ -}}
+{{- range $key, $val := $configFiles }}
+  {{- if $val.secret }}
+    {{- $secretConfigs := merge $secretConfigs (dict $key $val) }}
+  {{- else }}
+    {{- $nonSecretConfigs := merge $nonSecretConfigs (dict $key $val) }}
+  {{- end }}
+{{- end }}
+
+{{- if $nonSecretConfigs }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "library.name" $root }}-{{ $componentName }}-{{ $containerName }}-configfiles
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ $componentName }}-{{ $containerName }}
+data:
+  {{- include "common.configFile" (dict "root" $root "configs" $nonSecretConfigs) | indent 2 }}
+{{- end }}
+
+{{- if $secretConfigs }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ template "library.name" $root }}-{{ $componentName }}-{{ $containerName }}-secret-configfiles
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ $componentName }}-{{ $containerName }}
+type: Opaque
+stringData:
+  {{- include "common.configFile" (dict "root" $root "configs" $secretConfigs) | indent 2 }}
+{{- end }}
+
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

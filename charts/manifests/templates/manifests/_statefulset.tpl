@@ -51,7 +51,7 @@ spec:
       {{- if and $statefulset.volumeClaimTemplates (kindIs "slice" $statefulset.volumeClaimTemplates) }}
   volumeClaimTemplates: {{- toYaml $statefulset.volumeClaimTemplates | nindent 4 }}
       {{- end }}
-    {{- end }}  
+    {{- end }}
   {{- else }}
     {{- fail "Template requires '.context' as arguments" }}
   {{- end }}

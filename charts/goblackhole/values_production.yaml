@@ -11,9 +11,9 @@ goblackhole:
         remote_ip: "10.1.1.1"
     local_id: 10.217.133.15
     local_as: 65001
-    LogLevel: Info 
+    LogLevel: Info
     Blocklist: https://raw.githubusercontent.com/stamparm/ipsum/master/ipsum.txt
-    Community: 
+    Community:
     - 666
   deployment:
     replicas: 10

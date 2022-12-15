@@ -1,0 +1,87 @@
+{{- define "common.deployment" -}}
+{{- $root := . }}
+{{- range $name, $component := .Values.components }}
+{{- if $component.controller }}
+{{- if eq $component.controller.type "Deployment" }}
+{{- $deployment := $component.controller }}
+{{- if $deployment.deploy }}
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: {{ template "library.name" $root }}-{{ $name }}
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ $name }}
+spec:
+  replicas: {{ $deployment.replicas | default 1 }}
+  revisionHistoryLimit: {{ $deployment.revisionHistoryLimit | default 3 }}
+  strategy:
+    {{- if $deployment.strategy }}
+    type: {{ $deployment.strategy.type | default "Recreate" }}
+    {{- if $deployment.strategy.type }}
+    {{- if eq $deployment.strategy.type "RollingUpdate" }}
+    rollingUpdate:
+      maxSurge: {{ $deployment.strategy.maxSurge | default 1 }}
+      maxUnavailable: {{ $deployment.strategy.maxUnavailable | default 1 }}
+    {{- end }}
+    {{- end }}
+    {{- else }}
+    type: "Recreate"
+    {{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "library.name" $root }}
+      app.kubernetes.io/instance: {{ $root.Release.Name }}
+      app.kubernetes.io/component: {{ $name }}
+  template:
+    metadata:
+      labels:
+{{ include "library.labels.stable" $root | indent 8 }}
+        app.kubernetes.io/component: {{ $name }}
+        {{- range $key, $value := $deployment.extraLabels }}
+        {{ $key }}: {{ $value }}
+        {{- end }}
+        {{- if $deployment.gatherMetrics }}
+        gatherMetrics: "enabled"
+        {{- end }}
+      annotations:
+        {{- if $deployment.forceRedeploy }}
+        # timestamp using "now.Unix" makes "helm update" always mark the deployment as changed
+        # and thus re-pull the image even if the tag has not changed (if imagePullPolicy = Always)
+        timestamp: {{ now.Unix | quote }}
+        {{- end }}
+        {{- range $key, $value := $deployment.extraAnnotations }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+        {{- range $deployment.extraChecksumAnnotations }}
+        {{ .key }}: {{ include (print $.Template.BasePath .checksumFrom) $root | sha256sum }}
+        {{- end }}
+        {{- if or $deployment.containers $deployment.initContainers }}
+        {{- $containers := merge ($deployment.containers | default dict) ($deployment.initContainers | default dict) }}
+        {{- range $containerName, $containerValues := $containers }}
+        {{- $configMap := $containerValues.envConfigMap }}
+        {{- if and $configMap (not $deployment.disableChecksumAnnotations) }}
+        checksum/envConfigMap: {{ print $configMap | sha256sum }}
+        {{- end }}
+        {{- $secret := $containerValues.envSecret }}
+        {{- if and $secret (not $deployment.disableChecksumAnnotations) }}
+        checksum/envSecret: {{ print $secret | sha256sum }}
+        {{- end }}
+        {{- $configFiles := $containerValues.configFiles }}
+        {{- if and $configFiles (not $deployment.disableChecksumAnnotations) }}
+        checksum/configFiles: {{ print $configFiles | sha256sum }}
+        {{- end }}
+        {{- $binaryFiles := $containerValues.binaryFiles }}
+        {{- if and $binaryFiles (not $deployment.disableChecksumAnnotations) }}
+        checksum/binaryFiles: {{ print $binaryFiles | sha256sum }}
+        {{- end }}
+        {{- end }}
+        {{- end }}
+    spec:
+{{- include "common.pod" (dict "root" $root "controller" $deployment "name" $name) | indent 6 }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

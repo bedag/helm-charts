@@ -1,4 +1,4 @@
-## Global Values 
+## Global Values
 ##
 global:
 
@@ -42,7 +42,7 @@ e2g:
   # e2g.filtergroups -- Array of e2g config for a filgergroup mounted as /usr/local/e2guardian/etc/e2guardian/e2guardianf{{ id }}.conf
   filtergroups: []
   #  - id: 1
-  #    config: | 
+  #    config: |
   #     deepurlanalysis = off
 
 
@@ -133,152 +133,152 @@ pod:
   ## Image Pull Secrets
   # pod.imagePullSecrets -- Define [ImagePullSecrets](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). Will be overwritten if set by global variable.
   imagePullSecrets: []
-  
+
   ## Pod Labels
   # pod.podLabels -- Pod [labels](https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/) are only added for the pod
   podLabels: {}
-  
+
   ## Pod Annotations
   # pod.podAnnotations -- Pod [annotations](https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/) are only added for the pod
   podAnnotations: {}
-  
+
   ## Pod ForceRedeploy
   ## pod.forceRedeploy -- Adds timestamp annotation, causing your pods to be redeployed everytime a new release applied.
   forceRedeploy: false
-  
+
   ## Extra Pod Fields
   # pod.podFields -- Add extra field to the [Pod Template](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podtemplate-v1-core) if not available as value.
-  podFields: 
+  podFields:
     terminationGracePeriodSeconds: 0
-  
+
   ## Additional Kubernetes Volumes
   # pod.volumes -- Additional [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
   volumes: []
   #  - name: share
   #    persistentVolumeClaim:
   #      claimName: 'shared'
-  
+
   ## RestartPolicy Configuration
   # pod.restartPolicy -- Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
-  restartPolicy: 
-  
+  restartPolicy:
+
   ## Affinity Configuration
   # pod.affinity -- Pod [Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity)
   affinity: {}
-  
+
   ## NodeSelector Configuration
   # pod.nodeSelector -- Pod [NodeSelector](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/)
   nodeSelector: {}
-  
+
   ## Tolerations Configuration
   # pod.tolerations -- Pod [Tolerations](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/)
   tolerations: {}
-  
+
   ## Priority Configuration
   # pod.priorityClassName -- Pod [priorityClassName](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass)
   priorityClassName: ""
-  
+
   ## Pod SecurityContext Configuration
   # pod.podSecurityContext -- Pod [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
-  podSecurityContext: 
+  podSecurityContext:
     runAsNonRoot: true
     fsGroup: 65534
-    runAsUser: 65534 
-  
+    runAsUser: 65534
+
   ## Pod Initcontainers
   # pod.initContainers -- Pod [initContainers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
   initContainers: []
   #  - name: init-myservice
   #    image: busybox:1.28
   #    command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
-  
+
   ## Pod SideCar Containers
   # pod.sidecars -- Allows to add sidecars to your [maincar]](https://kubernetes.io/docs/concepts/workloads/pods/#using-pods)
   sidecars: []
-  
+
   #
   ## - ServiceAccount
   ## Reference: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
   ## API Reference: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#serviceaccount-v1-core
   ##
   serviceAccount:
-  
+
     ## ServiceAccount Creation
     # pod.serviceAccount.enabled -- Specifies whether a service account is enabled or not
     enabled: false
-  
+
     ## ServiceAccount Creation
     # pod.serviceAccount.create -- Specifies whether a service account should be created
     create: false
-  
+
     ## ServiceAccount API version
     # pod.serviceAccount.apiVersion -- Configure the api version used
     # @default -- v1
     apiVersion: ""
-  
+
     ## ServiceAccount Labels
     # pod.serviceAccount.labels -- Merges given labels with common labels
     labels: {}
-  
+
     ## ServiceAccount Annotations
     # pod.serviceAccount.annotations -- Annotations to add to the service account
     annotations: {}
-  
+
     ## ServiceAccount Auto Mount Service Token
     # pod.serviceAccount.automountServiceAccountToken -- (bool) AutomountServiceAccountToken indicates whether pods running as this service account should have an API token automatically mounted.
     automountServiceAccountToken: true
-  
+
     ## ServiceAccount Image pull secrets
     # pod.serviceAccount.imagePullSecrets -- ImagePullSecrets is a list of references to secrets in the same namespace to use for pulling any images in pods that reference this ServiceAccount.
     imagePullSecrets: []
-  
+
     ## ServiceAccount Global PullSecrets
     # pod.serviceAccount.globalPullSecrets -- Evaluate global set pullsecrets and mount, if set
     globalPullSecrets: false
-  
+
     ## ServiceAccount Secrets
     # pod.serviceAccount.secrets -- Secrets is the list of secrets allowed to be used by pods running using this ServiceAccount
     secrets: []
-  
+
     ## ServiceAccount Name
     # pod.serviceAccount.name -- If not set and create is true, a name is generated using the fullname template
     name: ""
-  
-  
+
+
   ## Container Configuration
   ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#container-template
   ## Full Configuration
-  
-  
+
+
   #
   ## -- Container
   ## Reference: https://kubernetes.io/de/docs/concepts/containers/
   ## Container API Object - https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.19/#container-v1-core
   #
-  
+
   ## Custom Container Name
   # pod.containerName -- Configure Container Name
   # @default -- `.Chart.Name`
-  containerName: 
-  
+  containerName:
+
   ## Docker Image definition.
   image:
     # pod.image.registry -- Configure Docker Registry. Will be overwritten if set by global variable.
     registry: docker.io
-  
+
     # pod.image.repository -- Configure Docker Repository
-    repository: bedag/e2g 
-  
+    repository: bedag/e2g
+
     # pod.image.pullPolicy -- Configure Docker Pull Policy. Will be overwritten if set by global variable.
-    pullPolicy: 
-  
+    pullPolicy:
+
     # pod.image.tag -- Configure Docker Image tag
     # @default -- Tag defaults to `.Chart.Appversion`, if not set
-    tag: 
-  
+    tag:
+
   ## Container Resources
   # pod.resources -- Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
-  resources: 
+  resources:
     {}
   #  requests:
   #    memory: "64Mi"
@@ -286,20 +286,20 @@ pod:
   #  limits:
   #    memory: "128Mi"
   #    cpu: "500m"
-  
+
   ## Container Command
   # pod.command -- Configure executed container command
-  command: 
+  command:
     {}
-  
+
   ## Container Command Args
   # pod.args -- Configure arguments for executed command
-  args: 
+  args:
     {}
-  
+
   ## Environment Variables
   # pod.environment -- Configure Environment Variables (Refer to values.yaml)
-  environment: 
+  environment:
     []
   # - name: "MY_ENV"
   #   value: "someValue"
@@ -309,12 +309,12 @@ pod:
   #     fieldRef:
   #       fieldPath: spec.*
   #
-  
+
   ## Container Ports
   # pod.ports -- Configure Container Ports
-  ports: 
+  ports:
    - name: "icap"
-     containerPort: 1344 
+     containerPort: 1344
      protocol: TCP
    - name: "http"
      containerPort: 8080
@@ -322,60 +322,60 @@ pod:
    - name: "https"
      containerPort: 8443
      protocol: TCP
-  
+
   ## Additional Volume Mounts
   # pod.volumeMounts -- Configure Container [volumeMounts](https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/)
-  volumeMounts: 
+  volumeMounts:
     []
   #  - name: "cache"
   #    mountPath: /cache
   #  - name: "share"
   #    mountPath: /var/data/share
-  
+
   ## Container SecurityContext
   # pod.securityContext -- Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
-  securityContext: 
+  securityContext:
     runAsUser: 65534
     runAsGroup: 65534
     allowPrivilegeEscalation: false
-  
+
   ## ReadinessProbe Configuration
   # pod.readinessProbe -- Container [ReadinessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-readiness-probes)
-  readinessProbe: 
+  readinessProbe:
     tcpSocket:
       port: 1344
     initialDelaySeconds: 5
     periodSeconds: 1
-  
+
   ## LivenessProbe Configuration
   # pod.livenessProbe -- Container [LivenessProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-a-liveness-command)
-  livenessProbe: 
+  livenessProbe:
     tcpSocket:
       port: 1344
     initialDelaySeconds: 15
     periodSeconds: 1
-  
+
   ## StartupProbe Configuration
   # pod.startupProbe -- Container [StartupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes)
-  startupProbe: 
+  startupProbe:
     {}
   #  httpGet:
   #    path: /health
   #    port: http
   #  failureThreshold: 30
   #  periodSeconds: 10
-  
+
   ## Container Lifecycle Hooks
   # pod.lifecycle -- Container [Lifecycle](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/)
-  lifecycle: 
+  lifecycle:
     {}
   #  postStart:
   #    exec:
   #      command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
-  
+
   ## Container ExtraFields
   # pod.containerFields -- Extra fields used on the container definition
-  containerFields: 
+  containerFields:
     {}
   #  stdinOnce: true
 
@@ -548,7 +548,7 @@ service:
 
   ## Service Type
   # service.type -- Configure Service [Type](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types).
-  type: "" 
+  type: ""
 
   ## Service Port Name
   # service.portName -- Configure Service Port name
@@ -572,7 +572,7 @@ service:
 
   ## Service Extra Ports
   # service.extraPorts -- Add additional ports to the service
-  extraPorts: 
+  extraPorts:
     - name: "http"
       port: 8080
       protocol: TCP
@@ -583,7 +583,7 @@ service:
       targetPort: "https"
   ## Service NodePort ([Reference](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport))
   # service.nodePort -- Specify the nodePort value for the LoadBalancer and NodePort service types
-  nodePort: 
+  nodePort:
 
   ## Service Loadbalancer IP
   # service.loadBalancerIP -- Configure Service [loadBalancerIP](https://kubernetes.io/docs/concepts/services-networking/service/#internal-load-balancer). Set the LoadBalancer service type to internal only.
@@ -605,4 +605,3 @@ service:
   ## Service Selector
   # service.selector -- Configure Service Selector Labels
   selector: {}
- 

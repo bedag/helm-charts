@@ -1,0 +1,39 @@
+{{- define "common.controller.files" -}}
+{{- $root := . }}
+{{- range $name, $component := .Values.components }}
+{{- if $component.controller }}
+{{- if $component.controller.deploy }}
+{{- $volumes := $component.controller.volumes }}
+{{- if $volumes }}
+{{- range $volumes }}
+{{- if or (eq .type "secret") (eq .type "configMap") }}
+{{- if .filePath }}
+{{- if $root.Files.Get .filePath }}
+---
+apiVersion: v1
+{{- if eq .type "secret" }}
+kind: Secret
+type: Opaque
+{{- else }}
+kind: ConfigMap
+{{- end }}
+metadata:
+  name: {{ template "library.name" $root }}-{{ .name }}
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ $name }}
+data:
+{{- if eq .type "secret" }}
+{{ ($root.Files.Glob .filePath).AsSecrets | indent 2 }}
+{{- else }}
+{{ ($root.Files.Glob .filePath).AsConfig | indent 2 }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

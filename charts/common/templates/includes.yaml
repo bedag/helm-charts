@@ -1,0 +1,61 @@
+{{- /* This file is used for developing & testing the common chart.
+Uncomment each "template" line to use the corresponding function */ -}}
+
+{{- /* ingress
+{{- template "common.ingress.ingress" . }}
+{{- template "common.ingress.secret" . }}
+*/ -}}
+
+{{- /* services
+{{- template "common.service" . }}
+*/ -}}
+
+{{- /* statefulset
+{{- template "common.statefulset" . }}
+*/ -}}
+
+{{- /* deployment
+{{- template "common.deployment" . }}
+*/ -}}
+
+{{- /* job
+{{- template "common.job" . }}
+*/ -}}
+
+{{- /* cronjob
+{{- template "common.cronjob" . }}
+*/ -}}
+
+{{- /* envSecret
+{{- template "common.controller.envSecret" . }}
+*/ -}}
+
+{{- /* envConfigMap
+{{- template "common.controller.envConfigMap" . }}
+*/ -}}
+
+{{- /* configFiles
+{{- template "common.controller.configFiles" . }}
+*/ -}}
+
+{{- /* binaryFiles
+{{- template "common.controller.binaryFiles" . }}
+*/ -}}
+
+{{- /* files
+{{- template "common.controller.files" . }}
+*/ -}}
+
+{{- /* pvcs
+{{- template "common.pvcs" . }}
+*/ -}}
+
+{{- /* servicemonitor
+{{- template "common.servicemonitor.headless.service" . }}
+{{- template "common.servicemonitor.servicemonitor" . }}
+{{- template "common.servicemonitor.secret" . }}
+*/ -}}
+
+{{- /* networkpolicy
+{{- template "common.networkpolicy" . }}
+*/ -}}

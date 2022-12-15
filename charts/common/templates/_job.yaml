@@ -1,0 +1,22 @@
+{{- define "common.job" -}}
+{{- $root := . }}
+{{- range $name, $component := .Values.components }}
+{{- if $component.controller }}
+{{- if eq $component.controller.type "Job" }}
+{{- $job := $component.controller }}
+{{- if $job.deploy }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "library.name" $root }}-{{ $name }}
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ $name }}
+spec:
+{{- include "common.jobspec" (dict "root" $root "job" $job "name" $name) | indent 2 }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

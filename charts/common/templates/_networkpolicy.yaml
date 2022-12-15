@@ -1,0 +1,57 @@
+{{- define "common.networkpolicy" -}}
+{{- if .Values.networkpolicy }}
+{{- if .Values.networkpolicy.deploy }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ template "library.name" . }}-default
+  labels:
+{{ include "library.labels.standard" . | indent 4 }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+{{- end }}
+{{- end }}
+
+{{- $root := . }}
+{{- range $name, $component := .Values.components }}
+{{- if $component.networkpolicy }}
+{{- $networkpolicy := $component.networkpolicy }}
+{{- if $networkpolicy.deploy }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ template "library.name" $root }}-{{ $name }}
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ $name }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "library.name" $root }}
+      app.kubernetes.io/component: {{ $name }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+      {{- if and $networkpolicy.podSelector }}
+      {{- range $networkpolicy.podSelector }}
+      {{- if and .matchLabels }}
+      - podSelector:
+          matchLabels:
+            {{- range $key, $val := .matchLabels }}
+            {{ $key }}: {{ $val | quote }}
+            {{- end }}
+      {{- end }}
+      {{- end }}
+      {{- end }}
+      ports:
+      - protocol: TCP
+        port: {{ $networkpolicy.ingressPort | default 80 }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

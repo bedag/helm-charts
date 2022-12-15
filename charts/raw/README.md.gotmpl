@@ -1,4 +1,4 @@
-# Raw 
+# Raw
 {{ template "chart.deprecationWarning" . }}
 
 {{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}
@@ -25,11 +25,11 @@ It is under active development and may contain bugs/unfinished documentation. An
 */}}
 {{ template "chart.requirementsSection" . }}
 
-# Examples 
+# Examples
 
 See the following examples to see the full potential:
 
-``` 
+```
 global:
   imageRegistry: "company-registry/"
 
@@ -38,8 +38,8 @@ image:
   registry: docker.io
   repository: bitnami/apache
 
-templates: 
-  - | 
+templates:
+  - |
       apiVersion: v1
       kind: Pod
       metadata:
@@ -54,7 +54,7 @@ templates:
               - name: web
                 containerPort: 80
                 protocol: TCP
-``` 
+```
 
 A very basic example. But might get you started.
 

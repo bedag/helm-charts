@@ -1,0 +1,29 @@
+{{- define "common.controller.envConfigMap" -}}
+{{- $root := . }}
+{{- range $componentName, $componentValues := .Values.components }}
+{{- if $componentValues.controller }}
+{{- if $componentValues.controller.deploy }}
+{{- if or $componentValues.controller.containers $componentValues.controller.initContainers }}
+{{- $containers := merge ($componentValues.controller.containers | default dict) ($componentValues.controller.initContainers | default dict) }}
+{{- range $containerName, $containerValues := $containers }}
+{{- $configMap := $containerValues.envConfigMap }}
+{{- if $configMap }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "library.name" $root }}-{{ $componentName }}-{{ $containerName }}
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ $componentName }}-{{ $containerName }}
+data:
+{{- range $key, $value := $configMap }}
+  {{ $key }}: {{ $value | quote }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

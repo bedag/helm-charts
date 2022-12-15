@@ -1,0 +1,27 @@
+{{- define "common.pvcs" -}}
+{{- $root := . }}
+{{- if .Values.pvcs }}
+{{- range .Values.pvcs }}
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "library.name" $root }}-{{ .name }}
+  labels:
+{{ include "library.labels.stable" $root | indent 4 }}
+spec:
+  accessModes:
+    {{- if .accessModes }}
+    {{- range .accessModes }}
+    - {{ . }}
+    {{- end }}
+    {{- else }}
+    - {{ "ReadWriteOnce" }}
+    {{- end }}
+  resources:
+    requests:
+      storage: {{ .size | default "1Gi" }}
+  storageClassName: {{ .storageClassName | default "" | quote }}
+{{- end }}
+{{- end }}
+{{- end -}}

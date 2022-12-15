@@ -1,0 +1,51 @@
+{{- define "common.servicemonitor.servicemonitor" -}}
+{{- $root := . }}
+{{- if .Values.servicemonitor }}
+{{- if .Values.servicemonitor.deploy }}
+{{- range .Values.servicemonitor.endpoints }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ template "library.name" $root }}-{{ .componentSelector.value }}
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+{{- /*
+The label 'app' needs to be explicitly set in order for servicemonitor to work (07.11.2019/ADB)
+*/}}
+    app: {{ template "library.name" $root }}
+    app.kubernetes.io/component: {{ .componentSelector.value }}
+spec:
+  endpoints:
+  - path: {{ .path | default "/metrics" }}
+    interval: {{ .interval | default "30s" }}
+    port: {{ .port | default "http" }}
+    {{- if $root.Values.servicemonitor.basicAuth.enabled }}
+    basicAuth:
+      password:
+        {{- if $root.Values.servicemonitor.basicAuth.existingSecret }}
+        name: {{ $root.Values.servicemonitor.basicAuth.existingSecret }}
+        {{- else }}
+        name: {{ template "library.name" $root }}-metrics-credentials
+        {{- end }}
+        key: {{ .overridePasswordKey | default $root.Values.servicemonitor.basicAuth.passwordKey }}
+      username:
+        {{- if $root.Values.servicemonitor.basicAuth.existingSecret }}
+        name: {{ $root.Values.servicemonitor.basicAuth.existingSecret }}
+        {{- else }}
+        name: {{ template "library.name" $root }}-metrics-credentials
+        {{- end }}
+        key: {{ .overrideUserKey | default $root.Values.servicemonitor.basicAuth.userKey }}
+    {{- end }}
+  namespaceSelector:
+    matchNames:
+    - {{ $root.Release.Namespace }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "library.name" $root }}
+      {{ .componentSelector.key }}: {{ .componentSelector.value }}
+      headless: "true"
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

@@ -1,6 +1,6 @@
 {{/*
 
-Copyright © 2021 Bedag Informatik AG 
+Copyright © 2021 Bedag Informatik AG
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,19 +25,19 @@ resources:
   {{- if $.Values.statefulset.enabled }}
   - type: "statefulset"
     values: {{- toYaml $.Values.pod | nindent 6 }}
-    overwrites: 
+    overwrites:
     {{ toYaml $.Values.statefulset | nindent 6 }}
     {{- include "overwrite" $ | nindent 6 }}
   {{- else if $.Values.daemonset.enabled }}
   - type: "daemonset"
     values: {{- toYaml $.Values.pod | nindent 6 }}
-    overwrites: 
+    overwrites:
     {{ toYaml $.Values.daemonset | nindent 6 }}
     {{- include "overwrite" $ | nindent 6 }}
   {{- else }}
   - type: "deployment"
     values: {{- toYaml $.Values.pod | nindent 6 }}
-    overwrites: 
+    overwrites:
     {{ toYaml $.Values.deployment | nindent 6 }}
     {{- include "overwrite" $ | nindent 6 }}
   {{- end }}
@@ -47,7 +47,7 @@ resources:
   {{- if and $.Values.extraResources (kindIs "slice" $.Values.extraResources) }}
     {{- toYaml $.Values.extraResources | nindent 2 }}
   {{- end }}
-  
+
   {{- if  $.Values.e2g.config }}
   - type: "raw"
     manifest: |

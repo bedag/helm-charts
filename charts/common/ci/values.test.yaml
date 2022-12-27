@@ -3,6 +3,11 @@ ingress:
   deploy: true
 # end common.ingress
 
+# start common.networkpolicy
+networkpolicy:
+  deploy: true
+# end common.networkpolicy
+
 # start common.servicemonitor
 servicemonitor:
   deploy: true
@@ -63,19 +68,19 @@ components:
           livenessProbe:
             enabled: true
             # START ONLY EXECCOMMAND
-            execCommand: [ "/bin/true" ]
+            execCommand: ["/bin/true"]
             # END ONLY EXECCOMMAND
 
           readinessProbe:
             enabled: true
             # START ONLY EXECCOMMAND
-            execCommand: [ "/bin/true" ]
+            execCommand: ["/bin/true"]
             # END ONLY EXECCOMMAND
 
           startupProbe:
             enabled: true
             # START ONLY EXECCOMMAND
-            execCommand: [ "/bin/true" ]
+            execCommand: ["/bin/true"]
             # END ONLY EXECCOMMAND
         container-2:
           image:
@@ -123,7 +128,7 @@ components:
         - metadata:
             name: foobar
           spec:
-            accessModes: [ "ReadWriteOnce" ]
+            accessModes: ["ReadWriteOnce"]
             storageClassName: myStorageClass
             resources:
               requests:
@@ -133,9 +138,9 @@ components:
       volumes:
         # name of the volume
         - name: generic-name
-        # type can either be "secret", "configMap" or "persistentVolumeClaim"
+          # type can either be "secret", "configMap" or "persistentVolumeClaim"
           type: "persistentVolumeClaim"
-        # claimNameSuffix has to be the same as .pvcs.[].name
+          # claimNameSuffix has to be the same as .pvcs.[].name
           claimNameSuffix: "name-of-pvc"
 
       containers:
@@ -153,17 +158,17 @@ components:
             - name: generic-name
               path: /tmp/test1
               subPath: test1.yml
-            #  readOnly: true
-            #  clearNamePrefix: false
+              # readOnly: true
+              # clearNamePrefix: false
       initContainers:
-        initContainer-1:
+        initcontainer-1:
           image:
             repository: nginx
             tag: "1.16"
           envSecret:
             foo: bar
           env:
-            foo: bar
+            foobar: foobar
           resources: {}
           containerSecurityContext:
             enabled: true
@@ -171,15 +176,15 @@ components:
               # add: []
               drop:
               - ALL
-          #  readOnlyRootFilesystem: true
-          #  runAsGroup: 1001
-          #  runAsNonRoot: true
-          #  runAsUser: 1001
-  component3:
+            # readOnlyRootFilesystem: true
+            # runAsGroup: 1001
+            # runAsNonRoot: true
+            # runAsUser: 1001
+  component-3:
     # start common.service
     services:
       # specify the name of the service
-      service1:
+      service-1:
         deploy: true
     # end common.service
     # start common.networkpolicy
@@ -214,7 +219,7 @@ components:
           image:
             repository: perl
             tag: "5.34.0"
-          command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+          command: ["perl", "-Mbignum=bpi", "-wle", "print bpi(2000)"]
           containerSecurityContext:
             enabled: true
             capabilities:
@@ -245,11 +250,11 @@ components:
               memory: 0
       # end containers
 
-  component4:
+  component-4:
     # start common.service
     services:
       # specify the name of the service
-      service1:
+      service-1:
         deploy: false
     # end common.service
     # start common.networkpolicy
@@ -278,7 +283,7 @@ components:
           image:
             repository: busybox
             tag: "1.28"
-          command: ["/bin/sh",  "-c", "date; echo Hello from the Kubernetes cluster"]
+          command: ["/bin/sh", "-c", "date; echo Hello from the Kubernetes cluster"]
           containerSecurityContext:
             enabled: true
             capabilities:

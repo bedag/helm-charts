@@ -1,6 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "https://s3.mgmtbi.ch/json-schemas/helm/common/x.y.z/values.schema.json",
   "type": "object",
   "$defs": {
     "container": {
@@ -13,11 +12,7 @@
           ],
           "properties": {
             "repository": {
-              "type": "string",
-              "pattern": "^(registry-group|registry|release-registry)\\.mgmtbi\\.ch\\/[a-z0-9-_]+[a-z0-9-_\\/]+$",
-              "examples": [
-                "registry-group.mgmtbi.ch/docker_base/nginx"
-              ]
+              "type": "string"
             },
             "tag": {
               "title": "SemVer check",

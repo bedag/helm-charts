@@ -26,7 +26,7 @@ secrets:
 # networkpolicy restricts all access between the pods. To configure allowed connections, go to components.*.networkpolicy.podSelector
 networkpolicy:
   # deploy has to be set to true for rendering to be applied
-  deploy: true
+  deploy: false
 # end common.networkpolicy
 
 # start common.ingress

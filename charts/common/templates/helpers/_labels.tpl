@@ -20,13 +20,6 @@ Based on https://helm.sh/docs/chart_best_practices/#standard-labels
 {{- define "library.labels.standard" -}}
 app.kubernetes.io/name: {{ template "library.name" . }}
 helm.sh/chart: {{ template "library.chartrefshort" . }}
-helm.nsm.bedag.ch/chartname: {{ .Chart.Name | quote }}
-{{- if (include "library.chartver.prerelease" .) }}
-helm.nsm.bedag.ch/chartver-prerelease: {{ template "library.chartver.prerelease" . }}
-{{- end }}
-{{- if (include "library.chartver.meta" .) }}
-helm.nsm.bedag.ch/chartver-meta: {{ template "library.chartver.meta" . }}
-{{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
 app.kubernetes.io/instance: {{ .Release.Name | quote }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
@@ -45,7 +38,6 @@ existence of a resource, for example in selectors.
 app.kubernetes.io/name: {{ template "library.name" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
 app.kubernetes.io/instance: {{ .Release.Name | quote }}
-helm.nsm.bedag.ch/chartname: {{ .Chart.Name | quote }}
 {{- end -}}
 
 {{- /*
@@ -59,5 +51,4 @@ deploy process is used.
 {{- define "library.labels.tillerless" -}}
 app.kubernetes.io/name: {{ template "library.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name | quote }}
-helm.nsm.bedag.ch/chartname: {{ .Chart.Name | quote }}
 {{- end -}}

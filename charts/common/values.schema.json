@@ -214,7 +214,7 @@
         "volumeMounts": {
           "type": "array",
           "items": {
-            "$id": "#/properties/ingress/properties/rules/items",
+            "$id": "#/$defs/container/properties/volumeMounts",
             "type": "object",
             "required": [
               "name",
@@ -611,24 +611,24 @@
         "type": "object",
         "properties": {
           "name": {
-            "$id": "#/properties/pvcs/items/name",
+            "$id": "#/properties/pvcs/items/properties/name",
             "type": "string",
             "examples": [
               "name-of-pvc"
             ]
           },
           "size": {
-            "$id": "#/properties/pvcs/items/size",
+            "$id": "#/properties/pvcs/items/properties/size",
             "type": "string",
             "default": "1Gi"
           },
           "accessModes": {
-            "$id": "#/properties/pvcs/items/accessModes",
+            "$id": "#/properties/pvcs/items/properties/accessModes",
             "type": "array",
             "items": {}
           },
           "storageClassName": {
-            "$id": "#/properties/pvcs/items/storageClassName",
+            "$id": "#/properties/pvcs/items/properties/storageClassName",
             "type": "string",
             "examples": [
               "nfs-data"
@@ -910,7 +910,7 @@
                 "volumes": {
                   "type": "array",
                   "items": {
-                    "$id": "#/properties/ingress/properties/rules/items",
+                    "$id": "#/properties/components/patternProperties/properties/controller/properties/volumes/items",
                     "type": "object",
                     "required": [
                       "name",

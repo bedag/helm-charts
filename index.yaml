@@ -3,6 +3,33 @@ entries:
   common:
   - annotations:
       artifacthub.io/changes: |
+        - "[Changed]: Networkpolicy disabled by default"
+        - "[Changed]: Improve json schema"
+        - "[Changed]: Housekeeping CI values"
+        - "[Removed]: Unused helm labels"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    created: "2022-12-29T16:05:46.157804214Z"
+    description: Bedag's common Helm chart to use for creating other Helm charts
+    digest: 1ee8800c6e2d2245cb739c7df7c1e7aa2f8bd5b7208c5e97995ebde89b6361c5
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Common
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: common
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/common
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/common-7.1.0/common-7.1.0.tgz
+    version: 7.1.0
+  - annotations:
+      artifacthub.io/changes: |
         - "[Added]: Initial release"
       artifacthub.io/containsSecurityUpdates: "false"
       artifacthub.io/license: Apache-2.0
@@ -1268,4 +1295,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/raw-1.0.0/raw-1.0.0.tgz
     version: 1.0.0
-generated: "2022-12-15T14:30:35.213896523Z"
+generated: "2022-12-29T16:05:46.157875414Z"

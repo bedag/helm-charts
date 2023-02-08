@@ -70,26 +70,8 @@ spec:
         {{- end }}
     spec:
 {{- include "common.pod" (dict "root" $root "controller" $statefulset "name" $name) | indent 6 }}
-{{- if or $statefulset.logPersistence $statefulset.extraVolumeClaimTemplates }}
+{{- if $statefulset.extraVolumeClaimTemplates }}
   volumeClaimTemplates:
-  {{- if $statefulset.logPersistence }}
-  {{- if $statefulset.logPersistence.enabled }}
-  - metadata:
-      name: log
-      labels:
-{{ include "library.labels.stable" $root | indent 8 }}
-        app.kubernetes.io/component: {{ $name }}
-    spec:
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: {{ $statefulset.logPersistence.size | quote }}
-      {{- if $statefulset.logPersistence.storageClass }}
-      storageClassName: "{{ $statefulset.logPersistence.storageClass }}"
-      {{- end }}
-  {{- end }}
-  {{- end }}
   {{- if $statefulset.extraVolumeClaimTemplates }}
   {{- with $statefulset.extraVolumeClaimTemplates }}
   {{- toYaml . | nindent 2 }}

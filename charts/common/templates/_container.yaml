@@ -36,14 +36,8 @@
   securityContext: {{- omit $containerValues.containerSecurityContext "enabled" | toYaml | nindent 4 }}
   {{- end }}
   {{- end }}
-  {{- if or $containerValues.logPersistence $containerValues.volumeMounts $containerValues.configFiles $containerValues.binaryFiles }}
+  {{- if or $containerValues.volumeMounts $containerValues.configFiles $containerValues.binaryFiles }}
   volumeMounts:
-    {{- if $containerValues.logPersistence }}
-    {{- if $containerValues.logPersistence.enabled }}
-    - name: log
-      mountPath: {{ $containerValues.logPersistence.logMountpoint | quote }}
-    {{- end }}
-    {{- end }}
     {{- if $containerValues.volumeMounts }}
     {{- range $containerValues.volumeMounts }}
     {{- if .clearNamePrefix }}

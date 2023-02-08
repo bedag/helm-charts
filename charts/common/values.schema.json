@@ -175,39 +175,6 @@
             }
           }
         },
-        "logPersistence": {
-          "type": "object",
-          "required": [
-            "enabled"
-          ],
-          "if": {
-            "properties": {
-              "enabled": {
-                "const": true
-              }
-            }
-          },
-          "then": {
-            "required": [
-              "size",
-              "logMountpoint"
-            ]
-          },
-          "properties": {
-            "enabled": {
-              "type": "boolean"
-            },
-            "storageClass": {
-              "type": "string"
-            },
-            "size": {
-              "type": "string"
-            },
-            "logMountpoint": {
-              "type": "string"
-            }
-          }
-        },
         "resources": {
           "type": "object"
         },

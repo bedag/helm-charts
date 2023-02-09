@@ -36,6 +36,11 @@ components:
     services:
       service-1:
         deploy: true
+        type: LoadBalancer
+        loadBalancerIP: 10.0.0.0
+        loadBalancerClass: test
+        loadBalancerSourceRanges:
+          - 10.0.0.0/8
     # end common.service
     # start common.networkpolicy
     networkpolicy:

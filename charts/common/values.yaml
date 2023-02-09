@@ -183,6 +183,12 @@ components:
         deploy: false
         # type is optional with a default value of "ClusterIP"
         #type:
+        # loadBalancerIP is required if type is "LoadBalancer"
+        #loadBalancerIP:
+        # loadBalancerClass is optional with no default value
+        #loadBalancerClass:
+        # loadBalancerSourceRanges is optional with no default value
+        #loadBalancerSourceRanges:
         # name is optional with a default value of "http"
         #name:
         # port is optional with a default value of "80"

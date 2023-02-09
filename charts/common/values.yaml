@@ -544,17 +544,6 @@ components:
             #  port: 80
             # END ONLY TCPSOCKET
 
-          # logPersistence is a dictionary for specifying properties about a log directory to persist. Global values .Values.logPersistence can be overriden here
-          #logPersistence:
-            # enabled when set to 'true', adds volume for this component writing log files to
-            #enabled: false
-            # storageClass to use when claming persistence volume
-            #storageClass: ""
-            # size for persistence volume to claim
-            #size: 1Gi
-            # directory to mount the persistence volume claim into
-            #logMountpoint: /var/log/nginx
-
           #resources: {}
             # We usually recommend not to specify default resources and to leave this as a conscious
             # choice for the user. This also increases chances charts run on environments with little

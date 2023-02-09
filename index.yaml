@@ -3,6 +3,30 @@ entries:
   common:
   - annotations:
       artifacthub.io/changes: |
+        - "[Removed]: logPersistence"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    created: "2023-02-09T10:32:27.024268197Z"
+    description: Bedag's common Helm chart to use for creating other Helm charts
+    digest: 630d4d3783c8a2b531b26aa52862a446d0ade2027231e2fed907f11d79a59f73
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Common
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: common
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/common
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/common-8.0.0/common-8.0.0.tgz
+    version: 8.0.0
+  - annotations:
+      artifacthub.io/changes: |
         - "[Changed]: Networkpolicy disabled by default"
         - "[Changed]: Improve json schema"
         - "[Changed]: Housekeeping CI values"
@@ -1295,4 +1319,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/raw-1.0.0/raw-1.0.0.tgz
     version: 1.0.0
-generated: "2022-12-29T16:05:46.157875414Z"
+generated: "2023-02-09T10:32:27.024356Z"

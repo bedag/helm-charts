@@ -1,6 +1,6 @@
 # common
 
-![Version: 8.1.0](https://img.shields.io/badge/Version-8.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 9.0.0](https://img.shields.io/badge/Version-9.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Bedag's common Helm chart to use for creating other Helm charts
 
@@ -21,6 +21,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | **Change** | **Chart Version** | **Description** | **Commits/PRs** |
 | :----------- | :---------------- | :--------------------- | :-------------- |
 |logPersistence removed|8.0.0|Removes logPersistence functionality as it can be achieved with volumeMounts & extraVolumeClaimTemplates and is buggy anyway.|https://github.com/bedag/helm-charts/pull/68|
+|networkpolicy template changes|9.0.0|add possibility to define more than one Port in networkpolicy|https://github.com/bedag/helm-charts/pull/70|
 
 ## Values
 

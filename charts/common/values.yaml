@@ -210,13 +210,20 @@ components:
     networkpolicy:
       # deploy has to be set to true for rendering to be applied
       deploy: false
+      # Optional IP CIDR source ranges to allow ingress traffic
+      # ipBlock:
+      #   cidr: "0.0.0.0/0"
       # podSelector is a optional list of matchLabels maps. All pods matching the labels are allowed to access the pods of this component
-      #podSelector:
-      #- matchLabels:
-      #    app.kubernetes.io/name: appname
-      #    app.kubernetes.io/component: component-2
-      # ingressPort is optional with a default value of "80"
-      #ingressPort:
+      # podSelector:
+      # - matchLabels:
+      #     app.kubernetes.io/name: appname
+      #     app.kubernetes.io/component: component-2
+      # ingressPorts is a list of ports on which connections are allowed
+      # ingressPorts:
+      # - protocol: TCP
+      #   port: 8080
+      # - protocol: TCP
+      #   port: 8081
     # end common.networkpolicy
 
     # controller is used for deploying pods via Deployment, StatefulSet, Job or CronJob ressources

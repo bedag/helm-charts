@@ -628,6 +628,37 @@
                 "deploy": {
                   "type": "boolean",
                   "default": false
+                },
+                "ipBlock": {
+                  "type": "object",
+                  "required": [
+                    "cidr"
+                  ],
+                  "properties": {
+                    "cidr": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "ingressPorts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "protocol": {
+                        "type": "string",
+                        "default": "TCP",
+                        "enum": [
+                          "TCP",
+                          "UDP",
+                          "SCTP"
+                        ]
+                      },
+                      "port": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 }
               }
             },

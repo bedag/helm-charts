@@ -45,6 +45,9 @@ components:
     # start common.networkpolicy
     networkpolicy:
       deploy: true
+      podSelector:
+      - matchLabels:
+          app.kubernetes.io/component: component-2
     # end common.networkpolicy
     controller:
       deploy: true
@@ -124,6 +127,8 @@ components:
     # start common.networkpolicy
     networkpolicy:
       deploy: true
+      ipBlock:
+        cidr: 0.0.0.0/0
     # end common.networkpolicy
     controller:
       deploy: true
@@ -195,6 +200,11 @@ components:
     # start common.networkpolicy
     networkpolicy:
       deploy: true
+      ingressPorts:
+      - protocol: TCP
+        port: "8080"
+      - protocol: TCP
+        port: "8081"
     # end common.networkpolicy
     controller:
       deploy: true

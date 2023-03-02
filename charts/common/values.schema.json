@@ -636,10 +636,7 @@
                   ],
                   "properties": {
                     "cidr": {
-                      "type": [
-                        "number",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   }
                 },

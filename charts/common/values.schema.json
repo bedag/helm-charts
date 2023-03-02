@@ -636,10 +636,7 @@
                   ],
                   "properties": {
                     "cidr": {
-                      "type": [
-                        "number",
-                        "string"
-                      ]
+                      "type": "string"
                     }
                   }
                 },
@@ -658,7 +655,7 @@
                         ]
                       },
                       "port": {
-                        "type": "string"
+                        "type": "integer"
                       }
                     }
                   }

@@ -3,6 +3,30 @@ entries:
   common:
   - annotations:
       artifacthub.io/changes: |
+        - "[Fixed]: Schema Json for NetworkPolicy"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    created: "2023-03-02T10:33:42.418911098Z"
+    description: Bedag's common Helm chart to use for creating other Helm charts
+    digest: 7849299d1ff800de441c4e0d1c27d6f603c7496a1b71e872e884970e009f5cc3
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Common
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: common
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/common
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/common-9.0.2/common-9.0.2.tgz
+    version: 9.0.2
+  - annotations:
+      artifacthub.io/changes: |
         - "[Fixed]: Linting for NetworkPolicy"
       artifacthub.io/containsSecurityUpdates: "false"
       artifacthub.io/license: Apache-2.0
@@ -1391,4 +1415,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/raw-1.0.0/raw-1.0.0.tgz
     version: 1.0.0
-generated: "2023-03-02T09:15:32.255635121Z"
+generated: "2023-03-02T10:33:42.418990198Z"

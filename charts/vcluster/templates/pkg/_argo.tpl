@@ -425,3 +425,12 @@ redis:
 helm template {{ include "pkg.argo.release" $ }} --namespace {{ include "pkg.argo.ns" $ }} argocd/{{ .chart }} {{ with .targetRevision }}--version {{ . }} {{ end }} -f /argocd/values.yaml
   {{- end -}}
 {{- end -}}
+
+{{- define "pkg.argo.plugin.subst.enabled" -}}
+  {{- $manifest := $.Values.gitops.argocd -}}
+  {{- if $manifest.enabled -}}
+    {{- if $manifest.bootstrap.plugins.subst.enabled -}}
+      {{- true -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

@@ -1,0 +1,30 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if and $kubernetes.scheduler.enabled $kubernetes.scheduler.service.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "scheduler" -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-scheduler
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{- include "pkg.components.svc_labels" (dict "labels" $kubernetes.scheduler.service.labels "ctx" $) | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  annotations:
+    {{- include "pkg.components.svc_annotations" (dict "annotations" $kubernetes.scheduler.service.annotations "ctx" $) | nindent 4 }}
+spec:
+  type: {{ $kubernetes.scheduler.service.type }}
+  {{- with $kubernetes.scheduler.service.loadBalancerIP }}
+  loadBalancerIP: {{ . }}
+  {{- end }}
+  ports:
+  - port: {{ $kubernetes.scheduler.service.port }}
+    name: client
+    {{- with $kubernetes.scheduler.service.nodePort }}
+    nodePort: {{ . }}
+    {{- end }}
+  selector: {{- include "kubernetes.selectorLabels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,32 @@
+{{- if (include "machine-controller.enabled" $) -}}
+  {{- if (include "machine-controller.admission-enabled" $) -}}
+    {{- $machine := $.Values.machine -}}
+    {{- $manifest := $machine.admission.service -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "machine-controller.fullname" . }}-admission
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "machine-controller.labels" . | nindent 4 }}
+    {{- include "pkg.components.svc_annotations" (dict "labels" $manifest.annotations "ctx" $) | nindent 4 }}
+  annotations: {{- include "pkg.components.svc_annotations" (dict "annotations" $manifest.annotations "ctx" $) | nindent 4 }}
+spec:
+  type: {{ $manifest.type }}
+  {{- with (include "machine-controller.admission.expose.loadbalancer.ip" $) }}
+  loadBalancerIP: {{ . }}
+  {{- end }}
+  ports:
+    - name: https
+      protocol: TCP
+      targetPort: 9876
+      {{- with $manifest.port }}
+      port: {{ . }}
+      {{- end }}
+      {{- with $manifest.nodePort }}
+      nodePort: {{ . }}
+      {{- end }}
+  selector:
+    {{- include "machine-controller.selectorLabels" . | nindent 4 }}
+  {{- end -}}
+{{- end -}}

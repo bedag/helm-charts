@@ -1,0 +1,28 @@
+{{- $endpoint := include "operating-system-manager.admission.url" $ -}}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ include "operating-system-manager.admission.webhook-name" $ }}
+  labels:
+    {{- include "operating-system-manager.labels" . | nindent 4 }}
+  #annotations:
+  #  cert-manager.io/inject-ca-from: kube-system/operating-system-manager-serving-cert
+webhooks:
+  - name: machinedeployments.cluster.k8s.io
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions: ["v1", "v1beta1"]
+    rules:
+      - apiGroups:
+          - "cluster.k8s.io"
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - machinedeployments
+    clientConfig:
+      url: {{ printf "%s/mutate-v1alpha1-machinedeployment" $endpoint }}
+      caBundle: Cg==

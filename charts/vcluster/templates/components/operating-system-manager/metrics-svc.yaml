@@ -1,0 +1,25 @@
+{{- if (include "operating-system-manager.enabled" $) -}}
+  {{- $manifest := $.Values.osm.metrics -}}
+  {{- if or $.Values.components.metrics.enabled $manifest.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "operating-system-manager.fullname" $ }}-metrics
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "operating-system-manager.labels" $ | nindent 4 }}
+    {{- include "pkg.components.svc_labels" (dict "labels" $manifest.service.labels "ctx" $) | nindent 4 }}
+  annotations:
+    {{- include "pkg.components.svc_annotations" (dict "annotations" $manifest.service.annotations "ctx" $) | nindent 4 }}
+spec:
+  sessionAffinity: None
+  type: ClusterIP
+  ports:
+    - name: http-metrics
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    {{- include "operating-system-manager.selectorLabels" $ | nindent 4 }}
+  {{- end -}}
+{{- end }}

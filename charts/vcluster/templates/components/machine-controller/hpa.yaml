@@ -1,0 +1,34 @@
+{{- if (include "machine-controller.enabled" $) -}}
+  {{- $machine := $.Values.machine -}}
+  {{- $manifest := $machine.autoscaling -}}
+  {{- if $manifest.enabled }}
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "machine-controller.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "machine-controller.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "machine-controller.fullname" . }}
+  minReplicas: {{ $manifest.minReplicas }}
+  maxReplicas: {{ $manifest.maxReplicas }}
+  metrics:
+    {{- if $manifest.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ $manifest.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if $manifest.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ $manifest.targetMemoryUtilizationPercentage }}
+    {{- end }}
+  {{- end }}
+{{- end }}

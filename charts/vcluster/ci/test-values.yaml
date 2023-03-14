@@ -1,0 +1,29 @@
+components:
+  podLabels:
+    extra: label
+  podAnnotations:
+    reloader.stakater.com/auto: "true"
+  nodeSelector:
+    name: "production"
+  tolerations:
+  - key: "example-key"
+    operator: "Exists"
+    effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: topology.kubernetes.io/zone
+            operator: In
+            values:
+            - antarctica-east1
+            - antarctica-west1
+  priorityClassName: "vcluster-operations"
+  topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: zone
+    whenUnsatisfiable: DoNotSchedule
+    labelSelector:
+      matchLabels:
+        foo: bar

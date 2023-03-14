@@ -1,0 +1,33 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- $fullName := include "kubernetes.fullname" . -}}
+  {{- $component_name := "kubeadm" -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullName }}-kubeadm-config
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+data:
+  kubeadmcfg.yaml: |+
+    apiVersion: kubeadm.k8s.io/v1beta3
+    kind: ClusterConfiguration
+    clusterName: {{ include "pkg.cluster.name" $ }}
+    {{- if $kubernetes.controlPlaneEndpoint }}
+    controlPlaneEndpoint: {{ $kubernetes.controlPlaneEndpoint }}
+    {{- else }}
+    controlPlaneEndpoint: {{ include "kubernetes.api.service" $ }}:{{ $kubernetes.apiServer.service.port }}
+    {{- end }}
+    {{- with $kubernetes.networking }}
+    networking:
+      dnsDomain: {{ .dnsDomain }}
+      {{- with .podSubnet }}
+      podSubnet: {{ . }}
+      {{- end }}
+      serviceSubnet: {{ .serviceSubnet }}
+    {{- end }}
+    {{- with (include "pkg.images.registry.url" $) }}
+    imageRepository: {{ . }}
+    {{- end }}
+{{- end }}

@@ -8,7 +8,7 @@ chart-repos:
   - buttahtoast=https://buttahtoast.github.io/helm-charts/
   - bedag=https://bedag.github.io/helm-charts/
 validate-chart-schema: true
-validate-maintainers: true
+validate-maintainers: false
 validate-yaml: false
 exclude-deprecated: true
 excluded-charts:

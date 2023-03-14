@@ -1,0 +1,174 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- $jobs := $.Values.lifecycle -}}
+  {{- if $kubernetes.admin.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "admin" -}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ $fullName }}-admin"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+    {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.admin.labels "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.admin.annotations "ctx" $)) }}
+  annotations:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ $kubernetes.admin.replicaCount }}
+  {{- with $kubernetes.admin.strategy }}
+  strategy: {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels: {{- include "kubernetes.selectorLabels" $ | nindent 6 }}
+      {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  template:
+    metadata:
+      labels: {{- include "kubernetes.selectorLabels" $ | nindent 8 }}
+        {{- include "pkg.components.pod_labels" (dict "labels" $kubernetes.admin.podLabels "ctx" $) | nindent 8 }}
+        {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+      annotations:
+        {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.admin.podAnnotations "ctx" $) | nindent 8 }}
+    spec:
+      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $kubernetes.admin.nodeSelector "ctx" $)) }}
+      nodeSelector: {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.admin.tolerations "ctx" $)) }}
+      tolerations:  {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.priorityClass" (dict "pc" $kubernetes.admin.priorityClassName "ctx" $)) }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      {{- with (include "pkg.components.topologySpreadConstraints" (dict "tsc" $kubernetes.admin.topologySpreadConstraints "ctx" $)) }}
+      topologySpreadConstraints: {{ . | nindent 8 }}
+      {{- end }}
+      affinity:
+      {{- with (include "pkg.components.affinity" (dict "affinity" $kubernetes.admin.affinity "ctx" $)) }}
+        {{- . | nindent 8 }}
+      {{- end }}
+      {{- if eq $kubernetes.admin.podAntiAffinity "hard" }}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "{{ $kubernetes.admin.podAntiAffinityTopologyKey }}"
+              labelSelector:
+                matchLabels:
+                  app: {{ $fullName }}-admin
+      {{- else if eq $kubernetes.admin.podAntiAffinity "soft" }}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                topologyKey: "{{ $kubernetes.admin.podAntiAffinityTopologyKey }}"
+                labelSelector:
+                  matchLabels:
+                    app: {{ $fullName }}-admin
+      {{- end }}
+      imagePullSecrets: {{ include "pkg.images.registry.pullsecrets" $ | nindent 8 }}
+        {{- with $kubernetes.admin.image.pullSecrets }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 5
+      initContainers: {{- include "pkg.cluster.connectivity" $ | nindent 8 }}
+      containers:
+      - command: [ 'sleep', 'infinity' ]
+        {{- if $kubernetes.admin.image.use_jobs }}
+        image: {{ include "pkg.images.registry.convert" (dict "image" $jobs.job.image "ctx" $) }}
+        {{- else }}
+        image: {{ include "pkg.images.registry.convert" (dict "image" $kubernetes.admin.image "ctx" $) }}
+        {{- end }}
+        imagePullPolicy:  {{ include "pkg.images.registry.pullpolicy" (dict "policy" $kubernetes.admin.image.pullPolicy "ctx" $) }}
+        {{- with (include "pkg.components.securityContext" (dict "sc" $kubernetes.admin.securityContext "ctx" $)) }}
+        securityContext: {{ . | nindent 10 }}
+        {{- end }}
+        name: admin
+        readinessProbe:
+          exec:
+            command:
+            - kubectl
+            - auth
+            - can-i
+            - '*'
+            - '*'
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        resources:
+          {{- toYaml $kubernetes.admin.resources | nindent 10 }}
+        {{- with $kubernetes.admin.envsFrom }}
+        envFrom:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        env:
+          {{- with $kubernetes.admin.envs }}
+            {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
+          {{- end }}
+          {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
+          {{- include "pkg.utils.xdg-env" $ | nindent 8 }}
+        - name: KUBECONFIG
+          value: "/etc/kubernetes/admin.conf"
+            {{- with .envs }}
+              {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
+            {{- end }}
+        volumeMounts:
+        - mountPath: /etc/kubernetes/
+          name: kubeconfig
+          readOnly: true
+        - mountPath: /pki/admin-client
+          name: pki-admin-client
+        - mountPath: /addons
+          name: addon-scripts
+        - mountPath: /cache
+          name: cache
+        {{- if or $kubernetes.extraManifests $kubernetes.konnectivityServer.enabled $kubernetes.konnectivityAgent.enabled }}
+        - mountPath: /manifests
+          name: manifests
+        {{- end }}
+        - mountPath: /config
+          name: config
+        {{- with $kubernetes.admin.extraVolumeMounts }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with $kubernetes.admin.sidecars }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with (include "pkg.components.podSecurityContext" (dict "psc" $kubernetes.admin.podSecurityContext "ctx" $)) }}
+      securityContext: {{ . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - name: cache
+        emptyDir:
+          sizeLimit: 500Mi
+      - configMap:
+          name: "{{ $fullName }}-admin-conf"
+        name: kubeconfig
+      - secret:
+          secretName: "{{ $fullName }}-pki-admin-client"
+        name: pki-admin-client
+      {{- if or $kubernetes.extraManifests $kubernetes.konnectivityServer.enabled $kubernetes.konnectivityAgent.enabled }}
+      - name: manifests
+        projected:
+          sources:
+          {{- if or $kubernetes.extraManifests }}
+          - secret:
+              name: "{{ $fullName }}-extra-manifests"
+          {{- end }}
+          {{- if or $kubernetes.konnectivityServer.enabled $kubernetes.konnectivityAgent.enabled }}
+          - configMap:
+              name: "{{ $fullName }}-konnectivity-manifests"
+          {{- end }}
+      {{- end }}
+      - name: config
+        configMap:
+          name: "{{ $fullName }}-kubeadm-config"
+      - name: addon-scripts
+        configMap:
+          name: "{{ $fullName }}-admin-scripts"
+      {{- with $kubernetes.admin.extraVolumes }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+  {{- end -}}
+{{- end -}}

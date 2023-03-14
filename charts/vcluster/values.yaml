@@ -1,0 +1,2189 @@
+# Cluster Configuration
+global:
+
+  # Proxy Configuration
+  proxy:
+    # -- Proxy Host
+    host: ""
+    # -- No Proxy Hosts
+    no_proxy: ""
+
+  # Docker Registry
+  registry:
+    # -- Registry Endpoint
+    endpoint: ""
+    creds:
+      # -- Registry Username
+      username: ""
+      # -- Registry Password
+      password: ""
+
+# ----------------------------
+# Utilities
+# ----------------------------
+
+# Cluster Configuration
+cluster:
+  # -- Define the cluster name
+  # @default -- The cluster name is derived from the `.Release.Name`
+  name: ""
+  # -- Define the cluster auth type
+  auth:
+    # -- Define the cluster auth type
+    administrators: []
+
+    config:
+
+  # -- Properties are substituted into the gitops component
+  properties: {}
+  #
+  # Any property you need for further usage in the gitops component
+  #   id: 5
+  #   environment: "development"
+  #   region: "eu-central-1"
+  #
+  # If the content is of type slice, the key is the index of the slice (eg hosts_0: 1.2.3.4:53, hosts_1: 1.2.3.5:53)
+  #   hosts:
+  #     - "1.2.3.4:53"
+  #     - "1.2.3.5:53"
+
+
+
+
+# ----------------------------
+# Machine Providers
+#  Provider values are currently given as env variables to the machine controller
+#  They serve as default values, if nothing is given in the machine spec.
+#  The values are given to the gitops component for further substitution
+# ----------------------------
+providers:
+
+  # Nutanix Configuration
+  # These values are used if nothing is set on the machine level.
+  # https://github.com/kubermatic/machine-controller/blob/main/pkg/cloudprovider/provider/nutanix/provider.go#L108
+  nutanix:
+    # -- Default Nutanix Cluster Endpoint
+    endpoint: ""
+    # -- Default Nutanix Cluster Port
+    port:
+    # -- Default Nutanix Cluster Username
+    username: ""
+    # -- Default Nutanix Cluster Password
+    password: ""
+    # -- Default Nutanix Cluster Insecure
+    insecure: false
+    # -- Default Nutanix Proxy URL
+    proxy: ""
+    # -- Default Nutanix Cluster Name
+    cluster: ""
+
+# ----------------------------
+# Lifecycle (General Usage)
+#  Lifecycle consists of jobs which run during the cluster lifecycle.
+#  They are used to perform tasks which are not part of the cluster lifecycle.
+#  All Jobs use the below configuration for the workload.
+# ----------------------------
+lifecycle:
+
+  # Cilium Installation
+  cilium:
+    # -- Install Cilium CNI
+    enabled: true
+    # -- Cilium version
+    version: 1.9.18
+    # -- Install only on chart install (First install)
+    on_install: true
+
+  # Create Additional Kubeconfigs which you can directly use to access the cluster in your existing toolchain (See values.yaml)
+  kubeconfigs: []
+  #   -- Name of the kubeconfig object (supports templating)
+  # - name: "my-kubeconfig"
+  #   -- Label of the kubeconfig object
+  #   labels: {}
+  #   -- Annotations of the kubeconfig object
+  #   annotations: {}
+  #   -- namespace to create the kubeconfig in (Default Release.Namespace)
+  #   namespace: ""
+  #   -- kind of kubeconfig. Can be "Configmap" or "Secret" (Default Secret)
+  #   kind: ""
+  #   -- Key in kind to store the kubeconfig (Default kubeconfig)
+  #   key: ""
+  #   -- Type of the kubeconfig. Can be "argo" or "kubeconfig" (Default kubeconfig)
+  #   type: ""
+  #   -- Endpoint of the kubeconfig. Can be "internal" or "external" (Default internal)
+  #   endpoint: ""
+  #   -- Clustername of the kubeconfig. Also used for argo clsuter name (Default pkg.cluster.name)
+  #   clustername: ""
+
+
+  # Additional customization for interactions with the current cluster
+  current:
+
+    # -- Additional configuration script for the current cluster (supports templating)
+    script:
+    #  echo "I am a script which runs on the current cluster"
+
+    # -- These manifests will be applied inside the cluster (supports templating)
+    extraManifests: {}
+    # -- Filename of the manifest
+    # namespace.yaml:
+    #   apiVersion: v1
+    #   kind: Namespace
+    #   metadata:
+    #     name: example
+
+    # -- These manifests will be applied inside the cluster, but only on $.Release.Install and wont be touched again (supports templating)
+    extraManifestsOnInstall: {}
+    # -- Filename of the manifest
+    # namespace.yaml:
+    #   apiVersion: v1
+    #   kind: Namespace
+    #   metadata:
+    #     name: example
+
+  # Additional customization for interactions with the vcluster cluster
+  vcluster:
+
+    # -- Additional configuration script for the vcluster (supports templating)
+    script:
+    #  echo "I am a script which runs on the vcluster"
+
+    # -- These manifests will be applied inside the vcluster (supports templating)
+    extraManifests: {}
+    # -- Filename of the manifest
+    # namespace.yaml:
+    #   apiVersion: v1
+    #   kind: Namespace
+    #   metadata:
+    #     name: example
+
+    # -- These manifests will be applied inside the vcluster, but only on $.Release.Install and wont be touched again (supports templating)
+    extraManifestsOnInstall: {}
+    # -- Filename of the manifest
+    # namespace.yaml:
+    #   apiVersion: v1
+    #   kind: Namespace
+    #   metadata:
+    #     name: example
+
+  # Gitops Setup Job
+  job:
+    # -- Deploy as Cronjob to run periodically
+    reconciler: true
+    # -- Job Annotations
+    annotations: {}
+    # -- Job Labels
+    labels: {}
+    # -- Cronjob Schedule
+    schedule: "0 0 1 */6 *"
+    # -- Cronjob successful jobs history limit
+    successfulJobsHistoryLimit: 3
+    # -- Cronjob failed jobs history limit
+    failedJobsHistoryLimit: 3
+    # -- Run Installer Jobs again (Only execute on Helm install)
+    image:
+      registry: registry-group.mgmtbi.ch
+      repository: sre/gitops/cluster_bootstrap
+      pullPolicy: Always
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: "dev.clusterbuild"
+      digest: ""
+      pullSecrets: []
+    # -- Pod Labels
+    podLabels: {}
+    # -- Pod Annotations
+    podAnnotations: {}
+    # -- Additional Pod Environment variables
+    extraEnv: []
+    # -- Additional Pod VolumeMounts
+    extraVolumeMounts: []
+    # -- Additional Pod Volumes
+    extraVolumes: []
+    # -- Pod Security Context
+    podSecurityContext:
+      enabled: true
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      privileged: false
+      runAsUser: 20000
+      runAsGroup: 20000
+      capabilities:
+        drop:
+        - ALL
+    # -- Node Selector
+    nodeSelector: {}
+    # -- Tolerations
+    tolerations: []
+    # -- Affinity
+    affinity: {}
+    # -- Pod PriorityClassName
+    priorityClassName: ""
+    # -- TopologySpreadConstraints
+    topologySpreadConstraints: []
+    # -- Resources configuration
+    resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  # ServiceAccount
+  serviceAccount:
+    # -- Specifies whether a service account should be created
+    create: true
+    # -- Annotations to add to the service account
+    annotations: {}
+    # -- The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+# ----------------------------
+# Components
+#   Configuration for all components from the vcluster (not within the vcluster, excluded: coredns, konnectivity)
+# ----------------------------
+components:
+
+  # Configuration for all workloads
+  workloads:
+
+    # -- Labels for all workloads (merged with workload labels)
+    labels: {}
+    # -- Annotations for all workloads (merged with workload annotations)
+    annotations: {}
+    # -- Pod Labels for all workloads (merged with workload podLabels)
+    podLabels: {}
+    # -- Pod Annotations for all workloads (merged with workload podAnnotations)
+    podAnnotations: {}
+    # reloader.stakater.com/auto: "true"
+
+    # Image Configuration
+    image:
+      # -- Overwrites Pull Policy for all components
+      pullPolicy: ""
+      # -- Additional image pull secrets for all components
+      pullSecrets: []
+
+    # -- Pod Security Context for all workloads  (Overwrites per workload podSecurityContext)
+    podSecurityContext: {}
+    # -- Enable Pod Security Context for all workloads
+    #  enabled: true
+    #  seccompProfile:
+    #    type: RuntimeDefault
+
+    # -- Container Security Context for all workloads (Overwrites per workload securityContext)
+    securityContext: {}
+    # -- Enable Pod Security Context for all workloads
+    #  enabled: true
+    #  allowPrivilegeEscalation: false
+    #  capabilities:
+    #    drop:
+    #    - ALL
+    #  readOnlyRootFilesystem: true
+
+    # -- Node Selector for all workloads (Overwrites all workloads nodeSelector)
+    nodeSelector: {}
+
+    # -- Tolerations for all workloads (Overwrites all workloads tolerations)
+    tolerations: []
+
+    # -- Affinity for all workloads (Overwrites all workloads affinities)
+    affinity: {}
+
+    # -- Priority Class for all workloads (Overwrites all workloads priorityClassNames)
+    priorityClassName: ""
+
+    # -- TopologySpreadConstraints for all workloads (Overwrites all workloads topologySpreadConstraints)
+    topologySpreadConstraints: []
+
+  # -- Labels for all services
+  svcLabels: {}
+
+  # -- Annotations for all services
+  svcAnnotations: {}
+
+  # Metrics Configurations
+  metrics:
+    # -- Enable metrics for all components
+    enabled: true
+    # ServiceMonitor
+    serviceMonitor:
+      # -- Enable ServiceMonitor for all components
+      enabled: true
+
+  exposure:
+    # -- Define how admission webhooks are expose (ingress or loadbalancer). Overwrites expose for all admission webhooks.
+    expose: "ingress"
+
+    certificates:
+      # -- Uses Existing Secret for all certificates
+      secretName: ""
+      issuer:
+        # -- Creates self-signed Issuer
+        selfSigned: false
+        # -- Set if the cert manager will generate either self-signed or CA signed SSL certificates. Its value will be either Issuer or ClusterIssuer
+        kind: Issuer # Issuer or ClusterIssuer
+        # -- Set the name of the ClusterIssuer if issuer kind is ClusterIssuer and if cert manager will generate CA signed SSL certificates
+        name: "" #  Name of the ClusterIssuer
+
+    # Ingress Configuration for all component ingresses
+    ingress:
+      # -- Port for Ingresses
+      port: 443
+      # -- Common annotations for admission ingresses
+      annotations: {}
+      #  kubernetes.io/ingress.class: nginx
+      #  kubernetes.io/tls-acme: "true"
+      #  cert-manager.io/issuer: ca-issuer
+      #  cert-manager.io/cluster-issuer: ca-cluster-issuer
+      #  kubernetes.io/ingress.global-static-ip-name: address-name
+      #  networking.gke.io/managed-certificates: certificate-name
+      # -- Ingressclass for admission ingresses
+      ingressClassName: ""
+      # -- Host for admission ingresses (admission endpoints are exposed via path). supports templating
+      host: "{{ include \"pkg.cluster.name\" $ }}.example.com"
+
+
+  networkPolicy:
+    enabled: true
+
+# ----------------------------
+# gitops Component
+# ----------------------------
+gitops:
+  # -- Enable/Disable Bootstrap Component
+  enabled: false
+
+  # Component Settings
+  component:
+
+    # -- Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well)
+    removeManifestsOnDisable: false
+
+  # -- Token used for all repositories
+  token: ""
+
+  # Flux GitOps Resources
+  flux:
+    # -- Create Flux resources. If false, ArgoCD resources will be created
+    enabled: false
+    # -- Use Pruning for flux syncs
+    prune: true
+    # -- Sync Interval for flux syncs
+    interval: "5m"
+
+    # Reference a SOPS Secret
+    secretReference:
+      # -- Enable SOPS Secret Reference
+      enabled: true
+      # -- Name of the SOPS Secret
+      name: "inventory-sops"
+
+
+  # ArgoCD GitOps Resources
+  argocd:
+    # -- Create ArgoCD resources (Helm Install)
+    enabled: true
+
+    # -- Install ArgoCD with Helm cli. The lifecycle will periodically ensure that argocd is applied with the values
+    lifecycle: false
+
+    bootstrap:
+      # -- ArgoCD Namespace
+      namespace: "argocd"
+      # -- ArgoCD Helm-Chart
+      chart: argo-cd
+      # -- ArgoCD Helm-Chart Repository
+      repoURL: https://argoproj.github.io/argo-helm
+      # -- ArgoCD Helm-Chart Version
+      targetRevision: 5.24.0
+      # -- ArgoCD Helm-Chart Values (allows templating) [Reference](https://artifacthub.io/packages/helm/argo/argo-cd)
+      values:
+
+        # Don't install ArgoCD CRDs on current cluster
+        crds:
+          install: false
+
+        # Use Flamingo Subsystem ArgoCD Image
+        global:
+          image:
+            repository: ghcr.io/flux-subsystem-argo/fsa/argocd
+            tag: "v2.5.11-fl.3-main-bc5b4abb"
+        configs:
+          params:
+            # https://argo-cd.readthedocs.io/en/stable/operator-manual/app-any-namespace/
+            application.namespaces: "*"
+          cm:
+            application.resourceTrackingMethod: annotation
+            # Disable in-cluster
+            cluster.inClusterEnabled: "false"
+            # Disable anonymous access
+            users.anonymous.enabled: "false"
+            # Specifies token expiration duration
+            users.session.duration: "24h"
+            # Enable Local Admin
+            admin.enabled: true
+            ## Ref: https://argo-cd.readthedocs.io/en/latest/operator-manual/rbac/#exec-resource
+            exec.enabled: true
+            # Add Kustomize Build Options
+            kustomize.buildOptions: "--enable-alpha-plugins --load-restrictor LoadRestrictionsNone"
+
+            resource.customizations.health.argoproj.io_Application: |
+              hs = {}
+              hs.status = "Progressing"
+              hs.message = ""
+              if obj.status ~= nil then
+                if obj.status.health ~= nil then
+                  hs.status = obj.status.health.status
+                  if obj.status.health.message ~= nil then
+                    hs.message = obj.status.health.message
+                  end
+                end
+              end
+              return hs
+
+          rbac:
+            create: true
+            #policy.csv: |
+
+      # ArgoCD Lifecycle config
+      config:
+        # -- Install ArgoCD CRDs from the given Helm version in the vcluster
+        install_crds: true
+        # -- Mounts the vcluster Config to all ArgoCD components
+        automount_kubeconfig: true
+
+        # -- Security Context (All ArgoCD components)
+        podSecurityContext:
+          enabled: true
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+
+        # -- Container Security Context (All ArgoCD components)
+        securityContext:
+          enabled: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - all
+          readOnlyRootFilesystem: true
+          runAsUser: 1001
+          runAsGroup: 1001
+
+        # Cluster Registration
+        register:
+          # -- Automatically register the vcluster with ArgoCD
+          enabled: true
+          # -- ArgoCD cluster name **(don't use __in-cluster__ as name, since argoCD will then attempt to do operations with its local serviceaccount)**
+          name: "vcluster"
+
+        # Argo Cluster Ingress
+        ingress:
+          # -- Enable ArgoCD Ingress
+          enabled: true
+          # -- Annotations
+          annotations: {}
+          #  kubernetes.io/ingress.class: nginx
+          # -- Ingressclass
+          ingressClassName: ""
+
+          server:
+            # -- Enable ArgoCD Server exposure
+            enabled: true
+            # -- Context path for argocd server
+            contextPath: /gitops
+          grpc:
+            # -- Enable ArgoCD Server GRPC exposure
+            enabled: true
+            # -- Context path for argocd server
+            contextPath: /grpc
+
+
+      # Add Plugins for Argocd
+      plugins:
+        subst:
+          # -- Enable Subst Plugin
+          enabled: false
+          image:
+            #registry: ghcr.io/buttahtoast/subst
+            #repository: buttahtoast/subst
+            #tag: "v0.0.1-alpha9"
+            registry: registry-group.mgmtbi.ch
+            #repository: sre/argo/subst
+            repository: oliverbaehler/dev
+            tag: subst
+            pullPolicy: Always
+            digest: ""
+            pullSecrets: []
+          # -- Resources configuration
+          resources: {}
+          # We usually recommend not to specify default resources and to leave this as a conscious
+          # choice for the user. This also increases chances charts run on environments with little
+          # resources, such as Minikube. If you do want to specify resources, uncomment the following
+          # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+          # limits:
+          #   cpu: 100m
+          #   memory: 128Mi
+          # requests:
+          #   cpu: 100m
+          #   memory: 128Mi
+
+  # This is used by the extraManifests, as example
+  repository:
+    # -- Inventory Repository URL
+    url: ""
+    # -- Inventory Repository Token
+    token: ""
+    # -- Inventory Repository Branch
+    ref: ""
+    # -- Inventory Repository Path. You can use templating in this value (eg. `/bootstrap/{ .Values.global.cluster.name }`)
+    # @default -- `/clusters/${cluster.name}`
+    path: ""
+
+# ----------------------------
+# Machine Controller Component
+# ----------------------------
+machine:
+  # -- Enable Machine-Controller Component
+  enabled: true
+  # Component Settings
+  component:
+    # -- Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well)
+    removeManifestsOnDisable: true
+    # -- Ensure all components manifests are present on controller start (as initContainer)
+    ensureManifestsOnStartup: true
+
+  # -- Tag Version used for machine-controller components
+  version: "v1.56.0" #"v1.54.2"
+
+  # Kubelect Configuration
+  kubelet:
+    # -- FeatureGates for kubelet
+    featureGates: []
+    # RotateKubeletServerCertificate=true
+
+  # -- Used Runtime
+  runtime: containerd
+
+  # Pause Image (Required on each machine)
+  pause:
+    image:
+      # -- Image registry
+      registry: ""
+      # -- Image repository
+      repository: pause
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag
+      tag: "3.5"
+      # -- Image Digest
+      digest: ""
+
+  # Controller Component
+  controller:
+    # -- Controller Command Arguments ([See Available](https://github.com/kubermatic/machine-controller/blob/main/cmd/machine-controller/main.go))
+    args:
+      node-csr-approver: true
+      join-cluster-timeout: 25m
+      worker-count: 10
+
+    image:
+      # -- Image registry
+      registry: quay.io
+      # -- Image repository
+      repository: kubermatic/machine-controller
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag (Version Overwrites)
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+      # -- Image Digest
+      digest: ""
+
+    # -- Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      readOnlyRootFilesystem: true
+      # Currently runs into problems
+      # runAsUser: 65534
+      # runAsGroup: 65534
+    # -- Livenessprobe configuration
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8085
+        scheme: HTTP
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    # -- Readinessprobe configuration
+    readinessProbe:
+      httpGet:
+        path: /healthz
+        port: 8085
+        scheme: HTTP
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    # -- Resources configuration
+    resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # -- Volume Mounts
+    volumeMounts: []
+    # -- Extra environment variables (`key: value` style, allows templating)
+    envs: {}
+    # EXTRA: "value"
+    # -- Extra environment variables from
+    envsFrom: []
+
+  # Admission Webhook (Webhook Controller is deployed to cluster namespace)
+  # The Admission Webhooks are deployed into the new cluster (Testing)
+  admission:
+
+    # -- Enable Admission Webhook Feature
+    enabled: true
+
+    # Admission Webhook Config
+    webhook:
+      # -- Admission Webhook Timeout
+      timeoutSeconds: 30
+      tls:
+        # -- Additional DNS Names for ADmission certificate
+        dnsNames: []
+        # -- Additional IP adresses for Admission certificate
+        ipAddresses: []
+        # -- Override the TLS Secret Name
+        name: ""
+
+    # -- Webhook Command Arguments ([See Available](https://github.com/kubermatic/machine-controller/blob/main/cmd/webhook/main.go))
+    args:
+      v: 4
+      # kubernetes-version-constraints: ">=1.18.0"
+
+    image:
+      # -- Image registry
+      registry: quay.io
+      # -- Image repository
+      repository: kubermatic/machine-controller
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag (Version Overwrites)
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+      # -- Image Digest
+      digest: ""
+
+    # -- Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      readOnlyRootFilesystem: true
+      # Currently runs into problems
+      # runAsUser: 65534
+      # runAsGroup: 65534
+    # -- Livenessprobe configuration
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 9876
+        scheme: HTTPS
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    # -- Readinessprobe configuration
+    readinessProbe:
+      httpGet:
+        path: /healthz
+        port: 9876
+        scheme: HTTPS
+      periodSeconds: 5
+    # -- Resources configuration
+    resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # -- Volume Mounts
+    volumeMounts: []
+    # -- Extra environment variables (`key: value` style, allows templating)
+    envs: {}
+    # EXTRA: "value"
+    # -- Extra environment variables from
+    envsFrom: []
+
+    # -- How to expose the admission service to be reachable from the vcluster. Can be `ingress` or `loadbalancer
+    expose: ""
+
+    # Admission Webhook Ingress
+    ingress:
+      # -- Annotations for admission ingress
+      annotations: {}
+      #  kubernetes.io/ingress.class: nginx
+      # -- Ingressclass for all ingresses
+      ingressClassName: ""
+      # -- Context path for admission ingress
+      contextPath: /admission/machine
+
+    # Admission Webhook Service
+    service:
+      # -- Admission Service Type
+      type: ClusterIP
+      # -- Admission Service Port
+      port: 9876
+      # -- Admission Service Labels
+      labels: {}
+      # -- Admission Service Annotations
+      annotations: {}
+      # metallb.universe.tf/address-pool: your net
+      # -- Admission Loadbalancer IP (must be set if `expose` is set to `loadbalancer`)
+      loadBalancerIP:
+      # -- Admission nodePort
+      nodePort:
+  # -- Image pull Secrets
+  imagePullSecrets: []
+  # -- Replicas for Admission Pods
+  replicaCount: 1
+  # -- Labels for Workload
+  labels: {}
+  # -- Annotations for Workload
+  annotations: {}
+  # -- Pod Labels
+  podLabels: {}
+  # -- Pod Annotations
+  podAnnotations: {}
+  # -- Pod Security Context
+  podSecurityContext:
+    enabled: true
+    runAsNonRoot: false
+    seccompProfile:
+      type: RuntimeDefault
+  # -- Node Selector
+  nodeSelector: {}
+  # -- Tolerations
+  tolerations: []
+  # -- Affinity
+  affinity: {}
+  # -- Volumes
+  volumes: []
+  # -- Pod PriorityClassName
+  priorityClassName: ""
+  # -- TopologySpreadConstraints for all workloads
+  topologySpreadConstraints: []
+  # -- Configure PodDisruptionBudget
+  podDisruptionBudget: {}
+  # maxUnavailable: 1
+  # -- Deployment Update Strategy
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+  # Metrics Configuration
+  metrics:
+    enabled: true
+    # Metrics Service
+    service:
+      # -- Service Labels
+      labels: {}
+      # -- Service Annotations
+      annotations: {}
+    # ServiceMonitor
+    serviceMonitor:
+      # -- Enable ServiceMonitor
+      enabled: true
+      # -- Install the ServiceMonitor into a different Namespace, as the monitoring stack one (default: the release one)
+      namespace: ''
+      # -- Assign additional labels according to Prometheus' serviceMonitorSelector matching labels
+      labels: {}
+      # -- Assign additional Annotations
+      annotations: {}
+      # -- Change matching labels
+      matchLabels: {}
+      # -- Set targetLabels for the serviceMonitor
+      targetLabels: []
+      # -- Set JobLabel for the serviceMonitor
+      jobSelector: app.kubernetes.io/name
+      endpoint:
+        # -- Set the scrape interval for the endpoint of the serviceMonitor
+        interval: "15s"
+        # -- Set the scrape timeout for the endpoint of the serviceMonitor
+        scrapeTimeout: ""
+        # -- Set metricRelabelings for the endpoint of the serviceMonitor
+        metricRelabelings: []
+        # -- Set relabelings for the endpoint of the serviceMonitor
+        relabelings: []
+
+  # Autoscaler Configuration
+  autoscaling:
+    # -- Enable Horizontal Pod Autoscaler
+    enabled: false
+    # -- Minimum available Replicas
+    minReplicas: 1
+    # -- Maximum available Replicas
+    maxReplicas: 100
+    # -- Benchmark CPU Usage
+    targetCPUUtilizationPercentage: 80
+    # -- Benchmark Memory Usage
+    targetMemoryUtilizationPercentage:
+
+  # ServiceAccount Configuration
+  serviceAccount:
+    # -- Specifies whether a service account should be created
+    create: true
+    # -- Annotations to add to the service account
+    annotations: {}
+    # -- The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+# ----------------------------
+#  Operating System Manager
+# ----------------------------
+# Refernece:
+osm:
+  # -- Enable Operating System Manager Component
+  enabled: false
+
+  # Component Settings
+  component:
+    # -- Manage CRDs within the cluster
+    manageCRDs: true
+    # -- Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well)
+    removeManifestsOnDisable: true
+    # -- Ensure all components manifests are present on controller start (as initContainer)
+    ensureManifestsOnStartup: true
+
+  # -- Tag Version used for both components
+  version: "v1.2.0"
+
+  # Controller Component
+  controller:
+
+    # -- Controller Command Arguments ([See Available](https://github.com/kubermatic/operating-system-manager/blob/main/cmd/osm-controller/main.go))
+    args:
+      worker-count: 10
+
+    image:
+      # -- Image registry
+      registry: quay.io
+      # -- Image repository
+      repository: kubermatic/operating-system-manager
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag (Version Overwrites)
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+      # -- Image Digest
+      digest: ""
+    # -- Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      readOnlyRootFilesystem: true
+      # Currently runs into problems
+      # runAsUser: 65534
+      # runAsGroup: 65534
+    # -- Livenessprobe configuration
+    livenessProbe:
+      httpGet:
+        path: /readyz
+        port: 8085
+        scheme: HTTP
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    # -- Readinessprobe configuration
+    readinessProbe:
+      httpGet:
+        path: /healthz
+        port: 8085
+        scheme: HTTP
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    # -- Pod Requests and limits
+    resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # -- Pod VolumeMounts
+    volumeMounts: []
+    # -- Extra environment variables (`key: value` style, allows templating)
+    envs: {}
+    # EXTRA: "value"
+    # -- Extra environment variables from
+    envsFrom: []
+
+  # Admission Webhook (Webhook Controller is deployed to cluster namespace)
+  # The Admission Webhooks are deployed into the new cluster (Testing)
+  admission:
+    # -- Enable Admission Webhook
+    enabled: true
+
+    # Admission Webhook Config
+    webhook:
+      # -- Admission Webhook Timeout
+      timeoutSeconds: 30
+      tls:
+        # -- Additional DNS Names for ADmission certificate
+        dnsNames: []
+        # -- Additional IP adresses for Admission certificate
+        ipAddresses: []
+        # -- Override the TLS Secret Name
+        name: ""
+
+    # -- Webhook Command Arguments ([See Available](https://github.com/kubermatic/operating-system-manager/blob/main/cmd/webhook/main.go))
+    args:
+      v: 4
+
+    image:
+      # -- Image registry
+      registry: quay.io
+      # -- Image repository
+      repository: kubermatic/operating-system-manager
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag (Version Overwrites)
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+      # -- Image Digest
+      digest: ""
+
+    # -- Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      readOnlyRootFilesystem: true
+      # Currently runs into problems
+      # runAsUser: 65534
+      # runAsGroup: 65534
+    # -- Livenessprobe configuration
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 9085
+        scheme: HTTP
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    # -- Readinessprobe configuration
+    readinessProbe:
+      httpGet:
+        path: /healthz
+        port: 9085
+        scheme: HTTP
+      initialDelaySeconds: 5
+      periodSeconds: 5
+
+    # -- Pod Requests and limits
+    resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # -- Pod VolumeMounts
+    volumeMounts: []
+    # -- Extra environment variables (`key: value` style, allows templating)
+    envs: {}
+    # EXTRA: "value"
+    # -- Extra environment variables from
+    envsFrom: []
+
+    # -- How to expose the admission service to be reachable from the vcluster. Can be `ingress` or `loadbalancer
+    expose: ""
+
+    # Admission Webhook Ingress
+    ingress:
+      # -- Annotations for admission ingress
+      annotations: {}
+      #  kubernetes.io/ingress.class: nginx
+      # -- Ingressclass for all ingresses
+      ingressClassName: ""
+      # -- Context path for admission ingress
+      contextPath: /admission/osm
+
+    # Admission Webhook Service
+    service:
+      # -- Admission Service Type
+      type: ClusterIP
+      # -- Admission Service Port
+      port: 9877
+      # -- Admission Service Labels
+      labels: {}
+      # -- Admission Service Annotations
+      annotations: {}
+      # metallb.universe.tf/address-pool: your net
+      # -- Admission Loadbalancer IP (must be set if `expose` is set to `loadbalancer`)
+      loadBalancerIP:
+      # -- Admission nodePort
+      nodePort:
+
+  # -- Image pull Secrets
+  imagePullSecrets: []
+  # -- Replicas for Admission Pods
+  replicaCount: 1
+  # -- Labels for Workload
+  labels: {}
+  # -- Annotations for Workload
+  annotations: {}
+  # -- Pod Labels
+  podLabels: {}
+  # -- Pod Annotations
+  podAnnotations: {}
+  # -- Pod Security Context
+  podSecurityContext:
+    enabled: true
+    runAsNonRoot: false
+    seccompProfile:
+      type: RuntimeDefault
+  # -- Deployment Update Strategy
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 50%
+  # -- Node Selector
+  nodeSelector: {}
+  # -- Tolerations
+  tolerations: []
+  # -- Affinity
+  affinity: {}
+  # -- Volumes
+  volumes: []
+  # -- Pod PriorityClassName
+  priorityClassName: ""
+  # -- TopologySpreadConstraints for all workloads
+  topologySpreadConstraints: []
+  # -- Configure PodDisruptionBudget
+  podDisruptionBudget: {}
+  # maxUnavailable: 1
+
+  # Metrics Configuration
+  metrics:
+    # -- Enable Metrics
+    enabled: true
+    # Metrics Service
+    service:
+      # -- Service Labels
+      labels: {}
+      # -- Service Annotations
+      annotations: {}
+    # ServiceMonitor
+    serviceMonitor:
+      # -- Enable ServiceMonitor
+      enabled: true
+      # -- Install the ServiceMonitor into a different Namespace, as the monitoring stack one (default: the release one)
+      namespace: ''
+      # -- Assign additional labels according to Prometheus' serviceMonitorSelector matching labels
+      labels: {}
+      # -- Assign additional Annotations
+      annotations: {}
+      # -- Change matching labels
+      matchLabels: {}
+      # -- Set JobLabel for the serviceMonitor
+      jobLabel: app.kubernetes.io/name
+      # -- Set targetLabels for the serviceMonitor
+      targetLabels: []
+      endpoint:
+        # -- Set the scrape interval for the endpoint of the serviceMonitor
+        interval: "15s"
+        # -- Set the scrape timeout for the endpoint of the serviceMonitor
+        scrapeTimeout: ""
+        # -- Set metricRelabelings for the endpoint of the serviceMonitor
+        metricRelabelings: []
+        # -- Set relabelings for the endpoint of the serviceMonitor
+        relabelings: []
+
+  # SericeAccount
+  serviceAccount:
+    # -- Specifies whether a service account should be created
+    create: true
+    # -- Annotations to add to the service account
+    annotations: {}
+    # -- The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+  # Autoscaler
+  autoscaling:
+    # -- Enable Horizontal Pod Autoscaler
+    enabled: false
+    # -- Minimum available Replicas
+    minReplicas: 1
+    # -- Maximum available Replicas
+    maxReplicas: 100
+    # -- Benchmark CPU Usage
+    targetCPUUtilizationPercentage: 80
+    # -- Benchmark Memory Usage
+    targetMemoryUtilizationPercentage:
+
+
+# ----------------------------
+#  Kubernetes Component
+# ----------------------------
+kubernetes:
+  # -- Enable Kubernetes Component
+  enabled: true
+
+  # Component Settings
+  component:
+
+    # -- Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well)
+    removeManifestsOnDisable: true
+
+  # -- Version for API Server, Scheduler, Controller Manager (Tag for all kubernetes components)
+  version: "v1.25.0"
+
+
+  # -- ControlerPlaneEndpoint
+  controlPlane:
+    # -- Endpoint for ControlPlane (eg `128.1314.1234.4242:6443`). If not set, the vcluster will try to find the endpoint automatically.
+    endpoint:
+
+  networking:
+    dnsDomain: cluster.local
+    serviceSubnet: "10.2.0.0/16"
+    podSubnet: "10.3.0.0/16"
+
+  persistence:
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 1Gi
+    # storageClassName: default
+    annotations: {}
+    finalizers:
+      - kubernetes.io/pvc-protection
+
+  # Kube-Proxy (via KubeADM)
+  kubeProxy:
+    # -- Install kube-proxy via KubeADM. If disabled, the cilium kube-proxy replacement will be used
+    enabled: true
+
+  ## ETCD
+  etcd:
+    # -- Enable ETCD
+    enabled: true
+
+    certSANs:
+      # -- Additonal DNS names for ETCD ceritifcate
+      dnsNames: []
+      # -- Additonal IP adresses names for ETCD ceritifcate
+      ipAddresses: []
+
+    # -- Extra arguments for ETCD
+    args:
+      snapshot-count: 10000
+
+    # https://console.cloud.google.com/gcr/images/etcd-development/GLOBAL/etcd?pli=1
+    image:
+      # -- Image registry
+      registry: k8s.gcr.io
+      # -- Image repository
+      repository: etcd
+      # -- Image tag
+      tag: 3.5.6-0
+      # -- Image Digest
+      digest: ""
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+    # -- Image pull Secrets
+    imagePullSecrets: []
+    # -- Replicas for ETCD Pods
+    replicaCount: 3
+    # -- Pod Requests and limits
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    # -- Labels for Workload
+    labels: {}
+    # -- Annotations for Workload
+    annotations: {}
+    # -- Pod Labels
+    podLabels: {}
+    # -- Pod Annotations
+    podAnnotations: {}
+    # -- Extra environment variables (`key: value` style, allows templating)
+    envs: {}
+    # -- Extra environment variables from
+    envsFrom: []
+    # -- Pod Security Context
+    podSecurityContext:
+      enabled: true
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+        - ALL
+    # -- Node Selector
+    nodeSelector: {}
+    # -- Tolerations
+    tolerations: []
+    podAntiAffinity: soft
+    podAntiAffinityTopologyKey: kubernetes.io/hostname
+    # -- Affinity
+    affinity: {}
+    # -- Additional volumemounts
+    volumeMounts: []
+    # -- Additional volumes
+    volumes: []
+    # -- Pod PriorityClassName
+    priorityClassName: ""
+    # -- TopologySpreadConstraints for all workloads
+    topologySpreadConstraints: []
+    # -- Configure PodDisruptionBudget
+    podDisruptionBudget: {}
+    # maxUnavailable: 1
+    # We recommend giving etcd some time to start up to garantuee a healthy cluster
+    # -- Pod Management Policy
+    podManagementPolicy: OrderedReady
+    # -- Minimum ready seconds
+    minReadySeconds: 10
+    # -- Update Strategy
+    updateStrategy: {}
+
+    ports:
+      # -- ETCD Client Port
+      client: 2379
+      # -- ETCD Peer Port
+      peer: 2380
+      # -- ETCD Metrics Port
+      metrics: 2381
+
+    ## ETCD Service
+    service:
+      enabled: true
+      type: ClusterIP
+      ports:
+        client: 2379
+        peer: 2380
+        metrics: 2381
+      labels: {}
+      annotations: {}
+      loadBalancerIP:
+
+    # ETCD Metrics Configuration
+    metrics:
+      enabled: true
+      # Metrics Service
+      service:
+        # -- Service Labels
+        labels: {}
+        # -- Service Annotations
+        annotations: {}
+      # ServiceMonitor
+      serviceMonitor:
+        # -- Enable ServiceMonitor
+        enabled: true
+        # -- Install the ServiceMonitor into a different Namespace, as the monitoring stack one (default: the release one)
+        namespace: ''
+        # -- Assign additional labels according to Prometheus' serviceMonitorSelector matching labels
+        labels: {}
+        # -- Assign additional Annotations
+        annotations: {}
+        # -- Change matching labels
+        matchLabels: {}
+        # -- Set targetLabels for the serviceMonitor
+        targetLabels: []
+        # -- Set JobLabel for the serviceMonitor
+        jobSelector: app.kubernetes.io/name
+        endpoint:
+          # -- Set the scrape interval for the endpoint of the serviceMonitor
+          interval: "15s"
+          # -- Set the scrape timeout for the endpoint of the serviceMonitor
+          scrapeTimeout: ""
+          # -- Set metricRelabelings for the endpoint of the serviceMonitor
+          metricRelabelings: []
+          # -- Set relabelings for the endpoint of the serviceMonitor
+          relabelings: []
+
+  ## Kubernetes API-Server
+  apiServer:
+    # -- Enable Kubernetes API-Server
+    enabled: true
+
+    certSANs:
+      # -- Additonal API-Server dns names for ETCD ceritifcate
+      dnsNames: []
+      # -- Additonal API-Server adresses for ETCD ceritifcate
+      ipAddresses: []
+
+    ## Ingress
+    ingress:
+      # -- Annotations for admission ingress
+      annotations: {}
+      #  kubernetes.io/ingress.class: nginx
+      # -- Ingressclass for all ingresses
+      ingressClassName: ""
+      # -- Context path for admission ingress
+      contextPath: /admission/machine
+
+    # -- Extra arguments for the kube-apiserver
+    args: {}
+    # advertise-address is required for kube-proxy
+    #advertise-address: 10.9.8.10
+
+    image:
+      # -- Image registry
+      registry: k8s.gcr.io
+      # -- Image repository
+      repository: kube-apiserver
+      # -- Image tag
+      tag: ""
+      # -- Image digest
+      digest: ""
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+
+    # -- Image pull Secrets
+    imagePullSecrets: []
+    # -- Replicas for API-Server
+    replicaCount: 2
+    # -- Pod Requests and limits
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    # -- Labels for Workload
+    labels: {}
+    # -- Annotations for Workload
+    annotations: {}
+    # -- Pod Labels
+    podLabels: {}
+    # -- Pod Annotations
+    podAnnotations: {}
+    # -- Extra environment variables (`key: value` style, allows templating)
+    envs: {}
+    # -- Extra environment variables from
+    envsFrom: []
+    # -- Pod Security Context
+    podSecurityContext:
+      enabled: true
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+        - ALL
+
+    # -- Node Selector
+    nodeSelector: {}
+    # -- Tolerations
+    tolerations: []
+    # -- Affinity
+    affinity: {}
+    podAntiAffinity: soft
+    podAntiAffinityTopologyKey: kubernetes.io/hostname
+    # -- Additional volumemounts
+    volumeMounts: []
+    # -- Additional volumes
+    volumes: []
+    # -- Pod PriorityClassName
+    priorityClassName: ""
+    # -- TopologySpreadConstraints for all workloads
+    topologySpreadConstraints: []
+    # -- Configure PodDisruptionBudget
+    podDisruptionBudget: {}
+    # maxUnavailable: 1
+    # -- Deployment Update Strategy
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 30%
+
+    # -- Port for API-Server
+    port: 6443
+
+    ## Service
+    service:
+      # -- Enable API-Server Service
+      enabled: true
+      type: ClusterIP # NodePort / LoadBalancer
+      port: 6443
+      # Specify nodePort for apiserver service (30000-32767)
+      nodePort:
+      labels: {}
+      annotations: {}
+      loadBalancerIP:
+
+  controllerManager:
+    # -- Enable Kubernetes Controller-Manager
+    enabled: true
+
+    # -- Extra arguments for the [controller-manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/)
+    args: {}
+
+    image:
+      # -- Image registry
+      registry: k8s.gcr.io
+      # -- Image repository
+      repository: kube-controller-manager
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag (Version Overwrites)
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+      # -- Image Digest
+      digest: ""
+    # -- Image pull Secrets
+    imagePullSecrets: []
+    # -- Replicas for Controller-Manager
+    replicaCount: 2
+    # -- Pod Requests and limits
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    # -- Labels for Workload
+    labels: {}
+    # -- Annotations for Workload
+    annotations: {}
+    # -- Pod Labels
+    podLabels: {}
+    # -- Pod Annotations
+    podAnnotations: {}
+    # -- Extra environment variables (`key: value` style, allows templating)
+    envs: {}
+    # -- Extra environment variables from
+    envsFrom: []
+    # -- Pod Security Context
+    podSecurityContext:
+      enabled: true
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+        - ALL
+    # -- Node Selector
+    nodeSelector: {}
+    # -- Tolerations
+    tolerations: []
+    # -- Affinity
+    affinity: {}
+    podAntiAffinity: soft
+    podAntiAffinityTopologyKey: kubernetes.io/hostname
+    # -- Additional Volumes
+    volumes: []
+    # -- Additional Volumemounts
+    volumeMounts: []
+    # -- Pod PriorityClassName
+    priorityClassName: ""
+    # -- TopologySpreadConstraints for all workloads
+    topologySpreadConstraints: []
+    # -- Configure PodDisruptionBudget
+    podDisruptionBudget: {}
+    # maxUnavailable: 1
+    # -- Deployment Update Strategy
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 50%
+    # -- Port for Controller-Manager
+    port: 10257
+
+    ## Service
+    service:
+      # -- Enable Controller-Manager Service
+      enabled: true
+      # -- Service Type
+      type: ClusterIP
+      # -- Service Port
+      port: 10257
+      # -- Service Labels
+      labels: {}
+      # -- Service Annotations
+      annotations: {}
+      # -- LoadBalancerIP
+      loadBalancerIP:
+
+  scheduler:
+    # -- Enable Kubernetes Scheduler
+    enabled: true
+
+    # -- kube-scheduler configuration [Read More](https://kubernetes.io/docs/reference/scheduling/config/)
+    configuration: {}
+
+    # -- Extra arguments for the [scheduler](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-scheduler/)
+    args: {}
+
+    image:
+      # -- Image registry
+      registry: registry.k8s.io
+      # -- Image repository
+      repository: kube-scheduler
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag (Version Overwrites)
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+      # -- Image Digest
+      digest: ""
+    # -- Image pull Secrets
+    imagePullSecrets: []
+    # -- Replicas for kube-scheduler
+    replicaCount: 2
+    # -- Pod Requests and limits
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    # -- Labels for Workload
+    labels: {}
+    # -- Annotations for Workload
+    annotations: {}
+    # -- Pod Labels
+    podLabels: {}
+    # -- Pod Annotations
+    podAnnotations: {}
+    # -- Extra environment variables (`key: value` style, allows templating)
+    envs: {}
+    # -- Extra environment variables from
+    envsFrom: []
+    # -- Pod Security Context
+    podSecurityContext:
+      enabled: true
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+        - ALL
+    # -- Node Selector
+    nodeSelector: {}
+    # -- Tolerations
+    tolerations: []
+    # -- Affinity
+    affinity: {}
+    podAntiAffinity: soft
+    podAntiAffinityTopologyKey: kubernetes.io/hostname
+    # -- Additional Volumes
+    volumes: []
+    # -- Additional Volumemounts
+    volumeMounts: []
+    # -- Pod PriorityClassName
+    priorityClassName: ""
+    # -- TopologySpreadConstraints for all workloads
+    topologySpreadConstraints: []
+    # -- Configure PodDisruptionBudget
+    podDisruptionBudget: {}
+    # maxUnavailable: 1
+    # -- Deployment Update Strategy
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 50%
+    # -- Port for kube-scheduler
+    port: 10259
+
+    ## Service
+    service:
+      # -- Enable kube-scheduler Service
+      enabled: true
+      # -- Service Type
+      type: ClusterIP
+      # -- Service Port
+      port: 10259
+      # -- Service Labels
+      labels: {}
+      # -- Service Annotations
+      annotations: {}
+      # -- LoadBalancerIP
+      loadBalancerIP:
+
+    ## Metrics Configuration
+    metrics:
+      enabled: true
+      # Metrics Service
+      service:
+        # -- Service Labels
+        labels: {}
+        # -- Service Annotations
+        annotations: {}
+      # ServiceMonitor
+      serviceMonitor:
+        # -- Enable ServiceMonitor
+        enabled: true
+        # -- Install the ServiceMonitor into a different Namespace, as the monitoring stack one (default: the release one)
+        namespace: ''
+        # -- Assign additional labels according to Prometheus' serviceMonitorSelector matching labels
+        labels: {}
+        # -- Assign additional Annotations
+        annotations: {}
+        # -- Change matching labels
+        matchLabels: {}
+        # -- Set targetLabels for the serviceMonitor
+        targetLabels: []
+        # -- Set JobLabel for the serviceMonitor
+        jobSelector: app.kubernetes.io/name
+        endpoint:
+          # -- Set the scrape interval for the endpoint of the serviceMonitor
+          interval: "15s"
+          # -- Set the scrape timeout for the endpoint of the serviceMonitor
+          scrapeTimeout: ""
+          # -- Set metricRelabelings for the endpoint of the serviceMonitor
+          metricRelabelings: []
+          # -- Set relabelings for the endpoint of the serviceMonitor
+          relabelings: []
+
+
+  admin:
+    # -- Enable Kubernetes Administration
+    enabled: true
+    image:
+      # -- Use the Job Image (used for kubectl admin and kubeadmin bootstrap)
+      use_jobs: true
+      # -- Image registry
+      registry: ghcr.io
+      # -- Image repository
+      repository: kvaps/kubernetes-tools
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag (Version Overwrites)
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: "v0.13.4"
+      # -- Image Digest
+      digest: ""
+    # -- Image pull Secrets
+    imagePullSecrets: []
+    # -- Replicas for admin
+    replicaCount: 1
+    # -- Pod Requests and limits
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    # -- Labels for Workload
+    labels: {}
+    # -- Annotations for Workload
+    annotations: {}
+    # -- Pod Labels
+    podLabels: {}
+    # -- Pod Annotations
+    podAnnotations: {}
+    # -- Extra environment variables (`key: value` style, allows templating)
+    envs: {}
+    # -- Extra environment variables from
+    envsFrom: []
+    # -- Pod Security Context
+    podSecurityContext:
+      enabled: true
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - all
+      readOnlyRootFilesystem: false
+    # -- Node Selector
+    nodeSelector: {}
+    # -- Tolerations
+    tolerations: []
+    # -- Affinity
+    affinity: {}
+    podAntiAffinity: soft
+    podAntiAffinityTopologyKey: kubernetes.io/hostname
+    # -- Additional Volumes
+    volumes: []
+    # -- Additional Volumemounts
+    volumeMounts: []
+    # -- Pod PriorityClassName
+    priorityClassName: ""
+    # -- TopologySpreadConstraints for all workloads
+    topologySpreadConstraints: []
+    # -- Configure PodDisruptionBudget
+    podDisruptionBudget: {}
+    # maxUnavailable: 1
+    # -- Deployment Update Strategy
+    strategy: {}
+
+  # CoreDNS (via KubeADM) deployed within vcluster
+  coredns:
+    # -- Install CoreDNS via KubeADM
+    enabled: true
+    # https://hub.docker.com/r/coredns/coredns/tags
+    image:
+      # -- Image registry
+      registry:
+      # -- Image repository
+      repository: coredns/coredns
+      # -- Image tag
+      tag: 1.10.0
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image Digest
+      digest: ""
+    # -- Image pull Secrets
+    imagePullSecrets: []
+    # -- CoreDNS Replicas
+    replicaCount: 2
+    # -- CoreDNS resources
+    resources:
+      limits:
+        memory: 170Mi
+      requests:
+        cpu: 100m
+        memory: 70Mi
+    # -- Labels for Workload
+    labels: {}
+    # -- Annotations for Workload
+    annotations: {}
+    # -- Pod Labels
+    podLabels: {}
+    # -- Pod Annotations
+    podAnnotations: {}
+    # -- Extra environment variables (`key: value` style, allows templating)
+    envs: {}
+    # -- Extra environment variables from
+    envsFrom: []
+    # -- Pod Security Context
+    podSecurityContext:
+      enabled: true
+      runAsNonRoot: false
+      seccompProfile:
+        type: RuntimeDefault
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        add:
+        - NET_BIND_SERVICE
+        drop:
+        - all
+      readOnlyRootFilesystem: true
+    # -- Deployment Update Strategy
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
+    # -- Node Selector
+    nodeSelector: {}
+    # -- Tolerations
+    tolerations: []
+    # -- Affinity
+    affinity: {}
+    podAntiAffinity: soft
+    podAntiAffinityTopologyKey: kubernetes.io/hostname
+    # -- Additional Volumes
+    volumes: []
+    # -- Additional Volumemounts
+    volumeMounts: []
+    # -- Pod PriorityClassName
+    priorityClassName: ""
+    # -- TopologySpreadConstraints for all workloads
+    topologySpreadConstraints: []
+
+  # Konnectivity Server
+  konnectivityServer:
+    # -- Enable Konnectivity Server
+    enabled: true
+    # -- This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment.
+    mode: GRPC
+    image:
+      # -- Image registry
+      registry: us.gcr.io
+      # -- Image repository
+      repository: k8s-artifacts-prod/kas-network-proxy/proxy-server
+      # -- Image tag
+      tag: v0.0.24
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image Digest
+      digest: ""
+      # -- Image pull secrets
+      pullSecrets: []
+
+    # -- Konnectivity Server Replicas (only used in HTTPConnect mode)
+    replicaCount: 2
+
+    # -- Konnectivity Server resources
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    # -- Konnectivity Server extra arguments
+    extraArgs: {}
+    labels: {}
+    annotations: {}
+    podLabels: {}
+    podAnnotations: {}
+    nodeSelector: {}
+    tolerations: []
+    podAntiAffinity: soft
+    podAntiAffinityTopologyKey: kubernetes.io/hostname
+    affinity: {}
+    # -- Extra environment variables (`key: value` style, allows templating)
+    envs: {}
+    # EXTRA: "value"
+    # -- Extra environment variables from
+    envsFrom: []
+    extraVolumes: []
+    extraVolumeMounts: []
+
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - all
+      readOnlyRootFilesystem: true
+      runAsUser: 65534
+      runAsGroup: 65534
+    # -- Pod Security Context (only used in HTTPConnect mode)
+    podSecurityContext:
+      enabled: true
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    # -- Deployment Update Strategy (only used in HTTPConnect mode)
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 50%
+
+    ports:
+      server: 8131
+      agent: 8132
+      admin: 8133
+      health: 8134
+    service:
+      enabled: true
+      type: ClusterIP
+      ports:
+        server: 8131
+        agent: 8132
+        admin: 8133
+      nodePorts:
+        server:
+        agent:
+        admin:
+      labels: {}
+      annotations: {}
+      loadBalancerIP:
+
+  konnectivityAgent:
+    enabled: false
+    image:
+      registry: us.gcr.io
+      repository: k8s-artifacts-prod/kas-network-proxy/proxy-agent
+      tag: v0.0.24
+      pullPolicy: IfNotPresent
+      pullSecrets: []
+    replicaCount: 2
+    hostNetwork: true
+
+    extraArgs: {}
+    labels: {}
+    annotations: {}
+    podLabels: {}
+    podAnnotations: {}
+    nodeSelector: {}
+    tolerations: []
+    podAntiAffinity: soft
+    podAntiAffinityTopologyKey: kubernetes.io/hostname
+    affinity: {}
+    # -- Extra environment variables (`key: value` style, allows templating)
+    envs: {}
+    # EXTRA: "value"
+    # -- Extra environment variables from
+    envsFrom: []
+    extraVolumes: []
+    extraVolumeMounts: []
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - all
+      readOnlyRootFilesystem: true
+      runAsUser: 65534
+      runAsGroup: 65534
+    # -- Pod Security Context
+    podSecurityContext:
+      enabled: true
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    # -- Deployment Update Strategy
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 50%
+    ports:
+      admin: 8133
+      health: 8134
+
+# ----------------------------
+#  Cluster-Autoscaler (Autoscaler) Component
+#   Reference: https://github.com/kube-green/kube-green
+# ----------------------------
+autoscaler:
+  # -- Enable autsocaler component
+  enabled: true
+  ## Priorities Expander
+  # -- The expanderPriorities is used if `extraArgs.expander` contains `priority` and expanderPriorities is also set with the priorities.
+  # If `args.expander` contains `priority`, then expanderPriorities is used to define cluster-autoscaler-priority-expander priorities.
+  # See: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/expander/priority/readme.md
+  expanderPriorities: {}
+  # 10:
+  #   - .*t2\.large.*
+  #   - .*t3\.large.*
+  # 50:
+  #   - .*m4\.4xlarge.*
+
+  # -- Annotations to add to `cluster-autoscaler-priority-expander` ConfigMap.
+  priorityConfigMapAnnotations: {}
+  # key1: "value1"
+  # key2: "value2"
+
+  # -- Additional container arguments.
+  # Refer to https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-the-parameters-to-ca for the full list of cluster autoscaler
+  # parameters and their default values.
+  # Everything after the first _ will be ignored allowing the use of multi-string arguments.
+  args:
+    leader-elect: true
+    logtostderr: true
+    stderrthreshold: info
+    scale-down-enabled: true
+    v: 4
+    # write-status-configmap: true
+    # status-config-map-name: cluster-autoscaler-status
+    # leader-elect: true
+    # leader-elect-resource-lock: endpoints
+    # skip-nodes-with-local-storage: true
+    # expander: random
+    # scale-down-enabled: true
+    # balance-similar-node-groups: true
+    # min-replica-count: 0
+    # scale-down-utilization-threshold: 0.5
+    # scale-down-non-empty-candidates-count: 30
+    # max-node-provision-time: 15m0s
+    # scan-interval: 10s
+    # scale-down-delay-after-add: 10m
+    # scale-down-delay-after-delete: 0s
+    # scale-down-delay-after-failure: 3m
+    # scale-down-unneeded-time: 10m
+    # skip-nodes-with-system-pods: true
+    # balancing-ignore-label_1: first-label-to-ignore
+    # balancing-ignore-label_2: second-label-to-ignore
+
+  # Image COnfiguration
+  image:
+    # -- Image registry
+    registry: k8s.gcr.io
+    # -- Image repository
+    repository: autoscaling/cluster-autoscaler
+    # -- Image pull policy
+    pullPolicy: IfNotPresent
+    # -- Image tag
+    tag: "v1.23.0"
+    # -- Image Digest
+    digest: ""
+  # -- Security Context
+  securityContext:
+    enabled: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+    runAsUser: 1001
+    runAsGroup: 1001
+  # -- Livenessprobe configuration
+  livenessProbe:
+    httpGet:
+      path: /health-check
+      port: 8085
+    initialDelaySeconds: 5
+    periodSeconds: 5
+  # -- Readinessprobe configuration
+  readinessProbe:
+    httpGet:
+      path: /health-check
+      port: 8085
+    periodSeconds: 5
+  # -- Pod Requests and limits
+  resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # -- Extra environment variables (`key: value` style, allows templating)
+  envs:
+    CAPI_GROUP: "cluster.k8s.io"
+  # -- Extra environment variables from
+  envsFrom: []
+  # -- Image pull Secrets
+  imagePullSecrets: []
+  # -- Replicas for Admission Pods
+  replicaCount: 1
+  # -- Labels for Workload
+  labels: {}
+  # -- Annotations for Workload
+  annotations: {}
+  # -- Pod Labels
+  podLabels: {}
+  # -- Pod Annotations
+  podAnnotations: {}
+  # -- Pod Security Context
+  podSecurityContext:
+    enabled: true
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  # -- Deployment Update Strategy
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  # -- Node Selector
+  nodeSelector: {}
+  # -- Tolerations
+  tolerations: []
+  # -- Affinity
+  affinity: {}
+  # -- Volumes
+  volumes: []
+  # -- Pod PriorityClassName
+  priorityClassName: ""
+  # -- TopologySpreadConstraints for all workloads
+  topologySpreadConstraints: []
+  # -- Configure PodDisruptionBudget
+  podDisruptionBudget: {}
+  # maxUnavailable: 1
+
+  # Metrics Configuration
+  metrics:
+    # ServiceMonitor
+    serviceMonitor:
+      # -- Enable ServiceMonitor
+      enabled: false
+      # -- Install the ServiceMonitor into a different Namespace, as the monitoring stack one (default: the release one)
+      namespace: ''
+      # -- Assign additional labels according to Prometheus' serviceMonitorSelector matching labels
+      labels: {}
+      # -- Assign additional Annotations
+      annotations: {}
+      # -- Change matching labels
+      matchLabels: {}
+      # -- Set targetLabels for the serviceMonitor
+      targetLabels: []
+      endpoint:
+        # -- Set the scrape interval for the endpoint of the serviceMonitor
+        interval: "15s"
+        # -- Set the scrape timeout for the endpoint of the serviceMonitor
+        scrapeTimeout: ""
+        # -- Set metricRelabelings for the endpoint of the serviceMonitor
+        metricRelabelings: []
+        # -- Set relabelings for the endpoint of the serviceMonitor
+        relabelings: []
+  # Autoscaler Configuration
+  autoscaling:
+    # -- Enable Horizontal Pod Autoscaler
+    enabled: false
+    # -- Minimum available Replicas
+    minReplicas: 1
+    # -- Maximum available Replicas
+    maxReplicas: 100
+    # -- Benchmark CPU Usage
+    targetCPUUtilizationPercentage: 80
+    # -- Benchmark Memory Usage
+    targetMemoryUtilizationPercentage:
+  # ServiceAccount Configuration
+  serviceAccount:
+    # -- Specifies whether a service account should be created
+    create: true
+    # -- Annotations to add to the service account
+    annotations: {}
+    # -- The name of the service account to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+
+# ----------------------------
+# Utilities
+# ----------------------------
+utils:
+  # -- Base Label used for labels
+  base_label: "app.kubernetes.io"
+  # -- Timezone
+  timezone: "Europe/Zurich"
+  # -- All controllers are installed on the current cluster without expecting a virtual API
+  currentcluster: false

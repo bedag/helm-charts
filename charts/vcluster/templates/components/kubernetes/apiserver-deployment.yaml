@@ -1,0 +1,206 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if $kubernetes.apiServer.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $certName := include "kubernetes.certname" . -}}
+    {{- $component_name := "apiserver" -}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ $fullName }}-apiserver"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+    {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.apiServer.labels "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.apiServer.annotations "ctx" $)) }}
+  annotations:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ $kubernetes.apiServer.replicaCount }}
+  {{- with $kubernetes.apiServer.strategy }}
+  strategy: {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels: {{- include "kubernetes.selectorLabels" $ | nindent 6 }}
+      {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  template:
+    metadata:
+      labels: {{- include "kubernetes.labels" $ | nindent 8 }}
+        {{- include "pkg.components.pod_labels" (dict "labels" $kubernetes.apiServer.podLabels "ctx" $) | nindent 8 }}
+        {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/components/kubernetes/apiserver-config.yaml" ) . | sha256sum }}
+        {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.apiServer.podAnnotations "ctx" $) | nindent 8 }}
+    spec:
+      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $kubernetes.apiServer.nodeSelector "ctx" $)) }}
+      nodeSelector: {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.apiServer.tolerations "ctx" $)) }}
+      tolerations:  {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.priorityClass" (dict "pc" $kubernetes.apiServer.priorityClassName "ctx" $)) }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      {{- with (include "pkg.components.topologySpreadConstraints" (dict "tsc" $kubernetes.apiServer.topologySpreadConstraints "ctx" $)) }}
+      topologySpreadConstraints: {{ . | nindent 8 }}
+      {{- end }}
+      affinity:
+      {{- with (include "pkg.components.affinity" (dict "affinity" $kubernetes.apiServer.affinity "ctx" $)) }}
+        {{- . | nindent 8 }}
+      {{- end }}
+      {{- if eq $kubernetes.apiServer.podAntiAffinity "hard" }}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "{{ $kubernetes.apiServer.podAntiAffinityTopologyKey }}"
+              labelSelector:
+                matchLabels:
+                  app: {{ $fullName }}-apiserver
+      {{- else if eq $kubernetes.apiServer.podAntiAffinity "soft" }}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                topologyKey: "{{ $kubernetes.apiServer.podAntiAffinityTopologyKey }}"
+                labelSelector:
+                  matchLabels:
+                    app: {{ $fullName }}-apiserver
+      {{- end }}
+      imagePullSecrets: {{ include "pkg.images.registry.pullsecrets" $ | nindent 8 }}
+        {{- with $kubernetes.apiServer.imagePullSecrets }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      automountServiceAccountToken: false
+      containers:
+      - command:
+        - kube-apiserver
+        - --allow-privileged=true
+        - --authorization-mode=Node,RBAC
+        - --bind-address=0.0.0.0
+        - --client-ca-file=/pki/apiserver-server/ca.crt
+        - --enable-admission-plugins=NodeRestriction
+        - --enable-bootstrap-token-auth=true
+        - --etcd-cafile=/pki/apiserver-etcd-client/ca.crt
+        - --etcd-certfile=/pki/apiserver-etcd-client/tls.crt
+        - --etcd-keyfile=/pki/apiserver-etcd-client/tls.key
+        - --etcd-servers={{ template "kubernetes.etcdEndpoints" . }}
+        - --kubelet-client-certificate=/pki/apiserver-kubelet-client/tls.crt
+        - --kubelet-client-key=/pki/apiserver-kubelet-client/tls.key
+        - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+        - --proxy-client-cert-file=/pki/front-proxy-client/tls.crt
+        - --proxy-client-key-file=/pki/front-proxy-client/tls.key
+        - --requestheader-allowed-names={{ $certName }}-front-proxy-client
+        - --requestheader-client-ca-file=/pki/front-proxy-client/ca.crt
+        - --requestheader-extra-headers-prefix=X-Remote-Extra-
+        - --requestheader-group-headers=X-Remote-Group
+        - --requestheader-username-headers=X-Remote-User
+        - --secure-port={{ $kubernetes.apiServer.port }}
+        - --service-account-key-file=/pki/sa/tls.crt
+        - --service-cluster-ip-range={{ $kubernetes.networking.serviceSubnet }}
+        - --tls-cert-file=/pki/apiserver-server/tls.crt
+        - --tls-private-key-file=/pki/apiserver-server/tls.key
+        - --egress-selector-config-file=/etc/kubernetes/egress-selector-configuration.yaml
+        - --service-account-issuer=https://kubernetes.default.svc.{{ $kubernetes.networking.dnsDomain }}
+        - --service-account-signing-key-file=/pki/sa/tls.key
+        {{- if not (hasKey $kubernetes.apiServer.args "advertise-address") }}
+          {{- with $kubernetes.apiServer.service.loadBalancerIP }}
+        - --advertise-address={{ . }}
+          {{- end }}
+        {{- end }}
+        {{- with $kubernetes.apiServer.args }}
+          {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 8 }}
+        {{- end }}
+        ports:
+        - containerPort: {{ $kubernetes.apiServer.port }}
+          name: client
+        {{- with $kubernetes.apiServer.image }}
+        image: {{ include "pkg.images.registry.convert" (dict "image" . "tag_overwrite" $kubernetes.version "ctx" $) }}
+        imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $kubernetes.apiServer.image.pullPolicy "ctx" $) }}
+        {{- end }}
+        {{- with (include "pkg.components.securityContext" (dict "sc" $kubernetes.apiServer.securityContext "ctx" $)) }}
+        securityContext: {{ . | nindent 10 }}
+        {{- end }}
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /livez
+            port: {{ $kubernetes.apiServer.port }}
+            scheme: HTTPS
+          initialDelaySeconds: 15
+          timeoutSeconds: 15
+        name: kube-apiserver
+        resources:
+          {{- toYaml $kubernetes.apiServer.resources | nindent 10 }}
+        {{- with $kubernetes.apiServer.envsFrom }}
+        envFrom:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        env:
+        {{- with $kubernetes.apiServer.envs }}
+          {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
+        {{- end }}
+        {{- include "pkg.common.env" $ | nindent 8 }}
+        volumeMounts:
+        - mountPath: /etc/kubernetes
+          name: apiserver-config
+        - mountPath: /pki/front-proxy-client
+          name: pki-front-proxy-client
+        - mountPath: /pki/apiserver-server
+          name: pki-apiserver-server
+        - mountPath: /pki/apiserver-etcd-client
+          name: pki-apiserver-etcd-client
+        - mountPath: /pki/apiserver-kubelet-client
+          name: pki-apiserver-kubelet-client
+        - mountPath: /pki/sa
+          name: pki-sa
+        {{- if and $kubernetes.konnectivityServer.enabled (eq $kubernetes.konnectivityServer.mode "HTTPConnect") }}
+        - mountPath: /pki/konnectivity-client
+          name: pki-konnectivity-client
+        {{- end }}
+        {{- if and $kubernetes.konnectivityServer.enabled (eq $kubernetes.konnectivityServer.mode "GRPC") }}
+        - mountPath: /run/konnectivity-server
+          name: konnectivity-uds
+        {{- end }}
+        {{- with $kubernetes.apiServer.volumeMounts }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- if and $kubernetes.konnectivityServer.enabled (eq $kubernetes.konnectivityServer.mode "GRPC") }}
+      {{ template "kubernetes.konnectivityServer.containers" . }}
+      {{- end }}
+      {{- with (include "pkg.components.podSecurityContext" (dict "psc" $kubernetes.apiServer.podSecurityContext "ctx" $)) }}
+      securityContext: {{ . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - configMap:
+          name: "{{ $fullName }}-apiserver-config"
+        name: apiserver-config
+      - secret:
+          secretName: "{{ $fullName }}-pki-front-proxy-client"
+        name: pki-front-proxy-client
+      - secret:
+          secretName: "{{ $fullName }}-pki-apiserver-server"
+        name: pki-apiserver-server
+      - secret:
+          secretName: "{{ $fullName }}-pki-apiserver-etcd-client"
+        name: pki-apiserver-etcd-client
+      - secret:
+          secretName: "{{ $fullName }}-pki-apiserver-kubelet-client"
+        name: pki-apiserver-kubelet-client
+      - secret:
+          secretName: "{{ $fullName }}-pki-sa"
+        name: pki-sa
+      {{- if $kubernetes.konnectivityServer.enabled }}
+      - secret:
+          secretName: "{{ $fullName }}-pki-konnectivity-client"
+        name: pki-konnectivity-client
+      {{- end }}
+      {{- if and $kubernetes.konnectivityServer.enabled (eq $kubernetes.konnectivityServer.mode "GRPC") }}
+      {{ template "kubernetes.konnectivityServer.volumes" . }}
+      {{- end }}
+      {{- with $kubernetes.apiServer.volumes }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+  {{- end }}
+{{- end }}

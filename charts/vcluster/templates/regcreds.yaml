@@ -1,0 +1,10 @@
+{{- if (include "pkg.images.registry.auth" $) }}
+apiVersion: v1
+data:
+  .dockerconfigjson: {{ include "pkg.images.dockerconfigjson" $ }}
+kind: Secret
+metadata:
+  name: {{ include "pkg.images.registry.secretname" $ }}
+  namespace: {{ .Release.Namespace }}
+type: kubernetes.io/dockerconfigjson
+{{- end }}

@@ -1,0 +1,16 @@
+{{- if (include "operating-system-manager.enabled" $) -}}
+  {{- $manifest := $.Values.osm -}}
+  {{- if $manifest.podDisruptionBudget -}}
+---
+apiVersion: "policy/v1"
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "operating-system-manager.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{ include "operating-system-manager.labels" . | nindent 4 }}
+spec: {{- toYaml $manifest.podDisruptionBudget | nindent 2 }}
+  selector:
+    matchLabels: {{- include "operating-system-manager.selectorLabels" . | nindent 6 }}
+  {{- end -}}
+{{- end -}}

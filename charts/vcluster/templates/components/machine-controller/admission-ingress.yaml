@@ -1,0 +1,56 @@
+{{- if (include "machine-controller.enabled" $) -}}
+  {{- if (include "machine-controller.admission-enabled" $) -}}
+    {{- if (include "machine-controller.admission.expose.ingress" $) -}}
+    {{- $machine := $.Values.machine.admission -}}
+    {{- $ingress := $.Values.components.exposure.ingress -}}
+      {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+apiVersion: networking.k8s.io/v1
+      {{- else }}
+apiVersion: networking.k8s.io/v1beta1
+      {{- end }}
+kind: Ingress
+metadata:
+  name: {{ include "machine-controller.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "machine-controller.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    {{- with $ingress.annotations }}
+      {{ toYaml . | indent 4 }}
+    {{- end }}
+    {{- with $machine.ingress.annotations }}
+      {{ toYaml . | indent 4 }}
+    {{- end }}
+spec:
+  {{- if $machine.ingress.ingressClassName }}
+  ingressClassName: {{ $machine.ingress.ingressClassName }}
+  {{- else if $ingress.ingressClassName }}
+  ingressClassName: {{ $ingress.ingressClassName }}
+  {{- end }}
+  tls:
+    - hosts:
+      - {{ include "pkg.common.ingress.host" . }}
+      secretName: {{ include "pkg.common.certificates.secretTlsName" $ }}
+  rules:
+    - host: {{ include "pkg.common.ingress.host" . }}
+      http:
+        paths:
+          {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+          - path: {{ include "machine-controller.admission.expose.ingress.context" $ | trimSuffix "/" }}(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "machine-controller.fullname" . }}-admission
+                port:
+                  name: https
+          {{- else }}
+          - path: {{ include "machine-controller.admission.expose.ingress.context" $ | trimSuffix "/" }}(/|$)(.*)
+            backend:
+              serviceName: {{ include "machine-controller.fullname" . }}-admission
+              servicePort: https
+          {{- end }}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

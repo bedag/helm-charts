@@ -1,0 +1,30 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if and $kubernetes.controllerManager.enabled $kubernetes.controllerManager.service.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "controller-manager" -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-controller-manager
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{- include "pkg.components.svc_labels" (dict "labels" $kubernetes.controllerManager.service.labels "ctx" $) | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  annotations:
+    {{- include "pkg.components.svc_annotations" (dict "labels" $kubernetes.controllerManager.service.annotations "ctx" $) | nindent 4 }}
+spec:
+  type: {{ $kubernetes.controllerManager.service.type }}
+  {{- with $kubernetes.controllerManager.service.loadBalancerIP }}
+  loadBalancerIP: {{ . }}
+  {{- end }}
+  ports:
+  - port: {{ $kubernetes.controllerManager.service.port }}
+    name: client
+    {{- with $kubernetes.controllerManager.service.nodePort }}
+    nodePort: {{ . }}
+    {{- end }}
+  selector: {{- include "kubernetes.selectorLabels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  {{- end }}
+{{- end }}

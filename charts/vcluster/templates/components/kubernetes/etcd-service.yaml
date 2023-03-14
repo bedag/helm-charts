@@ -1,0 +1,33 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if and $kubernetes.etcd.enabled $kubernetes.etcd.service.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "etcd" -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $fullName }}-etcd
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+    {{- include "pkg.components.svc_labels" (dict "labels" $kubernetes.etcd.service.labels "ctx" $) | nindent 4 }}
+  annotations:
+    {{- include "pkg.components.svc_annotations" (dict "annotations" $kubernetes.etcd.service.annotations "ctx" $) | nindent 4 }}
+spec:
+  type: {{ $kubernetes.etcd.service.type }}
+  {{- with $kubernetes.etcd.service.loadBalancerIP }}
+  loadBalancerIP: {{ . }}
+  {{- end }}
+  publishNotReadyAddresses: true
+  clusterIP: None
+  ports:
+  - port: {{ $kubernetes.etcd.service.ports.client }}
+    name: client
+  - port: {{ $kubernetes.etcd.service.ports.peer }}
+    name: peer
+  - port: {{ $kubernetes.etcd.service.ports.metrics }}
+    name: http-metrics
+  selector: {{- include "kubernetes.selectorLabels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,63 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if and $kubernetes.apiServer.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $certName := include "kubernetes.certname" . -}}
+    {{- $component_name := "kubernetes" -}}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "{{ $fullName }}-pki-front-proxy-ca"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+spec:
+  commonName: "{{ $certName }}-front-proxy-ca"
+  secretName: "{{ $fullName }}-pki-front-proxy-ca"
+  duration: 87600h # 3650d
+  renewBefore: 8760h # 365d
+  subject:
+    organizations:
+    - "{{ $fullName }}"
+  usages:
+  - "signing"
+  - "key encipherment"
+  - "cert sign"
+  isCA: true
+  issuerRef:
+    name: "{{ $fullName }}-selfsigning-issuer"
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: "{{ $fullName }}-front-proxy-issuer"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+spec:
+  ca:
+    secretName: "{{ $fullName }}-pki-front-proxy-ca"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "{{ $fullName }}-pki-front-proxy-client"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+spec:
+  commonName: "{{ $certName }}-front-proxy-client"
+  secretName: "{{ $fullName }}-pki-front-proxy-client"
+  duration: 8760h # 365d
+  renewBefore: 4380h # 178d
+  subject:
+    organizations:
+    - "system:masters"
+  usages:
+  - "signing"
+  - "key encipherment"
+  - "client auth"
+  issuerRef:
+    name: "{{ $fullName }}-front-proxy-issuer"
+    kind: Issuer
+  {{- end }}
+{{- end }}

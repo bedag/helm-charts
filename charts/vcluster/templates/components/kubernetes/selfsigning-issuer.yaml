@@ -1,0 +1,11 @@
+{{- if (include "kubernetes.enabled" $) -}}
+{{- $fullName := include "kubernetes.fullname" . -}}
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: "{{ $fullName }}-selfsigning-issuer"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+spec:
+  selfSigned: {}
+{{- end -}}

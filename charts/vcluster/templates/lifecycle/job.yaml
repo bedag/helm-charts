@@ -1,0 +1,167 @@
+{{- $kubernetes := $.Values.kubernetes -}}
+{{- $jobs := $.Values.lifecycle -}}
+{{- $manifest := $jobs.job -}}
+{{- $argocd := $.Values.gitops.argocd.bootstrap -}}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "vcluster.fullname" $ }}-lifecycle
+  labels: {{- include "vcluster.labels" $ | nindent 4 }}
+    {{- with (include "pkg.components.labels" (dict "labels" $manifest.labels "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+    checksum/config: {{ .Files.Get (printf "templates/bootstrap/kubeadm-config.yaml") | sha256sum  }}
+    {{- with (include "pkg.components.annotations" (dict "annotations" $manifest.annotations "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ttlSecondsAfterFinished: 120
+  template:
+    metadata:
+      labels: {{- include "kubernetes.labels" $ | nindent 8 }}
+        {{- include "pkg.components.pod_labels" (dict "labels" $manifest.podLabels "ctx" $) | nindent 8 }}
+      annotations:
+        {{- include "pkg.components.pod_annotations" (dict "annotations" $manifest.podAnnotations "ctx" $) | nindent 8 }}
+    spec:
+      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $manifest.nodeSelector "ctx" $)) }}
+      nodeSelector: {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.tolerations" (dict "tolerations" $manifest.tolerations "ctx" $)) }}
+      tolerations:  {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.priorityClass" (dict "pc" $manifest.priorityClassName "ctx" $)) }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      {{- with (include "pkg.components.topologySpreadConstraints" (dict "tsc" $manifest.topologySpreadConstraints "ctx" $)) }}
+      topologySpreadConstraints: {{ . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.affinity" (dict "affinity" $manifest.affinity "ctx" $)) }}
+      affinity: {{ . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.podSecurityContext" (dict "psc" $manifest.podSecurityContext "ctx" $)) }}
+      securityContext: {{ . | nindent 8 }}
+      {{- end }}
+      imagePullSecrets: {{- include "pkg.images.registry.pullsecrets" $ | nindent 8 }}
+        {{- with $manifest.image.pullSecrets }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      serviceAccountName: {{ include "vcluster.serviceAccountName" . }}
+      # Reconciler Operates in the current Cluster, therefore automounting the ServiceAccountToken is required
+      automountServiceAccountToken: true
+      restartPolicy: OnFailure
+      initContainers: {{- include "pkg.cluster.connectivity" $ | nindent 8 }}
+      containers:
+      - name: current
+        image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
+        imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy  "ctx" $) }}
+        command: [ '/bin/bash', '/scripts/configure-current.sh' ]
+        env: {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
+        {{- include "pkg.utils.xdg-env" $ | nindent 8 }}
+        {{- with (include "pkg.components.securityContext" (dict "sc" $manifest.securityContext "ctx" $)) }}
+        securityContext: {{ . | nindent 10 }}
+        {{- end }}
+        {{- with $manifest.resources }}
+        resources: {{ . | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        - mountPath: /pki/admin-client
+          name: pki-admin-client
+        - mountPath: /scripts
+          name: scripts
+        - mountPath: /cache
+          name: cache-current
+        {{- if (include "gitops.enabled" $) }}
+        - mountPath: /argocd
+          name: argocd
+        {{- end }}
+      - name: vcluster
+        image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
+        imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy  "ctx" $) }}
+        command: [ '/bin/bash', '/scripts/configure-vcluster.sh' ]
+        env: {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
+        {{- include "pkg.utils.xdg-env" $ | nindent 8 }}
+        - name: KUBECONFIG
+          value: "/etc/kubernetes/admin.conf"
+        {{- with $manifest.extraEnv }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with (include "pkg.components.securityContext" (dict "sc" $manifest.securityContext "ctx" $)) }}
+        securityContext: {{ . | nindent 10 }}
+        {{- end }}
+        {{- with $manifest.resources }}
+        resources: {{ . | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+        {{- include "gitops.volumemounts" $ | nindent 8 }}
+        {{- include "machine-controller.volumemounts" $ | nindent 8 }}
+        {{- include "operating-system-manager.volumemounts" $ | nindent 8 }}
+        {{- include "kube-green.volumemounts" $ | nindent 8 }}
+        - mountPath: /etc/kubernetes/
+          name: kubeconfig
+          readOnly: true
+        - mountPath: /pki/admin-client
+          name: pki-admin-client
+        - mountPath: /scripts
+          name: scripts
+        - mountPath: /manifests
+          name: manifests
+        - mountPath: /config
+          name: config
+        - mountPath: /cache
+          name: cache-vcluster
+        {{- if (include "gitops.enabled" $) }}
+        - mountPath: /argocd
+          name: argocd
+        {{- end }}
+        {{- with $manifest.extraVolumeMounts }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      volumes:
+      {{- include "gitops.volumes" $ | nindent 6 }}
+      {{- include "machine-controller.volumes" $ | nindent 6 }}
+      {{- include "operating-system-manager.volumes" $ | nindent 6 }}
+      {{- include "kube-green.volumes" $ | nindent 6 }}
+      - configMap:
+          name: "{{ include "kubernetes.fullname" $  }}-admin-conf"
+        name: kubeconfig
+      # Create dedicated caches, otherwise the lock file might block concurrent helm operations
+      - name: cache-current
+        emptyDir: {}
+      - name: cache-vcluster
+        emptyDir: {}
+      - secret:
+          secretName: "{{ include "kubernetes.fullname" $  }}-pki-admin-client"
+        name: pki-admin-client
+      - name: scripts
+        configMap:
+          name: {{ include "vcluster.fullname" $ }}-lifecycle-scripts
+          defaultMode: 0777
+      - name: config
+        configMap:
+          name: "{{ include "kubernetes.fullname" $  }}-kubeadm-config"
+      - name: manifests
+        projected:
+          sources:
+          - secret:
+              name: {{ include "vcluster.fullname" .  }}-manifests
+      {{- if or $kubernetes.konnectivityServer.enabled $kubernetes.konnectivityAgent.enabled }}
+          - configMap:
+              name: "{{ include "kubernetes.fullname" $  }}-konnectivity-manifests"
+      {{- end }}
+      {{- if $kubernetes.coredns.enabled }}
+          - configMap:
+              name: "{{ include "kubernetes.fullname" $  }}-coredns-manifests"
+      {{- end }}
+      {{- if (include "gitops.enabled" $) }}
+      - name: argocd
+        secret:
+          defaultMode: 420
+          secretName: {{ include "gitops.fullname" .  }}-argocd-values
+      {{- end }}
+      {{- with $manifest.extraVolumes }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}

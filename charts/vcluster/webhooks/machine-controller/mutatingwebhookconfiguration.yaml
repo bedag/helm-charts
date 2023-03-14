@@ -1,0 +1,43 @@
+{{- $endpoint := include "machine-controller.admission.url" $ -}}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ include "machine-controller.admission.mutating-webhook-name" $ }}
+  labels:
+    {{- include "machine-controller.labels" $ | nindent 4 }}
+webhooks:
+- name: machinedeployments.machine-controller.kubermatic.io
+  failurePolicy: Fail
+  sideEffects: None
+  admissionReviewVersions: ["v1", "v1beta1"]
+  rules:
+  - apiGroups:
+    - "cluster.k8s.io"
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - machinedeployments
+  clientConfig:
+    url: {{ printf "%s/machinedeployments" $endpoint }}
+    caBundle: Cg==
+- name: machines.machine-controller.kubermatic.io
+  failurePolicy: Fail
+  sideEffects: None
+  admissionReviewVersions: ["v1", "v1beta1"]
+  rules:
+  - apiGroups:
+    - "cluster.k8s.io"
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - machines
+  clientConfig:
+    url: {{ printf "%s/machines" $endpoint }}
+    caBundle: Cg==

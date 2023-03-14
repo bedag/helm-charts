@@ -1,0 +1,95 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if and $kubernetes.konnectivityServer.enabled (eq $kubernetes.konnectivityServer.mode "HTTPConnect") }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $certName := include "kubernetes.certname" . -}}
+    {{- $component_name := "konnectivity" -}}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "{{ $fullName }}-pki-konnectivity-ca"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+spec:
+  commonName: "{{ $certName }}-konnectivity-ca"
+  secretName: "{{ $fullName }}-pki-konnectivity-ca"
+  duration: 87600h # 3650d
+  renewBefore: 8760h # 365d
+  subject:
+    organizations:
+    - "{{ $fullName }}"
+  usages:
+  - "signing"
+  - "key encipherment"
+  - "cert sign"
+  isCA: true
+  issuerRef:
+    name: "{{ $fullName }}-selfsigning-issuer"
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: "{{ $fullName }}-konnectivity-issuer"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+spec:
+  ca:
+    secretName: "{{ $fullName }}-pki-konnectivity-ca"
+---
+{{- $svcName1 := printf "%s-konnectivity-server" $fullName }}
+{{- $svcName2 := printf "%s-konnectivity-server.%s" $fullName .Release.Namespace }}
+{{- $svcName3 := printf "%s-konnectivity-server.%s.svc" $fullName .Release.Namespace }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "{{ $fullName }}-pki-konnectivity-server"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+spec:
+  commonName: "{{ $certName }}-konnectivity-server"
+  secretName: "{{ $fullName }}-pki-konnectivity-server"
+  duration: 8760h # 365d
+  renewBefore: 4380h # 178d
+  subject:
+    organizations:
+    - "{{ $fullName }}"
+  usages:
+  - "signing"
+  - "key encipherment"
+  - "server auth"
+  dnsNames:
+  - "{{ $svcName1 }}"
+  - "{{ $svcName2 }}"
+  - "{{ $svcName3 }}"
+  - "localhost"
+  ipAddresses:
+  - "127.0.0.1"
+  issuerRef:
+    name: "{{ $fullName }}-konnectivity-issuer"
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: "{{ $fullName }}-pki-konnectivity-client"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+spec:
+  commonName: "{{ $certName }}-konnectivity-client"
+  secretName: "{{ $fullName }}-pki-konnectivity-client"
+  duration: 8760h # 365d
+  renewBefore: 4380h # 178d
+  subject:
+    organizations:
+    - "system:masters"
+  usages:
+  - "signing"
+  - "key encipherment"
+  - "client auth"
+  issuerRef:
+    name: "{{ $fullName }}-konnectivity-issuer"
+    kind: Issuer
+  {{- end }}
+{{- end }}

@@ -1,0 +1,104 @@
+{{- if (include "autoscaler.enabled" $) -}}
+# https://github.com/kubermatic/kubeone/blob/main/addons/cluster-autoscaler/cluster-autoscaler.yaml
+{{- $manifest := $.Values.autoscaler -}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "autoscaler.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "autoscaler.labels" . | nindent 4 }}
+    {{- with (include "pkg.components.labels" (dict "labels" $manifest.labels "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- with (include "pkg.components.annotations" (dict "annotations" $manifest.annotations "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ $manifest.replicaCount }}
+  {{- with $manifest.strategy }}
+  strategy: {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "autoscaler.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations: 
+        {{- include "pkg.components.pod_annotations" (dict "annotations" $manifest.podAnnotations "ctx" $) | nindent 8 }}
+      labels: 
+        {{- include "pkg.components.pod_labels" (dict "labels" $manifest.podLabels "ctx" $) | nindent 8 }}
+        {{- include "autoscaler.selectorLabels" . | nindent 8 }}
+    spec:
+      automountServiceAccountToken: false
+      serviceAccountName: {{ include "autoscaler.serviceAccountName" . }}
+      {{- with (include "pkg.components.podSecurityContext" (dict "psc" $manifest.podSecurityContext "ctx" $)) }}
+      securityContext: {{ . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: 30
+      imagePullSecrets: {{ include "pkg.images.registry.pullsecrets" $ | nindent 8 }}
+        {{- with $manifest.imagePullSecrets }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      initContainers: {{- include "pkg.cluster.connectivity" $ | nindent 8 }}
+      containers:
+        - name: manager
+          {{- with (include "pkg.components.securityContext" (dict "sc" $manifest.securityContext "ctx" $)) }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
+          imagePullPolicy: {{- include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy "ctx" $) -}}
+          env: {{- include "pkg.common.env" $ | nindent 10 }}
+            {{- with $manifest.envs }}
+              {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
+            {{- end }}
+            {{- with $manifest.envsFrom }}
+          envFrom:
+              {{- toYaml . | nindent 10 }}
+            {{- end }}
+          command:
+            - ./cluster-autoscaler
+            - --cluster-name={{ include "pkg.cluster.name" $ }}
+            - --namespace=kube-system
+            - --kubeconfig={{ include "pkg.cluster.cp.env.mount" $ }}
+            - --cloud-provider=clusterapi
+            {{- with $manifest.args }}
+              {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: metrics
+              containerPort: 8085
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml $manifest.livenessProbe | nindent 12}}
+          readinessProbe:
+            {{- toYaml $manifest.readinessProbe | nindent 12}}
+          resources:
+            {{- toYaml $manifest.resources | nindent 12 }}
+          volumeMounts: {{- include "pkg.cluster.cp.vms" $ | nindent 10 }}
+          {{- with $manifest.volumeMounts }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $manifest.nodeSelector "ctx" $)) }}
+      nodeSelector: {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.affinity" (dict "affinity" $manifest.affinity "ctx" $)) }}
+      affinity: {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.tolerations" (dict "tolerations" $manifest.tolerations "ctx" $)) }}
+      tolerations:  {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.priorityClass" (dict "pc" $manifest.priorityClassName "ctx" $)) }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      {{- with (include "pkg.components.topologySpreadConstraints" (dict "tsc" $manifest.topologySpreadConstraints "ctx" $)) }}
+      topologySpreadConstraints: {{ . | nindent 8 }}
+      {{- end }}
+      volumes: {{- include "pkg.cluster.cp.vs" $ | nindent 8 }}
+      {{- with $manifest.volumes }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end -}}

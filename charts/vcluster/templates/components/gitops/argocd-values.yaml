@@ -1,0 +1,14 @@
+
+{{- if (include "gitops.enabled" $) -}}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "gitops.fullname" .  }}-argocd-values
+  labels:
+    {{- include "gitops.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+stringData:
+  values.yaml: |
+    {{- include "pkg.argo.values" $ | nindent 4 }}
+{{- end -}}

@@ -1,0 +1,25 @@
+{{- if (include "machine-controller.enabled" $) -}}
+  {{- $manifest := $.Values.machine.metrics -}}
+  {{- if or $.Values.components.metrics.enabled $manifest.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "machine-controller.fullname" $ }}-metrics
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "machine-controller.labels" $ | nindent 4 }}
+    {{- include "pkg.components.svc_annotations" (dict "labels" $manifest.service.labels "ctx" $) | nindent 4 }}
+  annotations:
+    {{- include "pkg.components.svc_annotations" (dict "annotations" $manifest.service.annotations "ctx" $) | nindent 4 }}
+spec:
+  sessionAffinity: None
+  type: ClusterIP
+  ports:
+    - name: http-metrics
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    {{- include "machine-controller.selectorLabels" $ | nindent 4 }}
+  {{- end }}
+{{- end }}

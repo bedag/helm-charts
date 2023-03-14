@@ -1,0 +1,18 @@
+components:
+  admission:
+    expose: "loadbalancer"
+
+
+machine:
+  admission:
+    service:
+      annotations:
+        metallb.universe.tf/address-pool: "external-pool"
+      loadBalancerIP: ""
+
+osm:
+  admission:
+    service:
+      annotations:
+        metallb.universe.tf/address-pool: "external-pool"
+      loadBalancerIP: 10.0.0.11

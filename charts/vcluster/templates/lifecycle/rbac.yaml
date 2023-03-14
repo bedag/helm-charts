@@ -1,0 +1,53 @@
+{{/* Full Access for Argo Installation */}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+# This role binding allows "jane" to read pods in the "default" namespace.
+# You need to already have a Role named "pod-reader" in that namespace.
+kind: RoleBinding
+metadata:
+  name: {{ include "vcluster.fullname" .  }}-installer
+subjects:
+- kind: ServiceAccount
+  name: {{ include "vcluster.serviceAccountName"  . }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  # "roleRef" specifies the binding to a Role / ClusterRole
+  kind: ClusterRole #this must be Role or ClusterRole
+  name: cluster-admin # this must match the name of the Role or ClusterRole you wish to bind to
+  apiGroup: rbac.authorization.k8s.io
+
+{{/* Required to apply converted Kubeconfig into Argo Workspace */}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "vcluster.fullname" .  }}
+  labels: {{- include "vcluster.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - watch
+  - list
+  - create
+  - update
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "vcluster.fullname" .  }}
+  labels: {{- include "vcluster.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "vcluster.fullname" .  }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "vcluster.serviceAccountName"  . }}
+  namespace: {{ .Release.Namespace }}

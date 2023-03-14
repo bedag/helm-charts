@@ -1,0 +1,57 @@
+{{- if (include "operating-system-manager.enabled" $) -}}
+  {{- if (include "operating-system-manager.admission-enabled" $) -}}
+    {{- if (include "operating-system-manager.admission.expose.ingress" $) -}}
+      {{- $admission := $.Values.osm.admission -}}
+      {{- $ingress := $.Values.components.exposure.ingress -}}
+---
+    {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+apiVersion: networking.k8s.io/v1
+    {{- else }}
+apiVersion: networking.k8s.io/v1beta1
+    {{- end }}
+kind: Ingress
+metadata:
+  name: {{ include "operating-system-manager.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "operating-system-manager.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    {{- with $ingress.annotations }}
+      {{ toYaml . | indent 4 }}
+    {{- end }}
+    {{- with $admission.ingress.annotations }}
+      {{ toYaml . | indent 4 }}
+    {{- end }}
+spec:
+  {{- if $admission.ingress.ingressClassName }}
+  ingressClassName: {{ $admission.ingress.ingressClassName }}
+  {{- else if $ingress.ingressClassName }}
+  ingressClassName: {{ $ingress.ingressClassName }}
+  {{- end }}
+  tls:
+    - hosts:
+      - {{ include "pkg.common.ingress.host" . }}
+      secretName: {{ include "operating-system-manager.admission.secretTlsName" $ }}
+  rules:
+    - host: {{ include "pkg.common.ingress.host" . }}
+      http:
+        paths:
+          {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
+          - path: {{ include "operating-system-manager.admission.expose.ingress.context" $ | trimSuffix "/" }}(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "operating-system-manager.fullname" . }}-admission
+                port:
+                  name: https
+          {{- else }}
+          - path: {{ include "operating-system-manager.admission.expose.ingress.context" $ | trimSuffix "/" }}(/|$)(.*)
+            backend:
+              serviceName: {{ include "operating-system-manager.fullname" . }}-admission
+              servicePort: https
+          {{- end }}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

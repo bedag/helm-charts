@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "vcluster.fullname" .  }}-lifecycle-scripts
+  labels: {{- include "vcluster.labels" $ | nindent 4 }}
+data:
+  configure-vcluster.sh: |-
+    {{- tpl (.Files.Get "addons/scripts/configure-vcluster.sh") $ | nindent 4 }}
+  configure-current.sh: |-
+    {{- tpl (.Files.Get "addons/scripts/configure-current.sh") $ | nindent 4 }}

@@ -1,0 +1,37 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if and $kubernetes.apiServer.enabled $kubernetes.apiServer.service.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "apiserver" -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "kubernetes.api.service" $}}
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+    {{- include "pkg.components.svc_labels" (dict "labels" $kubernetes.apiServer.service.labels "ctx" $) | nindent 4 }}
+  annotations:
+    {{- include "pkg.components.svc_annotations" (dict "annotations" $kubernetes.apiServer.service.annotations "ctx" $) | nindent 4 }}
+spec:
+  type: {{ $kubernetes.apiServer.service.type }}
+  {{- with $kubernetes.apiServer.service.loadBalancerIP }}
+  loadBalancerIP: {{ . }}
+  {{- end }}
+  ports:
+  - port: {{ $kubernetes.apiServer.service.port }}
+    name: client
+    {{- with $kubernetes.apiServer.service.nodePort }}
+    nodePort: {{ . }}
+    {{- end }}
+  {{- if and $kubernetes.konnectivityServer.enabled $kubernetes.konnectivityServer.service.enabled (eq $kubernetes.konnectivityServer.mode "GRPC") }}
+  - port: {{ $kubernetes.konnectivityServer.ports.agent }}
+    name: agent
+    {{- with $kubernetes.konnectivityServer.service.nodePorts.client }}
+    nodePort: {{ . }}
+    {{- end }}
+  {{- end }}
+  selector: {{- include "kubernetes.selectorLabels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  {{- end }}
+{{- end }}

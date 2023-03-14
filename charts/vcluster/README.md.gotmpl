@@ -39,10 +39,31 @@ Major Changes to functions are documented with the version affected. **Before up
 
 # Components
 
+This chart contains different "components" (it's different tools which make up the control plane).
+The purpose of the combination if these tools is to achieve a control plane, which is easy to manage and does not
+relay on worker nodes to be managed. But we also do not intend to add a lot of complexity to the control plane.
+All the components are deployed as pods in the hosting cluster and are toggled by the `enabled` flag. 
+
+## Kubernetes
+
+Installs the required components to provide a Kubernetes Control Plane (hosted in pods). The implementation is based on [Kuebrnetes by Kvaps](https://artifacthub.io/packages/helm/kvaps/kubernetes), who came uup with this great idea.
+
+
+
 ## Machine Controller
+
+__We recommend using our set version and configured flags__
+
+The [Machine-Controller](https://github.com/kubermatic/machine-controller) by [Kubermatic](https://www.kubermatic.com/). 
+
+
 
 ## Operating System Manager
 
+__We recommend using our set version and configured flags. The component is not stable tested yet!__
+
+The [Operating System Manager](https://github.com/kubermatic/operating-system-manager) by [Kubermatic](https://www.kubermatic.com/)  is responsible for creating and managing the required configurations for worker nodes in a Kubernetes cluster. It decouples operating system configurations into dedicated and isolable resources for better modularity and maintainability.
+It's optional and only works together with [Machine Controller](#machine-controller). If you enable this component, we will take care of the configuration between Machine-Controller and Operating System Manager.
 
 ## Kubernetes
 
@@ -106,7 +127,7 @@ Access the ArgoCD UI by opening [http://localhost:9191]( http://localhost:9191) 
 
 ## Machine
 
-Available Values for the [Machine Controller Component](). The component consists of a single deployment with a `controller` and `admission` container. Pod settings are therefor made for both subcomponents.
+Available Values for the [Machine Controller Component](#machine-controller). The component consists of a single deployment with a `controller` and `admission` container. Pod settings are therefor made for both subcomponents.
 
 {{- template "table.heading" $ }}
 {{- range .Values }}
@@ -123,7 +144,6 @@ Available Values for the [Machine Controller Component](). The component consist
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}
-
 
 ### Admission
 
@@ -168,9 +188,98 @@ Available Values for the [Operating System Manager](). The component consists of
 {{- end }}
 
 
+## Kubernetes Values
+
+Available Values for the [Kubernetes component](#kubernetes).
+
+
+
+### API-Server
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "apiServer." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Konnektivity-Server
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "konnectivityServer." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+### Controller Manager
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "controllerManager." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Scheduler
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "scheduler." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### ETCD
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "etcd." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Admin
+
+Deploys an administration pod which has the admin kubeconfig mounted and allows for easy access to the cluster.
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "admin." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+
+
+### CoreDNS (In-Cluster)
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "coredns." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+### Konnektivity-Agent (In-Cluster)
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "konnectivityAgent." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+
+
+
 ## Autoscaler
 
-Available Values for the [Autsocaler component]().
+Available Values for the [Autsocaler component](#kubernetes-autoscaler).
 
 
 ### Settings
@@ -209,3 +318,14 @@ Available Values for the [Autsocaler component]().
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}
+
+
+## Utilities
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "utilities." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+

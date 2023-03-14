@@ -1,4 +1,4 @@
-# Kubernetes
+# Vcluster
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
@@ -22,13 +22,31 @@ Major Changes to functions are documented with the version affected. **Before up
 | :----------- | :---------------- | :--------------------- | :-------------- |
 |||||
 
-# Guides
+## Guides
 
 # Components
 
+This chart contains different "components" (it's different tools which make up the control plane).
+The purpose of the combination if these tools is to achieve a control plane, which is easy to manage and does not
+relay on worker nodes to be managed. But we also do not intend to add a lot of complexity to the control plane.
+All the components are deployed as pods in the hosting cluster and are toggled by the `enabled` flag.
+
+## Kubernetes
+
+Installs the required components to provide a Kubernetes Control Plane (hosted in pods). The implementation is based on [Kuebrnetes by Kvaps](https://artifacthub.io/packages/helm/kvaps/kubernetes), who came uup with this great idea.
+
 ## Machine Controller
 
+__We recommend using our set version and configured flags__
+
+The [Machine-Controller](https://github.com/kubermatic/machine-controller) by [Kubermatic](https://www.kubermatic.com/).
+
 ## Operating System Manager
+
+__We recommend using our set version and configured flags. The component is not stable tested yet!__
+
+The [Operating System Manager](https://github.com/kubermatic/operating-system-manager) by [Kubermatic](https://www.kubermatic.com/)  is responsible for creating and managing the required configurations for worker nodes in a Kubernetes cluster. It decouples operating system configurations into dedicated and isolable resources for better modularity and maintainability.
+It's optional and only works together with [Machine Controller](#machine-controller). If you enable this component, we will take care of the configuration between Machine-Controller and Operating System Manager.
 
 ## Kubernetes
 
@@ -78,7 +96,7 @@ Access the ArgoCD UI by opening [http://localhost:9191]( http://localhost:9191) 
 
 ## Machine
 
-Available Values for the [Machine Controller Component](). The component consists of a single deployment with a `controller` and `admission` container. Pod settings are therefor made for both subcomponents.
+Available Values for the [Machine Controller Component](#machine-controller). The component consists of a single deployment with a `controller` and `admission` container. Pod settings are therefor made for both subcomponents.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | machine.affinity | object | `{}` | Affinity |
@@ -272,9 +290,279 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.admission.webhook.tls.ipAddresses | list | `[]` | Additional IP adresses for Admission certificate |
 | osm.admission.webhook.tls.name | string | `""` | Override the TLS Secret Name |
 
+## Kubernetes Values
+
+Available Values for the [Kubernetes component](#kubernetes).
+
+### API-Server
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetes.apiServer.affinity | object | `{}` | Affinity |
+| kubernetes.apiServer.args | object | `{}` | Extra arguments for the kube-apiserver |
+| kubernetes.apiServer.certSANs.dnsNames | list | `[]` | Additonal API-Server dns names for ETCD ceritifcate |
+| kubernetes.apiServer.certSANs.ipAddresses | list | `[]` | Additonal API-Server adresses for ETCD ceritifcate |
+| kubernetes.apiServer.enabled | bool | `true` | Enable Kubernetes API-Server |
+| kubernetes.apiServer.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
+| kubernetes.apiServer.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.apiServer.image.digest | string | `""` | Image digest |
+| kubernetes.apiServer.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| kubernetes.apiServer.image.registry | string | `"k8s.gcr.io"` | Image registry |
+| kubernetes.apiServer.image.repository | string | `"kube-apiserver"` | Image repository |
+| kubernetes.apiServer.image.tag | string | `""` | Image tag |
+| kubernetes.apiServer.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.apiServer.ingress.annotations | object | `{}` | Annotations for admission ingress |
+| kubernetes.apiServer.ingress.contextPath | string | `"/admission/machine"` | Context path for admission ingress |
+| kubernetes.apiServer.ingress.ingressClassName | string | `""` | Ingressclass for all ingresses |
+| kubernetes.apiServer.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.apiServer.podAnnotations | object | `{}` | Pod Annotations |
+| kubernetes.apiServer.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
+| kubernetes.apiServer.podLabels | object | `{}` | Pod Labels |
+| kubernetes.apiServer.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| kubernetes.apiServer.port | int | `6443` | Port for API-Server |
+| kubernetes.apiServer.priorityClassName | string | `""` | Pod PriorityClassName |
+| kubernetes.apiServer.replicaCount | int | `2` | Replicas for API-Server |
+| kubernetes.apiServer.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Pod Requests and limits |
+| kubernetes.apiServer.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"readOnlyRootFilesystem":true}` | Container Security Context |
+| kubernetes.apiServer.service.enabled | bool | `true` | Enable API-Server Service |
+| kubernetes.apiServer.strategy | object | `{"rollingUpdate":{"maxUnavailable":"30%"},"type":"RollingUpdate"}` | Deployment Update Strategy |
+| kubernetes.apiServer.tolerations | list | `[]` | Tolerations |
+| kubernetes.apiServer.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
+| kubernetes.apiServer.volumeMounts | list | `[]` | Additional volumemounts |
+| kubernetes.apiServer.volumes | list | `[]` | Additional volumes |
+
+### Konnektivity-Server
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetes.konnectivityServer.enabled | bool | `true` | Enable Konnectivity Server |
+| kubernetes.konnectivityServer.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
+| kubernetes.konnectivityServer.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.konnectivityServer.extraArgs | object | `{}` | Konnectivity Server extra arguments |
+| kubernetes.konnectivityServer.image.digest | string | `""` | Image Digest |
+| kubernetes.konnectivityServer.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| kubernetes.konnectivityServer.image.pullSecrets | list | `[]` | Image pull secrets |
+| kubernetes.konnectivityServer.image.registry | string | `"us.gcr.io"` | Image registry |
+| kubernetes.konnectivityServer.image.repository | string | `"k8s-artifacts-prod/kas-network-proxy/proxy-server"` | Image repository |
+| kubernetes.konnectivityServer.image.tag | string | `"v0.0.24"` | Image tag |
+| kubernetes.konnectivityServer.mode | string | `"GRPC"` | This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment. |
+| kubernetes.konnectivityServer.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context (only used in HTTPConnect mode) |
+| kubernetes.konnectivityServer.replicaCount | int | `2` | Konnectivity Server Replicas (only used in HTTPConnect mode) |
+| kubernetes.konnectivityServer.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Konnectivity Server resources |
+| kubernetes.konnectivityServer.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["all"]},"enabled":true,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsUser":65534}` | Container Security Context |
+| kubernetes.konnectivityServer.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy (only used in HTTPConnect mode) |
+
+### Controller Manager
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetes.controllerManager.affinity | object | `{}` | Affinity |
+| kubernetes.controllerManager.annotations | object | `{}` | Annotations for Workload |
+| kubernetes.controllerManager.args | object | `{}` | Extra arguments for the [controller-manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) |
+| kubernetes.controllerManager.enabled | bool | `true` | Enable Kubernetes Controller-Manager |
+| kubernetes.controllerManager.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
+| kubernetes.controllerManager.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.controllerManager.image.digest | string | `""` | Image Digest |
+| kubernetes.controllerManager.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| kubernetes.controllerManager.image.registry | string | `"k8s.gcr.io"` | Image registry |
+| kubernetes.controllerManager.image.repository | string | `"kube-controller-manager"` | Image repository |
+| kubernetes.controllerManager.image.tag | string | `""` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
+| kubernetes.controllerManager.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.controllerManager.labels | object | `{}` | Labels for Workload |
+| kubernetes.controllerManager.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.controllerManager.podAnnotations | object | `{}` | Pod Annotations |
+| kubernetes.controllerManager.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
+| kubernetes.controllerManager.podLabels | object | `{}` | Pod Labels |
+| kubernetes.controllerManager.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| kubernetes.controllerManager.port | int | `10257` | Port for Controller-Manager |
+| kubernetes.controllerManager.priorityClassName | string | `""` | Pod PriorityClassName |
+| kubernetes.controllerManager.replicaCount | int | `2` | Replicas for Controller-Manager |
+| kubernetes.controllerManager.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Pod Requests and limits |
+| kubernetes.controllerManager.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"readOnlyRootFilesystem":true}` | Container Security Context |
+| kubernetes.controllerManager.service.annotations | object | `{}` | Service Annotations |
+| kubernetes.controllerManager.service.enabled | bool | `true` | Enable Controller-Manager Service |
+| kubernetes.controllerManager.service.labels | object | `{}` | Service Labels |
+| kubernetes.controllerManager.service.loadBalancerIP | string | `nil` | LoadBalancerIP |
+| kubernetes.controllerManager.service.port | int | `10257` | Service Port |
+| kubernetes.controllerManager.service.type | string | `"ClusterIP"` | Service Type |
+| kubernetes.controllerManager.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy |
+| kubernetes.controllerManager.tolerations | list | `[]` | Tolerations |
+| kubernetes.controllerManager.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
+| kubernetes.controllerManager.volumeMounts | list | `[]` | Additional Volumemounts |
+| kubernetes.controllerManager.volumes | list | `[]` | Additional Volumes |
+
+### Scheduler
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetes.scheduler.affinity | object | `{}` | Affinity |
+| kubernetes.scheduler.annotations | object | `{}` | Annotations for Workload |
+| kubernetes.scheduler.args | object | `{}` | Extra arguments for the [scheduler](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-scheduler/) |
+| kubernetes.scheduler.configuration | object | `{}` | kube-scheduler configuration [Read More](https://kubernetes.io/docs/reference/scheduling/config/) |
+| kubernetes.scheduler.enabled | bool | `true` | Enable Kubernetes Scheduler |
+| kubernetes.scheduler.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
+| kubernetes.scheduler.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.scheduler.image.digest | string | `""` | Image Digest |
+| kubernetes.scheduler.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| kubernetes.scheduler.image.registry | string | `"registry.k8s.io"` | Image registry |
+| kubernetes.scheduler.image.repository | string | `"kube-scheduler"` | Image repository |
+| kubernetes.scheduler.image.tag | string | `""` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
+| kubernetes.scheduler.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.scheduler.labels | object | `{}` | Labels for Workload |
+| kubernetes.scheduler.metrics.service.annotations | object | `{}` | Service Annotations |
+| kubernetes.scheduler.metrics.service.labels | object | `{}` | Service Labels |
+| kubernetes.scheduler.metrics.serviceMonitor.annotations | object | `{}` | Assign additional Annotations |
+| kubernetes.scheduler.metrics.serviceMonitor.enabled | bool | `true` | Enable ServiceMonitor |
+| kubernetes.scheduler.metrics.serviceMonitor.endpoint.interval | string | `"15s"` | Set the scrape interval for the endpoint of the serviceMonitor |
+| kubernetes.scheduler.metrics.serviceMonitor.endpoint.metricRelabelings | list | `[]` | Set metricRelabelings for the endpoint of the serviceMonitor |
+| kubernetes.scheduler.metrics.serviceMonitor.endpoint.relabelings | list | `[]` | Set relabelings for the endpoint of the serviceMonitor |
+| kubernetes.scheduler.metrics.serviceMonitor.endpoint.scrapeTimeout | string | `""` | Set the scrape timeout for the endpoint of the serviceMonitor |
+| kubernetes.scheduler.metrics.serviceMonitor.jobSelector | string | `"app.kubernetes.io/name"` | Set JobLabel for the serviceMonitor |
+| kubernetes.scheduler.metrics.serviceMonitor.labels | object | `{}` | Assign additional labels according to Prometheus' serviceMonitorSelector matching labels |
+| kubernetes.scheduler.metrics.serviceMonitor.matchLabels | object | `{}` | Change matching labels |
+| kubernetes.scheduler.metrics.serviceMonitor.namespace | string | `""` | Install the ServiceMonitor into a different Namespace, as the monitoring stack one (default: the release one) |
+| kubernetes.scheduler.metrics.serviceMonitor.targetLabels | list | `[]` | Set targetLabels for the serviceMonitor |
+| kubernetes.scheduler.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.scheduler.podAnnotations | object | `{}` | Pod Annotations |
+| kubernetes.scheduler.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
+| kubernetes.scheduler.podLabels | object | `{}` | Pod Labels |
+| kubernetes.scheduler.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| kubernetes.scheduler.port | int | `10259` | Port for kube-scheduler |
+| kubernetes.scheduler.priorityClassName | string | `""` | Pod PriorityClassName |
+| kubernetes.scheduler.replicaCount | int | `2` | Replicas for kube-scheduler |
+| kubernetes.scheduler.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Pod Requests and limits |
+| kubernetes.scheduler.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"readOnlyRootFilesystem":true}` | Container Security Context |
+| kubernetes.scheduler.service.annotations | object | `{}` | Service Annotations |
+| kubernetes.scheduler.service.enabled | bool | `true` | Enable kube-scheduler Service |
+| kubernetes.scheduler.service.labels | object | `{}` | Service Labels |
+| kubernetes.scheduler.service.loadBalancerIP | string | `nil` | LoadBalancerIP |
+| kubernetes.scheduler.service.port | int | `10259` | Service Port |
+| kubernetes.scheduler.service.type | string | `"ClusterIP"` | Service Type |
+| kubernetes.scheduler.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy |
+| kubernetes.scheduler.tolerations | list | `[]` | Tolerations |
+| kubernetes.scheduler.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
+| kubernetes.scheduler.volumeMounts | list | `[]` | Additional Volumemounts |
+| kubernetes.scheduler.volumes | list | `[]` | Additional Volumes |
+
+### ETCD
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetes.etcd.affinity | object | `{}` | Affinity |
+| kubernetes.etcd.args | object | `{"snapshot-count":10000}` | Extra arguments for ETCD |
+| kubernetes.etcd.certSANs.dnsNames | list | `[]` | Additonal DNS names for ETCD ceritifcate |
+| kubernetes.etcd.certSANs.ipAddresses | list | `[]` | Additonal IP adresses names for ETCD ceritifcate |
+| kubernetes.etcd.enabled | bool | `true` | Enable ETCD |
+| kubernetes.etcd.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
+| kubernetes.etcd.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.etcd.image.digest | string | `""` | Image Digest |
+| kubernetes.etcd.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| kubernetes.etcd.image.registry | string | `"k8s.gcr.io"` | Image registry |
+| kubernetes.etcd.image.repository | string | `"etcd"` | Image repository |
+| kubernetes.etcd.image.tag | string | `"3.5.6-0"` | Image tag |
+| kubernetes.etcd.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.etcd.metrics.service.annotations | object | `{}` | Service Annotations |
+| kubernetes.etcd.metrics.service.labels | object | `{}` | Service Labels |
+| kubernetes.etcd.metrics.serviceMonitor.annotations | object | `{}` | Assign additional Annotations |
+| kubernetes.etcd.metrics.serviceMonitor.enabled | bool | `true` | Enable ServiceMonitor |
+| kubernetes.etcd.metrics.serviceMonitor.endpoint.interval | string | `"15s"` | Set the scrape interval for the endpoint of the serviceMonitor |
+| kubernetes.etcd.metrics.serviceMonitor.endpoint.metricRelabelings | list | `[]` | Set metricRelabelings for the endpoint of the serviceMonitor |
+| kubernetes.etcd.metrics.serviceMonitor.endpoint.relabelings | list | `[]` | Set relabelings for the endpoint of the serviceMonitor |
+| kubernetes.etcd.metrics.serviceMonitor.endpoint.scrapeTimeout | string | `""` | Set the scrape timeout for the endpoint of the serviceMonitor |
+| kubernetes.etcd.metrics.serviceMonitor.jobSelector | string | `"app.kubernetes.io/name"` | Set JobLabel for the serviceMonitor |
+| kubernetes.etcd.metrics.serviceMonitor.labels | object | `{}` | Assign additional labels according to Prometheus' serviceMonitorSelector matching labels |
+| kubernetes.etcd.metrics.serviceMonitor.matchLabels | object | `{}` | Change matching labels |
+| kubernetes.etcd.metrics.serviceMonitor.namespace | string | `""` | Install the ServiceMonitor into a different Namespace, as the monitoring stack one (default: the release one) |
+| kubernetes.etcd.metrics.serviceMonitor.targetLabels | list | `[]` | Set targetLabels for the serviceMonitor |
+| kubernetes.etcd.minReadySeconds | int | `10` | Minimum ready seconds |
+| kubernetes.etcd.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.etcd.podAnnotations | object | `{}` | Pod Annotations |
+| kubernetes.etcd.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
+| kubernetes.etcd.podLabels | object | `{}` | Pod Labels |
+| kubernetes.etcd.podManagementPolicy | string | `"OrderedReady"` | Pod Management Policy |
+| kubernetes.etcd.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| kubernetes.etcd.ports.client | int | `2379` | ETCD Client Port |
+| kubernetes.etcd.ports.metrics | int | `2381` | ETCD Metrics Port |
+| kubernetes.etcd.ports.peer | int | `2380` | ETCD Peer Port |
+| kubernetes.etcd.priorityClassName | string | `""` | Pod PriorityClassName |
+| kubernetes.etcd.replicaCount | int | `3` | Replicas for ETCD Pods |
+| kubernetes.etcd.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Pod Requests and limits |
+| kubernetes.etcd.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"readOnlyRootFilesystem":true}` | Container Security Context |
+| kubernetes.etcd.tolerations | list | `[]` | Tolerations |
+| kubernetes.etcd.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
+| kubernetes.etcd.updateStrategy | object | `{}` | Update Strategy |
+| kubernetes.etcd.volumeMounts | list | `[]` | Additional volumemounts |
+| kubernetes.etcd.volumes | list | `[]` | Additional volumes |
+
+### Admin
+
+Deploys an administration pod which has the admin kubeconfig mounted and allows for easy access to the cluster.
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetes.admin.affinity | object | `{}` | Affinity |
+| kubernetes.admin.annotations | object | `{}` | Annotations for Workload |
+| kubernetes.admin.enabled | bool | `true` | Enable Kubernetes Administration |
+| kubernetes.admin.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
+| kubernetes.admin.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.admin.image.digest | string | `""` | Image Digest |
+| kubernetes.admin.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| kubernetes.admin.image.registry | string | `"ghcr.io"` | Image registry |
+| kubernetes.admin.image.repository | string | `"kvaps/kubernetes-tools"` | Image repository |
+| kubernetes.admin.image.tag | string | `"v0.13.4"` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
+| kubernetes.admin.image.use_jobs | bool | `true` | Use the Job Image (used for kubectl admin and kubeadmin bootstrap) |
+| kubernetes.admin.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.admin.labels | object | `{}` | Labels for Workload |
+| kubernetes.admin.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.admin.podAnnotations | object | `{}` | Pod Annotations |
+| kubernetes.admin.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
+| kubernetes.admin.podLabels | object | `{}` | Pod Labels |
+| kubernetes.admin.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| kubernetes.admin.priorityClassName | string | `""` | Pod PriorityClassName |
+| kubernetes.admin.replicaCount | int | `1` | Replicas for admin |
+| kubernetes.admin.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Pod Requests and limits |
+| kubernetes.admin.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["all"]},"enabled":true,"readOnlyRootFilesystem":false}` | Container Security Context |
+| kubernetes.admin.strategy | object | `{}` | Deployment Update Strategy |
+| kubernetes.admin.tolerations | list | `[]` | Tolerations |
+| kubernetes.admin.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
+| kubernetes.admin.volumeMounts | list | `[]` | Additional Volumemounts |
+| kubernetes.admin.volumes | list | `[]` | Additional Volumes |
+
+### CoreDNS (In-Cluster)
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetes.coredns.affinity | object | `{}` | Affinity |
+| kubernetes.coredns.annotations | object | `{}` | Annotations for Workload |
+| kubernetes.coredns.enabled | bool | `true` | Install CoreDNS via KubeADM |
+| kubernetes.coredns.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
+| kubernetes.coredns.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.coredns.image.digest | string | `""` | Image Digest |
+| kubernetes.coredns.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| kubernetes.coredns.image.registry | string | `nil` | Image registry |
+| kubernetes.coredns.image.repository | string | `"coredns/coredns"` | Image repository |
+| kubernetes.coredns.image.tag | string | `"1.10.0"` | Image tag |
+| kubernetes.coredns.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.coredns.labels | object | `{}` | Labels for Workload |
+| kubernetes.coredns.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.coredns.podAnnotations | object | `{}` | Pod Annotations |
+| kubernetes.coredns.podLabels | object | `{}` | Pod Labels |
+| kubernetes.coredns.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":false,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| kubernetes.coredns.priorityClassName | string | `""` | Pod PriorityClassName |
+| kubernetes.coredns.replicaCount | int | `2` | CoreDNS Replicas |
+| kubernetes.coredns.resources | object | `{"limits":{"memory":"170Mi"},"requests":{"cpu":"100m","memory":"70Mi"}}` | CoreDNS resources |
+| kubernetes.coredns.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"add":["NET_BIND_SERVICE"],"drop":["all"]},"enabled":true,"readOnlyRootFilesystem":true}` | Container Security Context |
+| kubernetes.coredns.strategy | object | `{"rollingUpdate":{"maxUnavailable":1},"type":"RollingUpdate"}` | Deployment Update Strategy |
+| kubernetes.coredns.tolerations | list | `[]` | Tolerations |
+| kubernetes.coredns.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
+| kubernetes.coredns.volumeMounts | list | `[]` | Additional Volumemounts |
+| kubernetes.coredns.volumes | list | `[]` | Additional Volumes |
+
+### Konnektivity-Agent (In-Cluster)
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetes.konnectivityAgent.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
+| kubernetes.konnectivityAgent.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.konnectivityAgent.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| kubernetes.konnectivityAgent.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["all"]},"enabled":true,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsUser":65534}` | Container Security Context |
+| kubernetes.konnectivityAgent.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy |
+
 ## Autoscaler
 
-Available Values for the [Autsocaler component]().
+Available Values for the [Autsocaler component](#kubernetes-autoscaler).
 
 ### Settings
 | Key | Type | Default | Description |

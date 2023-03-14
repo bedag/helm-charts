@@ -369,9 +369,6 @@ gitops:
     # -- Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well)
     removeManifestsOnDisable: false
 
-  # -- Token used for all repositories
-  token: ""
-
   # Flux GitOps Resources
   flux:
     # -- Create Flux resources. If false, ArgoCD resources will be created
@@ -380,14 +377,6 @@ gitops:
     prune: true
     # -- Sync Interval for flux syncs
     interval: "5m"
-
-    # Reference a SOPS Secret
-    secretReference:
-      # -- Enable SOPS Secret Reference
-      enabled: true
-      # -- Name of the SOPS Secret
-      name: "inventory-sops"
-
 
   # ArgoCD GitOps Resources
   argocd:

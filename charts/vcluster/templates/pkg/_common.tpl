@@ -129,13 +129,6 @@ Common Selector Labels
       {{- end -}}
     {{- end -}}
 
-    {{/* Kube-Green Component (Admission) */}}
-    {{- if (include "kube-green.enabled" $) -}}
-      {{- with (include "kube-green.admission.endpoint" $) -}}
-        {{- $no_proxy = printf "%s,%s" $no_proxy . -}}
-      {{- end -}}
-    {{- end -}}
-
     {{/*{{- $no_proxy = printf "%s,%s" ($no_proxy | trimSuffix ",") "argocd-applicationset-controller,argocd-dex-server,argocd-redis,argocd-repo-server,argocd-server" -}}*/}}
   {{- end -}}
 

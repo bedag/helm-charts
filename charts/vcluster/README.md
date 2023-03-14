@@ -94,7 +94,88 @@ Access the ArgoCD UI by opening [http://localhost:9191]( http://localhost:9191) 
 
 # Values
 
-## Machine
+## Globals
+
+Global Values
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| global.comonents.exposure.certificates.issuer.kind | string | `"Issuer"` | Set if the cert manager will generate either self-signed or CA signed SSL certificates. Its value will be either Issuer or ClusterIssuer |
+| global.comonents.exposure.certificates.issuer.name | string | `""` | Set the name of the ClusterIssuer if issuer kind is ClusterIssuer and if cert manager will generate CA signed SSL certificates |
+| global.comonents.exposure.certificates.issuer.selfSigned | bool | `false` | Creates self-signed Issuer |
+| global.comonents.exposure.certificates.secretName | string | `""` | Uses Existing Secret for all certificates |
+| global.comonents.exposure.expose | string | `"ingress"` | Define how admission webhooks are expose (ingress or loadbalancer). Overwrites expose for all admission webhooks. |
+| global.comonents.exposure.ingress.annotations | object | `{}` | Common annotations for admission ingresses |
+| global.comonents.exposure.ingress.host | string | `"{{ include \"pkg.cluster.name\" $ }}.example.com"` | Host for admission ingresses (admission endpoints are exposed via path). supports templating |
+| global.comonents.exposure.ingress.ingressClassName | string | `""` | Ingressclass for admission ingresses |
+| global.comonents.exposure.ingress.port | int | `443` | Port for Ingresses |
+| global.comonents.metrics.enabled | bool | `true` | Enable metrics for all components |
+| global.comonents.metrics.serviceMonitor.enabled | bool | `true` | Enable ServiceMonitor for all components |
+| global.comonents.networkPolicy.enabled | bool | `false` |  |
+| global.comonents.service.annotations | object | `{}` | Annotations for all services |
+| global.comonents.service.labels | object | `{}` | Labels for all services |
+| global.comonents.workloads.affinity | object | `{}` | Affinity for all workloads (Overwrites all workloads affinities) |
+| global.comonents.workloads.annotations | object | `{}` | Annotations for all workloads (merged with workload annotations) |
+| global.comonents.workloads.image.pullPolicy | string | `""` | Overwrites Pull Policy for all components |
+| global.comonents.workloads.image.pullSecrets | list | `[]` | Additional image pull secrets for all components |
+| global.comonents.workloads.labels | object | `{}` | Labels for all workloads (merged with workload labels) |
+| global.comonents.workloads.nodeSelector | object | `{}` | Node Selector for all workloads (Overwrites all workloads nodeSelector) |
+| global.comonents.workloads.podAnnotations | object | `{}` | Pod Annotations for all workloads (merged with workload podAnnotations) |
+| global.comonents.workloads.podLabels | object | `{}` | Pod Labels for all workloads (merged with workload podLabels) |
+| global.comonents.workloads.podSecurityContext | object | `{"enabled":false}` | Pod Security Context for all workloads  (Overwrites per workload podSecurityContext) |
+| global.comonents.workloads.priorityClassName | string | `""` | Priority Class for all workloads (Overwrites all workloads priorityClassNames) |
+| global.comonents.workloads.securityContext | object | `{"enabled":false}` | Container Security Context for all workloads (Overwrites per workload securityContext) |
+| global.comonents.workloads.tolerations | list | `[]` | Tolerations for all workloads (Overwrites all workloads tolerations) |
+| global.comonents.workloads.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads (Overwrites all workloads topologySpreadConstraints) |
+| global.proxy.host | string | `""` | Proxy Host |
+| global.proxy.no_proxy | string | `""` | No Proxy Hosts |
+| global.registry.creds.password | string | `""` | Registry Password |
+| global.registry.creds.username | string | `""` | Registry Username |
+| global.registry.endpoint | string | `""` | Registry Endpoint |
+
+## Utilities Values
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| cluster.name | string | The cluster name is derived from the `.Release.Name` | Define the cluster name |
+| cluster.properties | object | `{}` | Properties are substituted into the gitops component |
+
+## Lifecycle
+
+We use a lifecycle Job/Cronjob to manage certain configurations within the vcluster and the hosting cluster.
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| lifecycle.cilium.enabled | bool | `true` | Install Cilium CNI |
+| lifecycle.cilium.on_install | bool | `true` | Install only on chart install (First install) |
+| lifecycle.cilium.version | string | `"1.9.18"` | Cilium version |
+| lifecycle.current.extraManifests | object | See values.yaml | These manifests will be applied inside the cluster (supports templating) |
+| lifecycle.current.extraManifestsOnInstall | object | See values.yaml | These manifests will be applied inside the cluster, but only on $.Release.Install and wont be touched again (supports templating) |
+| lifecycle.current.script | string | `nil` | Additional configuration script for the current cluster (supports templating) |
+| lifecycle.job.affinity | object | `{}` | Affinity |
+| lifecycle.job.annotations | object | `{}` | Job Annotations |
+| lifecycle.job.extraVolumeMounts | list | `[]` | Additional Pod VolumeMounts |
+| lifecycle.job.extraVolumes | list | `[]` | Additional Pod Volumes |
+| lifecycle.job.failedJobsHistoryLimit | int | `3` | Cronjob failed jobs history limit |
+| lifecycle.job.image | object | `{"digest":"","pullPolicy":"Always","pullSecrets":[],"registry":"registry-group.mgmtbi.ch","repository":"sre/gitops/cluster_bootstrap","tag":"dev.clusterbuild"}` | Run Installer Jobs again (Only execute on Helm install) |
+| lifecycle.job.labels | object | `{}` | Job Labels |
+| lifecycle.job.nodeSelector | object | `{}` | Node Selector |
+| lifecycle.job.podAnnotations | object | `{}` | Pod Annotations |
+| lifecycle.job.podLabels | object | `{}` | Pod Labels |
+| lifecycle.job.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| lifecycle.job.priorityClassName | string | `""` | Pod PriorityClassName |
+| lifecycle.job.reconciler | bool | `true` | Deploy as Cronjob to run periodically |
+| lifecycle.job.resources | object | `{}` | Resources configuration |
+| lifecycle.job.schedule | string | `"0 0 1 */6 *"` | Cronjob Schedule |
+| lifecycle.job.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"privileged":false,"runAsGroup":20000,"runAsUser":20000}` | Container Security Context |
+| lifecycle.job.successfulJobsHistoryLimit | int | `3` | Cronjob successful jobs history limit |
+| lifecycle.job.tolerations | list | `[]` | Tolerations |
+| lifecycle.job.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints |
+| lifecycle.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
+| lifecycle.serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
+| lifecycle.serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
+| lifecycle.vcluster.extraManifests | object | See values.yaml | These manifests will be applied inside the vcluster (supports templating) |
+| lifecycle.vcluster.extraManifestsOnInstall | object | See values.yaml | These manifests will be applied inside the vcluster, but only on $.Release.Install and wont be touched again (supports templating) |
+| lifecycle.vcluster.script | string | `nil` | Additional configuration script for the vcluster (supports templating) |
+
+## Machine Values
 
 Available Values for the [Machine Controller Component](#machine-controller). The component consists of a single deployment with a `controller` and `admission` container. Pod settings are therefor made for both subcomponents.
 | Key | Type | Default | Description |
@@ -193,7 +274,7 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.admission.webhook.tls.ipAddresses | list | `[]` | Additional IP adresses for Admission certificate |
 | machine.admission.webhook.tls.name | string | `""` | Override the TLS Secret Name |
 
-## OSM
+## OSM Values
 
 __This Component is not stable yet!__
 
@@ -333,22 +414,34 @@ Available Values for the [Kubernetes component](#kubernetes).
 ### Konnektivity-Server
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| kubernetes.konnectivityServer.affinity | object | `{}` | Affinity |
+| kubernetes.konnectivityServer.annotations | object | `{}` | Annotations for Workload |
+| kubernetes.konnectivityServer.args | object | `{}` | Konnectivity Server extra arguments  |
 | kubernetes.konnectivityServer.enabled | bool | `true` | Enable Konnectivity Server |
 | kubernetes.konnectivityServer.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.konnectivityServer.envsFrom | list | `[]` | Extra environment variables from |
-| kubernetes.konnectivityServer.extraArgs | object | `{}` | Konnectivity Server extra arguments |
 | kubernetes.konnectivityServer.image.digest | string | `""` | Image Digest |
 | kubernetes.konnectivityServer.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| kubernetes.konnectivityServer.image.pullSecrets | list | `[]` | Image pull secrets |
 | kubernetes.konnectivityServer.image.registry | string | `"us.gcr.io"` | Image registry |
 | kubernetes.konnectivityServer.image.repository | string | `"k8s-artifacts-prod/kas-network-proxy/proxy-server"` | Image repository |
 | kubernetes.konnectivityServer.image.tag | string | `"v0.0.24"` | Image tag |
+| kubernetes.konnectivityServer.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.konnectivityServer.labels | object | `{}` | Labels for Workload |
 | kubernetes.konnectivityServer.mode | string | `"GRPC"` | This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment. |
+| kubernetes.konnectivityServer.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.konnectivityServer.podAnnotations | object | `{}` | Pod Annotations |
+| kubernetes.konnectivityServer.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
+| kubernetes.konnectivityServer.podLabels | object | `{}` | Pod Labels |
 | kubernetes.konnectivityServer.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context (only used in HTTPConnect mode) |
+| kubernetes.konnectivityServer.priorityClassName | string | `""` | Pod PriorityClassName |
 | kubernetes.konnectivityServer.replicaCount | int | `2` | Konnectivity Server Replicas (only used in HTTPConnect mode) |
 | kubernetes.konnectivityServer.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Konnectivity Server resources |
 | kubernetes.konnectivityServer.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["all"]},"enabled":true,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsUser":65534}` | Container Security Context |
-| kubernetes.konnectivityServer.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy (only used in HTTPConnect mode) |
+| kubernetes.konnectivityServer.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy |
+| kubernetes.konnectivityServer.tolerations | list | `[]` | Tolerations |
+| kubernetes.konnectivityServer.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
+| kubernetes.konnectivityServer.volumeMounts | list | `[]` | Additional Volumemounts |
+| kubernetes.konnectivityServer.volumes | list | `[]` | Additional Volumes |
 
 ### Controller Manager
 | Key | Type | Default | Description |
@@ -525,7 +618,7 @@ Deploys an administration pod which has the admin kubeconfig mounted and allows 
 ### CoreDNS (In-Cluster)
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| kubernetes.coredns.affinity | object | `{}` | Affinity |
+| kubernetes.coredns.affinity | object | `{"podAntiAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"podAffinityTerm":{"labelSelector":{"matchExpressions":[{"key":"k8s-app","operator":"In","values":["kube-dns"]}]},"topologyKey":"kubernetes.io/hostname"},"weight":100}]}}` | Affinity |
 | kubernetes.coredns.annotations | object | `{}` | Annotations for Workload |
 | kubernetes.coredns.enabled | bool | `true` | Install CoreDNS via KubeADM |
 | kubernetes.coredns.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
@@ -537,32 +630,52 @@ Deploys an administration pod which has the admin kubeconfig mounted and allows 
 | kubernetes.coredns.image.tag | string | `"1.10.0"` | Image tag |
 | kubernetes.coredns.imagePullSecrets | list | `[]` | Image pull Secrets |
 | kubernetes.coredns.labels | object | `{}` | Labels for Workload |
-| kubernetes.coredns.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.coredns.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node Selector |
 | kubernetes.coredns.podAnnotations | object | `{}` | Pod Annotations |
 | kubernetes.coredns.podLabels | object | `{}` | Pod Labels |
 | kubernetes.coredns.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":false,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
-| kubernetes.coredns.priorityClassName | string | `""` | Pod PriorityClassName |
+| kubernetes.coredns.priorityClassName | string | `"system-cluster-critical"` | Pod PriorityClassName |
 | kubernetes.coredns.replicaCount | int | `2` | CoreDNS Replicas |
 | kubernetes.coredns.resources | object | `{"limits":{"memory":"170Mi"},"requests":{"cpu":"100m","memory":"70Mi"}}` | CoreDNS resources |
 | kubernetes.coredns.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"add":["NET_BIND_SERVICE"],"drop":["all"]},"enabled":true,"readOnlyRootFilesystem":true}` | Container Security Context |
 | kubernetes.coredns.strategy | object | `{"rollingUpdate":{"maxUnavailable":1},"type":"RollingUpdate"}` | Deployment Update Strategy |
-| kubernetes.coredns.tolerations | list | `[]` | Tolerations |
+| kubernetes.coredns.tolerations | list | `[{"key":"CriticalAddonsOnly","operator":"Exists"}]` | Tolerations |
 | kubernetes.coredns.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
-| kubernetes.coredns.volumeMounts | list | `[]` | Additional Volumemounts |
-| kubernetes.coredns.volumes | list | `[]` | Additional Volumes |
 
 ### Konnektivity-Agent (In-Cluster)
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| kubernetes.konnectivityAgent.affinity | object | `{}` | Affinity |
+| kubernetes.konnectivityAgent.annotations | object | `{}` | Annotations for Workload |
+| kubernetes.konnectivityAgent.args | object | `{}` | Konnectivity Agent extra arguments  |
+| kubernetes.konnectivityAgent.enabled | bool | `false` | Enable Konnectivity Agent |
 | kubernetes.konnectivityAgent.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.konnectivityAgent.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.konnectivityAgent.hostNetwork | bool | `true` | Use HostNetwork |
+| kubernetes.konnectivityAgent.image.digest | string | `""` | Image Digest |
+| kubernetes.konnectivityAgent.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| kubernetes.konnectivityAgent.image.registry | string | `"us.gcr.io"` | Image registry |
+| kubernetes.konnectivityAgent.image.repository | string | `"k8s-artifacts-prod/kas-network-proxy/proxy-agent"` | Image repository |
+| kubernetes.konnectivityAgent.image.tag | string | `"v0.0.24"` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
+| kubernetes.konnectivityAgent.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.konnectivityAgent.labels | object | `{}` | Labels for Workload |
+| kubernetes.konnectivityAgent.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.konnectivityAgent.podAnnotations | object | `{}` | Pod Annotations |
+| kubernetes.konnectivityAgent.podLabels | object | `{}` | Pod Labels |
 | kubernetes.konnectivityAgent.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| kubernetes.konnectivityAgent.ports.admin | int | `8133` | Konnectivity Agent Administration Port |
+| kubernetes.konnectivityAgent.ports.health | int | `8134` | Konnectivity Agent Health Port |
+| kubernetes.konnectivityAgent.priorityClassName | string | `"system-cluster-critical"` | Pod PriorityClassName |
+| kubernetes.konnectivityAgent.replicaCount | int | `2` | Replicas for admin |
+| kubernetes.konnectivityAgent.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Pod Requests and limits |
 | kubernetes.konnectivityAgent.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["all"]},"enabled":true,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsUser":65534}` | Container Security Context |
 | kubernetes.konnectivityAgent.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy |
+| kubernetes.konnectivityAgent.tolerations | list | `[{"key":"CriticalAddonsOnly","operator":"Exists"}]` | Tolerations |
+| kubernetes.konnectivityAgent.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
 
-## Autoscaler
+## Autoscaler Values
 
-Available Values for the [Autsocaler component](#kubernetes-autoscaler).
+Available Values for the [Autsocaler component](#autoscaler).
 
 ### Settings
 | Key | Type | Default | Description |
@@ -582,7 +695,7 @@ Available Values for the [Autsocaler component](#kubernetes-autoscaler).
 | autoscaler.expanderPriorities | object | `{}` | The expanderPriorities is used if `extraArgs.expander` contains `priority` and expanderPriorities is also set with the priorities. If `args.expander` contains `priority`, then expanderPriorities is used to define cluster-autoscaler-priority-expander priorities. See: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/expander/priority/readme.md |
 | autoscaler.image.digest | string | `""` | Image Digest |
 | autoscaler.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| autoscaler.image.registry | string | `"k8s.gcr.io"` | Image registry |
+| autoscaler.image.registry | string | `"registry.k8s.io"` | Image registry |
 | autoscaler.image.repository | string | `"autoscaling/cluster-autoscaler"` | Image repository |
 | autoscaler.image.tag | string | `"v1.23.0"` | Image tag |
 | autoscaler.imagePullSecrets | list | `[]` | Image pull Secrets |
@@ -628,3 +741,8 @@ Available Values for the [Autsocaler component](#kubernetes-autoscaler).
 | autoscaler.metrics.serviceMonitor.matchLabels | object | `{}` | Change matching labels |
 | autoscaler.metrics.serviceMonitor.namespace | string | `""` | Install the ServiceMonitor into a different Namespace, as the monitoring stack one (default: the release one) |
 | autoscaler.metrics.serviceMonitor.targetLabels | list | `[]` | Set targetLabels for the serviceMonitor |
+
+## GitOps Values
+
+Available Values for the [Gitops component](#gitops).
+

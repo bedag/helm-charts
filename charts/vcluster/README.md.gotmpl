@@ -125,7 +125,40 @@ Access the ArgoCD UI by opening [http://localhost:9191]( http://localhost:9191) 
 |-----|------|---------|-------------|
 {{- end }}
 
-## Machine
+## Globals
+
+Global Values
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "global." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+## Utilities Values
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if or (hasPrefix "utilities." .Key) (hasPrefix "providers." .Key) (hasPrefix "cluster." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+## Lifecycle
+
+We use a lifecycle Job/Cronjob to manage certain configurations within the vcluster and the hosting cluster.
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "lifecycle." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+## Machine Values
 
 Available Values for the [Machine Controller Component](#machine-controller). The component consists of a single deployment with a `controller` and `admission` container. Pod settings are therefor made for both subcomponents.
 
@@ -155,7 +188,7 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 {{- end }}
 
 
-## OSM
+## OSM Values
 
 __This Component is not stable yet!__
 
@@ -251,9 +284,6 @@ Deploys an administration pod which has the admin kubeconfig mounted and allows 
   {{- end }}
 {{- end }}
 
-
-
-
 ### CoreDNS (In-Cluster)
 
 {{- template "table.heading" $ }}
@@ -273,13 +303,9 @@ Deploys an administration pod which has the admin kubeconfig mounted and allows 
   {{- end }}
 {{- end }}
 
+## Autoscaler Values
 
-
-
-
-## Autoscaler
-
-Available Values for the [Autsocaler component](#kubernetes-autoscaler).
+Available Values for the [Autsocaler component](#autoscaler).
 
 
 ### Settings
@@ -319,13 +345,7 @@ Available Values for the [Autsocaler component](#kubernetes-autoscaler).
   {{- end }}
 {{- end }}
 
+## GitOps Values
 
-## Utilities
-
-{{- template "table.heading" $ }}
-{{- range .Values }}
-  {{- if and (hasPrefix "utilities." .Key) }}
-| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
-  {{- end }}
-{{- end }}
+Available Values for the [Gitops component](#gitops).
 

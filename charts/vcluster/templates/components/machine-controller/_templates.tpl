@@ -115,7 +115,7 @@ Create the Admission Webhook TLS Secret
 */}}
 {{- define "machine-controller.secretTlsName" -}}
   {{- if (include "machine-controller.admission.expose.ingress" $) }}
-{{- include "pkg.common.certificates.secretTlsName" $ }}
+{{- include "pkg.components.certificates.secretTlsName" $ }}
   {{- else }}
 {{- include "machine-controller.admission.secretTlsName" $ }}
   {{- end }}
@@ -210,7 +210,7 @@ machine-controller-mutating-webhook
 
   {{/* Expose via Ingress */}}
   {{- if (include "machine-controller.admission.expose.ingress" $) -}}
-    {{- $base = (printf "https://%s/%s" (include "pkg.common.ingress.host" $) (include "machine-controller.admission.expose.ingress.context" $ | trimPrefix "/")) -}}
+    {{- $base = (printf "https://%s/%s" (include "pkg.components.ingress.host" $) (include "machine-controller.admission.expose.ingress.context" $ | trimPrefix "/")) -}}
   {{- end -}}
 
   {{/* Expose via Service (LoadBalancer) */}}
@@ -227,7 +227,7 @@ machine-controller-mutating-webhook
 {{- define "machine-controller.admission.endpoint" -}}
   {{/* Expose via Ingress */}}
   {{- if (include "machine-controller.admission.expose.ingress" $) -}}
-    {{- printf "%s" (include "pkg.common.ingress.host" $) -}}
+    {{- printf "%s" (include "pkg.components.ingress.host" $) -}}
   {{- else if (include "machine-controller.admission.expose.loadbalancer" $) -}}
     {{- printf "%s" (include "machine-controller.admission.expose.loadbalancer.ip" $) -}}
   {{- end -}}

@@ -157,31 +157,6 @@ Common Selector Labels
   {{- end -}}
 {{- end -}}
 
-{{/* Ingress */}}
-{{- define "pkg.common.ingress.host" -}}
-  {{- with $.Values.components.exposure.ingress.host -}}
-    {{- printf "%s" (include "pkg.utils.template" (dict "tpl" . "ctx" $)) -}}
-  {{- end -}}
-{{- end -}}
-
-
-{{- define "pkg.common.certificates.issuer" -}}
-  {{- with $.Values.components.exposure.certificates.issuer }}
-    {{- if .selfSigned }}
-kind: Issuer
-name: {{ include "vcluster.fullname" $ }}-self-signed
-    {{- else }}
-kind: {{ .kind }}
-name: {{ .name }}
-    {{- end }}
-  {{- end }}
-{{- end -}}
-
-
-{{- define "pkg.common.certificates.secretTlsName" -}}
-{{- default ( printf "%s-tls" ( include "pkg.cluster.name" . ) ) $.Values.components.exposure.certificates.secretName -}}
-{{- end -}}
-
 {{/*
   ServiceMonitor ExtraLabels
 */}}

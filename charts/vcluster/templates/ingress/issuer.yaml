@@ -1,4 +1,4 @@
-{{- if $.Values.components.exposure.certificates.issuer.selfSigned }}
+{{- if $.Values.global.components.exposure.certificates.issuer.selfSigned }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer

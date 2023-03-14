@@ -31,10 +31,10 @@ spec:
   {{- end }}
   tls:
     - hosts:
-      - {{ include "pkg.common.ingress.host" . }}
-      secretName: {{ include "pkg.common.certificates.secretTlsName" $ }}
+      - {{ include "pkg.components.ingress.host" . }}
+      secretName: {{ include "pkg.components.certificates.secretTlsName" $ }}
   rules:
-    - host: {{ include "pkg.common.ingress.host" . }}
+    - host: {{ include "pkg.components.ingress.host" . }}
       http:
         paths:
           {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}

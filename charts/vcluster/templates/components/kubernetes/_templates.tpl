@@ -153,7 +153,7 @@ Template for konnectivityServer containers
         - --agent-service-account=konnectivity-agent
         - --kubeconfig=/etc/kubernetes/konnectivity-server.conf
         - --authentication-audience=system:konnectivity-server
-        {{- with $kubernetes.konnectivityServer.extraArgs }}
+        {{- with $kubernetes.konnectivityServer.args }}
           {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 8 }}
         {{- end }}
         ports:

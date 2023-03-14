@@ -7,7 +7,7 @@ metadata:
     addonmanager.kubernetes.io/mode: Reconcile
     k8s-app: konnectivity-agent
     {{- with $kubernetes.konnectivityAgent.labels }}
-    {{- toYaml . | nindent 4 }}
+      {{- toYaml . | nindent 4 }}
     {{- end }}
     {{- with $kubernetes.konnectivityAgent.annotations }}
     annotations:
@@ -29,7 +29,7 @@ spec:
       labels:
         k8s-app: konnectivity-agent
         {{- with $kubernetes.konnectivityAgent.podLabels }}
-        {{- toYaml . | nindent 8 }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
       {{- with $kubernetes.konnectivityAgent.podAnnotations }}
       annotations:
@@ -40,21 +40,24 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with $kubernetes.konnectivityAgent.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       hostNetwork: {{ $kubernetes.konnectivityAgent.hostNetwork }}
+      {{- if $kubernetes.konnectivityAgent.podSecurityContext.enabled }}
       securityContext:
-        seccompProfile:
-          type: RuntimeDefault
-      priorityClassName: system-cluster-critical
-      tolerations:
-      - key: "CriticalAddonsOnly"
-        operator: "Exists"
+        {{- toYaml (omit $kubernetes.konnectivityAgent.podSecurityContext "enabled") | nindent 8 }}
+      {{- end }}
+      priorityClassName: {{ $kubernetes.konnectivityAgent.priorityClassName }}
       {{- with $kubernetes.konnectivityAgent.tolerations }}
-      {{- toYaml . | nindent 6 }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- if or $kubernetes.konnectivityServer.affinity $kubernetes.konnectivityServer.podAntiAffinity }}
       affinity:
         {{- with $kubernetes.konnectivityServer.affinity }}
-        {{- toYaml . | nindent 8 }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
         {{- if eq $kubernetes.konnectivityServer.podAntiAffinity "hard" }}
         podAntiAffinity:
@@ -74,8 +77,8 @@ spec:
                     app: {{ $fullName }}-konnectivity-server
         {{- end }}
       {{- end }}
-      imagePullSecrets: {{ include "pkg.images.registry.pullsecrets" $ | nindent 8 }}
-        {{- with $kubernetes.konnectivityServer.image.pullSecrets }}
+      imagePullSecrets:
+        {{- with $kubernetes.konnectivityServer.imagePullSecrets }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
       containers:
@@ -90,31 +93,45 @@ spec:
         - --ca-cert=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
         - --service-account-token-path=/var/run/secrets/tokens/konnectivity-agent-token
 
-        {{- if not (hasKey $kubernetes.konnectivityAgent.extraArgs "proxy-server-host") }}
+        {{- if not (hasKey $kubernetes.konnectivityAgent.args "proxy-server-host") }}
         {{- if and (eq $kubernetes.konnectivityServer.mode "HTTPConnect") $kubernetes.konnectivityServer.service.loadBalancerIP }}
         - --proxy-server-host={{ $kubernetes.konnectivityServer.service.loadBalancerIP }}
         {{- else if and (eq $kubernetes.konnectivityServer.mode "GRPC") $kubernetes.apiServer.service.loadBalancerIP }}
         - --proxy-server-host={{ $kubernetes.apiServer.service.loadBalancerIP }}
         {{- else }}
-        {{- fail ".konnectivityAgent.extraArgs.proxy-server-host must be specified!" }}
+        {{- fail ".konnectivityAgent.args.proxy-server-host must be specified!" }}
         {{- end }}
         {{- end }}
 
-        {{- if not (hasKey $kubernetes.konnectivityAgent.extraArgs "proxy-server-port") }}
+        {{- if not (hasKey $kubernetes.konnectivityAgent.args "proxy-server-port") }}
         {{- if eq $kubernetes.konnectivityServer.service.type "LoadBalancer" }}
         - --proxy-server-port={{ $kubernetes.konnectivityServer.service.ports.agent }}
         {{- else if $kubernetes.konnectivityServer.service.NodePort }}
         - --proxy-server-port={{ $kubernetes.konnectivityServer.service.nodePorts.agent }}
         {{- else }}
-        {{- fail ".konnectivityAgent.extraArgs.proxy-server-port must be specified!" }}
+        {{- fail ".konnectivityAgent.args.proxy-server-port must be specified!" }}
         {{- end }}
         {{- end }}
-
         - --admin-server-port={{ $kubernetes.konnectivityAgent.ports.admin }}
         - --health-server-port={{ $kubernetes.konnectivityAgent.ports.health }}
-
-        {{- range $key, $value := $kubernetes.konnectivityAgent.extraArgs }}
-        - --{{ $key }}={{ $value }}
+        {{- with $kubernetes.konnectivityAgent.args }}
+          {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 10 }}
+        {{- end }}
+        {{- with $kubernetes.konnectivityAgent.envs }}
+        env: 
+          {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
+        {{- end }}
+        {{- with $kubernetes.konnectivityAgent.envsFrom }}
+        envFrom:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with $kubernetes.konnectivityAgent.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- if $kubernetes.konnectivityAgent.securityContext.enabled }}
+        securityContext:
+          {{- toYaml (omit $kubernetes.konnectivityAgent.securityContext "enabled") | nindent 10 }}
         {{- end }}
         ports:
         - containerPort: {{ $kubernetes.konnectivityAgent.ports.admin }}
@@ -124,9 +141,6 @@ spec:
         volumeMounts:
         - mountPath: /var/run/secrets/tokens
           name: konnectivity-agent-token
-        {{- with $kubernetes.konnectivityAgent.extraVolumeMounts }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
         livenessProbe:
           httpGet:
             path: /healthz
@@ -134,9 +148,6 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 15
           timeoutSeconds: 15
-      {{- with $kubernetes.konnectivityAgent.sidecars }}
-      {{- toYaml . | nindent 6 }}
-      {{- end }}
       serviceAccountName: konnectivity-agent
       volumes:
       - name: konnectivity-agent-token
@@ -145,6 +156,3 @@ spec:
           - serviceAccountToken:
               path: konnectivity-agent-token
               audience: system:konnectivity-server
-      {{- with $kubernetes.konnectivityAgent.extraVolumes }}
-      {{- toYaml . | nindent 6 }}
-      {{- end }}

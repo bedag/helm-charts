@@ -8,7 +8,7 @@ metadata:
     {{- include "vcluster.labels" $ | nindent 4 }}
 spec:
   dnsNames:
-  {{- with (include "pkg.common.ingress.host" $) }}
+  {{- with (include "pkg.components.ingress.host" $) }}
   - {{ . }}
   {{- end }}
   usages:
@@ -16,5 +16,5 @@ spec:
   - "key encipherment"
   - "server auth"
   issuerRef:
-    {{- include "pkg.common.certificates.issuer" $ | nindent 4 }}
-  secretName: {{ include "pkg.common.certificates.secretTlsName" $ }}
+    {{- include "pkg.components.certificates.issuer" $ | nindent 4 }}
+  secretName: {{ include "pkg.components.certificates.secretTlsName" $ }}

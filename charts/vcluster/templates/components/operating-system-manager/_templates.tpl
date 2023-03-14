@@ -3,7 +3,7 @@ Component enabled
 */}}
 {{- define "operating-system-manager.enabled" -}}
 {{- $component := $.Values.osm -}}
-  {{- if $component.enabled -}}
+  {{- if and $component.enabled (include "machine-controller.enabled" $) -}}
     {{- true -}}
   {{- end -}}
 {{- end }}
@@ -117,7 +117,7 @@ Create the Admission Webhook TLS Secret
 */}}
 {{- define "operating-system-manager.secretTlsName" -}}
   {{- if (include "operating-system-manager.admission.expose.ingress" $) }}
-{{- include "pkg.common.certificates.secretTlsName" $ -}}
+{{- include "pkg.components.certificates.secretTlsName" $ -}}
   {{- else }}
 {{- include "operating-system-manager.admission.secretTlsName" $ -}}
   {{- end }}
@@ -141,7 +141,7 @@ Self-Signed Admission Webhook TLS Secret
 
   {{/* Expose via Ingress */}}
   {{- if (include "operating-system-manager.admission.expose.ingress" $) -}}
-    {{- $base = (printf "https://%s/%s" (include "pkg.common.ingress.host" $) (include "operating-system-manager.admission.expose.ingress.context" $ | trimPrefix "/")) -}}
+    {{- $base = (printf "https://%s/%s" (include "pkg.components.ingress.host" $) (include "operating-system-manager.admission.expose.ingress.context" $ | trimPrefix "/")) -}}
   {{- end -}}
 
   {{/* Expose via Service (LoadBalancer) */}}
@@ -157,7 +157,7 @@ Self-Signed Admission Webhook TLS Secret
 
 {{- define "operating-system-manager.admission.endpoint" -}}
   {{- if (include "operating-system-manager.admission.expose.ingress" $) -}}
-    {{- printf "%s" (include "pkg.common.ingress.host" $) -}}
+    {{- printf "%s" (include "pkg.components.ingress.host" $) -}}
   {{- else if (include "operating-system-manager.admission.expose.loadbalancer" $) -}}
     {{- printf "%s" (include "operating-system-manager.admission.expose.loadbalancer.ip" $) -}}
   {{- end -}}

@@ -50,7 +50,7 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
-          imagePullPolicy: {{- include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy "ctx" $) -}}
+          imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy "ctx" $) }}
           env: {{- include "pkg.common.env" $ | nindent 10 }}
             {{- with $manifest.envs }}
               {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}

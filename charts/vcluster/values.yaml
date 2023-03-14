@@ -18,21 +18,117 @@ global:
       # -- Registry Password
       password: ""
 
-# ----------------------------
-# Utilities
-# ----------------------------
+  # Configuration for all components from the vcluster (not within the vcluster, excluded: coredns, konnectivity)
+  components:    
+
+    # Configuration for all workloads
+    workloads:
+  
+      # -- Labels for all workloads (merged with workload labels)
+      labels: {}
+      # -- Annotations for all workloads (merged with workload annotations)
+      annotations: {}
+      # -- Pod Labels for all workloads (merged with workload podLabels)
+      podLabels: {}
+      # -- Pod Annotations for all workloads (merged with workload podAnnotations)
+      podAnnotations: {}
+      # reloader.stakater.com/auto: "true"
+
+      # Image Configuration
+      image:
+        # -- Overwrites Pull Policy for all components
+        pullPolicy: ""
+        # -- Additional image pull secrets for all components
+        pullSecrets: []
+  
+      # -- Pod Security Context for all workloads  (Overwrites per workload podSecurityContext)
+      podSecurityContext:
+        enabled: false
+      # -- Enable Pod Security Context for all workloads
+      #  enabled: true
+      #  seccompProfile:
+      #    type: RuntimeDefault
+  
+      # -- Container Security Context for all workloads (Overwrites per workload securityContext)
+      securityContext:
+        enabled: false
+      # -- Enable Pod Security Context for all workloads
+      #  enabled: true
+      #  allowPrivilegeEscalation: false
+      #  capabilities:
+      #    drop:
+      #    - ALL
+      #  readOnlyRootFilesystem: true
+  
+      # -- Node Selector for all workloads (Overwrites all workloads nodeSelector)
+      nodeSelector: {}
+      # -- Tolerations for all workloads (Overwrites all workloads tolerations)
+      tolerations: []
+      # -- Affinity for all workloads (Overwrites all workloads affinities)
+      affinity: {}
+      # -- Priority Class for all workloads (Overwrites all workloads priorityClassNames)
+      priorityClassName: ""
+      # -- TopologySpreadConstraints for all workloads (Overwrites all workloads topologySpreadConstraints)
+      topologySpreadConstraints: []
+    
+    service:
+      # -- Labels for all services
+      labels: {}
+      # -- Annotations for all services
+      annotations: {}
+
+    # Metrics Configurations
+    metrics:
+      # -- Enable metrics for all components
+      enabled: true
+      # ServiceMonitor
+      serviceMonitor:
+        # -- Enable ServiceMonitor for all components
+        enabled: true
+
+    # NetworkPolicies
+    networkPolicy:
+      enabled: false
+
+    # Components Exposure
+    exposure:
+      # -- Define how admission webhooks are expose (ingress or loadbalancer). Overwrites expose for all admission webhooks.
+      expose: "ingress"
+  
+      certificates:
+        # -- Uses Existing Secret for all certificates
+        secretName: ""
+        issuer:
+          # -- Creates self-signed Issuer
+          selfSigned: false
+          # -- Set if the cert manager will generate either self-signed or CA signed SSL certificates. Its value will be either Issuer or ClusterIssuer
+          kind: Issuer # Issuer or ClusterIssuer
+          # -- Set the name of the ClusterIssuer if issuer kind is ClusterIssuer and if cert manager will generate CA signed SSL certificates
+          name: "" #  Name of the ClusterIssuer
+  
+      # Ingress Configuration for all component ingresses
+      ingress:
+        # -- Port for Ingresses
+        port: 443
+        # -- Common annotations for admission ingresses
+        annotations: {}
+        #  kubernetes.io/ingress.class: nginx
+        #  kubernetes.io/tls-acme: "true"
+        #  cert-manager.io/issuer: ca-issuer
+        #  cert-manager.io/cluster-issuer: ca-cluster-issuer
+        #  kubernetes.io/ingress.global-static-ip-name: address-name
+        #  networking.gke.io/managed-certificates: certificate-name
+        # -- Ingressclass for admission ingresses
+        ingressClassName: ""
+        # -- Host for admission ingresses (admission endpoints are exposed via path). supports templating
+        host: "{{ include \"pkg.cluster.name\" $ }}.example.com"
+  
 
 # Cluster Configuration
 cluster:
   # -- Define the cluster name
   # @default -- The cluster name is derived from the `.Release.Name`
   name: ""
-  # -- Define the cluster auth type
-  auth:
-    # -- Define the cluster auth type
-    administrators: []
-
-    config:
 
   # -- Properties are substituted into the gitops component
   properties: {}
@@ -42,40 +138,27 @@ cluster:
   #   environment: "development"
   #   region: "eu-central-1"
   #
-  # If the content is of type slice, the key is the index of the slice (eg hosts_0: 1.2.3.4:53, hosts_1: 1.2.3.5:53)
-  #   hosts:
-  #     - "1.2.3.4:53"
-  #     - "1.2.3.5:53"
-
-
-
 
 # ----------------------------
-# Machine Providers
+# Machine Providers Environment
 #  Provider values are currently given as env variables to the machine controller
 #  They serve as default values, if nothing is given in the machine spec.
 #  The values are given to the gitops component for further substitution
 # ----------------------------
-providers:
-
-  # Nutanix Configuration
-  # These values are used if nothing is set on the machine level.
-  # https://github.com/kubermatic/machine-controller/blob/main/pkg/cloudprovider/provider/nutanix/provider.go#L108
-  nutanix:
-    # -- Default Nutanix Cluster Endpoint
-    endpoint: ""
-    # -- Default Nutanix Cluster Port
-    port:
-    # -- Default Nutanix Cluster Username
-    username: ""
-    # -- Default Nutanix Cluster Password
-    password: ""
-    # -- Default Nutanix Cluster Insecure
-    insecure: false
-    # -- Default Nutanix Proxy URL
-    proxy: ""
-    # -- Default Nutanix Cluster Name
-    cluster: ""
+# -- Generic Providers Environment
+# @default -- see values.yaml
+providers: {}
+# Nutanix Configuration
+# These values are used if nothing is set on the machine level.
+# https://github.com/kubermatic/machine-controller/blob/main/pkg/cloudprovider/provider/nutanix/provider.go#L108
+# nutanix: 
+#   endpoint: ""
+#   port:
+#   username: ""
+#   password: ""
+#   insecure: false
+#   proxy: ""
+#   cluster: ""
 
 # ----------------------------
 # Lifecycle (General Usage)
@@ -95,6 +178,7 @@ lifecycle:
     on_install: true
 
   # Create Additional Kubeconfigs which you can directly use to access the cluster in your existing toolchain (See values.yaml)
+  # @default -- See values.yaml
   kubeconfigs: []
   #   -- Name of the kubeconfig object (supports templating)
   # - name: "my-kubeconfig"
@@ -124,6 +208,7 @@ lifecycle:
     #  echo "I am a script which runs on the current cluster"
 
     # -- These manifests will be applied inside the cluster (supports templating)
+    # @default -- See values.yaml
     extraManifests: {}
     # -- Filename of the manifest
     # namespace.yaml:
@@ -133,6 +218,7 @@ lifecycle:
     #     name: example
 
     # -- These manifests will be applied inside the cluster, but only on $.Release.Install and wont be touched again (supports templating)
+    # @default -- See values.yaml
     extraManifestsOnInstall: {}
     # -- Filename of the manifest
     # namespace.yaml:
@@ -149,6 +235,7 @@ lifecycle:
     #  echo "I am a script which runs on the vcluster"
 
     # -- These manifests will be applied inside the vcluster (supports templating)
+    # @default -- See values.yaml
     extraManifests: {}
     # -- Filename of the manifest
     # namespace.yaml:
@@ -158,6 +245,7 @@ lifecycle:
     #     name: example
 
     # -- These manifests will be applied inside the vcluster, but only on $.Release.Install and wont be touched again (supports templating)
+    # @default -- See values.yaml
     extraManifestsOnInstall: {}
     # -- Filename of the manifest
     # namespace.yaml:
@@ -248,116 +336,7 @@ lifecycle:
     name: ""
 
 # ----------------------------
-# Components
-#   Configuration for all components from the vcluster (not within the vcluster, excluded: coredns, konnectivity)
-# ----------------------------
-components:
-
-  # Configuration for all workloads
-  workloads:
-
-    # -- Labels for all workloads (merged with workload labels)
-    labels: {}
-    # -- Annotations for all workloads (merged with workload annotations)
-    annotations: {}
-    # -- Pod Labels for all workloads (merged with workload podLabels)
-    podLabels: {}
-    # -- Pod Annotations for all workloads (merged with workload podAnnotations)
-    podAnnotations: {}
-    # reloader.stakater.com/auto: "true"
-
-    # Image Configuration
-    image:
-      # -- Overwrites Pull Policy for all components
-      pullPolicy: ""
-      # -- Additional image pull secrets for all components
-      pullSecrets: []
-
-    # -- Pod Security Context for all workloads  (Overwrites per workload podSecurityContext)
-    podSecurityContext: {}
-    # -- Enable Pod Security Context for all workloads
-    #  enabled: true
-    #  seccompProfile:
-    #    type: RuntimeDefault
-
-    # -- Container Security Context for all workloads (Overwrites per workload securityContext)
-    securityContext: {}
-    # -- Enable Pod Security Context for all workloads
-    #  enabled: true
-    #  allowPrivilegeEscalation: false
-    #  capabilities:
-    #    drop:
-    #    - ALL
-    #  readOnlyRootFilesystem: true
-
-    # -- Node Selector for all workloads (Overwrites all workloads nodeSelector)
-    nodeSelector: {}
-
-    # -- Tolerations for all workloads (Overwrites all workloads tolerations)
-    tolerations: []
-
-    # -- Affinity for all workloads (Overwrites all workloads affinities)
-    affinity: {}
-
-    # -- Priority Class for all workloads (Overwrites all workloads priorityClassNames)
-    priorityClassName: ""
-
-    # -- TopologySpreadConstraints for all workloads (Overwrites all workloads topologySpreadConstraints)
-    topologySpreadConstraints: []
-
-  # -- Labels for all services
-  svcLabels: {}
-
-  # -- Annotations for all services
-  svcAnnotations: {}
-
-  # Metrics Configurations
-  metrics:
-    # -- Enable metrics for all components
-    enabled: true
-    # ServiceMonitor
-    serviceMonitor:
-      # -- Enable ServiceMonitor for all components
-      enabled: true
-
-  exposure:
-    # -- Define how admission webhooks are expose (ingress or loadbalancer). Overwrites expose for all admission webhooks.
-    expose: "ingress"
-
-    certificates:
-      # -- Uses Existing Secret for all certificates
-      secretName: ""
-      issuer:
-        # -- Creates self-signed Issuer
-        selfSigned: false
-        # -- Set if the cert manager will generate either self-signed or CA signed SSL certificates. Its value will be either Issuer or ClusterIssuer
-        kind: Issuer # Issuer or ClusterIssuer
-        # -- Set the name of the ClusterIssuer if issuer kind is ClusterIssuer and if cert manager will generate CA signed SSL certificates
-        name: "" #  Name of the ClusterIssuer
-
-    # Ingress Configuration for all component ingresses
-    ingress:
-      # -- Port for Ingresses
-      port: 443
-      # -- Common annotations for admission ingresses
-      annotations: {}
-      #  kubernetes.io/ingress.class: nginx
-      #  kubernetes.io/tls-acme: "true"
-      #  cert-manager.io/issuer: ca-issuer
-      #  cert-manager.io/cluster-issuer: ca-cluster-issuer
-      #  kubernetes.io/ingress.global-static-ip-name: address-name
-      #  networking.gke.io/managed-certificates: certificate-name
-      # -- Ingressclass for admission ingresses
-      ingressClassName: ""
-      # -- Host for admission ingresses (admission endpoints are exposed via path). supports templating
-      host: "{{ include \"pkg.cluster.name\" $ }}.example.com"
-
-
-  networkPolicy:
-    enabled: true
-
-# ----------------------------
-# gitops Component
+# Gitops Component
 # ----------------------------
 gitops:
   # -- Enable/Disable Bootstrap Component
@@ -510,10 +489,9 @@ gitops:
             registry: registry-group.mgmtbi.ch
             #repository: sre/argo/subst
             repository: oliverbaehler/dev
-            tag: subst
+            tag: v0.2.0-alpha1
             pullPolicy: Always
             digest: ""
-            pullSecrets: []
           # -- Resources configuration
           resources: {}
           # We usually recommend not to specify default resources and to leave this as a conscious
@@ -527,15 +505,16 @@ gitops:
           #   cpu: 100m
           #   memory: 128Mi
 
-  # This is used by the extraManifests, as example
+  # -- This is used by the extraManifests, as example (Custom structure)
+  # @default -- See values.yaml
   repository:
-    # -- Inventory Repository URL
+    # Inventory Repository URL
     url: ""
-    # -- Inventory Repository Token
+    # Inventory Repository Token
     token: ""
-    # -- Inventory Repository Branch
+    # Inventory Repository Branch
     ref: ""
-    # -- Inventory Repository Path. You can use templating in this value (eg. `/bootstrap/{ .Values.global.cluster.name }`)
+    # Inventory Repository Path. You can use templating in this value (eg. `/bootstrap/{ .Values.global.cluster.name }`)
     # @default -- `/clusters/${cluster.name}`
     path: ""
 
@@ -1680,7 +1659,7 @@ kubernetes:
           # -- Set relabelings for the endpoint of the serviceMonitor
           relabelings: []
 
-
+  # Administration Pod
   admin:
     # -- Enable Kubernetes Administration
     enabled: true
@@ -1810,27 +1789,35 @@ kubernetes:
         drop:
         - all
       readOnlyRootFilesystem: true
+    # -- Node Selector
+    nodeSelector:
+      kubernetes.io/os: linux
+    # -- Tolerations
+    tolerations:
+      - key: "CriticalAddonsOnly"
+        operator: "Exists"
+    # -- Affinity
+    affinity: 
+       podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                  - key: k8s-app
+                    operator: In
+                    values: ["kube-dns"]
+              topologyKey: kubernetes.io/hostname
+    # -- Pod PriorityClassName
+    priorityClassName: "system-cluster-critical"
+    # -- TopologySpreadConstraints for all workloads
+    topologySpreadConstraints: []
     # -- Deployment Update Strategy
     strategy:
       type: RollingUpdate
       rollingUpdate:
         maxUnavailable: 1
-    # -- Node Selector
-    nodeSelector: {}
-    # -- Tolerations
-    tolerations: []
-    # -- Affinity
-    affinity: {}
-    podAntiAffinity: soft
-    podAntiAffinityTopologyKey: kubernetes.io/hostname
-    # -- Additional Volumes
-    volumes: []
-    # -- Additional Volumemounts
-    volumeMounts: []
-    # -- Pod PriorityClassName
-    priorityClassName: ""
-    # -- TopologySpreadConstraints for all workloads
-    topologySpreadConstraints: []
+
 
   # Konnectivity Server
   konnectivityServer:
@@ -1849,36 +1836,27 @@ kubernetes:
       pullPolicy: IfNotPresent
       # -- Image Digest
       digest: ""
-      # -- Image pull secrets
-      pullSecrets: []
-
+    # -- Image pull Secrets
+    imagePullSecrets: []
     # -- Konnectivity Server Replicas (only used in HTTPConnect mode)
     replicaCount: 2
-
     # -- Konnectivity Server resources
     resources:
       requests:
         cpu: 100m
         memory: 128Mi
-    # -- Konnectivity Server extra arguments
-    extraArgs: {}
+    # -- Labels for Workload
     labels: {}
+    # -- Annotations for Workload
     annotations: {}
+    # -- Pod Labels
     podLabels: {}
+    # -- Pod Annotations
     podAnnotations: {}
-    nodeSelector: {}
-    tolerations: []
-    podAntiAffinity: soft
-    podAntiAffinityTopologyKey: kubernetes.io/hostname
-    affinity: {}
     # -- Extra environment variables (`key: value` style, allows templating)
     envs: {}
-    # EXTRA: "value"
     # -- Extra environment variables from
     envsFrom: []
-    extraVolumes: []
-    extraVolumeMounts: []
-
     # -- Container Security Context
     securityContext:
       enabled: true
@@ -1895,11 +1873,32 @@ kubernetes:
       runAsNonRoot: true
       seccompProfile:
         type: RuntimeDefault
-    # -- Deployment Update Strategy (only used in HTTPConnect mode)
+    # -- Node Selector
+    nodeSelector: {}
+    # -- Tolerations
+    tolerations: []
+    # -- Affinity
+    affinity: {}
+    podAntiAffinity: soft
+    podAntiAffinityTopologyKey: kubernetes.io/hostname
+    # -- Additional Volumes
+    volumes: []
+    # -- Additional Volumemounts
+    volumeMounts: []
+    # -- Pod PriorityClassName
+    priorityClassName: ""
+    # -- TopologySpreadConstraints for all workloads
+    topologySpreadConstraints: []
+    # -- Configure PodDisruptionBudget
+    podDisruptionBudget: {}
+    # maxUnavailable: 1
+    # -- Deployment Update Strategy
     strategy:
       type: RollingUpdate
       rollingUpdate:
         maxUnavailable: 50%
+    # -- Konnectivity Server extra arguments 
+    args: {}
 
     ports:
       server: 8131
@@ -1922,33 +1921,43 @@ kubernetes:
       loadBalancerIP:
 
   konnectivityAgent:
+    # -- Enable Konnectivity Agent
     enabled: false
-    image:
-      registry: us.gcr.io
-      repository: k8s-artifacts-prod/kas-network-proxy/proxy-agent
-      tag: v0.0.24
-      pullPolicy: IfNotPresent
-      pullSecrets: []
-    replicaCount: 2
+    # -- Use HostNetwork
     hostNetwork: true
-
-    extraArgs: {}
+    image:
+      # -- Image registry
+      registry: us.gcr.io
+      # -- Image repository
+      repository: k8s-artifacts-prod/kas-network-proxy/proxy-agent
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag (Version Overwrites)
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: "v0.0.24"
+      # -- Image Digest
+      digest: ""
+    # -- Image pull Secrets
+    imagePullSecrets: []
+    # -- Replicas for admin
+    replicaCount: 2
+    # -- Pod Requests and limits
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    # -- Labels for Workload
     labels: {}
+    # -- Annotations for Workload
     annotations: {}
+    # -- Pod Labels
     podLabels: {}
+    # -- Pod Annotations
     podAnnotations: {}
-    nodeSelector: {}
-    tolerations: []
-    podAntiAffinity: soft
-    podAntiAffinityTopologyKey: kubernetes.io/hostname
-    affinity: {}
     # -- Extra environment variables (`key: value` style, allows templating)
     envs: {}
-    # EXTRA: "value"
     # -- Extra environment variables from
     envsFrom: []
-    extraVolumes: []
-    extraVolumeMounts: []
     # -- Container Security Context
     securityContext:
       enabled: true
@@ -1965,13 +1974,31 @@ kubernetes:
       runAsNonRoot: true
       seccompProfile:
         type: RuntimeDefault
+    # -- Node Selector
+    nodeSelector: {}
+    # -- Tolerations
+    tolerations:
+      - key: "CriticalAddonsOnly"
+        operator: "Exists"
+    # -- Affinity
+    affinity: {}
+    podAntiAffinity: soft
+    podAntiAffinityTopologyKey: kubernetes.io/hostname
+    # -- Pod PriorityClassName
+    priorityClassName: "system-cluster-critical"
+    # -- TopologySpreadConstraints for all workloads
+    topologySpreadConstraints: []
     # -- Deployment Update Strategy
     strategy:
       type: RollingUpdate
       rollingUpdate:
         maxUnavailable: 50%
+    # -- Konnectivity Agent extra arguments 
+    args: {}
     ports:
+      # -- Konnectivity Agent Administration Port
       admin: 8133
+      # -- Konnectivity Agent Health Port
       health: 8134
 
 # ----------------------------
@@ -2031,7 +2058,7 @@ autoscaler:
   # Image COnfiguration
   image:
     # -- Image registry
-    registry: k8s.gcr.io
+    registry: registry.k8s.io
     # -- Image repository
     repository: autoscaling/cluster-autoscaler
     # -- Image pull policy

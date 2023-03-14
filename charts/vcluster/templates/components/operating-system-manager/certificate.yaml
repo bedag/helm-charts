@@ -30,7 +30,7 @@ spec:
   - "key encipherment"
   - "server auth"
   issuerRef:
-    {{- include "pkg.common.certificates.issuer" $ | nindent 4 }}
+    {{- include "pkg.components.certificates.issuer" $ | nindent 4 }}
   secretName: {{ include "operating-system-manager.admission.secretTlsName" . }}
   subject:
     organizations:

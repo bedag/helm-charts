@@ -1,0 +1,32 @@
+{{- if (include "operating-system-manager.enabled" $) -}}
+  {{- if (include "operating-system-manager.admission-enabled" $) -}}
+    {{- $osm := $.Values.osm -}}
+    {{- $manifest := $osm.admission.service -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "operating-system-manager.fullname" . }}-admission
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "operating-system-manager.labels" . | nindent 4 }}
+    {{- include "pkg.components.svc_annotations" (dict "labels" $manifest.annotations "ctx" $) | nindent 4 }}
+  annotations: {{- include "pkg.components.svc_annotations" (dict "annotations" $manifest.annotations "ctx" $) | nindent 4 }}
+spec:
+  type: {{ $manifest.type }}
+  {{- with (include "operating-system-manager.admission.expose.loadbalancer.ip" $) }}
+  loadBalancerIP: {{ . }}
+  {{- end }}
+  ports:
+    - name: https
+      protocol: TCP
+      {{- with $manifest.port }}
+      port: {{ . }}
+      {{- end }}
+      {{- with $manifest.nodePort }}
+      nodePort: {{ . }}
+      {{- end }}
+      targetPort: 9443
+  selector:
+    {{- include "operating-system-manager.selectorLabels" . | nindent 4 }}
+  {{- end -}}
+{{- end -}}

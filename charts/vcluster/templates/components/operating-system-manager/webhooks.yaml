@@ -1,0 +1,16 @@
+{{/*
+  Always Create Webhook secret.
+  This way the in cluster resources can be removed if a component is disabled
+*/}}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "operating-system-manager.fullname" . }}-webhooks
+  labels: {{- include "operating-system-manager.labels" . | nindent 4 }}
+stringData:
+  {{ range $path, $_ :=  .Files.Glob (include "operating-system-manager.webhooks" $) }}
+    {{- with $ }}
+      {{- base $path | nindent 4 }}: | {{- tpl (.Files.Get $path) . | nindent 6 }}
+    {{ end }}
+  {{- end }}

@@ -1,0 +1,45 @@
+{{- $endpoint := include "operating-system-manager.admission.url" $ -}}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: {{ include "operating-system-manager.admission.webhook-name" $ }}
+  labels:
+    {{- include "operating-system-manager.labels" . | nindent 4 }}
+  #annotation:
+  #  cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "operating-system-manager.fullname" . }}-admission
+webhooks:
+  - name: operatingsystemprofiles.operatingsystemmanager.k8c.io
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions: ["v1", "v1beta1"]
+    rules:
+      - apiGroups:
+          - "operatingsystemmanager.k8c.io"
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - operatingsystemprofiles
+    clientConfig:
+      url: {{ printf "%s/operatingsystemprofile" $endpoint }}
+      caBundle: Cg==
+  - name: operatingsystemconfigs.operatingsystemmanager.k8c.io
+    failurePolicy: Fail
+    sideEffects: None
+    admissionReviewVersions: ["v1", "v1beta1"]
+    rules:
+      - apiGroups:
+          - "operatingsystemmanager.k8c.io"
+        apiVersions:
+          - v1alpha1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - operatingsystemconfigs
+    clientConfig:
+      url: {{ printf "%s/operatingsystemconfig" $endpoint }}
+      caBundle: Cg==

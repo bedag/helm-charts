@@ -1,0 +1,173 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if $kubernetes.controllerManager.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "controller-manager" -}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ $fullName }}-controller-manager"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{- include "pkg.components.svc_labels" (dict "labels" $kubernetes.controllerManager.service.labels "ctx" $) | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+    {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.controllerManager.labels "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.controllerManager.annotations "ctx" $)) }}
+  annotations:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ $kubernetes.controllerManager.replicaCount }}
+  {{- with $kubernetes.controllerManager.strategy }}
+  strategy: {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels: {{- include "kubernetes.selectorLabels" $ | nindent 6 }}
+      {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  template:
+    metadata:
+      labels: {{- include "kubernetes.labels" $ | nindent 8 }}
+        {{- include "pkg.components.pod_labels" (dict "labels" $kubernetes.controllerManager.podLabels "ctx" $) | nindent 8 }}
+        {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+      annotations:
+        {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.controllerManager.podAnnotations "ctx" $) | nindent 8 }}
+    spec:
+      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $kubernetes.controllerManager.nodeSelector "ctx" $)) }}
+      nodeSelector: {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.controllerManager.tolerations "ctx" $)) }}
+      tolerations:  {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.priorityClass" (dict "pc" $kubernetes.controllerManager.priorityClassName "ctx" $)) }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      {{- with (include "pkg.components.topologySpreadConstraints" (dict "tsc" $kubernetes.controllerManager.topologySpreadConstraints "ctx" $)) }}
+      topologySpreadConstraints: {{ . | nindent 8 }}
+      {{- end }}
+      affinity:
+      {{- with (include "pkg.components.affinity" (dict "affinity" $kubernetes.controllerManager.affinity "ctx" $)) }}
+        {{- . | nindent 8 }}
+      {{- end }}
+      {{- if eq $kubernetes.controllerManager.podAntiAffinity "hard" }}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "{{ $kubernetes.controllerManager.podAntiAffinityTopologyKey }}"
+              labelSelector:
+                matchLabels:
+                  app: {{ $fullName }}-controller-manager
+      {{- else if eq $kubernetes.controllerManager.podAntiAffinity "soft" }}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                topologyKey: "{{ $kubernetes.controllerManager.podAntiAffinityTopologyKey }}"
+                labelSelector:
+                  matchLabels:
+                    app: {{ $fullName }}-controller-manager
+      {{- end }}
+      imagePullSecrets: {{ include "pkg.images.registry.pullsecrets" $ | nindent 8 }}
+        {{- with $kubernetes.controllerManager.imagePullSecrets }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      automountServiceAccountToken: false
+      containers:
+      - command:
+        - kube-controller-manager
+        - --authentication-kubeconfig=/etc/kubernetes/controller-manager.conf
+        - --authorization-kubeconfig=/etc/kubernetes/controller-manager.conf
+        - --bind-address=0.0.0.0
+        - --client-ca-file=/pki/ca/tls.crt
+        - --cluster-name=kubernetes
+        - --cluster-signing-cert-file=/pki/ca/tls.crt
+        - --cluster-signing-key-file=/pki/ca/tls.key
+        - --controllers=*,bootstrapsigner,tokencleaner
+        - --kubeconfig=/etc/kubernetes/controller-manager.conf
+        - --leader-elect=true
+        - --requestheader-client-ca-file=/pki/front-proxy-client/tls.crt
+        - --root-ca-file=/pki/ca/tls.crt
+        - --secure-port={{ $kubernetes.controllerManager.port }}
+        - --service-account-private-key-file=/pki/sa/tls.key
+        - --use-service-account-credentials=true
+        - --tls-cert-file=/pki/controller-manager-server/tls.crt
+        - --tls-private-key-file=/pki/controller-manager-server/tls.key
+        - --service-cluster-ip-range={{ $kubernetes.networking.serviceSubnet }}
+        {{ with $kubernetes.networking.podSubnet }}
+        - --allocate-node-cidrs=true
+        - --cluster-cidr={{ . }}
+        {{- end }}
+        {{- with $kubernetes.controllerManager.args }}
+          {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 8 }}
+        {{- end }}
+        {{- with $kubernetes.controllerManager.image }}
+        image: {{ include "pkg.images.registry.convert" (dict "image" . "tag_overwrite" $kubernetes.version "ctx" $) }}
+        imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .pullPolicy "ctx" $) }}
+        {{- end }}
+        {{- with (include "pkg.components.securityContext" (dict "sc" $kubernetes.controllerManager.securityContext "ctx" $)) }}
+        securityContext: {{ . | nindent 10 }}
+        {{- end }}
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /healthz
+            port: {{ $kubernetes.controllerManager.port }}
+            scheme: HTTPS
+          initialDelaySeconds: 15
+          timeoutSeconds: 15
+        name: kube-controller-manager
+        resources:
+          {{- toYaml $kubernetes.controllerManager.resources | nindent 10 }}
+        {{- with $kubernetes.controllerManager.envsFrom }}
+        envFrom:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        env:
+        {{- with $kubernetes.controllerManager.envs }}
+          {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
+        {{- end }}
+        {{- include "pkg.common.env" $ | nindent 8 }}
+        volumeMounts:
+        - mountPath: /etc/kubernetes/
+          name: kubeconfig
+          readOnly: true
+        - mountPath: /pki/controller-manager-server
+          name: pki-controller-manager-server
+        - mountPath: /pki/controller-manager-client
+          name: pki-controller-manager-client
+        - mountPath: /pki/ca
+          name: pki-ca
+        - mountPath: /pki/front-proxy-client
+          name: pki-front-proxy-client
+        - mountPath: /pki/sa
+          name: pki-sa
+        {{- with $kubernetes.controllerManager.volumeMounts }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with (include "pkg.components.podSecurityContext" (dict "psc" $kubernetes.controllerManager.podSecurityContext "ctx" $)) }}
+      securityContext: {{ . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - configMap:
+          name: "{{ $fullName }}-controller-manager-conf"
+        name: kubeconfig
+      - secret:
+          secretName: "{{ $fullName }}-pki-controller-manager-server"
+        name: pki-controller-manager-server
+      - secret:
+          secretName: "{{ $fullName }}-pki-controller-manager-client"
+        name: pki-controller-manager-client
+      - secret:
+          secretName: "{{ $fullName }}-pki-ca"
+        name: pki-ca
+      - secret:
+          secretName: "{{ $fullName }}-pki-front-proxy-client"
+        name: pki-front-proxy-client
+      - secret:
+          secretName: "{{ $fullName }}-pki-sa"
+        name: pki-sa
+      {{- with $kubernetes.controllerManager.volumes }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+  {{- end }}
+{{- end }}

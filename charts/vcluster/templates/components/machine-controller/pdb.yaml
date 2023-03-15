@@ -1,0 +1,16 @@
+{{- if (include "machine-controller.enabled" $) -}}
+  {{- $manifest := $.Values.machine -}}
+  {{- if $manifest.podDisruptionBudget -}}
+---
+apiVersion: "policy/v1"
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "machine-controller.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{ include "machine-controller.labels" . | nindent 4 }}
+spec: {{- toYaml $manifest.podDisruptionBudget | nindent 2 }}
+  selector:
+    matchLabels: {{- include "machine-controller.selectorLabels" . | nindent 6 }}
+  {{- end -}}
+{{- end -}}

@@ -1,0 +1,46 @@
+{{- if (include "kubernetes.enabled" $) -}}
+{{- $kubernetes := $.Values.kubernetes -}}
+  {{- $fullName := include "kubernetes.fullname" . -}}
+  {{- $component_name := "apiserver" -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullName }}-apiserver-config
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+data:
+  egress-selector-configuration.yaml: |
+    apiVersion: apiserver.k8s.io/v1beta1
+    kind: EgressSelectorConfiguration
+    egressSelections:
+    - name: cluster
+      connection:
+        {{- if and $kubernetes.konnectivityServer.enabled }}
+        {{- if has $kubernetes.konnectivityServer.mode (list "HTTPConnect" "GRPC") }}
+        proxyProtocol: {{ $kubernetes.konnectivityServer.mode }}
+        {{- else }}
+        {{- fail "$kubernetes.konnectivityServer.mode supports only \"HTTPConnect\" and \"GRPC\" values" }}
+        {{- end }}
+        transport:
+          {{- if eq $kubernetes.konnectivityServer.mode "GRPC" }}
+          uds:
+            udsName: /run/konnectivity-server/konnectivity-server.socket
+          {{- else }}
+          tcp:
+            url: "https://{{ $fullName }}-konnectivity-server:8131"
+            TLSConfig:
+              caBundle: /pki/konnectivity-client/ca.crt
+              clientKey: /pki/konnectivity-client/tls.key
+              clientCert: /pki/konnectivity-client/tls.crt
+          {{- end }}
+        {{- else }}
+        proxyProtocol: Direct
+        {{- end }}
+    - name: master
+      connection:
+        proxyProtocol: Direct
+    - name: etcd
+      connection:
+        proxyProtocol: Direct
+{{- end -}}

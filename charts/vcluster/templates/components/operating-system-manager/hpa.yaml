@@ -1,0 +1,34 @@
+{{- if (include "operating-system-manager.enabled" $) -}}
+  {{- $osm := $.Values.osm -}}
+  {{- $manifest := $osm.autoscaling -}}
+  {{- if $manifest.enabled }}
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "operating-system-manager.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "operating-system-manager.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "operating-system-manager.fullname" . }}
+  minReplicas: {{ $manifest.minReplicas }}
+  maxReplicas: {{ $manifest.maxReplicas }}
+  metrics:
+    {{- if $manifest.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ $manifest.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if $manifest.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ $manifest.targetMemoryUtilizationPercentage }}
+    {{- end }}
+  {{- end -}}
+{{- end -}}

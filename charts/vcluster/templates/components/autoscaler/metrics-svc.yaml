@@ -1,0 +1,25 @@
+{{- if (include "autoscaler.enabled" $) -}}
+  {{- $manifest := $.Values.autoscaler.metrics -}}
+  {{- if (include "pkg.components.metrics.enabled" (dict "metrics" $manifest "ctx" $)) -}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "autoscaler.fullname" $ }}-metrics
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "autoscaler.labels" $ | nindent 4 }}
+    {{- include "pkg.components.svc_labels" (dict "labels" .labels "ctx" $) | nindent 4 }}
+  annotations:
+    {{- include "pkg.components.svc_annotations" (dict "annotations" .annotations "ctx" $) | nindent 4 }}
+spec:
+  sessionAffinity: None
+  type: ClusterIP
+  ports:
+    - name: http-metrics
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    {{- include "autoscaler.selectorLabels" $ | nindent 4 }}
+  {{- end }}
+{{- end -}}

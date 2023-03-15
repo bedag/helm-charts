@@ -1,0 +1,29 @@
+{{- if (include "autoscaler.enabled" $) -}}
+  {{- $manifest := $.Values.autoscaler -}}
+  {{- if hasKey $manifest.args "expander" }}
+    {{- if and ($manifest.expanderPriorities) (include "autoscaler.priorityExpanderEnabled" .) -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-autoscaler-priority-expander
+  namespace: {{ .Release.Namespace }}
+  labels:
+{{ include "autoscaler.labels" . | indent 4 }}
+  {{- if $manifest.priorityConfigMapAnnotations }}
+  annotations:
+{{ toYaml $manifest.priorityConfigMapAnnotations | indent 4 }}
+  {{- end }}
+data:
+  priorities: |-
+{{- if kindIs "string" $manifest.expanderPriorities }}
+{{ $manifest.expanderPriorities | indent 4 }}
+{{- else }}
+{{- range $k,$v := $manifest.expanderPriorities }}
+    {{ $k | int }}:
+      {{- toYaml $v | nindent 6 }}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}

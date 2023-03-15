@@ -1,0 +1,67 @@
+{{/*
+  Use Flux to deploy Argo to the target cluster
+*/}}
+{{- $gitops := $.Values.gitops -}}
+{{- $manifest := $gitops.argocd -}}
+{{- if (include "gitops.flux.enabled" $) -}}
+  {{- if $manifest.enabled -}}
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: {{ include "pkg.cluster.name" $ }}-argocd
+  namespace: {{ .Release.Namespace }}
+spec:
+    {{- with $gitops.flux.interval }}
+  interval: {{ . }}
+    {{- end }}
+    {{- with $manifest.bootstrap }}
+  url: {{ .repoURL }}
+    {{- end }}
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: {{ include "pkg.cluster.name" $ }}-argocd
+  namespace: {{ .Release.Namespace }}
+spec:
+  releaseName: {{ include "pkg.argo.release" $ }}
+    {{- with $gitops.flux.interval }}
+  interval: {{ . }}
+    {{- end }}
+  targetNamespace: {{ include "pkg.argo.release.namespace" $ }}
+    {{- with $manifest.bootstrap }}
+  chart:
+    spec:
+      chart: {{ .chart }}
+      version: {{ .targetRevision }}
+      sourceRef:
+        kind: HelmRepository
+        name: {{ include "pkg.cluster.name" $ }}-argocd
+        namespace: {{ $.Release.Namespace }}
+    {{- end }}
+  test:
+    enable: true
+    ignoreFailures: true
+  install:
+    remediation:
+      retries: -1
+      remediateLastFailure: false
+    {{- if $manifest.incluster }}
+    createNamespace: true
+    {{- end }}
+  upgrade:
+    remediation:
+      remediateLastFailure: false
+    {{- if $manifest.incluster }}
+  kubeConfig:
+    secretRef:
+      name: {{ include "gitops.converter.flux.secretName" $ }}
+      key: {{ include "gitops.converter.secretKey" $ }}
+    {{- end }}
+  valuesFrom:
+    - kind: Secret
+      name: {{ include "pkg.argo.release.values.secret" $ }}
+      valuesKey: values.yaml
+  {{- end -}}
+{{- end -}}

@@ -1,0 +1,145 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if $kubernetes.scheduler.enabled }}
+  {{- $fullName := include "kubernetes.fullname" . -}}
+  {{- $component_name := "scheduler" -}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ $fullName }}-scheduler"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+    {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.scheduler.labels "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.scheduler.annotations "ctx" $)) }}
+  annotations:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ $kubernetes.scheduler.replicaCount }}
+  {{- with $kubernetes.scheduler.strategy }}
+  strategy: {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels: {{- include "kubernetes.selectorLabels" $ | nindent 6 }}
+      {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  template:
+    metadata:
+      labels: {{- include "kubernetes.labels" $ | nindent 8 }}
+        {{- include "pkg.components.pod_labels" (dict "labels" $kubernetes.scheduler.podLabels "ctx" $) | nindent 8 }}
+        {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+      annotations:
+        {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.scheduler.podAnnotations "ctx" $) | nindent 8 }}
+    spec:
+      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $kubernetes.scheduler.nodeSelector "ctx" $)) }}
+      nodeSelector: {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.scheduler.tolerations "ctx" $)) }}
+      tolerations:  {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.priorityClass" (dict "pc" $kubernetes.scheduler.priorityClassName "ctx" $)) }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      {{- with (include "pkg.components.topologySpreadConstraints" (dict "tsc" $kubernetes.scheduler.topologySpreadConstraints "ctx" $)) }}
+      topologySpreadConstraints: {{ . | nindent 8 }}
+      {{- end }}
+      affinity:
+      {{- with (include "pkg.components.affinity" (dict "affinity" $kubernetes.scheduler.affinity "ctx" $)) }}
+        {{- . | nindent 8 }}
+      {{- end }}
+      {{- if eq $kubernetes.scheduler.podAntiAffinity "hard" }}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "{{ $kubernetes.scheduler.podAntiAffinityTopologyKey }}"
+              labelSelector:
+                matchLabels:
+                  app: {{ $fullName }}-scheduler
+      {{- else if eq $kubernetes.scheduler.podAntiAffinity "soft" }}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                topologyKey: "{{ $kubernetes.scheduler.podAntiAffinityTopologyKey }}"
+                labelSelector:
+                  matchLabels:
+                    app: {{ $fullName }}-scheduler
+      {{- end }}
+      imagePullSecrets: {{ include "pkg.images.registry.pullsecrets" $ | nindent 8 }}
+        {{- with $kubernetes.scheduler.imagePullSecrets }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      automountServiceAccountToken: false
+      containers:
+      - command:
+        - kube-scheduler
+        - --authentication-kubeconfig=/etc/kubernetes/kubeconfig.conf
+        - --authorization-kubeconfig=/etc/kubernetes/kubeconfig.conf
+        - --bind-address=0.0.0.0
+        - --kubeconfig=/etc/kubernetes/kubeconfig.conf
+        - --leader-elect=true
+        - --secure-port={{ $kubernetes.scheduler.port }}
+        - --tls-cert-file=/pki/scheduler-server/tls.crt
+        - --tls-private-key-file=/pki/scheduler-server/tls.key
+        {{- if $kubernetes.scheduler.configuration }}
+        - --config=/etc/kubernetes/scheduler.yaml
+        {{- end }}
+        {{- with $kubernetes.scheduler.args }}
+          {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 8 }}
+        {{- end }}
+        {{- with $kubernetes.scheduler.image }}
+        image: {{ include "pkg.images.registry.convert" (dict "image" . "tag_overwrite" $kubernetes.version "ctx" $) }}
+        imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .pullPolicy "ctx" $) }}
+        {{- end }}
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /healthz
+            port: {{ $kubernetes.scheduler.port }}
+            scheme: HTTPS
+          initialDelaySeconds: 15
+          timeoutSeconds: 15
+        name: kube-scheduler
+        {{- with (include "pkg.components.securityContext" (dict "sc" $kubernetes.scheduler.securityContext "ctx" $)) }}
+        securityContext: {{ . | nindent 10 }}
+        {{- end }}
+        resources:
+          {{- toYaml $kubernetes.scheduler.resources | nindent 10 }}
+        {{- with $kubernetes.scheduler.envsFrom }}
+        envFrom:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        env: {{- include "pkg.common.env" $ | nindent 8 }}
+        {{- with $kubernetes.scheduler.envs }}
+          {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
+        {{- end }}
+        volumeMounts:
+        - mountPath: /etc/kubernetes/
+          name: scheduler-conf
+          readOnly: true
+        - mountPath: /pki/scheduler-server
+          name: pki-scheduler-server
+        - mountPath: /pki/scheduler-client
+          name: pki-scheduler-client
+        {{- with $kubernetes.scheduler.volumeMounts }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with (include "pkg.components.podSecurityContext" (dict "psc" $kubernetes.scheduler.podSecurityContext "ctx" $)) }}
+      securityContext: {{ . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - configMap:
+          name: "{{ $fullName }}-scheduler-conf"
+        name: scheduler-conf
+      - secret:
+          secretName: "{{ $fullName }}-pki-scheduler-server"
+        name: pki-scheduler-server
+      - secret:
+          secretName: "{{ $fullName }}-pki-scheduler-client"
+        name: pki-scheduler-client
+      {{- with $kubernetes.scheduler.volumes }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+  {{- end }}
+{{- end }}

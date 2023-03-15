@@ -1,0 +1,53 @@
+{{- if (include "autoscaler.enabled" $) -}}
+  {{- $manifest := $.Values.autoscaler.metrics -}}
+  {{- if (include "pkg.components.metrics.enabled" (dict "metrics" $manifest "ctx" $)) -}}
+    {{- if (include "pkg.components.serviceMonitor.enabled" (dict "sm" $manifest.serviceMonitor "ctx" $)) -}}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "autoscaler.fullname" . }}-monitor
+  namespace: {{ $manifest.serviceMonitor.namespace | default .Release.Namespace }}
+  labels:
+    {{- include "autoscaler.labels" . | nindent 4 }}
+    {{- with $manifest.serviceMonitor.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with $manifest.serviceMonitor.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  endpoints:
+    {{- with $manifest.serviceMonitor.endpoint }}
+  - interval: {{ .interval }}
+    port: http-metrics
+    path: /metrics
+      {{- with .scrapeTimeout }}
+    scrapeTimeout: {{ . }}
+      {{- end }}
+      {{- with .metricRelabelings }}
+    metricRelabelings: {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .relabelings }}
+    relabelings: {{- toYaml . | nindent 6 }}
+      {{- end }}
+    {{- end }}
+  jobLabel: app.kubernetes.io/name
+    {{- with $manifest.serviceMonitor.targetLabels }}
+  targetLabels: {{- toYaml . | nindent 4 }}
+    {{- end }}
+  podTargetLabels: {{- include "pkg.common.sm.podTargetLabels" $ | nindent 4 }}
+  selector:
+    matchLabels:
+    {{- if $manifest.serviceMonitor.matchLabels }}
+      {{- toYaml $manifest.serviceMonitor.matchLabels | nindent 6 }}
+    {{- else }}
+      {{- include "autoscaler.selectorLabels" $ | nindent 6 }}
+    {{- end }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

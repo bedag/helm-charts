@@ -1,0 +1,39 @@
+{{- if (include "machine-controller.enabled" $) -}}
+  {{- $machine := $.Values.machine -}}
+  {{- if and (include "machine-controller.admission-enabled" $) (not (include "machine-controller.admission.expose.ingress" $)) -}}
+    {{ $svc := printf "%s-admission" (include "machine-controller.fullname" .) -}}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $svc }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "machine-controller.labels" $ | nindent 4 }}
+spec:
+  dnsNames:
+  - {{ $svc }}
+  - {{ $svc }}.{{ .Release.Namespace }}.svc
+  - {{ $svc }}.{{ .Release.Namespace }}.svc.cluster.local
+  {{- with $machine.admission.webhook.tls.dnsNames }}
+    {{- . | toYaml | nindent 2 }}
+  {{- end }}
+  ipAddresses:
+  {{- with $machine.admission.webhook.tls.ipAddresses }}
+    {{- . | toYaml | nindent 2 }}
+  {{- end }}
+  {{- if (include "machine-controller.admission.expose.loadbalancer" $) }}
+   - {{ include "machine-controller.admission.expose.loadbalancer.ip" $ }}
+  {{- end }}
+  usages:
+  - "signing"
+  - "key encipherment"
+  - "server auth"
+  issuerRef:
+    {{- include "pkg.components.certificates.issuer" $ | nindent 4 }}
+  secretName: {{ include "machine-controller.admission.secretTlsName" . }}
+  subject:
+    organizations:
+      - vcluster.ch
+  {{- end -}}
+{{- end -}}

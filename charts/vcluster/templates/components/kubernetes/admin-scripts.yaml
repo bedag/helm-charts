@@ -1,0 +1,17 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if $kubernetes.admin.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "admin" -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ $fullName }}-admin-scripts"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+data:
+  register-argo.sh: |-
+    {{- include "pkg.scripts.register-cluster" $ | nindent 4 }}
+  {{- end -}}
+{{- end -}}

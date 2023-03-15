@@ -1,0 +1,32 @@
+{{- $manifest := $.Values.lifecycle -}}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "vcluster.fullname" .  }}-manifests
+  labels:
+    {{- include "vcluster.labels" $ | nindent 4 }}
+type: Opaque
+stringData:
+
+  {{/* Registry Credentials */}}
+  {{- if (include "pkg.images.registry.auth" $) }}
+  regcred.yaml: |
+    apiVersion: v1
+    data:
+      .dockerconfigjson: {{ include "pkg.images.dockerconfigjson" $ }}
+    kind: Secret
+    metadata:
+      name: regcreds
+      namespace: {{ include "pkg.cluster.namespace" $ }}
+    type: kubernetes.io/dockerconfigjson
+  {{- end }}
+
+  {{- with $manifest.vcluster.extraManifests }}
+    {{- range $key, $content := . }}
+      {{- $content := include "pkg.utils.template" (dict "tpl" $content "ctx" $) -}}
+      {{- if ($content | nospace) }}
+        {{- base $key | nindent 2 }}: | {{- $content | nindent 4 }}
+      {{- end }}
+    {{- end -}}
+  {{- end }}

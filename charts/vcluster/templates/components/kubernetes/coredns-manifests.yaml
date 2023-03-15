@@ -1,0 +1,19 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if $kubernetes.coredns.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "kubeadm" -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullName }}-coredns-manifests
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+data:
+    {{- if $kubernetes.coredns.enabled }}
+  coredns.yaml: |
+      {{- tpl (.Files.Get (printf "%s/coredns.yaml" (include "kubernetes.manifests.dir" $ | trimSuffix "/"))) . | nindent 4 }}
+    {{- end }}
+  {{- end }}
+{{- end }}

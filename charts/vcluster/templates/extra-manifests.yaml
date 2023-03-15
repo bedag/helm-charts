@@ -1,0 +1,20 @@
+{{- if or $.Values.lifecycle.current.extraManifests $.Values.lifecycle.current.extraManifestsOnInstall }}
+---
+apiVersion: v1
+kind: List
+metadata:
+  name: {{ include "vcluster.fullname" $ }}-manifests
+items:
+  {{- if $.Release.IsInstall }}
+    {{- with $.Values.lifecycle.current.extraManifestsOnInstall }}
+      {{- range $file, $content := . }}
+    - {{- include "pkg.utils.template" (dict "tpl" $content "ctx" $) | nindent 4 }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- with $.Values.lifecycle.current.extraManifests }}
+    {{- range $file, $content := . }}
+  - {{- include "pkg.utils.template" (dict "tpl" $content "ctx" $) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,12 @@
+{{- if $.Values.global.components.exposure.certificates.issuer.selfSigned }}
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name:  {{ include "vcluster.fullname" $ }}-self-signed
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vcluster.labels" $  | nindent 4 }}
+spec:
+  selfSigned: {}
+{{- end }}

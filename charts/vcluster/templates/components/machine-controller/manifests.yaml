@@ -1,0 +1,34 @@
+{{/*
+  Always Create Manifests Secret.
+  This way the in cluster resources can be removed if a component is disabled
+*/}}
+{{- if (include "pkg.dev.incluster" $) }}
+  {{- if (include "machine-controller.enabled" $) }}
+    {{ range $path, $_ :=  .Files.Glob (include "machine-controller.manifests" $) }}
+      {{- with $ }}
+        {{- $content := (tpl (.Files.Get $path) .) -}}
+        {{- if ($content | nospace) }}
+          {{- printf "---\n" $content | nindent 0 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- else }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "machine-controller.manifests.name" $ }}
+  labels:
+    {{- include "machine-controller.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+stringData:
+  {{ range $path, $_ :=  .Files.Glob (include "machine-controller.manifests" $) }}
+    {{- with $ }}
+      {{- $content := (tpl (.Files.Get $path) .) -}}
+      {{- if ($content | nospace) }}
+        {{- base $path | nindent 4 }}: | {{- $content | nindent 6 }}
+      {{- end }}
+    {{ end }}
+  {{- end }}
+{{- end }}

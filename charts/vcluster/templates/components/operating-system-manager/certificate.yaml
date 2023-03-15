@@ -1,0 +1,39 @@
+{{- if (include "operating-system-manager.enabled" $) -}}
+  {{- $osm := $.Values.osm -}}
+  {{- if and (include "operating-system-manager.admission-enabled" $) (include "operating-system-manager.admission.expose.ingress" $) -}}
+    {{ $svc := printf "%s-admission" (include "operating-system-manager.fullname" .) -}}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $svc }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "operating-system-manager.labels" $ | nindent 4 }}
+spec:
+  dnsNames:
+  - {{ $svc }}
+  - {{ $svc }}.{{ .Release.Namespace }}.svc
+  - {{ $svc }}.{{ .Release.Namespace }}.svc.cluster.local
+  {{- with $osm.admission.webhook.tls.dnsNames }}
+    {{- . | toYaml | nindent 2 }}
+  {{- end }}
+  ipAddresses:
+  {{- with $osm.admission.webhook.tls.ipAddresses }}
+    {{- . | toYaml | nindent 2 }}
+  {{- end }}
+  {{- if (include "operating-system-manager.admission.expose.loadbalancer" $) }}
+   - {{ include "operating-system-manager.admission.expose.loadbalancer.ip" $ }}
+  {{- end }}
+  usages:
+  - "signing"
+  - "key encipherment"
+  - "server auth"
+  issuerRef:
+    {{- include "pkg.components.certificates.issuer" $ | nindent 4 }}
+  secretName: {{ include "operating-system-manager.admission.secretTlsName" . }}
+  subject:
+    organizations:
+      - vcluster.ch
+  {{- end -}}
+{{- end -}}

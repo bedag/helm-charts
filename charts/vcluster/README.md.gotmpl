@@ -1,0 +1,351 @@
+# Vcluster
+
+{{ template "chart.deprecationWarning" . }}
+
+__This Chart is under active development! We try to improve documentation and values consistency over time__
+
+{{ template "chart.versionBadge" . }}{{ template "chart.typeBadge" . }}
+
+{{ template "chart.description" . }}
+
+{{ template "chart.homepageLine" . }}
+
+{{/*
+  Chart Maintainers
+*/}}
+{{ template "chart.maintainersSection" . }}
+
+{{/*
+  Chart Requirements
+*/}}
+{{ template "chart.requirementsSection" . }}
+
+{{/*
+  Chart Sources
+*/}}
+{{ template "chart.sourcesSection" . }}
+
+# Major Changes
+
+Major Changes to functions are documented with the version affected. **Before upgrading the dependency version, check this section out!**
+
+| **Change** | **Chart Version** | **Description** | **Commits/PRs** |
+| :----------- | :---------------- | :--------------------- | :-------------- |
+|||||
+
+## Guides
+
+
+
+# Components
+
+This chart contains different "components" (it's different tools which make up the control plane).
+The purpose of the combination if these tools is to achieve a control plane, which is easy to manage and does not
+relay on worker nodes to be managed. But we also do not intend to add a lot of complexity to the control plane.
+All the components are deployed as pods in the hosting cluster and are toggled by the `enabled` flag. 
+
+## Kubernetes
+
+Installs the required components to provide a Kubernetes Control Plane (hosted in pods). The implementation is based on [Kuebrnetes by Kvaps](https://artifacthub.io/packages/helm/kvaps/kubernetes), who came uup with this great idea.
+
+
+
+## Machine Controller
+
+__We recommend using our set version and configured flags__
+
+The [Machine-Controller](https://github.com/kubermatic/machine-controller) by [Kubermatic](https://www.kubermatic.com/). 
+
+
+
+## Operating System Manager
+
+__We recommend using our set version and configured flags. The component is not stable tested yet!__
+
+The [Operating System Manager](https://github.com/kubermatic/operating-system-manager) by [Kubermatic](https://www.kubermatic.com/)  is responsible for creating and managing the required configurations for worker nodes in a Kubernetes cluster. It decouples operating system configurations into dedicated and isolable resources for better modularity and maintainability.
+It's optional and only works together with [Machine Controller](#machine-controller). If you enable this component, we will take care of the configuration between Machine-Controller and Operating System Manager.
+
+## Kubernetes
+
+Installs the required components to provide a Kubernetes Control Plane (hosted in pods). The implementation is based on [Kuebrnetes by Kvaps](https://artifacthub.io/packages/helm/kvaps/kubernetes), who came uup with this great idea.
+
+## Kubernetes Autoscaler
+
+Based on [Cluster Autoscaler](https://github.com/kubernetes/autoscaler). 
+Allows to scale Kubernetes clusters based on the number of pods and nodes. 
+The component is deployed as a single deployment with a `controller` container. Since it's deployed on a hosting cluster, it's possible to downscale workers to zero and scale up again.
+
+## GitOps
+
+
+
+# Guides
+
+
+## Exposure
+
+
+### Admission
+
+
+
+## ArgoCD Access
+
+
+### Forwards the ArgoCD UI to your local machine
+
+We must forward the ArgoCD within the new cluster in the kubectl client.
+You can access the ArgoCD UI by running the following command:
+
+```bash
+# Execute Kubectl Container
+kubectl exec -it test-cluster-kubectl sh -n machine-controller2
+
+# Extract Admin Password
+kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
+
+# Forward ArgoCD UI
+kubectl port-forward svc/argocd-server 8080:80 -n argocd
+```
+
+Open second terminal and run the following command:
+
+```bash
+kubectl port-forward pod/test-cluster-kubectl 9191:8080 -n machine-controller2
+```
+
+Access the ArgoCD UI by opening [http://localhost:9191]( http://localhost:9191) in your browser. Login with `admin` and previously extract password.
+
+
+
+# Values
+
+{{- define "table.heading" }}
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- end }}
+
+## Globals
+
+Global Values
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "global." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+## Utilities Values
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if or (hasPrefix "utilities." .Key) (hasPrefix "providers." .Key) (hasPrefix "cluster." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+## Lifecycle
+
+We use a lifecycle Job/Cronjob to manage certain configurations within the vcluster and the hosting cluster.
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "lifecycle." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+## Machine Values
+
+Available Values for the [Machine Controller Component](#machine-controller). The component consists of a single deployment with a `controller` and `admission` container. Pod settings are therefor made for both subcomponents.
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "machine." .Key) (not (contains "controller" .Key)) (not (contains "admission" .Key)) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Controller
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "machine." .Key) (contains "controller" .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Admission
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "machine." .Key) (contains "admission" .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+## OSM Values
+
+__This Component is not stable yet!__
+
+Available Values for the [Operating System Manager](). The component consists of a single deployment with a `controller` and `admission` container. Pod settings are therefor made for both subcomponents.
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "osm." .Key) (not (contains "controller" .Key)) (not (contains "admission" .Key)) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Controller
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "osm." .Key) (contains "controller" .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+### Admission
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "osm." .Key) (contains "admission" .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+## Kubernetes Values
+
+Available Values for the [Kubernetes component](#kubernetes).
+
+
+
+### API-Server
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "apiServer." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Konnektivity-Server
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "konnectivityServer." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+### Controller Manager
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "controllerManager." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Scheduler
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "scheduler." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### ETCD
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "etcd." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Admin
+
+Deploys an administration pod which has the admin kubeconfig mounted and allows for easy access to the cluster.
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "admin." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### CoreDNS (In-Cluster)
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "coredns." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+### Konnektivity-Agent (In-Cluster)
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "konnectivityAgent." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+## Autoscaler Values
+
+Available Values for the [Autsocaler component](#autoscaler).
+
+
+### Settings
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "autoscaler." .Key) (or (contains "autoscaler.enabled" .Key) (contains "expanderPriorities" .Key) (contains "priorityConfigMapAnnotations" .Key)) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+### Workload
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "autoscaler." .Key) (not (contains "autoscaling" .Key)) (not (contains "metrics" .Key)) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Autoscaling
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "autoscaler." .Key) (contains "autoscaling" .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+#### Metrics
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "autoscaler." .Key) (contains "metrics" .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+## GitOps Values
+
+Available Values for the [Gitops component](#gitops).
+

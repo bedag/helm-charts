@@ -1,0 +1,171 @@
+{{- if (include "operating-system-manager.enabled" $) -}}
+  {{- $osm := $.Values.osm -}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "operating-system-manager.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "operating-system-manager.labels" . | nindent 4 }}
+    {{- with (include "pkg.components.labels" (dict "labels" $osm.labels "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:
+    {{- include "operating-system-manager.manifests.checksum" $ | nindent 4 }}
+    {{- with (include "pkg.components.annotations" (dict "annotations" $osm.annotations "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if not $osm.autoscaling.enabled }}
+  replicas: {{ $osm.replicaCount }}
+  {{- end }}
+  {{- with $osm.strategy }}
+  strategy: {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "operating-system-manager.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations: {{- include "pkg.components.pod_annotations" (dict "annotations" $osm.podAnnotations "ctx" $) | nindent 8 }}
+        {{ include "operating-system-manager.manifests.checksum" $ }}
+        {{ include "operating-system-manager.webhooks.checksum" $ }}
+      labels: {{- include "operating-system-manager.selectorLabels" . | nindent 8 }}
+        {{- include "pkg.components.pod_labels" (dict "labels" $osm.podLabels "ctx" $) | nindent 8 }}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets: {{ include "pkg.images.registry.pullsecrets" $ | nindent 8 }}
+        {{- with $osm.imagePullSecrets }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      serviceAccountName: {{ include "operating-system-manager.serviceAccountName" . }}
+      {{- with (include "pkg.components.podSecurityContext" (dict "psc" $osm.podSecurityContext "ctx" $)) }}
+      securityContext: {{ . | nindent 8 }}
+      {{- end }}
+      terminationGracePeriodSeconds: 30
+      initContainers: {{- include "pkg.cluster.connectivity"  $ | nindent 8 }}
+      {{- if $osm.component.ensureManifestsOnStartup }}
+        {{- include "operating-system-manager.manifest-init" $ | nindent 8 }}
+      {{- end }}
+      containers:
+          {{- with $osm.controller }}
+        - name: manager
+            {{- with (include "pkg.components.securityContext" (dict "sc" .securityContext "ctx" $)) }}
+          securityContext: {{ . | nindent 12 }}
+            {{- end }}
+          image: {{ include "pkg.images.registry.convert" (dict "image" .image "tag_overwrite" $osm.version "ctx" $) }}
+          imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .image.pullPolicy "ctx" $) }}
+          env: {{- include "pkg.common.env" $ | nindent 10 }}
+            {{- with .envs }}
+              {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
+            {{- end }}
+            {{- with .envsFrom }}
+          envFrom:
+              {{- toYaml . | nindent 10 }}
+            {{- end }}
+          command:
+            - /usr/local/bin/osm-controller
+            - -namespace=kube-system
+            {{- include "machine-controller.controller.args" $ | nindent 12 }}
+            - -metrics-address=0.0.0.0:8080
+            - -health-probe-address=0.0.0.0:8085
+            {{- with (include "machine-controller.runtime" $) }}
+            - -container-runtime={{ . }}
+            {{- end }}
+            {{- with (include "machine-controller.pause" $) }}
+            - -pause-image={{ . }}
+            {{- end }}
+            {{- with .args }}
+              {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: healthz
+              containerPort: 8085
+              protocol: TCP
+            - name: metrics
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .livenessProbe | nindent 12}}
+          readinessProbe:
+            {{- toYaml .readinessProbe | nindent 12}}
+          resources:
+            {{- toYaml .resources | nindent 12 }}
+          volumeMounts:  {{- include "pkg.cluster.cp.vms" $ | nindent 10 }}
+            {{- with .volumeMounts }}
+              {{- toYaml . | nindent 10 }}
+            {{- end }}
+          {{- end }}
+
+          {{- if (include "operating-system-manager.admission-enabled" $) }}
+            {{- with $osm.admission }}
+        - name: webhook
+              {{- with (include "pkg.components.securityContext" (dict "sc" .securityContext "ctx" $)) }}
+          securityContext: {{ . | nindent 12 }}
+              {{- end }}
+          image: {{ include "pkg.images.registry.convert" (dict "image" .image "tag_overwrite" $osm.version "ctx" $) }}
+          imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .image.pullPolicy "ctx" $) }}
+          env: {{- include "pkg.common.env" $ | nindent 10 }}
+            {{- with .envs }}
+              {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
+            {{- end }}
+            {{- with .envsFrom }}
+          envFrom:
+              {{- toYaml . | nindent 10 }}
+            {{- end }}
+          command:
+            - /usr/local/bin/webhook
+            - -kubeconfig={{ include "pkg.cluster.cp.env.mount" $ }}
+            - -namespace={{ $.Release.Namespace }}
+            - -logtostderr
+            - -metrics-bind-address=0.0.0.0:9191
+            - -health-probe-bind-address=0.0.0.0:9085
+            - -cert-dir={{ include "operating-system-manager.volumemounts.certs.path" $ }}
+            {{- with .args }}
+              {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 12 }}
+            {{- end }}
+          ports:
+            - name: healthz
+              containerPort: 9085
+              protocol: TCP
+            - name: metrics
+              containerPort: 9191
+              protocol: TCP
+            - name: https
+              containerPort: 9443
+              protocol: TCP
+          livenessProbe:
+              {{- toYaml .livenessProbe | nindent 12}}
+          readinessProbe:
+              {{- toYaml .readinessProbe | nindent 12}}
+          resources:
+              {{- toYaml .resources | nindent 12 }}
+          volumeMounts: {{- include "pkg.cluster.cp.vms" $ | nindent 12 }}
+              {{- include "operating-system-manager.volumemounts.certs" $ | nindent 12 }}
+              {{- with .volumeMounts }}
+                {{- toYaml . | nindent 12 }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $osm.nodeSelector "ctx" $)) }}
+      nodeSelector: {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.affinity" (dict "affinity" $osm.affinity "ctx" $)) }}
+      affinity: {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.tolerations" (dict "tolerations" $osm.tolerations "ctx" $)) }}
+      tolerations:  {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.priorityClass" (dict "pc" $osm.priorityClassName "ctx" $)) }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      {{- with (include "pkg.components.topologySpreadConstraints" (dict "tsc" $osm.topologySpreadConstraints "ctx" $)) }}
+      topologySpreadConstraints: {{ . | nindent 8 }}
+      {{- end }}
+      volumes: {{- include "pkg.cluster.cp.vs" $ | nindent 8 }}
+        {{- include "operating-system-manager.volumes" $ | nindent 8 }}
+        {{- with $osm.volumes }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+{{- end -}}

@@ -1,0 +1,215 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if $kubernetes.etcd.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "etcd" -}}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $fullName }}-etcd
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+    {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.etcd.labels "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.etcd.annotations "ctx" $)) }}
+  annotations:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ $kubernetes.etcd.replicaCount }}
+  serviceName: {{ $fullName }}-etcd
+  {{- with $kubernetes.etcd.podManagementPolicy }}
+  podManagementPolicy: {{ . }}
+  {{- end }}
+  {{- with $kubernetes.etcd.minReadySeconds }}
+  minReadySeconds: {{ . }}
+  {{- end }}
+  {{- with $kubernetes.etcd.updateStrategy }}
+  updateStrategy: {{ toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    matchLabels: {{- include "kubernetes.selectorLabels" $ | nindent 6 }}
+      {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  template:
+    metadata:
+      name: {{ $fullName }}-etcd
+      labels: {{- include "kubernetes.labels" $ | nindent 8 }}
+        {{- include "pkg.components.pod_labels" (dict "labels" $kubernetes.etcd.podLabels "ctx" $) | nindent 8 }}
+        {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+      annotations:
+        {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.etcd.podAnnotations "ctx" $) | nindent 8 }}
+    spec:
+      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $kubernetes.etcd.nodeSelector "ctx" $)) }}
+      nodeSelector: {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.etcd.tolerations "ctx" $)) }}
+      tolerations:  {{- . | nindent 8 }}
+      {{- end }}
+      {{- with (include "pkg.components.priorityClass" (dict "pc" $kubernetes.etcd.priorityClassName "ctx" $)) }}
+      priorityClassName: {{ . }}
+      {{- end }}
+      {{- with (include "pkg.components.topologySpreadConstraints" (dict "tsc" $kubernetes.etcd.topologySpreadConstraints "ctx" $)) }}
+      topologySpreadConstraints: {{ . | nindent 8 }}
+      {{- end }}
+      affinity:
+      {{- with (include "pkg.components.affinity" (dict "affinity" $kubernetes.etcd.affinity "ctx" $)) }}
+        {{- . | nindent 8 }}
+      {{- end }}
+      {{- if eq $kubernetes.etcd.podAntiAffinity "hard" }}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "{{ $kubernetes.etcd.podAntiAffinityTopologyKey }}"
+              labelSelector:
+                matchLabels:
+                  app: {{ $fullName }}-etcd
+      {{- else if eq $kubernetes.etcd.podAntiAffinity "soft" }}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                topologyKey: "{{ $kubernetes.etcd.podAntiAffinityTopologyKey }}"
+                labelSelector:
+                  matchLabels:
+                    app: {{ $fullName }}-etcd
+      {{- end }}
+      imagePullSecrets: {{- include "pkg.images.registry.pullsecrets" $ | nindent 8 }}
+        {{- with $kubernetes.etcd.imagePullSecrets }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      automountServiceAccountToken: false
+      containers:
+      - command:
+        - etcd
+        - --advertise-client-urls=https://$(POD_NAME).{{ $fullName }}-etcd:{{ $kubernetes.etcd.ports.client }}
+        - --cert-file=/pki/etcd/server/tls.crt
+        - --client-cert-auth=true
+        - --data-dir=/var/lib/etcd
+        - --initial-advertise-peer-urls=https://$(POD_NAME).{{ $fullName }}-etcd:{{ $kubernetes.etcd.ports.peer }}
+        - --initial-cluster={{ template "kubernetes.etcdInitialCluster" . }}
+        - --initial-cluster-state={{ ternary "new" "existing" .Release.IsInstall }}
+        - --initial-cluster-token={{ $fullName }}-etcd
+        - --key-file=/pki/etcd/server/tls.key
+        - --listen-client-urls=https://0.0.0.0:{{ $kubernetes.etcd.ports.client }}
+        - --listen-peer-urls=https://0.0.0.0:{{ $kubernetes.etcd.ports.peer }}
+        - --listen-metrics-urls=http://0.0.0.0:{{ $kubernetes.etcd.ports.metrics }}
+        - --name=$(POD_NAME)
+        - --peer-cert-file=/pki/etcd/peer/tls.crt
+        - --peer-client-cert-auth=true
+        - --peer-key-file=/pki/etcd/peer/tls.key
+        - --peer-trusted-ca-file=/pki/etcd/ca/tls.crt
+        - --trusted-ca-file=/pki/etcd/ca/tls.crt
+        {{- with $kubernetes.etcd.args }}
+          {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 8 }}
+        {{- end }}
+        {{- with $kubernetes.etcd.envsFrom }}
+        envFrom:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        env: {{- include "pkg.common.env" $ | nindent 8 }}
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: ETCDCTL_API
+          value: "3"
+        - name: ETCDCTL_CACERT
+          value: /pki/etcd/peer/ca.crt
+        - name: ETCDCTL_CERT
+          value: /pki/etcd/peer/tls.crt
+        - name: ETCDCTL_KEY
+          value: /pki/etcd/peer/tls.key
+        - name: ETCDCTL_ENDPOINTS
+          value: {{ template "kubernetes.etcdEndpoints" . }}
+        {{- with $kubernetes.etcd.envs }}
+          {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
+        {{- end }}
+        {{- with $kubernetes.etcd.image }}
+        image: {{ include "pkg.images.registry.convert" (dict "image" . "ctx" $) }}
+        imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .pullPolicy "ctx" $) }}
+        {{- end }}
+        {{- with (include "pkg.components.securityContext" (dict "sc" $kubernetes.etcd.securityContext "ctx" $)) }}
+        securityContext: {{ . | nindent 10 }}
+        {{- end }}
+        ports:
+        - containerPort: {{ $kubernetes.etcd.ports.client }}
+          name: client
+        - containerPort: {{ $kubernetes.etcd.ports.peer }}
+          name: peer
+        - containerPort: {{ $kubernetes.etcd.ports.metrics }}
+          name: http-metrics
+        livenessProbe:
+          failureThreshold: 8
+          httpGet:
+            path: /health
+            port: {{ $kubernetes.etcd.ports.metrics }}
+            scheme: HTTP
+          initialDelaySeconds: 15
+          timeoutSeconds: 15
+        name: etcd
+        resources:
+          {{- toYaml $kubernetes.etcd.resources | nindent 10 }}
+        volumeMounts:
+        - mountPath: /pki/etcd/ca
+          name: pki-etcd-certs-ca
+        - mountPath: /pki/etcd/peer
+          name: pki-etcd-certs-peer
+        - mountPath: /pki/etcd/server
+          name: pki-etcd-certs-server
+        - mountPath: /var/lib/etcd
+          name: etcd-data
+        {{- with $kubernetes.etcd.volumeMounts }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with (include "pkg.components.podSecurityContext" (dict "psc" $kubernetes.etcd.podSecurityContext "ctx" $)) }}
+      securityContext: {{ . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - secret:
+          secretName: {{ $fullName }}-pki-etcd-ca
+        name: pki-etcd-certs-ca
+      - secret:
+          secretName: {{ $fullName }}-pki-etcd-peer
+        name: pki-etcd-certs-peer
+      - secret:
+          secretName: {{ $fullName }}-pki-etcd-server
+        name: pki-etcd-certs-server
+      {{- if not $kubernetes.persistence.enabled }}
+      - emptyDir: {}
+        name: etcd-data
+      {{- end }}
+      {{- with $kubernetes.etcd.volumes }}
+      {{- toYaml . | nindent 6 }}
+      {{- end }}
+  {{- if $kubernetes.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: etcd-data
+      labels:
+        app: {{ $fullName }}-etcd
+        {{- if $kubernetes.persistence.labels }}
+        {{- toYaml $kubernetes.persistence.labels | nindent 4 }}
+        {{- end }}
+      {{- with $kubernetes.persistence.annotations  }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $kubernetes.persistence.finalizers  }}
+      finalizers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      accessModes:
+        {{- range $kubernetes.persistence.accessModes }}
+        - {{ . | quote }}
+        {{- end }}
+      {{- if $kubernetes.persistence.storageClassName }}
+      storageClassName: {{ $kubernetes.persistence.storageClassName }}
+      {{- end }}
+      resources:
+        requests:
+          storage: {{ $kubernetes.persistence.size | quote }}
+    {{- end }}
+  {{- end }}
+{{- end }}

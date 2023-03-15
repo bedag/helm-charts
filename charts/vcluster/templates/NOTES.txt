@@ -1,0 +1,8 @@
+{{- $fullName := include "kubernetes.fullname" . -}}
+{{- $cmd := printf "kubectl exec -n %s -ti deploy/%s-admin -- sh" .Release.Namespace $fullName -}}
+1. {{ $fullName }} cluster deployed.
+
+  Get shell in admin container:
+    ┌─{{ "─" | repeat (len $cmd) }}─┐
+    │ {{           $cmd          }} │
+    └─{{ "─" | repeat (len $cmd) }}─┘

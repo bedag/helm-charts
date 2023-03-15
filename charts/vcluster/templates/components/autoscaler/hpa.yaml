@@ -1,0 +1,33 @@
+{{- if (include "autoscaler.enabled" $) -}}
+  {{- $manifest := $.Values.autoscaler.autoscaling -}}
+  {{- if $manifest.enabled }}
+---
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "autoscaler.fullname" $ }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "autoscaler.labels" $ | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "autoscaler.fullname" . }}
+  minReplicas: {{ $manifest.minReplicas }}
+  maxReplicas: {{ $manifest.maxReplicas }}
+  metrics:
+    {{- if $manifest.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ $manifest.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if $manifest.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ $manifest.targetMemoryUtilizationPercentage }}
+    {{- end }}
+  {{- end }}
+{{- end -}}

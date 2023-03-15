@@ -1,0 +1,25 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if or $kubernetes.konnectivityServer.enabled $kubernetes.konnectivityAgent.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "konnectivity" -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullName }}-konnectivity-manifests
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+data:
+  {{- if $kubernetes.konnectivityServer.enabled }}
+  konnectivity-server-rbac.yaml: |
+      {{- tpl (.Files.Get (printf "%s/konnectivity-server-rbac.yaml" (include "kubernetes.manifests.dir" $ | trimSuffix "/"))) . | nindent 4 }}
+  {{- end }}
+  {{- if $kubernetes.konnectivityAgent.enabled }}
+  konnectivity-agent-deployment.yaml: |
+      {{- tpl (.Files.Get (printf "%s/konnectivity-agent-deployment.yaml" (include "kubernetes.manifests.dir" $ | trimSuffix "/"))) . | nindent 4 }}
+  konnectivity-agent-rbac.yaml: |
+      {{- tpl (.Files.Get (printf "%s/konnectivity-agent-rbac.yaml" (include "kubernetes.manifests.dir" $ | trimSuffix "/"))) . | nindent 4 }}
+    {{- end }}
+  {{- end }}
+{{- end -}}

@@ -1,0 +1,29 @@
+cluster:
+  properties:
+    kubernetes_api_ip: "help"
+    kubernetes_api_port: "6443"
+lifecycle:
+  current:
+    extraManifests:
+      project.yaml: |
+        {{- include "pkg.manifests.argo-cluster-project" $ | nindent 4 }}
+      bootstrap-app.yaml: |
+        {{- include "pkg.manifests.argo-bootstrap-app" $ | nindent 4 }}
+      bootstrap-app-ejson.yaml: |
+        {{- include "pkg.manifests.argo-app-ejson"  $ | nindent 4 }}
+      bootstrap-repository.yaml: |
+        {{- include "pkg.manifests.argo-bootstrap-repository" $ | nindent 4 }}
+  vcluster:
+    extraManifests:
+      bootstrap-app-ejson.yaml: |
+        {{- include "pkg.manifests.argo-app-ejson"  $ | nindent 4 }}
+gitops:
+  enabled: false
+osm:
+  enabled: false
+kubernetes:
+  enabled: false
+autoscaler:
+  enabled: false
+machine:
+  enabled: false

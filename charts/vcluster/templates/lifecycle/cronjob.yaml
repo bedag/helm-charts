@@ -1,0 +1,34 @@
+{{- $manifest := $.Values.lifecycle.job -}}
+{{- if $manifest.reconciler }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "vcluster.fullname" $ }}-lifecycle
+  labels: {{- include "vcluster.labels" $ | nindent 4 }}
+    {{- with (include "pkg.components.labels" (dict "labels" $manifest.labels "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  annotations:  
+    {{- with (include "pkg.components.annotations" (dict "annotations" $manifest.annotations "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  schedule: "{{ $manifest.schedule }}"
+  successfulJobsHistoryLimit: {{ $manifest.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ $manifest.failedJobsHistoryLimit }}
+  jobTemplate:
+    metadata:
+      labels: {{- include "vcluster.labels" $ | nindent 8 }}
+        {{- with $manifest.labels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        checksum/scripts: {{ .Files.Get "/templates/scripts-configmap.yaml" | sha256sum  }}
+        {{- with $manifest.annotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      template:
+      {{- (include (print $.Template.BasePath "/lifecycle/job.yaml") . | fromYaml ).spec.template | toYaml | nindent 8 }}
+{{- end -}}

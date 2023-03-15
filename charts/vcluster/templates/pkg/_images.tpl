@@ -55,20 +55,22 @@ kube-system
 
 {{/* PullSecret for Registry */}}
 {{- define "pkg.images.registry.pullsecrets" -}}
+  {{- $components := $.Values.global.components -}}
   {{- if (include "pkg.images.registry.auth" $) }}
 - name: {{ template "pkg.images.registry.secretname" $ }}
   {{- end }}
-  {{- if $.Values.components.workloads.image.pullsecrets }}
-     {{- toYaml $.Values.components.workloads.image.pullsecrets | nindent 0 }}
+  {{- if $components.workloads.image.pullsecrets }}
+     {{- toYaml $components.workloads.image.pullsecrets | nindent 0 }}
   {{- end }}
 {{- end -}}
 
 
 {{/* PullPolicy */}}
 {{- define "pkg.images.registry.pullpolicy" -}}
+  {{- $components := $.ctx.Values.global.components -}}
   {{- $policy := $.policy -}}
-  {{- if $.ctx.Values.components.workloads.image.pullPolicy -}}
-    {{- $policy = $.ctx.Values.components.workloads.image.pullPolicy -}}
+  {{- if $components.workloads.image.pullPolicy -}}
+    {{- $policy = $components.workloads.image.pullPolicy -}}
   {{- end -}}
   {{- if $policy -}}
     {{ printf "%s" $policy }}

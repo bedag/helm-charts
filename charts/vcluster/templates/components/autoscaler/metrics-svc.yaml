@@ -1,6 +1,6 @@
 {{- if (include "autoscaler.enabled" $) -}}
   {{- $manifest := $.Values.autoscaler.metrics -}}
-  {{- if or $.Values.components.metrics.enabled $manifest.enabled }}
+  {{- if (include "pkg.components.metrics.enabled" (dict "metrics" $manifest "ctx" $)) -}}
 ---
 apiVersion: v1
 kind: Service

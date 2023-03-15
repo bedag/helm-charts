@@ -4,13 +4,13 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "gitops.fullname" .  }}-lifecycle
-  labels: {{- include "gitops.labels" $ | nindent 4 }}
-    {{- with $manifest.labels }}
+  name: {{ include "vcluster.fullname" $ }}-lifecycle
+  labels: {{- include "vcluster.labels" $ | nindent 4 }}
+    {{- with (include "pkg.components.labels" (dict "labels" $manifest.labels "ctx" $)) }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
-    {{- with $manifest.annotations }}
-  annotations:
+  annotations:  
+    {{- with (include "pkg.components.annotations" (dict "annotations" $manifest.annotations "ctx" $)) }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
@@ -19,7 +19,7 @@ spec:
   failedJobsHistoryLimit: {{ $manifest.failedJobsHistoryLimit }}
   jobTemplate:
     metadata:
-      labels: {{- include "gitops.labels" $ | nindent 8 }}
+      labels: {{- include "vcluster.labels" $ | nindent 8 }}
         {{- with $manifest.labels }}
           {{- toYaml . | nindent 8 }}
         {{- end }}

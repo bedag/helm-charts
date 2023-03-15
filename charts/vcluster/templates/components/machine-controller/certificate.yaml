@@ -1,6 +1,6 @@
 {{- if (include "machine-controller.enabled" $) -}}
   {{- $machine := $.Values.machine -}}
-  {{- if and (include "machine-controller.admission-enabled" $) (include "machine-controller.admission.expose.ingress" $) -}}
+  {{- if and (include "machine-controller.admission-enabled" $) (not (include "machine-controller.admission.expose.ingress" $)) -}}
     {{ $svc := printf "%s-admission" (include "machine-controller.fullname" .) -}}
 ---
 apiVersion: cert-manager.io/v1

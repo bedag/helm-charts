@@ -2,7 +2,7 @@
   {{- if (include "machine-controller.admission-enabled" $) -}}
     {{- if (include "machine-controller.admission.expose.ingress" $) -}}
     {{- $machine := $.Values.machine.admission -}}
-    {{- $ingress := $.Values.components.exposure.ingress -}}
+    {{- $ingress := $.Values.global.components.exposure.ingress -}}
       {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
 apiVersion: networking.k8s.io/v1
       {{- else }}

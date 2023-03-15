@@ -1,7 +1,7 @@
 {{- if (include "autoscaler.enabled" $) -}}
   {{- $manifest := $.Values.autoscaler.metrics -}}
-  {{- if or $.Values.components.metrics.enabled $manifest.enabled }}
-    {{- if or $.Values.components.metrics.serviceMonitor.enabled $manifest.serviceMonitor.enabled }}
+  {{- if (include "pkg.components.metrics.enabled" (dict "metrics" $manifest "ctx" $)) -}}
+    {{- if (include "pkg.components.serviceMonitor.enabled" (dict "sm" $manifest.serviceMonitor "ctx" $)) -}}
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor

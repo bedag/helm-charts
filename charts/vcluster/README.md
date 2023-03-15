@@ -99,33 +99,32 @@ Access the ArgoCD UI by opening [http://localhost:9191]( http://localhost:9191) 
 Global Values
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| global.comonents.exposure.certificates.issuer.kind | string | `"Issuer"` | Set if the cert manager will generate either self-signed or CA signed SSL certificates. Its value will be either Issuer or ClusterIssuer |
-| global.comonents.exposure.certificates.issuer.name | string | `""` | Set the name of the ClusterIssuer if issuer kind is ClusterIssuer and if cert manager will generate CA signed SSL certificates |
-| global.comonents.exposure.certificates.issuer.selfSigned | bool | `false` | Creates self-signed Issuer |
-| global.comonents.exposure.certificates.secretName | string | `""` | Uses Existing Secret for all certificates |
-| global.comonents.exposure.expose | string | `"ingress"` | Define how admission webhooks are expose (ingress or loadbalancer). Overwrites expose for all admission webhooks. |
-| global.comonents.exposure.ingress.annotations | object | `{}` | Common annotations for admission ingresses |
-| global.comonents.exposure.ingress.host | string | `"{{ include \"pkg.cluster.name\" $ }}.example.com"` | Host for admission ingresses (admission endpoints are exposed via path). supports templating |
-| global.comonents.exposure.ingress.ingressClassName | string | `""` | Ingressclass for admission ingresses |
-| global.comonents.exposure.ingress.port | int | `443` | Port for Ingresses |
-| global.comonents.metrics.enabled | bool | `true` | Enable metrics for all components |
-| global.comonents.metrics.serviceMonitor.enabled | bool | `true` | Enable ServiceMonitor for all components |
-| global.comonents.networkPolicy.enabled | bool | `false` |  |
-| global.comonents.service.annotations | object | `{}` | Annotations for all services |
-| global.comonents.service.labels | object | `{}` | Labels for all services |
-| global.comonents.workloads.affinity | object | `{}` | Affinity for all workloads (Overwrites all workloads affinities) |
-| global.comonents.workloads.annotations | object | `{}` | Annotations for all workloads (merged with workload annotations) |
-| global.comonents.workloads.image.pullPolicy | string | `""` | Overwrites Pull Policy for all components |
-| global.comonents.workloads.image.pullSecrets | list | `[]` | Additional image pull secrets for all components |
-| global.comonents.workloads.labels | object | `{}` | Labels for all workloads (merged with workload labels) |
-| global.comonents.workloads.nodeSelector | object | `{}` | Node Selector for all workloads (Overwrites all workloads nodeSelector) |
-| global.comonents.workloads.podAnnotations | object | `{}` | Pod Annotations for all workloads (merged with workload podAnnotations) |
-| global.comonents.workloads.podLabels | object | `{}` | Pod Labels for all workloads (merged with workload podLabels) |
-| global.comonents.workloads.podSecurityContext | object | `{"enabled":false}` | Pod Security Context for all workloads  (Overwrites per workload podSecurityContext) |
-| global.comonents.workloads.priorityClassName | string | `""` | Priority Class for all workloads (Overwrites all workloads priorityClassNames) |
-| global.comonents.workloads.securityContext | object | `{"enabled":false}` | Container Security Context for all workloads (Overwrites per workload securityContext) |
-| global.comonents.workloads.tolerations | list | `[]` | Tolerations for all workloads (Overwrites all workloads tolerations) |
-| global.comonents.workloads.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads (Overwrites all workloads topologySpreadConstraints) |
+| global.components.exposure.certificates.issuer.kind | string | `"Issuer"` | Set if the cert manager will generate either self-signed or CA signed SSL certificates. Its value will be either Issuer or ClusterIssuer |
+| global.components.exposure.certificates.issuer.name | string | `""` | Set the name of the ClusterIssuer if issuer kind is ClusterIssuer and if cert manager will generate CA signed SSL certificates |
+| global.components.exposure.certificates.issuer.selfSigned | bool | `false` | Creates self-signed Issuer |
+| global.components.exposure.certificates.secretName | string | `""` | Uses Existing Secret for all certificates |
+| global.components.exposure.expose | string | `"ingress"` | Define how admission webhooks are expose (ingress or loadbalancer). Overwrites expose for all admission webhooks. |
+| global.components.exposure.ingress.annotations | object | `{}` | Common annotations for admission ingresses |
+| global.components.exposure.ingress.host | string | `"{{ include \"pkg.cluster.name\" $ }}.example.com"` | Host for admission ingresses (admission endpoints are exposed via path). supports templating |
+| global.components.exposure.ingress.ingressClassName | string | `""` | Ingressclass for admission ingresses |
+| global.components.exposure.ingress.port | int | `443` | Port for Ingresses |
+| global.components.metrics | object | `{}` |  |
+| global.components.networkPolicy.enabled | bool | `false` |  |
+| global.components.service.annotations | object | `{}` | Annotations for all services |
+| global.components.service.labels | object | `{}` | Labels for all services |
+| global.components.workloads.affinity | object | `{}` | Affinity for all workloads (Overwrites all workloads affinities) |
+| global.components.workloads.annotations | object | `{}` | Annotations for all workloads (merged with workload annotations) |
+| global.components.workloads.image.pullPolicy | string | `""` | Overwrites Pull Policy for all components |
+| global.components.workloads.image.pullSecrets | list | `[]` | Additional image pull secrets for all components |
+| global.components.workloads.labels | object | `{}` | Labels for all workloads (merged with workload labels) |
+| global.components.workloads.nodeSelector | object | `{}` | Node Selector for all workloads (Overwrites all workloads nodeSelector) |
+| global.components.workloads.podAnnotations | object | `{}` | Pod Annotations for all workloads (merged with workload podAnnotations) |
+| global.components.workloads.podLabels | object | `{}` | Pod Labels for all workloads (merged with workload podLabels) |
+| global.components.workloads.podSecurityContext | object | `{"enabled":false}` | Pod Security Context for all workloads  (Overwrites per workload podSecurityContext) |
+| global.components.workloads.priorityClassName | string | `""` | Priority Class for all workloads (Overwrites all workloads priorityClassNames) |
+| global.components.workloads.securityContext | object | `{"enabled":false}` | Container Security Context for all workloads (Overwrites per workload securityContext) |
+| global.components.workloads.tolerations | list | `[]` | Tolerations for all workloads (Overwrites all workloads tolerations) |
+| global.components.workloads.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads (Overwrites all workloads topologySpreadConstraints) |
 | global.proxy.host | string | `""` | Proxy Host |
 | global.proxy.no_proxy | string | `""` | No Proxy Hosts |
 | global.registry.creds.password | string | `""` | Registry Password |

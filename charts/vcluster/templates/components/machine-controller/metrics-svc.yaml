@@ -1,6 +1,6 @@
 {{- if (include "machine-controller.enabled" $) -}}
   {{- $manifest := $.Values.machine.metrics -}}
-  {{- if or $.Values.components.metrics.enabled $manifest.enabled }}
+  {{- if (include "pkg.components.metrics.enabled" (dict "metrics" $manifest "ctx" $)) -}}
 ---
 apiVersion: v1
 kind: Service

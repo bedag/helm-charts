@@ -183,7 +183,7 @@
 
 {{/* Ingress */}}
 {{- define "pkg.components.ingress.host" -}}
-  {{- $components := $.ctx.Values.global.components -}}
+  {{- $components := $.Values.global.components -}}
   {{- with $components.exposure.ingress.host -}}
     {{- printf "%s" (include "pkg.utils.template" (dict "tpl" . "ctx" $)) -}}
   {{- end -}}
@@ -191,21 +191,21 @@
 
 
 {{- define "pkg.components.certificates.issuer" -}}
-  {{- $components := $.ctx.Values.global.components -}}
+  {{- $components := $.Values.global.components -}}
   {{- with $components.exposure.certificates.issuer }}
     {{- if .selfSigned }}
 kind: Issuer
 name: {{ include "vcluster.fullname" $ }}-self-signed
     {{- else }}
 kind: {{ .kind }}
-name: {{ .name }}
+name: {{ default (include "vcluster.fullname" $) .name }}
     {{- end }}
   {{- end }}
 {{- end -}}
 
 
 {{- define "pkg.components.certificates.secretTlsName" -}}
-{{- $components := $.ctx.Values.global.components -}}
+{{- $components := $.Values.global.components -}}
 {{- default ( printf "%s-tls" ( include "pkg.cluster.name" $ ) ) $components.exposure.certificates.secretName -}}
 {{- end -}}
 
@@ -217,10 +217,10 @@ name: {{ .name }}
   {{- $components := $.ctx.Values.global.components -}}
   {{- $metrics := $.metrics -}}
   {{- if $components.metrics -}}
-    {{- $sc = $components.workloads.securityContext -}}
+    {{- $metrics = $components.metrics -}}
   {{- end -}}
-  {{- if $sc.enabled -}}
-    {{- printf "%s" (toYaml (omit $sc "enabled")) -}}
+  {{- if $metrics.enabled -}}
+    {{- true -}}
   {{- end -}}
 {{- end -}}
 
@@ -230,12 +230,14 @@ name: {{ .name }}
 */}}
 {{- define "pkg.components.serviceMonitor.enabled" -}}
   {{- $components := $.ctx.Values.global.components -}}
-  {{- $metrics := $.metrics -}}
+  {{- $sm := $.sm -}}
   {{- if $components.metrics -}}
-    {{- $sc = $components.workloads.securityContext -}}
+    {{- if $components.metrics.serviceMonitor -}}
+      {{- $sm = $components.metrics.serviceMonitor -}}
+    {{- end -}}
   {{- end -}}
-  {{- if $sc.enabled -}}
-    {{- printf "%s" (toYaml (omit $sc "enabled")) -}}
+  {{- if $sm.enabled -}}
+    {{- true -}}
   {{- end -}}
 {{- end -}}
 

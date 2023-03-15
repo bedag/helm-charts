@@ -170,7 +170,7 @@ Admission Expose
 {{- define "operating-system-manager.admission.expose.loadbalancer" -}}
   {{- $manifest := $.Values.osm -}}
   {{- if not (include "operating-system-manager.admission.expose.ingress" $) -}}
-    {{- if or (eq $.Values.components.admission.expose "loadbalancer") (eq $manifest.admission.expose "loadbalancer") -}}
+    {{- if or (eq $.Values.global.components.admission.expose "loadbalancer") (eq $manifest.admission.expose "loadbalancer") -}}
       {{- if (include "operating-system-manager.admission.expose.loadbalancer.ip" $) -}}
         {{- true -}}
       {{- else -}}
@@ -197,7 +197,7 @@ Admission Expose
 
 {{- define "operating-system-manager.admission.expose.ingress" -}}
   {{- $manifest := $.Values.osm -}}
-  {{- if or (eq $.Values.components.exposure.expose "ingress") (eq $manifest.admission.expose "ingress") -}}
+  {{- if or (eq $.Values.global.components.exposure.expose "ingress") (eq $manifest.admission.expose "ingress") -}}
     {{- true -}}
   {{- end -}}
 {{- end -}}

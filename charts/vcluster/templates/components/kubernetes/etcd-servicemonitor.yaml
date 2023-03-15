@@ -2,9 +2,8 @@
   {{- $manifest := $.Values.kubernetes.etcd -}}
   {{- $fullName := include "kubernetes.fullname" . -}}
   {{- $component_name := "etcd" -}}
-  {{- if $manifest.enabled }}
-    {{- if or $.Values.components.metrics.enabled $manifest.metrics.enabled }}
-      {{- if or $.Values.components.metrics.serviceMonitor.enabled $manifest.metrics.serviceMonitor.enabled }}
+  {{- if (include "pkg.components.metrics.enabled" (dict "metrics" $manifest.metrics "ctx" $)) -}}
+    {{- if (include "pkg.components.serviceMonitor.enabled" (dict "sm" $manifest.metrics.serviceMonitor "ctx" $)) -}}
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
@@ -59,7 +58,6 @@ spec:
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace }}
-      {{- end -}}
     {{- end -}}
   {{- end -}}
 {{- end -}}

@@ -1,6 +1,7 @@
-components:
-  admission:
-    expose: "loadbalancer"
+global:
+  components:
+    admission:
+      expose: "loadbalancer"
 
 
 machine:

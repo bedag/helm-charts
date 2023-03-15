@@ -19,8 +19,6 @@ lifecycle:
         {{- include "pkg.manifests.argo-app-ejson"  $ | nindent 4 }}
 gitops:
   enabled: false
-green:
-  enabled: false
 osm:
   enabled: false
 kubernetes:

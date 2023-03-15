@@ -2,7 +2,7 @@
   {{- if (include "operating-system-manager.admission-enabled" $) -}}
     {{- if (include "operating-system-manager.admission.expose.ingress" $) -}}
       {{- $admission := $.Values.osm.admission -}}
-      {{- $ingress := $.Values.components.exposure.ingress -}}
+      {{- $ingress := $.Values.global.components.exposure.ingress -}}
 ---
     {{- if .Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
 apiVersion: networking.k8s.io/v1

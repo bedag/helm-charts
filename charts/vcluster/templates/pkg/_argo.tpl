@@ -147,7 +147,7 @@ server:
     automountServiceAccountToken: true
   clusterAdminAccess:
     enabled: false
-  {{- $ingress := $.Values.components.exposure.ingress }}
+  {{- $ingress := $.Values.global.components.exposure.ingress }}
   extraArgs:
     {{- with $argocd.bootstrap.config.ingress }}
       {{- if.enabled }}
@@ -189,13 +189,13 @@ server:
     ingressClassName: {{ $ingress.ingressClassName }}
         {{- end }}
     hosts:
-      - {{ include "pkg.common.ingress.host" $ }}
+      - {{ include "pkg.components.ingress.host" $ }}
     paths:
       - {{ .server.contextPath }}
     tls:
       - hosts:
-        - {{ include "pkg.common.ingress.host" $ }}
-        secretName: {{ include "pkg.common.certificates.secretTlsName" $ }}
+        - {{ include "pkg.components.ingress.host" $ }}
+        secretName: {{ include "pkg.components.certificates.secretTlsName" $ }}
       {{- end }}
     {{- end }}
   {{- end }}
@@ -220,13 +220,13 @@ server:
     ingressClassName: {{ $ingress.ingressClassName }}
         {{- end }}
     hosts:
-      - {{ include "pkg.common.ingress.host" $ }}
+      - {{ include "pkg.components.ingress.host" $ }}
     paths:
       - {{ .grpc.contextPath }}
     tls:
       - hosts:
-        - {{ include "pkg.common.ingress.host" $ }}
-        secretName: {{ include "pkg.common.certificates.secretTlsName" $ }}
+        - {{ include "pkg.components.ingress.host" $ }}
+        secretName: {{ include "pkg.components.certificates.secretTlsName" $ }}
       {{- end }}
     {{- end }}
   {{- end }}
@@ -284,9 +284,6 @@ repoServer:
     {{- include "pkg.cluster.cp.vs" $ | nindent 2 }}
   {{- end }}
   {{- if (include "pkg.argo.plugin.subst.enabled" $) }}
-  - configMap:
-      name: {{ include "pkg.argo.release" $ }}-cmp-subst
-    name: subst-plugin
   - emptyDir: {}
     name: subst-tmp
     {{- if (include "pkg.dev.incluster" $) }}
@@ -349,9 +346,6 @@ repoServer:
         name: var-files
       - mountPath: /home/argocd/cmp-server/plugins
         name: plugins
-      - mountPath: /home/argocd/cmp-server/config/plugin.yaml
-        subPath: plugin.yaml
-        name: subst-plugin
       # Starting with v2.4, do NOT mount the same tmp volume as the repo-server container. The filesystem separation helps
       # mitigate path traversal attacks.
       - mountPath: /tmp

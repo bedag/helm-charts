@@ -239,7 +239,7 @@ Admission Expose
 {{- define "machine-controller.admission.expose.loadbalancer" -}}
   {{- $machine := $.Values.machine -}}
   {{- if not (include "machine-controller.admission.expose.ingress" $) -}}
-    {{- if or (eq $.Values.components.admission.expose "loadbalancer") (eq $machine.admission.expose "loadbalancer") -}}
+    {{- if or (eq $.Values.global.components.admission.expose "loadbalancer") (eq $machine.admission.expose "loadbalancer") -}}
       {{- if (include "machine-controller.admission.expose.loadbalancer.ip" $) -}}
         {{- true -}}
       {{- else -}}
@@ -266,7 +266,7 @@ Admission Expose
 
 {{- define "machine-controller.admission.expose.ingress" -}}
   {{- $machine := $.Values.machine -}}
-  {{- if or (eq $.Values.components.exposure.expose "ingress") (eq $machine.admission.expose "ingress") -}}
+  {{- if or (eq $.Values.global.components.exposure.expose "ingress") (eq $machine.admission.expose "ingress") -}}
     {{- true -}}
   {{- end -}}
 {{- end -}}

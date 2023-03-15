@@ -232,6 +232,7 @@ server:
   {{- end }}
 
 applicationSet:
+  enabled: false
   {{- with (include "pkg.components.securityContext" (dict "sc" $argocd.bootstrap.config.securityContext "ctx" $)) }}
   containerSecurityContext: {{ . | nindent 4 }}
   {{- end }}
@@ -358,7 +359,6 @@ repoServer:
   {{- end }}
 redis-ha:
   enabled: false
-
 redis:
   enabled: true
   image:

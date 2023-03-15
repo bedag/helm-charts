@@ -139,14 +139,16 @@ Self-Signed Admission Webhook TLS Secret
   {{/* If not enabled, use undefined in url (otherwise delete will fail) */}}
   {{- $base := "undefined" -}}
 
-  {{/* Expose via Ingress */}}
-  {{- if (include "operating-system-manager.admission.expose.ingress" $) -}}
-    {{- $base = (printf "https://%s/%s" (include "pkg.components.ingress.host" $) (include "operating-system-manager.admission.expose.ingress.context" $ | trimPrefix "/")) -}}
-  {{- end -}}
-
-  {{/* Expose via Service (LoadBalancer) */}}
-  {{- if (include "operating-system-manager.admission.expose.loadbalancer" $) -}}
-    {{- $base = (printf "https://%s:%s" (include "operating-system-manager.admission.expose.loadbalancer.ip" $) (include "operating-system-manager.admission.expose.loadbalancer.port" $)) -}}
+  {{- if (include "operating-system-manager.admission-enabled" $) -}}
+    {{/* Expose via Ingress */}}
+    {{- if (include "operating-system-manager.admission.expose.ingress" $) -}}
+      {{- $base = (printf "https://%s/%s" (include "pkg.components.ingress.host" $) (include "operating-system-manager.admission.expose.ingress.context" $ | trimPrefix "/")) -}}
+    {{- end -}}
+  
+    {{/* Expose via Service (LoadBalancer) */}}
+    {{- if (include "operating-system-manager.admission.expose.loadbalancer" $) -}}
+      {{- $base = (printf "https://%s:%s" (include "operating-system-manager.admission.expose.loadbalancer.ip" $) (include "operating-system-manager.admission.expose.loadbalancer.port" $)) -}}
+    {{- end -}}
   {{- end -}}
 
   {{/* Print */}}
@@ -170,7 +172,7 @@ Admission Expose
 {{- define "operating-system-manager.admission.expose.loadbalancer" -}}
   {{- $manifest := $.Values.osm -}}
   {{- if not (include "operating-system-manager.admission.expose.ingress" $) -}}
-    {{- if or (eq $.Values.global.components.admission.expose "loadbalancer") (eq $manifest.admission.expose "loadbalancer") -}}
+    {{- if (eq (include "pkg.components.expose.type" (dict "expose" $manifest.admission.expose "ctx" $)) "loadbalancer") -}}
       {{- if (include "operating-system-manager.admission.expose.loadbalancer.ip" $) -}}
         {{- true -}}
       {{- else -}}

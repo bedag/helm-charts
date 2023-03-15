@@ -208,14 +208,16 @@ machine-controller-mutating-webhook
   {{/* If not enabled, use undefined in url (otherwise delete will fail) */}}
   {{- $base := "undefined" -}}
 
-  {{/* Expose via Ingress */}}
-  {{- if (include "machine-controller.admission.expose.ingress" $) -}}
-    {{- $base = (printf "https://%s/%s" (include "pkg.components.ingress.host" $) (include "machine-controller.admission.expose.ingress.context" $ | trimPrefix "/")) -}}
-  {{- end -}}
-
-  {{/* Expose via Service (LoadBalancer) */}}
-  {{- if (include "machine-controller.admission.expose.loadbalancer" $) -}}
-    {{- $base = (printf "https://%s:%s" (include "machine-controller.admission.expose.loadbalancer.ip" $) (include "machine-controller.admission.expose.loadbalancer.port" $)) -}}
+  {{- if (include "machine-controller.admission-enabled" $) -}}
+    {{/* Expose via Ingress */}}
+    {{- if (include "machine-controller.admission.expose.ingress" $) -}}
+      {{- $base = (printf "https://%s/%s" (include "pkg.components.ingress.host" $) (include "machine-controller.admission.expose.ingress.context" $ | trimPrefix "/")) -}}
+    {{- end -}}
+  
+    {{/* Expose via Service (LoadBalancer) */}}
+    {{- if (include "machine-controller.admission.expose.loadbalancer" $) -}}
+      {{- $base = (printf "https://%s:%s" (include "machine-controller.admission.expose.loadbalancer.ip" $) (include "machine-controller.admission.expose.loadbalancer.port" $)) -}}
+    {{- end -}}
   {{- end -}}
 
   {{/* Print */}}
@@ -239,7 +241,7 @@ Admission Expose
 {{- define "machine-controller.admission.expose.loadbalancer" -}}
   {{- $machine := $.Values.machine -}}
   {{- if not (include "machine-controller.admission.expose.ingress" $) -}}
-    {{- if or (eq $.Values.global.components.admission.expose "loadbalancer") (eq $machine.admission.expose "loadbalancer") -}}
+    {{- if (eq (include "pkg.components.expose.type" (dict "expose" $machine.admission.expose "ctx" $)) "loadbalancer") -}}
       {{- if (include "machine-controller.admission.expose.loadbalancer.ip" $) -}}
         {{- true -}}
       {{- else -}}

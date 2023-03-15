@@ -182,6 +182,25 @@
 {{- end -}}
 
 {{/* Ingress */}}
+{{- define "pkg.components.expose.type" -}}
+  {{- $components := $.ctx.Values.global.components -}}
+  {{- $ex := $.expose -}}
+  {{- if $components.exposure.expose -}}
+    {{- $ex = $components.exposure.expose -}}
+  {{- end -}}
+  {{- if $ex -}}
+    {{- $allowed := (list "loadbalancer" "ingress") -}}
+    {{- $e := $ex | lower -}}
+    {{- if (has $e $allowed) -}}
+      {{- printf "%s" $e -}}
+    {{- else -}}
+      {{- fail (printf "expose type must be one of: %s" ($allowed| join ", ")) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+
+{{/* Ingress */}}
 {{- define "pkg.components.ingress.host" -}}
   {{- $components := $.Values.global.components -}}
   {{- with $components.exposure.ingress.host -}}
@@ -189,6 +208,10 @@
   {{- end -}}
 {{- end -}}
 
+
+
+
+$.Values.global.components.admission.expose
 
 {{- define "pkg.components.certificates.issuer" -}}
   {{- $components := $.Values.global.components -}}

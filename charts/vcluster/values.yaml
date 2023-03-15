@@ -485,7 +485,7 @@ gitops:
           image:
             registry: ghcr.io
             repository: buttahtoast/subst-cmp
-            tag: v0.2.0-alpha1
+            tag: v0.2.0-alpha2
             pullPolicy: Always
             digest: ""
           # -- Resources configuration

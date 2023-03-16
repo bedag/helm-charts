@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.1.1](https://img.shields.io/badge/Version-0.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -101,9 +101,9 @@ Global Values
 |-----|------|---------|-------------|
 | global.components.exposure.certificates.issuer.kind | string | `"Issuer"` | Set if the cert manager will generate either self-signed or CA signed SSL certificates. Its value will be either Issuer or ClusterIssuer |
 | global.components.exposure.certificates.issuer.name | string | `""` | Set the name of the ClusterIssuer if issuer kind is ClusterIssuer and if cert manager will generate CA signed SSL certificates |
-| global.components.exposure.certificates.issuer.selfSigned | bool | `false` | Creates self-signed Issuer |
+| global.components.exposure.certificates.issuer.selfSigned | bool | `true` | Creates self-signed Issuer |
 | global.components.exposure.certificates.secretName | string | `""` | Uses Existing Secret for all certificates |
-| global.components.exposure.expose | string | `"ingress"` | Define how admission webhooks are expose (ingress or loadbalancer). Overwrites expose for all admission webhooks. |
+| global.components.exposure.expose | string | `"loadbalancer"` | Define how admission webhooks are expose (ingress or loadbalancer). Overwrites expose for all admission webhooks. |
 | global.components.exposure.ingress.annotations | object | `{}` | Common annotations for admission ingresses |
 | global.components.exposure.ingress.host | string | `"{{ include \"pkg.cluster.name\" $ }}.example.com"` | Host for admission ingresses (admission endpoints are exposed via path). supports templating |
 | global.components.exposure.ingress.ingressClassName | string | `""` | Ingressclass for admission ingresses |
@@ -130,6 +130,7 @@ Global Values
 | global.registry.creds.password | string | `""` | Registry Password |
 | global.registry.creds.username | string | `""` | Registry Username |
 | global.registry.endpoint | string | `""` | Registry Endpoint |
+| global.storageClassName | string | `""` | StorageClassName for all persistent volumes |
 
 ## Utilities Values
 | Key | Type | Default | Description |
@@ -192,7 +193,7 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.metrics.service.annotations | object | `{}` | Service Annotations |
 | machine.metrics.service.labels | object | `{}` | Service Labels |
 | machine.metrics.serviceMonitor.annotations | object | `{}` | Assign additional Annotations |
-| machine.metrics.serviceMonitor.enabled | bool | `true` | Enable ServiceMonitor |
+| machine.metrics.serviceMonitor.enabled | bool | `false` | Enable ServiceMonitor |
 | machine.metrics.serviceMonitor.endpoint.interval | string | `"15s"` | Set the scrape interval for the endpoint of the serviceMonitor |
 | machine.metrics.serviceMonitor.endpoint.metricRelabelings | list | `[]` | Set metricRelabelings for the endpoint of the serviceMonitor |
 | machine.metrics.serviceMonitor.endpoint.relabelings | list | `[]` | Set relabelings for the endpoint of the serviceMonitor |
@@ -245,7 +246,7 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | machine.admission.args | object | `{"v":4}` | Webhook Command Arguments ([See Available](https://github.com/kubermatic/machine-controller/blob/main/cmd/webhook/main.go)) |
-| machine.admission.enabled | bool | `true` | Enable Admission Webhook Feature |
+| machine.admission.enabled | bool | `false` | Enable Admission Webhook Feature |
 | machine.admission.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | machine.admission.envsFrom | list | `[]` | Extra environment variables from |
 | machine.admission.expose | string | `""` | How to expose the admission service to be reachable from the vcluster. Can be `ingress` or `loadbalancer |
@@ -295,7 +296,7 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.metrics.service.annotations | object | `{}` | Service Annotations |
 | osm.metrics.service.labels | object | `{}` | Service Labels |
 | osm.metrics.serviceMonitor.annotations | object | `{}` | Assign additional Annotations |
-| osm.metrics.serviceMonitor.enabled | bool | `true` | Enable ServiceMonitor |
+| osm.metrics.serviceMonitor.enabled | bool | `false` | Enable ServiceMonitor |
 | osm.metrics.serviceMonitor.endpoint.interval | string | `"15s"` | Set the scrape interval for the endpoint of the serviceMonitor |
 | osm.metrics.serviceMonitor.endpoint.metricRelabelings | list | `[]` | Set metricRelabelings for the endpoint of the serviceMonitor |
 | osm.metrics.serviceMonitor.endpoint.relabelings | list | `[]` | Set relabelings for the endpoint of the serviceMonitor |
@@ -500,7 +501,7 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.scheduler.metrics.service.annotations | object | `{}` | Service Annotations |
 | kubernetes.scheduler.metrics.service.labels | object | `{}` | Service Labels |
 | kubernetes.scheduler.metrics.serviceMonitor.annotations | object | `{}` | Assign additional Annotations |
-| kubernetes.scheduler.metrics.serviceMonitor.enabled | bool | `true` | Enable ServiceMonitor |
+| kubernetes.scheduler.metrics.serviceMonitor.enabled | bool | `false` | Enable ServiceMonitor |
 | kubernetes.scheduler.metrics.serviceMonitor.endpoint.interval | string | `"15s"` | Set the scrape interval for the endpoint of the serviceMonitor |
 | kubernetes.scheduler.metrics.serviceMonitor.endpoint.metricRelabelings | list | `[]` | Set metricRelabelings for the endpoint of the serviceMonitor |
 | kubernetes.scheduler.metrics.serviceMonitor.endpoint.relabelings | list | `[]` | Set relabelings for the endpoint of the serviceMonitor |
@@ -551,7 +552,7 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.etcd.metrics.service.annotations | object | `{}` | Service Annotations |
 | kubernetes.etcd.metrics.service.labels | object | `{}` | Service Labels |
 | kubernetes.etcd.metrics.serviceMonitor.annotations | object | `{}` | Assign additional Annotations |
-| kubernetes.etcd.metrics.serviceMonitor.enabled | bool | `true` | Enable ServiceMonitor |
+| kubernetes.etcd.metrics.serviceMonitor.enabled | bool | `false` | Enable ServiceMonitor |
 | kubernetes.etcd.metrics.serviceMonitor.endpoint.interval | string | `"15s"` | Set the scrape interval for the endpoint of the serviceMonitor |
 | kubernetes.etcd.metrics.serviceMonitor.endpoint.metricRelabelings | list | `[]` | Set metricRelabelings for the endpoint of the serviceMonitor |
 | kubernetes.etcd.metrics.serviceMonitor.endpoint.relabelings | list | `[]` | Set relabelings for the endpoint of the serviceMonitor |

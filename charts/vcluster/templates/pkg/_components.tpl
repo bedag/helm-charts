@@ -248,6 +248,18 @@ name: {{ default (include "vcluster.fullname" $) .name }}
 {{- end -}}
 
 
+{{- define "pkg.components.storageClass" -}}
+  {{- $global := $.ctx.Values.global -}}
+  {{- $storageClass := .sc -}}
+  {{- if $global.storageClassName -}}
+    {{- $storageClass = $global.storageClassName -}}
+  {{- end -}}
+  {{- if $storageClass -}}
+    {{- printf "%s" $storageClass -}}
+  {{- end -}}
+{{- end -}}
+
+
 {{/*
     Components Metrics enabled
 */}}

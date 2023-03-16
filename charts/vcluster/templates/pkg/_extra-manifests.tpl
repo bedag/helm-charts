@@ -81,7 +81,7 @@ spec: {{- include "pkg.argo.app_commons" $ | nindent 2 }}
     repoURL: {{ . }}
       {{- end }}
     targetRevision: {{ default "initialize" .ref }}
-    path: {{ default (printf "./clusters/%s" (include "pkg.cluster.name" $)) .path }}
+    path: {{ include "pkg.utils.template" (dict "tpl" (default (printf "./clusters/%s" (include "pkg.cluster.name" $)) .path) "ctx" $) }}
     {{- end }}
     {{- with (include "gitops.substition.variables.env" $) }}
     plugin:
@@ -122,17 +122,4 @@ metadata:
 stringData:
   private.key: {{ $.Values.gitops.ejson_key }}
   {{- end -}}
-{{- end -}}
-
-{{/* Plugin Definition */}}
-{{- define "pkg.manifests.argo-plugin-subst" -}}
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "pkg.argo.release" $ }}-cmp-subst
-  namespace: {{ include "pkg.argo.release.namespace" $ }}
-data:
-  plugin.yaml: |
-    {{- include "pkg.argo.plugin.subst.cmp" $ | nindent 6 }}
 {{- end -}}

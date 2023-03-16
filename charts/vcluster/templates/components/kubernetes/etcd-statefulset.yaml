@@ -204,9 +204,7 @@ spec:
         {{- range $kubernetes.persistence.accessModes }}
         - {{ . | quote }}
         {{- end }}
-      {{- if $kubernetes.persistence.storageClassName }}
-      storageClassName: {{ $kubernetes.persistence.storageClassName }}
-      {{- end }}
+      storageClassName: {{ include "pkg.components.storageClass" (dict "sc" $kubernetes.persistence.storageClassName "ctx" $) }}
       resources:
         requests:
           storage: {{ $kubernetes.persistence.size | quote }}

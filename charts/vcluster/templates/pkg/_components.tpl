@@ -254,7 +254,7 @@ name: {{ default (include "vcluster.fullname" $) .name }}
   {{- if $global.storageClassName -}}
     {{- $storageClass = $global.storageClassName -}}
   {{- end -}}
-  {{- if$storageClass -}}
+  {{- if $storageClass -}}
     {{- printf "%s" $storageClass -}}
   {{- end -}}
 {{- end -}}

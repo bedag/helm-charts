@@ -100,7 +100,7 @@ volumes:
   {{- if $binaryFiles }}
   - name: {{ $containerName }}-binaryfiles
     secret:
-      secretName: {{ template "library.name" $root }}-{{ $name }}-{{ $containerName }}-binaryfile
+      secretName: {{ template "library.name" $root }}-{{ $name }}-{{ $containerName }}-binaryfiles
   {{- end }}
   {{- end }}
   {{- end }}

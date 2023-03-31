@@ -110,6 +110,15 @@ components:
               content:
                 key1: foo
                 key2: bar
+            appconfig.json:
+              format: "json"
+              mountPath: /opt/appconfig.json
+              content:
+                yaml1: val1
+                yaml2: val2
+                yaml3: val3
+                yaml4:
+                  subkey1: subval1
           binaryFiles:
             binaryFilename:
               mountPath: /opt/my-binary-license

@@ -475,6 +475,16 @@ components:
             #    yaml4:
             #      subkey1: subval1
 
+            #appconfig.json:
+            #  format: "json"
+            #  mountPath: /opt/appconfig.json
+            #  content:
+            #    yaml1: val1
+            #    yaml2: val2
+            #    yaml3: val3
+            #    yaml4:
+            #      subkey1: subval1
+
             #application.conf:
             #  format: "simple"
             #  mountPath: /opt/application.conf

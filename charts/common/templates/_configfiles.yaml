@@ -12,6 +12,8 @@ Generate config structure, at this point it does not matter if we put it in a Se
   {{- end }}
   {{- else if eq $format "yaml" }}
   {{- tpl (toYaml $definition.content) $root | trim | nindent 2 }}
+  {{- else if eq $format "json" }}
+  {{- tpl (toYaml $definition.content) $root | trim | fromYaml | toJson | nindent 2 }}
   {{- else if eq $format "simple" }}
   {{- tpl $definition.content $root | trim | nindent 2 }}
   {{- end }}

@@ -625,12 +625,85 @@
               "patternProperties": {
                 "^.*$": {
                   "type": "object",
-                  "required": [
-                    "deploy"                  ],
                   "properties": {
-                    "deploy": {
-                      "type": "boolean",
-                      "default": false
+                    "policyTypes": {
+                      "type": "array"
+                    },
+                    "ingress": {
+                      "type": "object",
+                      "properties": {
+                        "ipBlock": {
+                          "type": "object",
+                          "required": [
+                            "cidr"
+                          ],
+                          "properties": {
+                            "cidr": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "ports": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "protocol",
+                              "port"
+                            ],
+                            "properties": {
+                              "protocol": {
+                                "type": "string",
+                                "default": "TCP",
+                                "enum": [
+                                  "TCP",
+                                  "UDP",
+                                  "SCTP"
+                                ]
+                              },
+                              "port": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "egress": {
+                      "type": "object",
+                      "properties": {
+                        "ipBlock": {
+                          "type": "object",
+                          "required": [
+                            "cidr"
+                          ],
+                          "properties": {
+                            "cidr": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "ports": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "protocol": {
+                                "type": "string",
+                                "default": "TCP",
+                                "enum": [
+                                  "TCP",
+                                  "UDP",
+                                  "SCTP"
+                                ]
+                              },
+                              "port": {
+                                "type": "integer"
+                              }
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 }

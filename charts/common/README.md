@@ -46,7 +46,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | components.component-1.controller.tolerations | list | `[]` |  |
 | components.component-1.controller.type | string | `"Deployment"` |  |
 | components.component-1.controller.volumes | list | `[]` |  |
-| components.component-1.networkpolicies.networkpolicy-1.deploy | bool | `false` |  |
+| components.component-1.networkpolicies | object | `{}` |  |
 | components.component-1.services.service-1.deploy | bool | `false` |  |
 | defaultTag | string | `"latest"` |  |
 | ingress.annotations."nginx.ingress.kubernetes.io/ssl-redirect" | string | `"true"` |  |

@@ -207,59 +207,57 @@ components:
     # end common.service
     # start common.networkpolicy
     # networkpolicy allows access from outside of the namespace or from other pods
-    networkpolicies:
+    networkpolicies: {}
       # specify the name of the networkpolicy
-      networkpolicy-1:
-          # deploy has to be set to true for rendering to be applied
-          deploy: false
-          # List of policyTypes
-          #policyTypes:
-          #  - Ingress
-          #  - Egress
-          #
-          # Ingress rules
-          #ingress:
-            # Optional IP CIDR source ranges to allow ingress traffic from
-            #ipBlock:
-            #  cidr: "0.0.0.0/0"
-            # namespaceSelector is a optional list of matchLabels maps. This selects particular namespaces from which all Pods should be allowed to access the pods of this component.
-            #namespaceSelector:
-            #- matchLabels:
-            #    app.kubernetes.io/name: appname
-            #    app.kubernetes.io/component: component-1
-            # podSelector is a optional list of matchLabels maps. All pods (in the actual namespace) matching these labels are allowed to access the pods of this component.
-            #podSelector:
-            #- matchLabels:
-            #    app.kubernetes.io/name: appname
-            #    app.kubernetes.io/component: component-2
-            # Ports is a list of ports on which connections are allowed.
-            #ports:
-            #- protocol: TCP
-            #  port: 8080
-            #- protocol: TCP
-            #  port: 8081
-          #
-          # Egress rules
-          #egress:
-            # Optional IP CIDR destination ranges to allow egress traffic to
-            #ipBlock:
-            #  cidr: "0.0.0.0/0"
-            # namespaceSelector is a optional list of matchLabels maps. This selects particular namespaces to where the pods of this component are allowed to connect to.
-            #namespaceSelector:
-            #- matchLabels:
-            #    app.kubernetes.io/name: appname
-            #    app.kubernetes.io/component: component-1
-            # podSelector is a optional list of matchLabels maps. All pods that match these labels may be accessed by the pods of this component.
-            #podSelector:
-            #- matchLabels:
-            #    app.kubernetes.io/name: appname
-            #    app.kubernetes.io/component: component-2
-            # Ports is a list of destination ports (in the previously defined namespaces/pods) to where connections are allowed.
-            #ports:
-            #- protocol: TCP
-            #  port: 8080
-            #- protocol: TCP
-            #  port: 8081
+      #networkpolicy-1:
+        # List of policyTypes
+        #policyTypes:
+        #  - Ingress
+        #  - Egress
+        #
+        # Ingress rules
+        #ingress:
+          # Optional IP CIDR source ranges to allow ingress traffic from
+          #ipBlock:
+          #  cidr: "0.0.0.0/0"
+          # namespaceSelector is a optional list of matchLabels maps. This selects particular namespaces from which all Pods should be allowed to access the pods of this component.
+          #namespaceSelector:
+          #- matchLabels:
+          #    app.kubernetes.io/name: appname
+          #    app.kubernetes.io/component: component-1
+          # podSelector is a optional list of matchLabels maps. All pods (in the actual namespace) matching these labels are allowed to access the pods of this component.
+          #podSelector:
+          #- matchLabels:
+          #    app.kubernetes.io/name: appname
+          #    app.kubernetes.io/component: component-2
+          # Ports is a list of ports on which connections are allowed.
+          #ports:
+          #- protocol: TCP
+          #  port: 8080
+          #- protocol: TCP
+          #  port: 8081
+        #
+        # Egress rules
+        #egress:
+          # Optional IP CIDR destination ranges to allow egress traffic to
+          #ipBlock:
+          #  cidr: "0.0.0.0/0"
+          # namespaceSelector is a optional list of matchLabels maps. This selects particular namespaces to where the pods of this component are allowed to connect to.
+          #namespaceSelector:
+          #- matchLabels:
+          #    app.kubernetes.io/name: appname
+          #    app.kubernetes.io/component: component-1
+          # podSelector is a optional list of matchLabels maps. All pods that match these labels may be accessed by the pods of this component.
+          #podSelector:
+          #- matchLabels:
+          #    app.kubernetes.io/name: appname
+          #    app.kubernetes.io/component: component-2
+          # Ports is a list of destination ports (in the previously defined namespaces/pods) to where connections are allowed.
+          #ports:
+          #- protocol: TCP
+          #  port: 8080
+          #- protocol: TCP
+          #  port: 8081
     # end common.networkpolicy
 
     # controller is used for deploying pods via Deployment, StatefulSet, Job or CronJob ressources

@@ -19,7 +19,6 @@ spec:
 {{- range $name, $component := .Values.components }}
 {{- if $component.networkpolicies }}
 {{- range $networkpolicyname, $networkpolicy := $component.networkpolicies }}
-{{- if $networkpolicy.deploy }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -41,13 +40,14 @@ spec:
   {{- $section := $networkpolicy.ingress }}
   ingress:
     - from:
-      {{ include "networkpolicy.sections" $section | indent 6 }}
-  {{- else if $networkpolicy.egress }}
-  {{- $section := $networkpolicy.egress }}
-    - to:
-      {{ include "networkpolicy.sections" $section | indent 6 }}
+      {{- include "networkpolicy.sections" $section | indent 6 }}
   {{- end }}
-{{- end }}
+  {{- if $networkpolicy.egress }}
+  {{- $section := $networkpolicy.egress }}
+  egress:
+    - to:
+      {{- include "networkpolicy.sections" $section | indent 6 }}
+  {{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

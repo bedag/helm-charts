@@ -620,44 +620,17 @@
                 }
               }
             },
-            "networkpolicy": {
+            "networkpolicies": {
               "type": "object",
-              "required": [
-                "deploy"
-              ],
-              "properties": {
-                "deploy": {
-                  "type": "boolean",
-                  "default": false
-                },
-                "ipBlock": {
+              "patternProperties": {
+                "^.*$": {
                   "type": "object",
                   "required": [
-                    "cidr"
-                  ],
+                    "deploy"                  ],
                   "properties": {
-                    "cidr": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "ingressPorts": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "protocol": {
-                        "type": "string",
-                        "default": "TCP",
-                        "enum": [
-                          "TCP",
-                          "UDP",
-                          "SCTP"
-                        ]
-                      },
-                      "port": {
-                        "type": "integer"
-                      }
+                    "deploy": {
+                      "type": "boolean",
+                      "default": false
                     }
                   }
                 }

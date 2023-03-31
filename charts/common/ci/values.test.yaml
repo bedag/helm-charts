@@ -43,11 +43,20 @@ components:
           - 10.0.0.0/8
     # end common.service
     # start common.networkpolicy
-    networkpolicy:
-      deploy: true
-      podSelector:
-      - matchLabels:
-          app.kubernetes.io/component: component-2
+    networkpolicies:
+      networkpolicy-1:
+        deploy: true
+        policyTypes:
+          - Ingress
+          - Egress
+        ingress:
+          podSelector:
+          - matchLabels:
+            app.kubernetes.io/component: component-2
+        egress:
+          namespaceSelector:
+          - matchLabels:
+            kubernetes.io/metadata.name: namespace-1
     # end common.networkpolicy
     controller:
       deploy: true
@@ -134,10 +143,14 @@ components:
         deploy: true
     # end common.service
     # start common.networkpolicy
-    networkpolicy:
-      deploy: true
-      ipBlock:
-        cidr: 0.0.0.0/0
+    networkpolicies:
+      networkpolicy-1:
+        deploy: true
+        policyTypes:
+          - Ingress
+        ingress:
+          ipBlock:
+            cidr: 0.0.0.0/0
     # end common.networkpolicy
     controller:
       deploy: true
@@ -207,13 +220,17 @@ components:
         deploy: true
     # end common.service
     # start common.networkpolicy
-    networkpolicy:
-      deploy: true
-      ingressPorts:
-      - protocol: TCP
-        port: "8080"
-      - protocol: TCP
-        port: "8081"
+    networkpolicies:
+      networkpolicy-1:
+        deploy: true
+        policyTypes:
+          - Ingress
+        ingress:
+          ports:
+          - protocol: TCP
+            port: "8080"
+          - protocol: TCP
+            port: "8081"
     # end common.networkpolicy
     controller:
       deploy: true
@@ -281,10 +298,6 @@ components:
       service-1:
         deploy: false
     # end common.service
-    # start common.networkpolicy
-    networkpolicy:
-      deploy: false
-    # end common.networkpolicy
 
     controller:
       deploy: true

@@ -1,7 +1,7 @@
 apiVersion: v2
 name: common
 description: "Bedag's common Helm chart to use for creating other Helm charts"
-version: 9.1.3
+version: 10.0.0
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -27,5 +27,6 @@ annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
-    - "[Fixed]: Allows controller replica of count 0"
-    - "[Fixed]: Typo in volumemout of binaryfiles"
+    - "[Changed]: possibility to create multiple networkpolicies"
+    - "[Added]: namespaceSelector in networkpolicy"
+    - "[Added]: egress networkpolicies"

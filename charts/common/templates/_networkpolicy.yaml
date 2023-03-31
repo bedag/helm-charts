@@ -17,14 +17,14 @@ spec:
 
 {{- $root := . }}
 {{- range $name, $component := .Values.components }}
-{{- if $component.networkpolicy }}
-{{- $networkpolicy := $component.networkpolicy }}
+{{- if $component.networkpolicies }}
+{{- range $networkpolicyname, $networkpolicy := $component.networkpolicies }}
 {{- if $networkpolicy.deploy }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ template "library.name" $root }}-{{ $name }}
+  name: {{ template "library.name" $root }}-{{ $name }}-{{ $networkpolicyname }}
   labels:
 {{ include "library.labels.standard" $root | indent 4 }}
     app.kubernetes.io/component: {{ $name }}
@@ -34,30 +34,20 @@ spec:
       app.kubernetes.io/name: {{ template "library.name" $root }}
       app.kubernetes.io/component: {{ $name }}
   policyTypes:
-    - Ingress
+    {{- range $policytype := $networkpolicy.policyTypes }}
+    - {{ $policytype | quote }}
+    {{- end }}
+  {{- if $networkpolicy.ingress }}
+  {{- $section := $networkpolicy.ingress }}
   ingress:
     - from:
-      {{- if $networkpolicy.ipBlock }}
-      - ipBlock:
-          cidr: {{ $networkpolicy.ipBlock.cidr }}
-      {{- end }}
-      {{- if $networkpolicy.podSelector }}
-      {{- range $networkpolicy.podSelector }}
-      {{- if .matchLabels }}
-      - podSelector:
-          matchLabels:
-            {{- range $key, $val := .matchLabels }}
-            {{ $key }}: {{ $val | quote }}
-            {{- end }}
-      {{- end }}
-      {{- end }}
-      {{- end }}
-      {{- if $networkpolicy.ingressPorts }}
-      ports:
-      {{- with $networkpolicy.ingressPorts }}
-      {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- end }}
+      {{ include "networkpolicy.sections" $section | indent 6 }}
+  {{- else if $networkpolicy.egress }}
+  {{- $section := $networkpolicy.egress }}
+    - to:
+      {{ include "networkpolicy.sections" $section | indent 6 }}
+  {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

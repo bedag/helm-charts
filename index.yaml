@@ -9,6 +9,31 @@ entries:
       artifacthub.io/license: Apache-2.0
       artifacthub.io/prerelease: "false"
     apiVersion: v2
+    created: "2023-03-31T13:31:24.058241537Z"
+    description: Bedag's common Helm chart to use for creating other Helm charts
+    digest: 43c7d28beaf22da3b679f9e96b045274e6d17fad56202410914fefed7d9405da
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Common
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: common
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/common
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/common-9.1.3/common-9.1.3.tgz
+    version: 9.1.3
+  - annotations:
+      artifacthub.io/changes: |
+        - "[Fixed]: Allows controller replica of count 0"
+        - "[Fixed]: Typo in volumemout of binaryfiles"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
     created: "2023-03-28T11:29:51.742033869Z"
     description: Bedag's common Helm chart to use for creating other Helm charts
     digest: 374d1107ec6f1b664adefcb77aa20782c7652b83e63a312abbb5c39a26152871
@@ -1477,4 +1502,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/vcluster-0.1.0/vcluster-0.1.0.tgz
     version: 0.1.0
-generated: "2023-03-28T11:29:51.742242172Z"
+generated: "2023-03-31T13:31:24.058457034Z"

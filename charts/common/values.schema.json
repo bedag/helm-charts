@@ -119,7 +119,10 @@
                 "type": "string"
               },
               "containerPort": {
-                "type": "integer"
+                "type": [
+                  "number",
+                  "string"
+                ]
               }
             }
           }
@@ -274,6 +277,76 @@
         },
         "port": {
           "default": "http"
+        }
+      }
+    },
+    "networkpolicyType": {
+      "type": "object",
+      "properties": {
+        "ipBlock": {
+          "type": "object",
+          "required": [
+            "cidr"
+          ],
+          "properties": {
+            "cidr": {
+              "type": "string"
+            }
+          }
+        },
+        "namespaceSelector": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "patternProperties": {
+              "^.*$": {
+                "type": "object",
+                "patternProperties": {
+                  "^.*$": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "podSelector": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "patternProperties": {
+              "^.*$": {
+                "type": "object",
+                "patternProperties": {
+                  "^.*$": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "protocol": {
+                "type": "string",
+                "enum": [
+                  "TCP",
+                  "UDP",
+                  "SCTP"
+                ]
+              },
+              "port": {
+                "type": [
+                  "number",
+                  "string"
+                ]
+              }
+            }
+          }
         }
       }
     }
@@ -627,83 +700,17 @@
                   "type": "object",
                   "properties": {
                     "policyTypes": {
-                      "type": "array"
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": ["Ingress", "Egress"]
+                      }
                     },
                     "ingress": {
-                      "type": "object",
-                      "properties": {
-                        "ipBlock": {
-                          "type": "object",
-                          "required": [
-                            "cidr"
-                          ],
-                          "properties": {
-                            "cidr": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "ports": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "required": [
-                              "protocol",
-                              "port"
-                            ],
-                            "properties": {
-                              "protocol": {
-                                "type": "string",
-                                "default": "TCP",
-                                "enum": [
-                                  "TCP",
-                                  "UDP",
-                                  "SCTP"
-                                ]
-                              },
-                              "port": {
-                                "type": "integer"
-                              }
-                            }
-                          }
-                        }
-                      }
+                      "$ref": "#/$defs/networkpolicyType"
                     },
                     "egress": {
-                      "type": "object",
-                      "properties": {
-                        "ipBlock": {
-                          "type": "object",
-                          "required": [
-                            "cidr"
-                          ],
-                          "properties": {
-                            "cidr": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "ports": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "protocol": {
-                                "type": "string",
-                                "default": "TCP",
-                                "enum": [
-                                  "TCP",
-                                  "UDP",
-                                  "SCTP"
-                                ]
-                              },
-                              "port": {
-                                "type": "integer"
-                              }
-                            }
-                          }
-                        }
-                      }
+                      "$ref": "#/$defs/networkpolicyType"
                     }
                   }
                 }

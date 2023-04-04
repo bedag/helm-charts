@@ -19,6 +19,7 @@ spec:
 {{- range $name, $component := .Values.components }}
 {{- if $component.networkpolicies }}
 {{- range $networkpolicyname, $networkpolicy := $component.networkpolicies }}
+{{- if $networkpolicy }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -48,6 +49,7 @@ spec:
     - to:
       {{- include "networkpolicy.sections" $section | indent 6 }}
   {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

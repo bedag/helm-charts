@@ -3,6 +3,32 @@ entries:
   common:
   - annotations:
       artifacthub.io/changes: |
+        - "[Changed]: possibility to create multiple networkpolicies"
+        - "[Added]: namespaceSelector in networkpolicy"
+        - "[Added]: egress networkpolicies"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    created: "2023-04-04T05:47:49.801867726Z"
+    description: Bedag's common Helm chart to use for creating other Helm charts
+    digest: 658d4b3a23b261adb7aed6f2481b8774bae7cf619eb3aca23c6e64e0b9b2bf74
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Common
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: common
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/common
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/common-10.0.0/common-10.0.0.tgz
+    version: 10.0.0
+  - annotations:
+      artifacthub.io/changes: |
         - "[Fixed]: Allows controller replica of count 0"
         - "[Fixed]: Typo in volumemout of binaryfiles"
       artifacthub.io/containsSecurityUpdates: "false"
@@ -1502,4 +1528,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/vcluster-0.1.0/vcluster-0.1.0.tgz
     version: 0.1.0
-generated: "2023-03-31T13:31:24.058457034Z"
+generated: "2023-04-04T05:47:49.801973727Z"

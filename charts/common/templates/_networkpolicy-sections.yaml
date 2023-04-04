@@ -1,0 +1,35 @@
+{{- define "networkpolicy.sections" -}}
+{{- $section := . }}
+{{- if $section.ipBlock }}
+- ipBlock:
+    cidr: {{ $section.ipBlock.cidr }}
+{{- end }}
+{{- if $section.namespaceSelector }}
+{{- range $section.namespaceSelector }}
+{{- if .matchLabels }}
+- namespaceSelector:
+    matchLabels:
+      {{- range $key, $val := .matchLabels }}
+      {{ $key }}: {{ $val | quote }}
+      {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- if $section.podSelector }}
+{{- range $section.podSelector }}
+{{- if .matchLabels }}
+- podSelector:
+    matchLabels:
+      {{- range $key, $val := .matchLabels }}
+      {{ $key }}: {{ $val | quote }}
+      {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- if $section.ports }}
+ports:
+{{- with $section.ports }}
+{{- toYaml . | nindent 2 }}
+{{- end }}
+{{- end }}
+{{- end }}

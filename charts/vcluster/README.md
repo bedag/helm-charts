@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.1.1](https://img.shields.io/badge/Version-0.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -150,7 +150,7 @@ We use a lifecycle Job/Cronjob to manage certain configurations within the vclus
 | lifecycle.current.extraManifestsOnInstall | object | See values.yaml | These manifests will be applied inside the cluster, but only on $.Release.Install and wont be touched again (supports templating) |
 | lifecycle.current.script | string | `nil` | Additional configuration script for the current cluster (supports templating) |
 | lifecycle.job.affinity | object | `{}` | Affinity |
-| lifecycle.job.annotations | object | `{}` | Job Annotations |
+| lifecycle.job.annotations | object | `{"helm.sh/hook":"post-install,post-upgrade","helm.sh/hook-delete-policy":"before-hook-creation"}` | Job Annotations |
 | lifecycle.job.extraVolumeMounts | list | `[]` | Additional Pod VolumeMounts |
 | lifecycle.job.extraVolumes | list | `[]` | Additional Pod Volumes |
 | lifecycle.job.failedJobsHistoryLimit | int | `3` | Cronjob failed jobs history limit |

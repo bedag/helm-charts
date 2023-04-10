@@ -12,11 +12,11 @@ metadata:
     {{- include "pkg.components.svc_labels" (dict "labels" $kubernetes.controllerManager.service.labels "ctx" $) | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
     {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.controllerManager.labels "ctx" $)) }}
-      {{- toYaml . | nindent 4 }}
+      {{-  . | nindent 4 }}
     {{- end }}
     {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.controllerManager.annotations "ctx" $)) }}
   annotations:
-      {{- toYaml . | nindent 4 }}
+      {{-  . | nindent 4 }}
     {{- end }}
 spec:
   replicas: {{ $kubernetes.controllerManager.replicaCount }}

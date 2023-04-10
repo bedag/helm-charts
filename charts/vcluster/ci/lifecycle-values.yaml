@@ -1,8 +1,55 @@
-cluster:
-  properties:
-    kubernetes_api_ip: "help"
-    kubernetes_api_port: "6443"
+global: 
+  components:    
+    workloads:
+      labels:
+        components: "label"
+      annotations: 
+        components: "annotation"
+      podLabels:
+        components: "podLabels"
+      podAnnotations:
+        reloader.stakater.com/auto: "true"
+      image:
+        pullPolicy: "Always"
+        pullSecrets:
+          - name: "common-regcred"
+      podSecurityContext:
+        enabled: false
+      # -- Enable Pod Security Context for all workloads
+      #  enabled: true
+      #  seccompProfile:
+      #    type: RuntimeDefault
+  
+      # -- Container Security Context for all workloads (Overwrites per workload securityContext)
+      securityContext:
+        enabled: false
+      # -- Enable Pod Security Context for all workloads
+      #  enabled: true
+      #  allowPrivilegeEscalation: false
+      #  capabilities:
+      #    drop:
+      #    - ALL
+      #  readOnlyRootFilesystem: true
+  
+      # -- Node Selector for all workloads (Overwrites all workloads nodeSelector)
+      nodeSelector: 
+        components: "nodeSelector"
+      # -- Tolerations for all workloads (Overwrites all workloads tolerations)
+      tolerations: []
+      # -- Affinity for all workloads (Overwrites all workloads affinities)
+      affinity: {}
+      # -- Priority Class for all workloads (Overwrites all workloads priorityClassNames)
+      priorityClassName: "components"
+      # -- TopologySpreadConstraints for all workloads (Overwrites all workloads topologySpreadConstraints)
+      topologySpreadConstraints: []
+
 lifecycle:
+  job:
+    reconciler: true
+    labels: 
+      argocd.argoproj.io/hook: PreSync
+    annotations:
+      argocd.argoproj.io/hook: PreSync
   current:
     extraManifests:
       project.yaml: |

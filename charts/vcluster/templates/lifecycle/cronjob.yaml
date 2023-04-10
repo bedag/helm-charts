@@ -7,11 +7,11 @@ metadata:
   name: {{ include "vcluster.fullname" $ }}-lifecycle
   labels: {{- include "vcluster.labels" $ | nindent 4 }}
     {{- with (include "pkg.components.labels" (dict "labels" $manifest.labels "ctx" $)) }}
-      {{- toYaml . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
   annotations:  
     {{- with (include "pkg.components.annotations" (dict "annotations" $manifest.annotations "ctx" $)) }}
-      {{- toYaml . | nindent 4 }}
+      {{-  . | nindent 4 }}
     {{- end }}
 spec:
   schedule: "{{ $manifest.schedule }}"

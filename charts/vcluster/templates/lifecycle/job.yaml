@@ -9,14 +9,14 @@ metadata:
   name: {{ include "vcluster.fullname" $ }}-lifecycle
   labels: {{- include "vcluster.labels" $ | nindent 4 }}
     {{- with (include "pkg.components.labels" (dict "labels" $manifest.labels "ctx" $)) }}
-      {{- toYaml . | nindent 4 }}
+      {{-  . | nindent 4 }}
     {{- end }}
   annotations:
     helm.sh/hook: post-install,post-upgrade
     helm.sh/hook-delete-policy: before-hook-creation
     checksum/config: {{ .Files.Get (printf "templates/bootstrap/kubeadm-config.yaml") | sha256sum  }}
     {{- with (include "pkg.components.annotations" (dict "annotations" $manifest.annotations "ctx" $)) }}
-      {{- toYaml . | nindent 4 }}
+      {{-  . | nindent 4 }}
     {{- end }}
 spec:
   ttlSecondsAfterFinished: 120

@@ -412,7 +412,7 @@ components:
       volumes: []
         # name of the volume
         #- name: generic-name
-        # type can either be "secret", "configMap" or "persistentVolumeClaim"
+        # type can either be "secret", "configMap", "persistentVolumeClaim" or "emptyDir"
         #  type: "secret"
         # START ONLY FOR SECRET or CONFIGMAP
         # filePath is optional for specifying a filePath in the helm chart where the file is located.
@@ -426,6 +426,12 @@ components:
         # readOnly will force the ReadOnly setting in VolumeMounts. Comment out for using default (false)
         #  readOnly: true
         # END ONLY FOR PERSISTENTVOLUMECLAIM
+        # START ONLY FOR EMPTYDIR
+        # medium represents what type of storage medium should be used. Must be an empty string (default) or Memory.
+        #  medium: "Memory"
+        # sizeLimit is the total amount of local storage required for this EmptyDir volume. Default is nil which means that the limit is undefined.
+        #  sizeLimit: 100Mi
+        # END ONLY FOR EMPTYDIR
       # end pod
 
       # start containers

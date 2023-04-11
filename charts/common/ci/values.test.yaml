@@ -176,6 +176,9 @@ components:
           type: "persistentVolumeClaim"
           # claimNameSuffix has to be the same as .pvcs.[].name
           claimNameSuffix: "name-of-pvc"
+        - name: emptydir-volume
+          type: "emptyDir"
+          sizeLimit: 100Mi
 
       containers:
         container-1:

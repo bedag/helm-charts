@@ -3,6 +3,30 @@ entries:
   common:
   - annotations:
       artifacthub.io/changes: |
+        - "[Added]: add emptyDir volumes"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    created: "2023-04-11T12:21:24.281000206Z"
+    description: Bedag's common Helm chart to use for creating other Helm charts
+    digest: dcafb3e4b2b4c057b8597ab9603bd0fe49d01c29c83d273246bb5755c90f2a6f
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Common
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: common
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/common
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/common-10.1.0/common-10.1.0.tgz
+    version: 10.1.0
+  - annotations:
+      artifacthub.io/changes: |
         - "[Changed]: possibility to create multiple networkpolicies"
         - "[Added]: namespaceSelector in networkpolicy"
         - "[Added]: egress networkpolicies"
@@ -1546,4 +1570,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/vcluster-0.1.0/vcluster-0.1.0.tgz
     version: 0.1.0
-generated: "2023-04-10T14:33:32.722087447Z"
+generated: "2023-04-11T12:21:24.281113308Z"

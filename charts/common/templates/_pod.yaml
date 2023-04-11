@@ -67,6 +67,18 @@ volumes:
       {{- if .readOnly }}
       readOnly: {{ .readOnly }}
       {{- end }}
+  {{- else if eq .type "emptyDir" }}
+    {{- if or .sizeLimit .medium }}
+    emptyDir:
+      {{- if .medium }}
+      medium: {{ .medium }}
+      {{- end }}
+      {{- if .sizeLimit }}
+      sizeLimit: {{ .sizeLimit }}
+      {{- end }}
+    {{- else }}
+    emptyDir: {}
+    {{- end }}
   {{- end }}
   {{- end }}
   {{- end }}

@@ -18,7 +18,9 @@ metadata:
       {{-  . | nindent 4 }}
     {{- end }}
 spec:
+  {{- if not $kubernetes.scheduler.autoscaling.enabled }}
   replicas: {{ $kubernetes.scheduler.replicaCount }}
+  {{- end }}
   {{- with $kubernetes.scheduler.strategy }}
   strategy: {{- toYaml . | nindent 4 }}
   {{- end }}

@@ -19,7 +19,9 @@ metadata:
       {{-  . | nindent 4 }}
     {{- end }}
 spec:
+  {{- if not $kubernetes.controllerManager.autoscaling.enabled }}
   replicas: {{ $kubernetes.controllerManager.replicaCount }}
+  {{- end }}
   {{- with $kubernetes.controllerManager.strategy }}
   strategy: {{- toYaml . | nindent 4 }}
   {{- end }}

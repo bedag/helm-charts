@@ -17,7 +17,9 @@ metadata:
       {{-  . | nindent 4 }}
     {{- end }}
 spec:
+  {{- if not $manifest.autoscaling.enabled }}
   replicas: {{ $manifest.replicaCount }}
+  {{- end }}
   {{- with $manifest.strategy }}
   strategy: {{- toYaml . | nindent 4 }}
   {{- end }}

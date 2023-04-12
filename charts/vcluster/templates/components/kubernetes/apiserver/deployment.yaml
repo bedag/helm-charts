@@ -19,7 +19,9 @@ metadata:
       {{-  . | nindent 4 }}
     {{- end }}
 spec:
+  {{- if not $kubernetes.apiServer.autoscaling.enabled }}
   replicas: {{ $kubernetes.apiServer.replicaCount }}
+  {{- end }}
   {{- with $kubernetes.apiServer.strategy }}
   strategy: {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -32,7 +34,7 @@ spec:
         {{- include "pkg.components.pod_labels" (dict "labels" $kubernetes.apiServer.podLabels "ctx" $) | nindent 8 }}
         {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/components/kubernetes/apiserver-config.yaml" ) . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/components/kubernetes/apiserver/config.yaml" ) . | sha256sum }}
         {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.apiServer.podAnnotations "ctx" $) | nindent 8 }}
     spec:
       {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $kubernetes.apiServer.nodeSelector "ctx" $)) }}

@@ -75,3 +75,8 @@
     {{- end }}
   {{- end }}
 {{- end -}}
+
+
+{{- define "pkg.utils.kubeVersion" -}}
+{{- default .Capabilities.KubeVersion.Version .Values.utils.kubeVersion -}}
+{{- end -}}

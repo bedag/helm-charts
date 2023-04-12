@@ -1,0 +1,68 @@
+machine:
+  enabled: true
+  podDisruptionBudget: 
+    maxUnavailable: 1
+  admission:
+    enabled: false
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 75
+osm:
+  enabled: true
+  podDisruptionBudget: 
+    maxUnavailable: 1
+  admission:
+    enabled: false
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 75
+kubernetes:
+  enabled: true
+  apiServer: 
+    enabled: true
+    podDisruptionBudget: 
+      maxUnavailable: 1
+    autoscaling:
+      enabled: true
+      minReplicas: 3
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: 75
+  controllerManager:
+    enabled: true
+    podDisruptionBudget: 
+      maxUnavailable: 1    
+    autoscaling:
+      enabled: true
+      minReplicas: 3
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: 75
+  scheduler:
+    enabled: true
+    podDisruptionBudget: 
+      maxUnavailable: 1
+    autoscaling:
+      enabled: true
+      minReplicas: 3
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: 75
+autoscaler:
+  enabled: true
+  podDisruptionBudget: 
+    maxUnavailable: 1
+  autoscaling:
+    enabled: true
+    minReplicas: 3
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 75
+
+

@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.1.3](https://img.shields.io/badge/Version-0.1.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -13,6 +13,12 @@ Virtual Kubernetes Cluster
 | Name | Email | Url |
 | ---- | ------ | --- |
 | Bedag Informatik AG | <sre@bedag.ch> |  |
+
+## Requirements
+
+| Repository | Name | Version |
+|------------|------|---------|
+| https://charts.bitnami.com/bitnami | common | 2.2.4 |
 
 # Major Changes
 
@@ -380,6 +386,11 @@ Available Values for the [Kubernetes component](#kubernetes).
 |-----|------|---------|-------------|
 | kubernetes.apiServer.affinity | object | `{}` | Affinity |
 | kubernetes.apiServer.args | object | `{}` | Extra arguments for the kube-apiserver |
+| kubernetes.apiServer.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler |
+| kubernetes.apiServer.autoscaling.maxReplicas | int | `5` | Maximum available Replicas |
+| kubernetes.apiServer.autoscaling.minReplicas | int | `1` | Minimum available Replicas |
+| kubernetes.apiServer.autoscaling.targetCPUUtilizationPercentage | int | `80` | Benchmark CPU Usage |
+| kubernetes.apiServer.autoscaling.targetMemoryUtilizationPercentage | string | `nil` | Benchmark Memory Usage |
 | kubernetes.apiServer.certSANs.dnsNames | list | `[]` | Additonal API-Server dns names for ETCD ceritifcate |
 | kubernetes.apiServer.certSANs.ipAddresses | list | `[]` | Additonal API-Server adresses for ETCD ceritifcate |
 | kubernetes.apiServer.enabled | bool | `true` | Enable Kubernetes API-Server |
@@ -449,6 +460,11 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.controllerManager.affinity | object | `{}` | Affinity |
 | kubernetes.controllerManager.annotations | object | `{}` | Annotations for Workload |
 | kubernetes.controllerManager.args | object | `{}` | Extra arguments for the [controller-manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) |
+| kubernetes.controllerManager.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler |
+| kubernetes.controllerManager.autoscaling.maxReplicas | int | `5` | Maximum available Replicas |
+| kubernetes.controllerManager.autoscaling.minReplicas | int | `1` | Minimum available Replicas |
+| kubernetes.controllerManager.autoscaling.targetCPUUtilizationPercentage | int | `80` | Benchmark CPU Usage |
+| kubernetes.controllerManager.autoscaling.targetMemoryUtilizationPercentage | string | `nil` | Benchmark Memory Usage |
 | kubernetes.controllerManager.enabled | bool | `true` | Enable Kubernetes Controller-Manager |
 | kubernetes.controllerManager.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.controllerManager.envsFrom | list | `[]` | Extra environment variables from |
@@ -487,6 +503,11 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.scheduler.affinity | object | `{}` | Affinity |
 | kubernetes.scheduler.annotations | object | `{}` | Annotations for Workload |
 | kubernetes.scheduler.args | object | `{}` | Extra arguments for the [scheduler](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-scheduler/) |
+| kubernetes.scheduler.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler |
+| kubernetes.scheduler.autoscaling.maxReplicas | int | `5` | Maximum available Replicas |
+| kubernetes.scheduler.autoscaling.minReplicas | int | `1` | Minimum available Replicas |
+| kubernetes.scheduler.autoscaling.targetCPUUtilizationPercentage | int | `80` | Benchmark CPU Usage |
+| kubernetes.scheduler.autoscaling.targetMemoryUtilizationPercentage | string | `nil` | Benchmark Memory Usage |
 | kubernetes.scheduler.configuration | object | `{}` | kube-scheduler configuration [Read More](https://kubernetes.io/docs/reference/scheduling/config/) |
 | kubernetes.scheduler.enabled | bool | `true` | Enable Kubernetes Scheduler |
 | kubernetes.scheduler.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |

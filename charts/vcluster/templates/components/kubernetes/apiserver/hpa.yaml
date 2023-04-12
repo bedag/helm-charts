@@ -1,24 +1,27 @@
-{{- if (include "machine-controller.enabled" $) -}}
-  {{- $machine := $.Values.machine -}}
-  {{- $manifest := $machine.autoscaling -}}
-  {{- if $manifest.enabled }}
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if $kubernetes.apiServer.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "apiserver" -}}
+    {{- $manifest := $kubernetes.apiServer.autoscaling -}}
+    {{- if $manifest.enabled }}
 ---
 apiVersion: {{ include "common.capabilities.hpa.apiVersion" ( dict "context" $ ) }}
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "machine-controller.fullname" . }}
+  name: "{{ $fullName }}-apiserver"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
   namespace: {{ .Release.Namespace }}
-  labels:
-    {{- include "machine-controller.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "machine-controller.fullname" . }}
+    name: "{{ $fullName }}-apiserver"
   minReplicas: {{ $manifest.minReplicas }}
   maxReplicas: {{ $manifest.maxReplicas }}
   metrics:
-    {{- if $manifest.targetCPUUtilizationPercentage }}
+      {{- if $manifest.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
@@ -29,8 +32,8 @@ spec:
           type: Utilization
           averageUtilization: {{ $manifest.targetCPUUtilizationPercentage }}
         {{- end }}
-    {{- end }}
-    {{- if $manifest.targetMemoryUtilizationPercentage }}
+      {{- end }}
+      {{- if $manifest.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
@@ -41,6 +44,7 @@ spec:
           type: Utilization
           averageUtilization: {{ $manifest.targetMemoryUtilizationPercentage }}
         {{- end }}
-    {{- end }}
-  {{- end }}
-{{- end }}
+      {{- end }}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

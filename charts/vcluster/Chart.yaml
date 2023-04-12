@@ -2,7 +2,7 @@ apiVersion: v2
 name: vcluster
 description: Virtual Kubernetes Cluster
 type: application
-version: 0.1.2
+version: 0.1.3
 appVersion: 0.1.0
 keywords:
   - vcluster
@@ -12,3 +12,7 @@ home: https://artifacthub.io/packages/helm/kvaps/kubernetes
 maintainers:
   - name: "Bedag Informatik AG"
     email: sre@bedag.ch
+dependencies:
+  - name: common
+    version: 2.2.4
+    repository: https://charts.bitnami.com/bitnami

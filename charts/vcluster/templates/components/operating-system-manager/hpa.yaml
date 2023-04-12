@@ -3,7 +3,7 @@
   {{- $manifest := $osm.autoscaling -}}
   {{- if $manifest.enabled }}
 ---
-apiVersion: autoscaling/v2beta1
+apiVersion: {{ include "common.capabilities.hpa.apiVersion" ( dict "context" $ ) }}
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "operating-system-manager.fullname" . }}
@@ -22,13 +22,25 @@ spec:
     - type: Resource
       resource:
         name: cpu
+        {{- if semverCompare "<1.23-0" (include "pkg.utils.kubeVersion" .) }}
         targetAverageUtilization: {{ $manifest.targetCPUUtilizationPercentage }}
+        {{- else }}
+        target:
+          type: Utilization
+          averageUtilization: {{ $manifest.targetCPUUtilizationPercentage }}
+        {{- end }}
     {{- end }}
     {{- if $manifest.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
+        {{- if semverCompare "<1.23-0" (include "pkg.utils.kubeVersion" .) }}
         targetAverageUtilization: {{ $manifest.targetMemoryUtilizationPercentage }}
+        {{- else }}
+        target:
+          type: Utilization
+          averageUtilization: {{ $manifest.targetMemoryUtilizationPercentage }}
+        {{- end }}
     {{- end }}
   {{- end -}}
 {{- end -}}

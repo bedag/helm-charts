@@ -1,0 +1,21 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if $kubernetes.scheduler.enabled }}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "scheduler" -}}
+    {{- if $kubernetes.scheduler.podDisruptionBudget -}}
+---
+apiVersion: {{ include "common.capabilities.policy.apiVersion" $ }}
+kind: PodDisruptionBudget
+metadata:
+  name: "{{ $fullName }}-scheduler"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ .Release.Namespace }}
+spec: {{- toYaml $kubernetes.scheduler.podDisruptionBudget | nindent 2 }}
+  selector:
+    matchLabels: {{- include "kubernetes.labels" $ | nindent 6 }}
+      {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

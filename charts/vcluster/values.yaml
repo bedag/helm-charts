@@ -1,7 +1,5 @@
 # Cluster Configuration
 global:
-
-  # Proxy Configuration
   proxy:
     # -- Proxy Host
     host: ""
@@ -1430,6 +1428,19 @@ kubernetes:
       annotations: {}
       loadBalancerIP:
 
+    # Autoscaler Configuration
+    autoscaling:
+      # -- Enable Horizontal Pod Autoscaler
+      enabled: false
+      # -- Minimum available Replicas
+      minReplicas: 1
+      # -- Maximum available Replicas
+      maxReplicas: 5
+      # -- Benchmark CPU Usage
+      targetCPUUtilizationPercentage: 80
+      # -- Benchmark Memory Usage
+      targetMemoryUtilizationPercentage:
+
   controllerManager:
     # -- Enable Kubernetes Controller-Manager
     enabled: true
@@ -1525,6 +1536,19 @@ kubernetes:
       annotations: {}
       # -- LoadBalancerIP
       loadBalancerIP:
+
+    # Autoscaler Configuration
+    autoscaling:
+      # -- Enable Horizontal Pod Autoscaler
+      enabled: false
+      # -- Minimum available Replicas
+      minReplicas: 1
+      # -- Maximum available Replicas
+      maxReplicas: 5
+      # -- Benchmark CPU Usage
+      targetCPUUtilizationPercentage: 80
+      # -- Benchmark Memory Usage
+      targetMemoryUtilizationPercentage:
 
   scheduler:
     # -- Enable Kubernetes Scheduler
@@ -1624,6 +1648,19 @@ kubernetes:
       annotations: {}
       # -- LoadBalancerIP
       loadBalancerIP:
+
+    # Autoscaler Configuration
+    autoscaling:
+      # -- Enable Horizontal Pod Autoscaler
+      enabled: false
+      # -- Minimum available Replicas
+      minReplicas: 1
+      # -- Maximum available Replicas
+      maxReplicas: 5
+      # -- Benchmark CPU Usage
+      targetCPUUtilizationPercentage: 80
+      # -- Benchmark Memory Usage
+      targetMemoryUtilizationPercentage:
 
     ## Metrics Configuration
     metrics:
@@ -1818,7 +1855,6 @@ kubernetes:
       type: RollingUpdate
       rollingUpdate:
         maxUnavailable: 1
-
 
   # Konnectivity Server
   konnectivityServer:
@@ -2197,6 +2233,9 @@ autoscaler:
 # ----------------------------
 # Utilities
 # ----------------------------
+# -- kubeVersion Override Kubernetes version
+kubeVersion: ""
+
 utils:
   # -- Base Label used for labels
   base_label: "app.kubernetes.io"

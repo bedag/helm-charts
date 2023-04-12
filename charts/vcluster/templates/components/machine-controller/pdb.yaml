@@ -2,7 +2,7 @@
   {{- $manifest := $.Values.machine -}}
   {{- if $manifest.podDisruptionBudget -}}
 ---
-apiVersion: "policy/v1"
+apiVersion: {{ include "common.capabilities.policy.apiVersion" $ }}
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "machine-controller.fullname" . }}

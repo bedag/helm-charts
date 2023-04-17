@@ -26,8 +26,7 @@ spec:
   - "cert sign"
   isCA: true
   issuerRef:
-    name: "{{ $fullName }}-selfsigning-issuer"
-    kind: Issuer
+    {{- include "pkg.components.certificates.issuer" $ | nindent 4 }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer

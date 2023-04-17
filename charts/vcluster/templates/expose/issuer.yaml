@@ -3,7 +3,7 @@
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name:  {{ include "vcluster.fullname" $ }}-self-signed
+  name:  {{ include "pkg.components.certificates.default_issuer" $ }}
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "vcluster.labels" $  | nindent 4 }}

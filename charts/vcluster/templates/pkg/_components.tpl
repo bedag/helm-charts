@@ -208,17 +208,18 @@
   {{- end -}}
 {{- end -}}
 
+{{- define "pkg.components.certificates.default_issuer" -}}
+{{ include "pkg.cluster.name" $ }}-self-signed
+{{- end -}}
 
 
-
-$.Values.global.components.admission.expose
 
 {{- define "pkg.components.certificates.issuer" -}}
   {{- $components := $.Values.global.components -}}
   {{- with $components.exposure.certificates.issuer }}
     {{- if .selfSigned }}
 kind: Issuer
-name: {{ include "vcluster.fullname" $ }}-self-signed
+name: {{ include "pkg.components.certificates.default_issuer" $ }}
     {{- else }}
 kind: {{ .kind }}
 name: {{ default (include "vcluster.fullname" $) .name }}

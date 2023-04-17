@@ -59,7 +59,7 @@ spec:
   - "cert sign"
   isCA: true
   issuerRef:
-    name: "{{ $fullName }}-selfsigning-issuer"
+    name: "{{ $fullName }}-issuer"
     kind: Issuer
 ---
 {{- $svcName1 := printf "%s-controller-manager" $fullName }}

@@ -127,8 +127,8 @@ spec:
         {{- end }}
 
         {{- if not (hasKey $kubernetes.konnectivity.agent.args "proxy-server-port") }}
-          {{- if and $kubernetes.konnectivity.server.sidecar (include "kubernetes.api.endpointPort" $) }}
-        - --proxy-server-port={{ include "kubernetes.api.endpointPort" $ }}
+          {{- if $kubernetes.konnectivity.server.sidecar }}
+        - --proxy-server-port={{ $kubernetes.konnectivity.server.ports.agent }}
           {{- else if eq $kubernetes.konnectivity.server.service.type "LoadBalancer" }}
         - --proxy-server-port={{ $kubernetes.konnectivity.server.service.ports.agent }}
           {{- else if $kubernetes.konnectivity.server.service.NodePort }}

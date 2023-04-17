@@ -3,6 +3,7 @@ kind: ClusterRoleBinding
 metadata:
   name: system:konnectivity-server
   labels:
+    component: "konnectivity-server"
     kubernetes.io/cluster-service: "true"
     addonmanager.kubernetes.io/mode: Reconcile
 roleRef:

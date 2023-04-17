@@ -64,19 +64,20 @@ kubectl apply -f /manifests/regcred.yaml
 kubectl delete secret {{ include "pkg.images.registry.secretname" $ }} -n {{ include "pkg.images.registry.secretnamespace" $ }} 2>/dev/null || true
 {{- end }}
 
-{{- if $kubernetes.konnectivityServer.enabled }}{{"\n"}}
+{{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.server.enabled }}{{"\n"}}
 # install konnectivity server
-kubectl apply -f /manifests/konnectivity-server-rbac.yaml
+kubectl apply -f /manifests/konnectivity-server.yaml
 {{- else }}{{"\n"}}
-kubectl delete -f /manifests/konnectivity-server-rbac.yaml 2>/dev/null || true
+kubectl delete ClusterRoleBinding ystem:konnectivity-server || true
 {{- end }}
 
-{{- if $kubernetes.konnectivityAgent.enabled }}{{"\n"}}
+
+{{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.agent.enabled }}{{"\n"}}
 # install konnectivity agent
-kubectl apply -f /manifests/konnectivity-agent-deployment.yaml -f /manifests/konnectivity-agent-rbac.yaml
+kubectl apply -f /manifests/konnectivity-agent.yaml
 {{- else }}{{"\n"}}
 # uninstall konnectivity agent
-kubectl delete -f /manifests/konnectivity-agent-deployment.yaml -f /manifests/konnectivity-agent-rbac.yaml 2>/dev/null || true
+kubectl delete sa/ 2>/dev/null || true
 {{- end }}
 
 {{- if $kubernetes.coredns.enabled }}{{"\n"}}

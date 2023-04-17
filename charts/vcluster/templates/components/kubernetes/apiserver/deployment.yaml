@@ -157,19 +157,21 @@ spec:
           name: pki-apiserver-kubelet-client
         - mountPath: /pki/sa
           name: pki-sa
-        {{- if and $kubernetes.konnectivityServer.enabled (eq $kubernetes.konnectivityServer.mode "HTTPConnect") }}
+        {{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.server.enabled $kubernetes.konnectivity.server.sidecar }}
+          {{- if (eq $kubernetes.konnectivity.server.mode "HTTPConnect") }}
         - mountPath: /pki/konnectivity-client
           name: pki-konnectivity-client
-        {{- end }}
-        {{- if and $kubernetes.konnectivityServer.enabled (eq $kubernetes.konnectivityServer.mode "GRPC") }}
+          {{- end }}
+          {{- if (eq $kubernetes.konnectivity.server.mode "GRPC") }}
         - mountPath: /run/konnectivity-server
-          name: konnectivity-uds
+          name: konnectivity-uds      
+          {{- end }}
         {{- end }}
         {{- with $kubernetes.apiServer.volumeMounts }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
-      {{- if and $kubernetes.konnectivityServer.enabled (eq $kubernetes.konnectivityServer.mode "GRPC") }}
-      {{ template "kubernetes.konnectivityServer.containers" . }}
+      {{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.server.enabled $kubernetes.konnectivity.server.sidecar }}
+        {{ include "kubernetes.konnectivityServer.containers" $ | nindent 6 }}
       {{- end }}
       {{- with (include "pkg.components.podSecurityContext" (dict "psc" $kubernetes.apiServer.podSecurityContext "ctx" $)) }}
       securityContext: {{ . | nindent 8 }}
@@ -193,13 +195,13 @@ spec:
       - secret:
           secretName: "{{ $fullName }}-pki-sa"
         name: pki-sa
-      {{- if $kubernetes.konnectivityServer.enabled }}
+      {{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.server.enabled }}
       - secret:
           secretName: "{{ $fullName }}-pki-konnectivity-client"
         name: pki-konnectivity-client
-      {{- end }}
-      {{- if and $kubernetes.konnectivityServer.enabled (eq $kubernetes.konnectivityServer.mode "GRPC") }}
-      {{ template "kubernetes.konnectivityServer.volumes" . }}
+        {{- if $kubernetes.konnectivity.server.sidecar }}
+          {{- include "kubernetes.konnectivityServer.volumes" $ | nindent 6 }}
+        {{- end }}
       {{- end }}
       {{- with $kubernetes.apiServer.volumes }}
         {{- toYaml . | nindent 6 }}

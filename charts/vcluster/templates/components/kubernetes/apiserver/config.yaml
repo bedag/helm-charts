@@ -16,14 +16,14 @@ data:
     egressSelections:
     - name: cluster
       connection:
-        {{- if and $kubernetes.konnectivityServer.enabled }}
-        {{- if has $kubernetes.konnectivityServer.mode (list "HTTPConnect" "GRPC") }}
-        proxyProtocol: {{ $kubernetes.konnectivityServer.mode }}
-        {{- else }}
-        {{- fail "$kubernetes.konnectivityServer.mode supports only \"HTTPConnect\" and \"GRPC\" values" }}
-        {{- end }}
+        {{- if and $kubernetes.konnectivity.enabled  $kubernetes.konnectivity.server.enabled }}
+          {{- if has $kubernetes.konnectivity.server.mode (list "HTTPConnect" "GRPC") }}
+        proxyProtocol: {{ $kubernetes.konnectivity.server.mode }}
+          {{- else }}
+            {{- fail "$kubernetes.konnectivity.server.mode supports only \"HTTPConnect\" and \"GRPC\" values" }}
+          {{- end }}
         transport:
-          {{- if eq $kubernetes.konnectivityServer.mode "GRPC" }}
+          {{- if eq $kubernetes.konnectivity.server.mode "GRPC" }}
           uds:
             udsName: /run/konnectivity-server/konnectivity-server.socket
           {{- else }}

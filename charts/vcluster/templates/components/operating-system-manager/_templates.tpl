@@ -328,7 +328,7 @@ fi
   InitContainer to apply/delete manifests
 */}}
 {{- define "operating-system-manager.manifest-init" -}}
-  {{- $manifest := $.Values.lifecycle.job  -}}
+  {{- $manifest := $.Values.lifecycle.jobs  -}}
   {{- if (include "operating-system-manager.manifest-exist" $) }}
 - name: osm-manifests
   image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}

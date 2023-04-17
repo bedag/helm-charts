@@ -205,7 +205,11 @@ lifecycle:
   current:
 
     # -- Additional configuration script for the current cluster (supports templating)
-    script:
+    setupScript:
+    #  echo "I am a script which runs on the current cluster"
+
+    # -- Additional configuration script for the vcluster during cleanup (supports templating)
+    cleanupScript:
     #  echo "I am a script which runs on the current cluster"
 
     # -- These manifests will be applied inside the cluster (supports templating)
@@ -231,8 +235,12 @@ lifecycle:
   # Additional customization for interactions with the vcluster cluster
   vcluster:
 
-    # -- Additional configuration script for the vcluster (supports templating)
-    script:
+    # -- Additional configuration script for the vcluster during reconciler (supports templating)
+    setupScript:
+    #  echo "I am a script which runs on the vcluster"
+
+    # -- Additional configuration script for the vcluster during cleanup (supports templating)
+    cleanupScript:
     #  echo "I am a script which runs on the vcluster"
 
     # -- These manifests will be applied inside the vcluster (supports templating)
@@ -255,23 +263,8 @@ lifecycle:
     #   metadata:
     #     name: example
 
-  # Gitops Setup Job
-  job:
-    # -- Deploy as Cronjob to run periodically
-    reconciler: true
-    # -- Job Annotations
-    annotations: 
-      helm.sh/hook: post-install,post-upgrade
-      helm.sh/hook-delete-policy: before-hook-creation
-    # -- Job Labels
-    labels: {}
-    # -- Cronjob Schedule
-    schedule: "0 0 1 */6 *"
-    # -- Cronjob successful jobs history limit
-    successfulJobsHistoryLimit: 3
-    # -- Cronjob failed jobs history limit
-    failedJobsHistoryLimit: 3
-    # -- Run Installer Jobs again (Only execute on Helm install)
+  # Workload configuration for all jobs
+  jobs:
     image:
       registry: registry-group.mgmtbi.ch
       repository: sre/gitops/cluster_bootstrap
@@ -328,6 +321,44 @@ lifecycle:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
+
+  # Setup Job
+  # Uses the workload settings from the jobs section above
+  setup:
+    # -- Deploy as Cronjob to run periodically
+    cronjob: true
+    # -- Job Annotations
+    annotations: 
+      helm.sh/hook: post-install,post-upgrade
+      helm.sh/hook-delete-policy: before-hook-creation
+      # argocd.argoproj.io/hook: Sync
+      # argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    # -- Job Labels
+    labels: {}
+    # -- Cronjob Schedule
+    schedule: "0 0 1 */6 *"
+    # -- Cronjob successful jobs history limit
+    successfulJobsHistoryLimit: 3
+    # -- Cronjob failed jobs history limit
+    failedJobsHistoryLimit: 3
+    # -- Run Installer Jobs again (Only execute on Helm install)
+
+  # Cleanup (Runs on uninstall)
+  # Uses the workload settings from the jobs section above
+  cleanup:
+    # -- Enable/Disable Cleanup
+    enabled: false
+    # -- Job Annotations
+    annotations: 
+      helm.sh/hook: pre-delete
+      helm.sh/hook-delete-policy: before-hook-creation
+      # argocd.argoproj.io/hook: Sync
+      # argocd.argoproj.io/hook-delete-policy: HookSucceeded
+    # -- Job Labels
+    labels: {}
+
+
+
   # ServiceAccount
   serviceAccount:
     # -- Specifies whether a service account should be created
@@ -1188,7 +1219,7 @@ kubernetes:
     # https://console.cloud.google.com/gcr/images/etcd-development/GLOBAL/etcd?pli=1
     image:
       # -- Image registry
-      registry: k8s.gcr.io
+      registry: registry.k8s.io
       # -- Image repository
       repository: etcd
       # -- Image tag
@@ -1857,187 +1888,200 @@ kubernetes:
         maxUnavailable: 1
 
   # Konnectivity Server
-  konnectivityServer:
-    # -- Enable Konnectivity Server
-    enabled: true
-    # -- This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment.
-    mode: GRPC
-    image:
-      # -- Image registry
-      registry: us.gcr.io
-      # -- Image repository
-      repository: k8s-artifacts-prod/kas-network-proxy/proxy-server
-      # -- Image tag
-      tag: v0.0.24
-      # -- Image pull policy
-      pullPolicy: IfNotPresent
-      # -- Image Digest
-      digest: ""
-    # -- Image pull Secrets
-    imagePullSecrets: []
-    # -- Konnectivity Server Replicas (only used in HTTPConnect mode)
-    replicaCount: 2
-    # -- Konnectivity Server resources
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-    # -- Labels for Workload
-    labels: {}
-    # -- Annotations for Workload
-    annotations: {}
-    # -- Pod Labels
-    podLabels: {}
-    # -- Pod Annotations
-    podAnnotations: {}
-    # -- Extra environment variables (`key: value` style, allows templating)
-    envs: {}
-    # -- Extra environment variables from
-    envsFrom: []
-    # -- Container Security Context
-    securityContext:
+  konnectivity:
+    # -- En/Disable konnectivity-server and konnectivity-agent
+    enabled: true 
+    # -- Set version for both konnectivity-server and konnectivity-agent
+    version: ""
+    # Konnectivity Server
+    server: 
+      # -- Enable Konnectivity Server
       enabled: true
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-        - all
-      readOnlyRootFilesystem: true
-      runAsUser: 65534
-      runAsGroup: 65534
-    # -- Pod Security Context (only used in HTTPConnect mode)
-    podSecurityContext:
-      enabled: true
-      runAsNonRoot: true
-      seccompProfile:
-        type: RuntimeDefault
-    # -- Node Selector
-    nodeSelector: {}
-    # -- Tolerations
-    tolerations: []
-    # -- Affinity
-    affinity: {}
-    podAntiAffinity: soft
-    podAntiAffinityTopologyKey: kubernetes.io/hostname
-    # -- Additional Volumes
-    volumes: []
-    # -- Additional Volumemounts
-    volumeMounts: []
-    # -- Pod PriorityClassName
-    priorityClassName: ""
-    # -- TopologySpreadConstraints for all workloads
-    topologySpreadConstraints: []
-    # -- Configure PodDisruptionBudget
-    podDisruptionBudget: {}
-    # maxUnavailable: 1
-    # -- Deployment Update Strategy
-    strategy:
-      type: RollingUpdate
-      rollingUpdate:
-        maxUnavailable: 50%
-    # -- Konnectivity Server extra arguments 
-    args: {}
-
-    ports:
-      server: 8131
-      agent: 8132
-      admin: 8133
-      health: 8134
-    service:
-      enabled: true
-      type: ClusterIP
+      # -- This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment.
+      mode: GRPC
+      # -- Enable Konnectivity Server as sidecfar for API Server
+      sidecar: true
+      # Konnectivity Server Image
+      image:
+        # -- Image registry
+        registry: registry.k8s.io
+        # -- Image repository
+        repository: kas-network-proxy/proxy-server
+        # -- Image tag
+        tag: v0.0.37
+        # -- Image pull policy
+        pullPolicy: IfNotPresent
+        # -- Image Digest
+        digest: ""
+      # -- Image pull Secrets
+      imagePullSecrets: []
+      # -- Konnectivity Server Replicas (only used in HTTPConnect mode)
+      replicaCount: 2
+      # -- Konnectivity Server resources
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      # -- Labels for Workload
+      labels: {}
+      # -- Annotations for Workload
+      annotations: {}
+      # -- Pod Labels
+      podLabels: {}
+      # -- Pod Annotations
+      podAnnotations: {}
+      # -- Extra environment variables (`key: value` style, allows templating)
+      envs: {}
+      # -- Extra environment variables from
+      envsFrom: []
+      # -- Container Security Context
+      securityContext:
+        enabled: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - all
+        readOnlyRootFilesystem: true
+        runAsUser: 65534
+        runAsGroup: 65534
+      # -- Pod Security Context (only used in HTTPConnect mode)
+      podSecurityContext:
+        enabled: true
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      # -- Node Selector
+      nodeSelector: {}
+      # -- Tolerations
+      tolerations: []
+      # -- Affinity
+      affinity: {}
+      podAntiAffinity: soft
+      podAntiAffinityTopologyKey: kubernetes.io/hostname
+      # -- Additional Volumes
+      volumes: []
+      # -- Additional Volumemounts
+      volumeMounts: []
+      # -- Pod PriorityClassName
+      priorityClassName: ""
+      # -- TopologySpreadConstraints for all workloads
+      topologySpreadConstraints: []
+      # -- Configure PodDisruptionBudget
+      podDisruptionBudget: {}
+      # maxUnavailable: 1
+      # -- Deployment Update Strategy
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 50%
+      # -- Konnectivity Server extra arguments 
+      args: {}
+  
       ports:
         server: 8131
         agent: 8132
         admin: 8133
-      nodePorts:
-        server:
-        agent:
-        admin:
+        health: 8134
+      service:
+        enabled: true
+        type: ClusterIP
+        ports:
+          server: 8131
+          agent: 8132
+          admin: 8133
+        nodePorts:
+          server:
+          agent:
+          admin:
+        labels: {}
+        annotations: {}
+        loadBalancerIP:
+  
+    # Konnectivity Agent
+    agent:
+      # -- Enable Konnectivity Agent
+      enabled: false
+      # -- Can be `DaemonSet` or `Deployment`
+      type: DaemonSet
+      # -- Use HostNetwork
+      hostNetwork: false
+      # Konnectivity Agent Image
+      image:
+        # -- Image registry
+        registry: registry.k8s.io
+        # -- Image repository
+        repository: kas-network-proxy/proxy-agent
+        # -- Image pull policy
+        pullPolicy: IfNotPresent
+        # -- Image tag (Version Overwrites)
+        # Overrides the image tag whose default is the chart appVersion.
+        tag: "v0.0.37"
+        # -- Image Digest
+        digest: ""
+      # -- Image pull Secrets
+      imagePullSecrets: []
+      # -- Replicas for admin (only for type `Deployment`)
+      replicaCount: 2
+      # -- Pod Requests and limits
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      # -- Labels for Workload
       labels: {}
+      # -- Annotations for Workload
       annotations: {}
-      loadBalancerIP:
-
-  konnectivityAgent:
-    # -- Enable Konnectivity Agent
-    enabled: false
-    # -- Use HostNetwork
-    hostNetwork: true
-    image:
-      # -- Image registry
-      registry: us.gcr.io
-      # -- Image repository
-      repository: k8s-artifacts-prod/kas-network-proxy/proxy-agent
-      # -- Image pull policy
-      pullPolicy: IfNotPresent
-      # -- Image tag (Version Overwrites)
-      # Overrides the image tag whose default is the chart appVersion.
-      tag: "v0.0.24"
-      # -- Image Digest
-      digest: ""
-    # -- Image pull Secrets
-    imagePullSecrets: []
-    # -- Replicas for admin
-    replicaCount: 2
-    # -- Pod Requests and limits
-    resources:
-      requests:
-        cpu: 100m
-        memory: 128Mi
-    # -- Labels for Workload
-    labels: {}
-    # -- Annotations for Workload
-    annotations: {}
-    # -- Pod Labels
-    podLabels: {}
-    # -- Pod Annotations
-    podAnnotations: {}
-    # -- Extra environment variables (`key: value` style, allows templating)
-    envs: {}
-    # -- Extra environment variables from
-    envsFrom: []
-    # -- Container Security Context
-    securityContext:
-      enabled: true
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-        - all
-      readOnlyRootFilesystem: true
-      runAsUser: 65534
-      runAsGroup: 65534
-    # -- Pod Security Context
-    podSecurityContext:
-      enabled: true
-      runAsNonRoot: true
-      seccompProfile:
-        type: RuntimeDefault
-    # -- Node Selector
-    nodeSelector: {}
-    # -- Tolerations
-    tolerations:
-      - key: "CriticalAddonsOnly"
-        operator: "Exists"
-    # -- Affinity
-    affinity: {}
-    podAntiAffinity: soft
-    podAntiAffinityTopologyKey: kubernetes.io/hostname
-    # -- Pod PriorityClassName
-    priorityClassName: "system-cluster-critical"
-    # -- TopologySpreadConstraints for all workloads
-    topologySpreadConstraints: []
-    # -- Deployment Update Strategy
-    strategy:
-      type: RollingUpdate
-      rollingUpdate:
-        maxUnavailable: 50%
-    # -- Konnectivity Agent extra arguments 
-    args: {}
-    ports:
-      # -- Konnectivity Agent Administration Port
-      admin: 8133
-      # -- Konnectivity Agent Health Port
-      health: 8134
-
+      # -- Pod Labels
+      podLabels: {}
+      # -- Pod Annotations
+      podAnnotations: {}
+      # -- Extra environment variables (`key: value` style, allows templating)
+      envs: {}
+      # -- Extra environment variables from
+      envsFrom: []
+      # -- Container Security Context
+      securityContext:
+        enabled: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+          - all
+        readOnlyRootFilesystem: true
+        runAsUser: 65534
+        runAsGroup: 65534
+      # -- Pod Security Context
+      podSecurityContext:
+        enabled: true
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      # -- Node Selector
+      nodeSelector: {}
+      # -- Tolerations
+      tolerations:
+        - key: "CriticalAddonsOnly"
+          operator: "Exists"
+      # -- Affinity
+      affinity: {}
+      podAntiAffinity: soft
+      podAntiAffinityTopologyKey: kubernetes.io/hostname
+      # -- Pod PriorityClassName
+      priorityClassName: "system-cluster-critical"
+      # -- TopologySpreadConstraints for all workloads
+      topologySpreadConstraints: []
+      # -- Deployment Update Strategy (Or DaemonSet Update Strategy)
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 50%
+      # -- Konnectivity Agent extra arguments 
+      args: {}
+      ports:
+        # -- Konnectivity Agent Administration Port
+        admin: 8133
+        # -- Konnectivity Agent Health Port
+        health: 8134
+  
 # ----------------------------
 #  Cluster-Autoscaler (Autoscaler) Component
 #   Reference: https://github.com/kube-green/kube-green

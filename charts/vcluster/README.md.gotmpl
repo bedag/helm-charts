@@ -225,6 +225,13 @@ Available Values for the [Operating System Manager](). The component consists of
 
 Available Values for the [Kubernetes component](#kubernetes).
 
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key) (not (or (contains "apiServer." .Key) (contains "controllerManager." .Key) (contains "scheduler." .Key) (contains "etcd." .Key) (contains "konnectivity." .Key) (contains "admin." .Key) (contains "coredns." .Key))) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
 
 
 ### API-Server
@@ -232,15 +239,6 @@ Available Values for the [Kubernetes component](#kubernetes).
 {{- template "table.heading" $ }}
 {{- range .Values }}
   {{- if and (hasPrefix "kubernetes." .Key)  (contains "apiServer." .Key) }}
-| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
-  {{- end }}
-{{- end }}
-
-### Konnektivity-Server
-
-{{- template "table.heading" $ }}
-{{- range .Values }}
-  {{- if and (hasPrefix "kubernetes." .Key)  (contains "konnectivityServer." .Key) }}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}
@@ -273,6 +271,41 @@ Available Values for the [Kubernetes component](#kubernetes).
   {{- end }}
 {{- end }}
 
+### Konnektivity
+
+Konnectivity is required to establish a connection to the API Server from the cluster network. [Read More about it](https://kubernetes.io/docs/tasks/extend-kubernetes/setup-konnectivity/). The following values are available for both Konnectivity Components:
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "konnectivity." .Key) (not (or (contains "agent" .Key) (contains "server" .Key))) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
+#### Server
+
+The Konnectivity-Server is deployed alongside with the API-Server. It must be reachable for the Konnectivity-Agent.
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "konnectivity." .Key) (contains "server" .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+#### Agent (In-Cluster)
+
+The konnectivity-Agent is deployed inside the vcluster and should establish a connection to the Konnectivity-Server. We recommend running the Konnectivity-Agent as Daemonset.
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "konnectivity." .Key) (contains "agent" .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
 ### Admin
 
 Deploys an administration pod which has the admin kubeconfig mounted and allows for easy access to the cluster.
@@ -289,16 +322,6 @@ Deploys an administration pod which has the admin kubeconfig mounted and allows 
 {{- template "table.heading" $ }}
 {{- range .Values }}
   {{- if and (hasPrefix "kubernetes." .Key)  (contains "coredns." .Key) }}
-| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
-  {{- end }}
-{{- end }}
-
-
-### Konnektivity-Agent (In-Cluster)
-
-{{- template "table.heading" $ }}
-{{- range .Values }}
-  {{- if and (hasPrefix "kubernetes." .Key)  (contains "konnectivityAgent." .Key) }}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}

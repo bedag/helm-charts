@@ -1,9 +1,10 @@
 {{- if (include "kubernetes.enabled" $) -}}
   {{- $kubernetes := $.Values.kubernetes -}}
-  {{- if and $kubernetes.konnectivityServer.enabled (eq $kubernetes.konnectivityServer.mode "HTTPConnect") }}
-    {{- $fullName := include "kubernetes.fullname" . -}}
-    {{- $certName := include "kubernetes.certname" . -}}
-    {{- $component_name := "konnectivity" -}}
+  {{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.server.enabled -}}
+    {{- if (eq $kubernetes.konnectivity.server.mode "HTTPConnect") -}}
+      {{- $fullName := include "kubernetes.fullname" . -}}
+      {{- $certName := include "kubernetes.certname" . -}}
+      {{- $component_name := "konnectivity" -}}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -91,5 +92,6 @@ spec:
   issuerRef:
     name: "{{ $fullName }}-konnectivity-issuer"
     kind: Issuer
-  {{- end }}
-{{- end }}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

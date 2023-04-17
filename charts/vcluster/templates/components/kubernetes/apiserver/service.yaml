@@ -24,10 +24,10 @@ spec:
     {{- with $kubernetes.apiServer.service.nodePort }}
     nodePort: {{ . }}
     {{- end }}
-  {{- if and $kubernetes.konnectivityServer.enabled $kubernetes.konnectivityServer.service.enabled (eq $kubernetes.konnectivityServer.mode "GRPC") }}
-  - port: {{ $kubernetes.konnectivityServer.ports.agent }}
+  {{- if and $kubernetes.konnectivity.server.enabled $kubernetes.konnectivity.server.service.enabled (eq $kubernetes.konnectivity.server.mode "GRPC") }}
+  - port: {{ $kubernetes.konnectivity.server.ports.agent }}
     name: agent
-    {{- with $kubernetes.konnectivityServer.service.nodePorts.client }}
+    {{- with $kubernetes.konnectivity.server.service.nodePorts.client }}
     nodePort: {{ . }}
     {{- end }}
   {{- end }}

@@ -1,0 +1,25 @@
+{{/* Always deploy manifests (required for removals */}}
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- $fullName := include "kubernetes.fullname" . -}}
+  {{- $component_name := "konnectivity" -}}
+  {{- if $kubernetes.konnectivity.enabled -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullName }}-konnectivity-manifests
+  namespace: {{ $.Release.Namespace }}
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+data:
+    {{- if $kubernetes.konnectivity.server.enabled }}
+  konnectivity-server.yaml: |
+      {{- tpl (.Files.Get (printf "%s/konnectivity-server.yaml" (include "kubernetes.manifests.dir" $ | trimSuffix "/"))) . | nindent 4 }}
+    {{- end }}
+    {{- if $kubernetes.konnectivity.agent.enabled }}
+  konnectivity-agent.yaml: |
+      {{- tpl (.Files.Get (printf "%s/konnectivity-agent.yaml" (include "kubernetes.manifests.dir" $ | trimSuffix "/"))) . | nindent 4 }}
+    {{- end }}
+  {{- end -}}
+{{- end -}}

@@ -10,6 +10,7 @@ metadata:
   name: "{{ $fullName }}-pki-ca"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   commonName: "{{ $certName }}-ca"
   secretName: "{{ $fullName }}-pki-ca"
@@ -24,8 +25,7 @@ spec:
   - "cert sign"
   isCA: true
   issuerRef:
-    name: "{{ $fullName }}-selfsigning-issuer"
-    kind: Issuer
+    {{- include "pkg.components.certificates.issuer" $ | nindent 4 }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer
@@ -33,6 +33,7 @@ metadata:
   name: "{{ $fullName }}-issuer"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   ca:
     secretName: "{{ $fullName }}-pki-ca"
@@ -43,6 +44,7 @@ metadata:
   name: "{{ $fullName }}-pki-sa"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   commonName: "{{ $certName }}-sa"
   secretName: "{{ $fullName }}-pki-sa"
@@ -69,6 +71,7 @@ metadata:
   name: "{{ $fullName }}-pki-controller-manager-server"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   commonName: "{{ $certName }}-controller-manager-server"
   secretName: "{{ $fullName }}-pki-controller-manager-server"
@@ -85,7 +88,6 @@ spec:
   - "{{ $svcName1 }}"
   - "{{ $svcName2 }}"
   - "{{ $svcName3 }}"
-  - "localhost"
   {{- with $kubernetes.apiServer.certSANs.dnsNames }}
   {{- . | toYaml | nindent 2 }}
   {{- end }}
@@ -116,6 +118,7 @@ metadata:
   name: "{{ $fullName }}-pki-scheduler-server"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   commonName: "{{ $certName }}-scheduler-server"
   secretName: "{{ $fullName }}-pki-scheduler-server"
@@ -163,6 +166,7 @@ metadata:
   name: "{{ $fullName }}-pki-apiserver-server"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   commonName: "{{ $certName }}-apiserver-server"
   secretName: "{{ $fullName }}-pki-apiserver-server"
@@ -179,6 +183,9 @@ spec:
   - "{{ $svcName1 }}"
   - "{{ $svcName2 }}"
   - "{{ $svcName3 }}"
+  - kubernetes.default
+  - kubernetes.default.svc
+  - kubernetes.default.svc.{{ $kubernetes.networking.dnsDomain | trimAll "." }}
   - "localhost"
   {{- with $kubernetes.apiServer.certSANs.dnsNames }}
   {{- . | toYaml | nindent 2 }}
@@ -207,6 +214,7 @@ metadata:
   name: "{{ $fullName }}-pki-controller-manager-client"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   commonName: "system:kube-controller-manager"
   secretName: "{{ $fullName }}-pki-controller-manager-client"
@@ -227,6 +235,9 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: "{{ $fullName }}-pki-scheduler-client"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   commonName: "system:kube-scheduler"
   secretName: "{{ $fullName }}-pki-scheduler-client"
@@ -249,6 +260,7 @@ metadata:
   name: "{{ $fullName }}-pki-konnectivity-server-client"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   commonName: "system:konnectivity-server"
   secretName: "{{ $fullName }}-pki-konnectivity-server-client"
@@ -271,6 +283,7 @@ metadata:
   name: "{{ $fullName }}-pki-admin-client"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   commonName: "{{ $certName }}-admin-client"
   secretName: "{{ $fullName }}-pki-admin-client"
@@ -293,6 +306,7 @@ metadata:
   name: "{{ $fullName }}-pki-apiserver-kubelet-client"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   commonName: "{{ $certName }}-apiserver-kubelet-client"
   secretName: "{{ $fullName }}-pki-apiserver-kubelet-client"

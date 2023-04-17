@@ -374,7 +374,7 @@ fi
   InitContainer to apply/delete manifests
 */}}
 {{- define "machine-controller.manifest-init" -}}
-  {{- $manifest := $.Values.lifecycle.job  -}}
+  {{- $manifest := $.Values.lifecycle.jobs  -}}
   {{- if (include "machine-controller.manifest-exist" $) }}
 - name: machine-manifests
   image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}

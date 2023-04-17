@@ -72,7 +72,7 @@ https://kubernetes.default.svc
     Connectivity Container
 */}}
 {{- define "pkg.cluster.connectivity" -}}
-  {{- $manifest := $.Values.lifecycle.job  -}}
+  {{- $manifest := $.Values.lifecycle.jobs  -}}
 - name: connectivity
   image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
   imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy "ctx" $) }}

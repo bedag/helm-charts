@@ -1,0 +1,180 @@
+{{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.agent.enabled }}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- $fullName := include "kubernetes.fullname" . -}}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: konnectivity-agent
+  namespace: kube-system
+  labels:
+    component: "konnectivity-agent"
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: Reconcile
+---
+apiVersion: apps/v1
+metadata:
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
+    component: "konnectivity-agent"
+    {{- with $kubernetes.konnectivity.agent.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with $kubernetes.konnectivity.agent.annotations }}
+    annotations:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  namespace: kube-system
+  name: konnectivity-agent
+{{- if (eq $kubernetes.konnectivity.agent.type "Deployment") }}
+kind: Deployment
+spec:
+  replicas: {{ $kubernetes.konnectivity.agent.replicaCount }}
+  {{- with $kubernetes.konnectivity.agent.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- else }}
+kind: DaemonSet
+spec:
+  {{- with $kubernetes.konnectivity.agent.strategy }}
+  updateStrategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+  selector:
+    matchLabels:
+      component: "konnectivity-agent"
+  template:
+    metadata:
+      labels:
+        component: "konnectivity-agent"
+        {{- with $kubernetes.konnectivity.agent.podLabels }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with $kubernetes.konnectivity.agent.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with $kubernetes.konnectivity.agent.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $kubernetes.konnectivity.agent.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      hostNetwork: {{ $kubernetes.konnectivity.agent.hostNetwork }}
+      {{- if $kubernetes.konnectivity.agent.podSecurityContext.enabled }}
+      securityContext:
+        {{- toYaml (omit $kubernetes.konnectivity.agent.podSecurityContext "enabled") | nindent 8 }}
+      {{- end }}
+      priorityClassName: {{ $kubernetes.konnectivity.agent.priorityClassName }}
+      {{- with $kubernetes.konnectivity.agent.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if or $kubernetes.konnectivity.agent.affinity $kubernetes.konnectivity.agent.podAntiAffinity }}
+      affinity:
+        {{- with $kubernetes.konnectivity.agent.affinity }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if eq $kubernetes.konnectivity.agent.podAntiAffinity "hard" }}
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: "{{ $kubernetes.konnectivity.agent.podAntiAffinityTopologyKey }}"
+              labelSelector:
+                matchLabels:
+                  app: {{ $fullName }}-konnectivity-server
+        {{- else if eq $kubernetes.konnectivity.agent.podAntiAffinity "soft" }}
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                topologyKey: "{{ $kubernetes.konnectivity.agent.podAntiAffinityTopologyKey }}"
+                labelSelector:
+                  matchLabels:
+                    app: {{ $fullName }}-konnectivity-server
+        {{- end }}
+      {{- end }}
+      imagePullSecrets:
+        {{- with $kubernetes.konnectivity.agent.imagePullSecrets }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      containers:
+      - name: konnectivity-agent
+        {{- with $kubernetes.konnectivity.agent.image }}
+        image: {{ include "pkg.images.registry.convert" (dict "image" . "ctx" $) }}
+        imagePullPolicy: {{ .pullPolicy }}
+        {{- end }}
+        command:
+        - /proxy-agent
+        - --logtostderr=true
+        - --ca-cert=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        - --service-account-token-path=/var/run/secrets/tokens/konnectivity-agent-token
+
+        {{- if not (hasKey $kubernetes.konnectivity.agent.args "proxy-server-host") }}
+        {{- if and (eq $kubernetes.konnectivity.server.mode "HTTPConnect") $kubernetes.konnectivity.server.service.loadBalancerIP }}
+        - --proxy-server-host={{ $kubernetes.konnectivity.server.service.loadBalancerIP }}
+        {{- else if and (eq $kubernetes.konnectivity.server.mode "GRPC") $kubernetes.apiServer.service.loadBalancerIP }}
+        - --proxy-server-host={{ $kubernetes.apiServer.service.loadBalancerIP }}
+        {{- else }}
+        {{- fail "kubernetes.konnectivity.agent.args.proxy-server-host must be specified!" }}
+        {{- end }}
+        {{- end }}
+
+        {{- if not (hasKey $kubernetes.konnectivity.agent.args "proxy-server-port") }}
+        {{- if eq $kubernetes.konnectivity.server.service.type "LoadBalancer" }}
+        - --proxy-server-port={{ $kubernetes.konnectivity.server.service.ports.agent }}
+        {{- else if $kubernetes.konnectivity.server.service.NodePort }}
+        - --proxy-server-port={{ $kubernetes.konnectivity.server.service.nodePorts.agent }}
+        {{- else }}
+        {{- fail "kubernetes.konnectivity.agent.args.proxy-server-port must be specified!" }}
+        {{- end }}
+        {{- end }}
+        - --admin-server-port={{ $kubernetes.konnectivity.agent.ports.admin }}
+        - --health-server-port={{ $kubernetes.konnectivity.agent.ports.health }}
+        {{- with $kubernetes.konnectivity.agent.args }}
+          {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 10 }}
+        {{- end }}
+        {{- with $kubernetes.konnectivity.agent.envs }}
+        env: 
+          {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
+        {{- end }}
+        {{- with $kubernetes.konnectivity.agent.envsFrom }}
+        envFrom:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with $kubernetes.konnectivity.agent.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- if $kubernetes.konnectivity.agent.securityContext.enabled }}
+        securityContext:
+          {{- toYaml (omit $kubernetes.konnectivity.agent.securityContext "enabled") | nindent 10 }}
+        {{- end }}
+        ports:
+        - containerPort: {{ $kubernetes.konnectivity.agent.ports.admin }}
+          name: admin
+        - containerPort: {{ $kubernetes.konnectivity.agent.ports.health }}
+          name: health
+        volumeMounts:
+        - mountPath: /var/run/secrets/tokens
+          name: konnectivity-agent-token
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: {{ $kubernetes.konnectivity.agent.ports.health }}
+            scheme: HTTP
+          initialDelaySeconds: 15
+          timeoutSeconds: 15
+      serviceAccountName: konnectivity-agent
+      volumes:
+      - name: konnectivity-agent-token
+        projected:
+          sources:
+          - serviceAccountToken:
+              path: konnectivity-agent-token
+              audience: system:konnectivity-server
+{{- end -}}

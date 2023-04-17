@@ -1,13 +1,15 @@
 {{- if (include "kubernetes.enabled" $) -}}
   {{- $kubernetes := $.Values.kubernetes -}}
-  {{- if $kubernetes.konnectivityServer.enabled }}
-    {{- $fullName := include "kubernetes.fullname" . -}}
-    {{- $component_name := "konnectivity" -}}
+  {{- if $kubernetes.konnectivity.enabled -}}
+    {{- if $kubernetes.konnectivity.server.enabled -}}
+      {{- $fullName := include "kubernetes.fullname" . -}}
+      {{- $component_name := "konnectivity" -}}
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ $fullName }}-konnectivity-server-conf
+  namespace: {{ $.Release.Namespace }}
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
 data:
@@ -32,5 +34,6 @@ data:
       user:
         client-certificate: /pki/konnectivity-server-client/tls.crt
         client-key: /pki/konnectivity-server-client/tls.key
-  {{- end }}
-{{- end }}
+  {{- end -}}
+  {{- end -}}
+{{- end -}}

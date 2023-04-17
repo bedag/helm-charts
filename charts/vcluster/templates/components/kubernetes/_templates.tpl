@@ -128,96 +128,96 @@ Template for konnectivityServer containers
 */}}
 {{- define "kubernetes.konnectivityServer.containers" -}}
   {{- $kubernetes := $.Values.kubernetes -}}
-      - command:
-        - /proxy-server
-        - --logtostderr=true
-        - --server-count={{ $kubernetes.konnectivityServer.replicaCount }}
-        - --server-id=$(POD_NAME)
-        - --cluster-cert=/pki/apiserver/tls.crt
-        - --cluster-key=/pki/apiserver/tls.key
-        {{- if eq $kubernetes.konnectivityServer.mode "HTTPConnect" }}
-        - --mode=http-connect
-        - --server-port={{ $kubernetes.konnectivityServer.ports.server }}
-        - --server-ca-cert=/pki/konnectivity-server/ca.crt
-        - --server-cert=/pki/konnectivity-server/tls.crt
-        - --server-key=/pki/konnectivity-server/tls.key
-        {{- else }}
-        - --mode=grpc
-        - --uds-name=/run/konnectivity-server/konnectivity-server.socket
-        - --server-port=0
-        {{- end }}
-        - --agent-port={{ $kubernetes.konnectivityServer.ports.agent }}
-        - --admin-port={{ $kubernetes.konnectivityServer.ports.admin }}
-        - --health-port={{ $kubernetes.konnectivityServer.ports.health }}
-        - --agent-namespace=kube-system
-        - --agent-service-account=konnectivity-agent
-        - --kubeconfig=/etc/kubernetes/konnectivity-server.conf
-        - --authentication-audience=system:konnectivity-server
-        {{- with $kubernetes.konnectivityServer.args }}
-          {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 8 }}
-        {{- end }}
-        ports:
-        {{- if eq $kubernetes.konnectivityServer.mode "HTTPConnect" }}
-        - containerPort: {{ $kubernetes.konnectivityServer.ports.server }}
-          name: server
-        {{- end }}
-        - containerPort: {{ $kubernetes.konnectivityServer.ports.agent }}
-          name: agent
-        - containerPort: {{ $kubernetes.konnectivityServer.ports.admin }}
-          name: admin
-        - containerPort: {{ $kubernetes.konnectivityServer.ports.health }}
-          name: health
-        {{- with $kubernetes.konnectivityServer.image }}
-        image: {{ include "pkg.images.registry.convert" (dict "image" . "ctx" $) }}
-        imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .pullPolicy "ctx" $) }}
-        {{- end }}
-        livenessProbe:
-          failureThreshold: 8
-          httpGet:
-            path: /healthz
-            port: {{ $kubernetes.konnectivityServer.ports.health }}
-            scheme: HTTP
-          initialDelaySeconds: 30
-          timeoutSeconds: 60
-        name: konnectivity-server
-        resources:
-          {{- toYaml $kubernetes.konnectivityServer.resources | nindent 10 }}
-        {{- if $kubernetes.konnectivityServer.securityContext.enabled }}
-          {{- with $kubernetes.konnectivityServer.securityContext }}
-        securityContext:
-          {{- toYaml (omit . "enabled") | nindent 10 }}
-          {{- end }}
-        {{- end }}
-        {{- with $kubernetes.konnectivityServer.envsFrom }}
-        envFrom:
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
-        env: {{- include "pkg.common.env" $ | nindent 8 }}
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        {{- with $kubernetes.konnectivityServer.envs }}
-          {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
-        {{- end }}
-        volumeMounts:
-        - mountPath: /pki/apiserver
-          name: pki-apiserver
-        {{- if eq $kubernetes.konnectivityServer.mode "HTTPConnect" }}
-        - mountPath: /pki/konnectivity-server
-          name: pki-konnectivity-server
-        {{- else }}
-        - mountPath: /run/konnectivity-server
-          name: konnectivity-uds
-        {{- end }}
-        - mountPath: /pki/konnectivity-server-client
-          name: pki-konnectivity-server-client
-        - mountPath: /etc/kubernetes/
-          name: kubeconfig
-          readOnly: true
-        {{- with $kubernetes.konnectivityServer.extraVolumeMounts }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+- command:
+  - /proxy-server
+  - --logtostderr=true
+  - --server-count={{ $kubernetes.konnectivity.server.replicaCount }}
+  - --server-id=$(POD_NAME)
+  - --cluster-cert=/pki/apiserver/tls.crt
+  - --cluster-key=/pki/apiserver/tls.key
+  {{- if eq $kubernetes.konnectivity.server.mode "HTTPConnect" }}
+  - --mode=http-connect
+  - --server-port={{ $kubernetes.konnectivity.server.ports.server }}
+  - --server-ca-cert=/pki/konnectivity-server/ca.crt
+  - --server-cert=/pki/konnectivity-server/tls.crt
+  - --server-key=/pki/konnectivity-server/tls.key
+  {{- else }}
+  - --mode=grpc
+  - --uds-name=/run/konnectivity-server/konnectivity-server.socket
+  - --server-port=0
+  {{- end }}
+  - --agent-port={{ $kubernetes.konnectivity.server.ports.agent }}
+  - --admin-port={{ $kubernetes.konnectivity.server.ports.admin }}
+  - --health-port={{ $kubernetes.konnectivity.server.ports.health }}
+  - --agent-namespace=kube-system
+  - --agent-service-account=konnectivity-agent
+  - --kubeconfig=/etc/kubernetes/konnectivity-server.conf
+  - --authentication-audience=system:konnectivity-server
+  {{- with $kubernetes.konnectivity.server.args }}
+    {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 2 }}
+  {{- end }}
+  ports:
+  {{- if eq $kubernetes.konnectivity.server.mode "HTTPConnect" }}
+  - containerPort: {{ $kubernetes.konnectivity.server.ports.server }}
+    name: server
+  {{- end }}
+  - containerPort: {{ $kubernetes.konnectivity.server.ports.agent }}
+    name: agent
+  - containerPort: {{ $kubernetes.konnectivity.server.ports.admin }}
+    name: admin
+  - containerPort: {{ $kubernetes.konnectivity.server.ports.health }}
+    name: health
+  {{- with $kubernetes.konnectivity.server.image }}
+  image: {{ include "pkg.images.registry.convert" (dict "image" . "ctx" $) }}
+  imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .pullPolicy "ctx" $) }}
+  {{- end }}
+  livenessProbe:
+    failureThreshold: 8
+    httpGet:
+      path: /healthz
+      port: {{ $kubernetes.konnectivity.server.ports.health }}
+      scheme: HTTP
+    initialDelaySeconds: 30
+    timeoutSeconds: 60
+  name: konnectivity-server
+  resources:
+    {{- toYaml $kubernetes.konnectivity.server.resources | nindent 4 }}
+  {{- if $kubernetes.konnectivity.server.securityContext.enabled }}
+    {{- with $kubernetes.konnectivity.server.securityContext }}
+  securityContext:
+    {{- toYaml (omit . "enabled") | nindent 4 }}
+    {{- end }}
+  {{- end }}
+  {{- with $kubernetes.konnectivity.server.envsFrom }}
+  envFrom:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  env: {{- include "pkg.common.env" $ | nindent 2 }}
+  - name: POD_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  {{- with $kubernetes.konnectivity.server.envs }}
+    {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 2 }}
+  {{- end }}
+  volumeMounts:
+  - mountPath: /pki/apiserver
+    name: pki-apiserver
+  {{- if eq $kubernetes.konnectivity.server.mode "HTTPConnect" }}
+  - mountPath: /pki/konnectivity-server
+    name: pki-konnectivity-server
+  {{- else }}
+  - mountPath: /run/konnectivity-server
+    name: konnectivity-uds
+  {{- end }}
+  - mountPath: /pki/konnectivity-server-client
+    name: pki-konnectivity-server-client
+  - mountPath: /etc/kubernetes/
+    name: kubeconfig
+    readOnly: true
+  {{- with $kubernetes.konnectivity.server.extraVolumeMounts }}
+    {{- toYaml . | nindent 2 }}
+  {{- end }}
 {{- end -}}
 
 {{/*
@@ -225,26 +225,26 @@ Template for konnectivityServer volumes
 */}}
 {{- define "kubernetes.konnectivityServer.volumes" -}}
   {{- $kubernetes := $.Values.kubernetes -}}
-      - secret:
-          secretName: "{{ template "kubernetes.fullname" . }}-pki-apiserver-server"
-        name: pki-apiserver
-      {{- if eq $kubernetes.konnectivityServer.mode "HTTPConnect" }}
-      - secret:
-          secretName: "{{ template "kubernetes.fullname" . }}-pki-konnectivity-server"
-        name: pki-konnectivity-server
-      {{- else }}
-      - secret:
-          secretName: "{{ template "kubernetes.fullname" . }}-pki-konnectivity-server-client"
-        name: pki-konnectivity-server-client
-      - emptyDir: {}
-        name: konnectivity-uds
-      {{- end }}
-      - configMap:
-          name: "{{ template "kubernetes.fullname" . }}-konnectivity-server-conf"
-        name: kubeconfig
-      {{- with $kubernetes.konnectivityServer.extraVolumes }}
-      {{- toYaml . | nindent 6 }}
-      {{- end }}
+- secret:
+    secretName: "{{ template "kubernetes.fullname" . }}-pki-apiserver-server"
+  name: pki-apiserver
+{{- if eq $kubernetes.konnectivity.server.mode "HTTPConnect" }}
+- secret:
+    secretName: "{{ template "kubernetes.fullname" . }}-pki-konnectivity-server"
+  name: pki-konnectivity-server
+{{- else }}
+- secret:
+    secretName: "{{ template "kubernetes.fullname" . }}-pki-konnectivity-server-client"
+  name: pki-konnectivity-server-client
+- emptyDir: {}
+  name: konnectivity-uds
+{{- end }}
+- configMap:
+    name: "{{ template "kubernetes.fullname" . }}-konnectivity-server-conf"
+  name: kubeconfig
+  {{- with $kubernetes.konnectivity.server.extraVolumes }}
+    {{- toYaml . | nindent 6 }}
+  {{- end }}
 {{- end -}}
 
 

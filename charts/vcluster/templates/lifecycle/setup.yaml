@@ -1,12 +1,12 @@
 {{- $kubernetes := $.Values.kubernetes -}}
 {{- $jobs := $.Values.lifecycle -}}
-{{- $manifest := $jobs.job -}}
+{{- $manifest := $jobs.jobs -}}
 {{- $argocd := $.Values.gitops.argocd.bootstrap -}}
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "vcluster.fullname" $ }}-lifecycle
+  name: {{ include "vcluster.fullname" $ }}-setup
   labels: {{- include "vcluster.labels" $ | nindent 4 }}
     {{- with (include "pkg.components.labels" (dict "labels" $manifest.labels "ctx" $)) }}
       {{-  . | nindent 4 }}
@@ -144,9 +144,11 @@ spec:
           sources:
           - secret:
               name: {{ include "vcluster.fullname" .  }}-manifests
-      {{- if or $kubernetes.konnectivityServer.enabled $kubernetes.konnectivityAgent.enabled }}
+      {{- if $kubernetes.konnectivity.enabled }}
+        {{- if or $kubernetes.konnectivity.server.enabled $kubernetes.konnectivity.agent.enabled }}
           - configMap:
               name: "{{ include "kubernetes.fullname" $  }}-konnectivity-manifests"
+        {{- end }}
       {{- end }}
       {{- if $kubernetes.coredns.enabled }}
           - configMap:

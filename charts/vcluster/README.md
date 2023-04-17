@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.1.3](https://img.shields.io/badge/Version-0.1.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -152,6 +152,7 @@ We use a lifecycle Job/Cronjob to manage certain configurations within the vclus
 | lifecycle.cilium.enabled | bool | `true` | Install Cilium CNI |
 | lifecycle.cilium.on_install | bool | `true` | Install only on chart install (First install) |
 | lifecycle.cilium.version | string | `"1.9.18"` | Cilium version |
+| lifecycle.cleanup.enabled | bool | `true` | Enable/Disable Cleanup |
 | lifecycle.current.extraManifests | object | See values.yaml | These manifests will be applied inside the cluster (supports templating) |
 | lifecycle.current.extraManifestsOnInstall | object | See values.yaml | These manifests will be applied inside the cluster, but only on $.Release.Install and wont be touched again (supports templating) |
 | lifecycle.current.script | string | `nil` | Additional configuration script for the current cluster (supports templating) |
@@ -380,6 +381,13 @@ Available Values for the [Operating System Manager](). The component consists of
 ## Kubernetes Values
 
 Available Values for the [Kubernetes component](#kubernetes).
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetes.component.removeManifestsOnDisable | bool | `true` | Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well) |
+| kubernetes.controlPlane | object | `{"endpoint":null}` | ControlerPlaneEndpoint |
+| kubernetes.controlPlane.endpoint | string | `nil` | Endpoint for ControlPlane (eg `128.1314.1234.4242:6443`). If not set, the vcluster will try to find the endpoint automatically. |
+| kubernetes.enabled | bool | `true` | Enable Kubernetes Component |
+| kubernetes.kubeProxy.enabled | bool | `true` | Install kube-proxy via KubeADM. If disabled, the cilium kube-proxy replacement will be used |
 
 ### API-Server
 | Key | Type | Default | Description |
@@ -421,38 +429,6 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.apiServer.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
 | kubernetes.apiServer.volumeMounts | list | `[]` | Additional volumemounts |
 | kubernetes.apiServer.volumes | list | `[]` | Additional volumes |
-
-### Konnektivity-Server
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| kubernetes.konnectivityServer.affinity | object | `{}` | Affinity |
-| kubernetes.konnectivityServer.annotations | object | `{}` | Annotations for Workload |
-| kubernetes.konnectivityServer.args | object | `{}` | Konnectivity Server extra arguments  |
-| kubernetes.konnectivityServer.enabled | bool | `true` | Enable Konnectivity Server |
-| kubernetes.konnectivityServer.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
-| kubernetes.konnectivityServer.envsFrom | list | `[]` | Extra environment variables from |
-| kubernetes.konnectivityServer.image.digest | string | `""` | Image Digest |
-| kubernetes.konnectivityServer.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| kubernetes.konnectivityServer.image.registry | string | `"us.gcr.io"` | Image registry |
-| kubernetes.konnectivityServer.image.repository | string | `"k8s-artifacts-prod/kas-network-proxy/proxy-server"` | Image repository |
-| kubernetes.konnectivityServer.image.tag | string | `"v0.0.24"` | Image tag |
-| kubernetes.konnectivityServer.imagePullSecrets | list | `[]` | Image pull Secrets |
-| kubernetes.konnectivityServer.labels | object | `{}` | Labels for Workload |
-| kubernetes.konnectivityServer.mode | string | `"GRPC"` | This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment. |
-| kubernetes.konnectivityServer.nodeSelector | object | `{}` | Node Selector |
-| kubernetes.konnectivityServer.podAnnotations | object | `{}` | Pod Annotations |
-| kubernetes.konnectivityServer.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
-| kubernetes.konnectivityServer.podLabels | object | `{}` | Pod Labels |
-| kubernetes.konnectivityServer.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context (only used in HTTPConnect mode) |
-| kubernetes.konnectivityServer.priorityClassName | string | `""` | Pod PriorityClassName |
-| kubernetes.konnectivityServer.replicaCount | int | `2` | Konnectivity Server Replicas (only used in HTTPConnect mode) |
-| kubernetes.konnectivityServer.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Konnectivity Server resources |
-| kubernetes.konnectivityServer.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["all"]},"enabled":true,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsUser":65534}` | Container Security Context |
-| kubernetes.konnectivityServer.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy |
-| kubernetes.konnectivityServer.tolerations | list | `[]` | Tolerations |
-| kubernetes.konnectivityServer.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
-| kubernetes.konnectivityServer.volumeMounts | list | `[]` | Additional Volumemounts |
-| kubernetes.konnectivityServer.volumes | list | `[]` | Additional Volumes |
 
 ### Controller Manager
 | Key | Type | Default | Description |
@@ -566,7 +542,7 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.etcd.envsFrom | list | `[]` | Extra environment variables from |
 | kubernetes.etcd.image.digest | string | `""` | Image Digest |
 | kubernetes.etcd.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| kubernetes.etcd.image.registry | string | `"k8s.gcr.io"` | Image registry |
+| kubernetes.etcd.image.registry | string | `"registry.k8s.io"` | Image registry |
 | kubernetes.etcd.image.repository | string | `"etcd"` | Image repository |
 | kubernetes.etcd.image.tag | string | `"3.5.6-0"` | Image tag |
 | kubernetes.etcd.imagePullSecrets | list | `[]` | Image pull Secrets |
@@ -602,6 +578,83 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.etcd.updateStrategy | object | `{}` | Update Strategy |
 | kubernetes.etcd.volumeMounts | list | `[]` | Additional volumemounts |
 | kubernetes.etcd.volumes | list | `[]` | Additional volumes |
+
+### Konnektivity
+
+Konnectivity is required to establish a connection to the API Server from the cluster network. [Read More about it](https://kubernetes.io/docs/tasks/extend-kubernetes/setup-konnectivity/). The following values are available for both Konnectivity Components:
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetes.konnectivity.enabled | bool | `true` | En/Disable konnectivity-server and konnectivity-agent |
+| kubernetes.konnectivity.version | string | `""` | Set version for both konnectivity-server and konnectivity-agent |
+
+#### Server
+
+The Konnectivity-Server is deployed alongside with the API-Server. It must be reachable for the Konnectivity-Agent.
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetes.konnectivity.server.affinity | object | `{}` | Affinity |
+| kubernetes.konnectivity.server.annotations | object | `{}` | Annotations for Workload |
+| kubernetes.konnectivity.server.args | object | `{}` | Konnectivity Server extra arguments  |
+| kubernetes.konnectivity.server.enabled | bool | `true` | Enable Konnectivity Server |
+| kubernetes.konnectivity.server.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
+| kubernetes.konnectivity.server.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.konnectivity.server.image.digest | string | `""` | Image Digest |
+| kubernetes.konnectivity.server.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| kubernetes.konnectivity.server.image.registry | string | `"registry.k8s.io"` | Image registry |
+| kubernetes.konnectivity.server.image.repository | string | `"kas-network-proxy/proxy-server"` | Image repository |
+| kubernetes.konnectivity.server.image.tag | string | `"v0.0.37"` | Image tag |
+| kubernetes.konnectivity.server.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.konnectivity.server.labels | object | `{}` | Labels for Workload |
+| kubernetes.konnectivity.server.mode | string | `"GRPC"` | This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment. |
+| kubernetes.konnectivity.server.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.konnectivity.server.podAnnotations | object | `{}` | Pod Annotations |
+| kubernetes.konnectivity.server.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
+| kubernetes.konnectivity.server.podLabels | object | `{}` | Pod Labels |
+| kubernetes.konnectivity.server.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context (only used in HTTPConnect mode) |
+| kubernetes.konnectivity.server.priorityClassName | string | `""` | Pod PriorityClassName |
+| kubernetes.konnectivity.server.replicaCount | int | `2` | Konnectivity Server Replicas (only used in HTTPConnect mode) |
+| kubernetes.konnectivity.server.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Konnectivity Server resources |
+| kubernetes.konnectivity.server.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["all"]},"enabled":true,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsUser":65534}` | Container Security Context |
+| kubernetes.konnectivity.server.sidecar | bool | `true` | Enable Konnectivity Server as sidecfar for API Server |
+| kubernetes.konnectivity.server.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy |
+| kubernetes.konnectivity.server.tolerations | list | `[]` | Tolerations |
+| kubernetes.konnectivity.server.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
+| kubernetes.konnectivity.server.volumeMounts | list | `[]` | Additional Volumemounts |
+| kubernetes.konnectivity.server.volumes | list | `[]` | Additional Volumes |
+
+#### Agent (In-Cluster)
+
+The konnectivity-Agent is deployed inside the vcluster and should establish a connection to the Konnectivity-Server. We recommend running the Konnectivity-Agent as Daemonset.
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetes.konnectivity.agent.affinity | object | `{}` | Affinity |
+| kubernetes.konnectivity.agent.annotations | object | `{}` | Annotations for Workload |
+| kubernetes.konnectivity.agent.args | object | `{}` | Konnectivity Agent extra arguments  |
+| kubernetes.konnectivity.agent.enabled | bool | `false` | Enable Konnectivity Agent |
+| kubernetes.konnectivity.agent.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
+| kubernetes.konnectivity.agent.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.konnectivity.agent.hostNetwork | bool | `false` | Use HostNetwork |
+| kubernetes.konnectivity.agent.image.digest | string | `""` | Image Digest |
+| kubernetes.konnectivity.agent.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| kubernetes.konnectivity.agent.image.registry | string | `"registry.k8s.io"` | Image registry |
+| kubernetes.konnectivity.agent.image.repository | string | `"kas-network-proxy/proxy-agent"` | Image repository |
+| kubernetes.konnectivity.agent.image.tag | string | `"v0.0.37"` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
+| kubernetes.konnectivity.agent.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.konnectivity.agent.labels | object | `{}` | Labels for Workload |
+| kubernetes.konnectivity.agent.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.konnectivity.agent.podAnnotations | object | `{}` | Pod Annotations |
+| kubernetes.konnectivity.agent.podLabels | object | `{}` | Pod Labels |
+| kubernetes.konnectivity.agent.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| kubernetes.konnectivity.agent.ports.admin | int | `8133` | Konnectivity Agent Administration Port |
+| kubernetes.konnectivity.agent.ports.health | int | `8134` | Konnectivity Agent Health Port |
+| kubernetes.konnectivity.agent.priorityClassName | string | `"system-cluster-critical"` | Pod PriorityClassName |
+| kubernetes.konnectivity.agent.replicaCount | int | `2` | Replicas for admin (only for type `Deployment`) |
+| kubernetes.konnectivity.agent.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Pod Requests and limits |
+| kubernetes.konnectivity.agent.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["all"]},"enabled":true,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsUser":65534}` | Container Security Context |
+| kubernetes.konnectivity.agent.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy (Or DaemonSet Update Strategy) |
+| kubernetes.konnectivity.agent.tolerations | list | `[{"key":"CriticalAddonsOnly","operator":"Exists"}]` | Tolerations |
+| kubernetes.konnectivity.agent.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
+| kubernetes.konnectivity.agent.type | string | `"DaemonSet"` | Can be `DaemonSet` or `Deployment` |
 
 ### Admin
 
@@ -662,37 +715,6 @@ Deploys an administration pod which has the admin kubeconfig mounted and allows 
 | kubernetes.coredns.strategy | object | `{"rollingUpdate":{"maxUnavailable":1},"type":"RollingUpdate"}` | Deployment Update Strategy |
 | kubernetes.coredns.tolerations | list | `[{"key":"CriticalAddonsOnly","operator":"Exists"}]` | Tolerations |
 | kubernetes.coredns.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
-
-### Konnektivity-Agent (In-Cluster)
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| kubernetes.konnectivityAgent.affinity | object | `{}` | Affinity |
-| kubernetes.konnectivityAgent.annotations | object | `{}` | Annotations for Workload |
-| kubernetes.konnectivityAgent.args | object | `{}` | Konnectivity Agent extra arguments  |
-| kubernetes.konnectivityAgent.enabled | bool | `false` | Enable Konnectivity Agent |
-| kubernetes.konnectivityAgent.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
-| kubernetes.konnectivityAgent.envsFrom | list | `[]` | Extra environment variables from |
-| kubernetes.konnectivityAgent.hostNetwork | bool | `true` | Use HostNetwork |
-| kubernetes.konnectivityAgent.image.digest | string | `""` | Image Digest |
-| kubernetes.konnectivityAgent.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| kubernetes.konnectivityAgent.image.registry | string | `"us.gcr.io"` | Image registry |
-| kubernetes.konnectivityAgent.image.repository | string | `"k8s-artifacts-prod/kas-network-proxy/proxy-agent"` | Image repository |
-| kubernetes.konnectivityAgent.image.tag | string | `"v0.0.24"` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
-| kubernetes.konnectivityAgent.imagePullSecrets | list | `[]` | Image pull Secrets |
-| kubernetes.konnectivityAgent.labels | object | `{}` | Labels for Workload |
-| kubernetes.konnectivityAgent.nodeSelector | object | `{}` | Node Selector |
-| kubernetes.konnectivityAgent.podAnnotations | object | `{}` | Pod Annotations |
-| kubernetes.konnectivityAgent.podLabels | object | `{}` | Pod Labels |
-| kubernetes.konnectivityAgent.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
-| kubernetes.konnectivityAgent.ports.admin | int | `8133` | Konnectivity Agent Administration Port |
-| kubernetes.konnectivityAgent.ports.health | int | `8134` | Konnectivity Agent Health Port |
-| kubernetes.konnectivityAgent.priorityClassName | string | `"system-cluster-critical"` | Pod PriorityClassName |
-| kubernetes.konnectivityAgent.replicaCount | int | `2` | Replicas for admin |
-| kubernetes.konnectivityAgent.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Pod Requests and limits |
-| kubernetes.konnectivityAgent.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["all"]},"enabled":true,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsUser":65534}` | Container Security Context |
-| kubernetes.konnectivityAgent.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy |
-| kubernetes.konnectivityAgent.tolerations | list | `[{"key":"CriticalAddonsOnly","operator":"Exists"}]` | Tolerations |
-| kubernetes.konnectivityAgent.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
 
 ## Autoscaler Values
 

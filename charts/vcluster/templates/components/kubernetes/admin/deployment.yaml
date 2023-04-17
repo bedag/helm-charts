@@ -77,7 +77,7 @@ spec:
       containers:
       - command: [ 'sleep', 'infinity' ]
         {{- if $kubernetes.admin.image.use_jobs }}
-        image: {{ include "pkg.images.registry.convert" (dict "image" $jobs.job.image "ctx" $) }}
+        image: {{ include "pkg.images.registry.convert" (dict "image" $jobs.jobs.image "ctx" $) }}
         {{- else }}
         image: {{ include "pkg.images.registry.convert" (dict "image" $kubernetes.admin.image "ctx" $) }}
         {{- end }}
@@ -123,7 +123,7 @@ spec:
           name: addon-scripts
         - mountPath: /cache
           name: cache
-        {{- if or $kubernetes.extraManifests $kubernetes.konnectivityServer.enabled $kubernetes.konnectivityAgent.enabled }}
+        {{- if or $kubernetes.extraManifests $kubernetes.konnectivity.server.enabled $kubernetes.konnectivity.agent.enabled }}
         - mountPath: /manifests
           name: manifests
         {{- end }}
@@ -148,7 +148,7 @@ spec:
       - secret:
           secretName: "{{ $fullName }}-pki-admin-client"
         name: pki-admin-client
-      {{- if or $kubernetes.extraManifests $kubernetes.konnectivityServer.enabled $kubernetes.konnectivityAgent.enabled }}
+      {{- if or $kubernetes.extraManifests $kubernetes.konnectivity.server.enabled $kubernetes.konnectivity.agent.enabled }}
       - name: manifests
         projected:
           sources:
@@ -156,9 +156,11 @@ spec:
           - secret:
               name: "{{ $fullName }}-extra-manifests"
           {{- end }}
-          {{- if or $kubernetes.konnectivityServer.enabled $kubernetes.konnectivityAgent.enabled }}
+          {{- if $kubernetes.konnectivity.enabled }}
+            {{- if or $kubernetes.konnectivity.server.enabled $kubernetes.konnectivity.agent.enabled }}
           - configMap:
               name: "{{ $fullName }}-konnectivity-manifests"
+            {{- end }}
           {{- end }}
       {{- end }}
       - name: config

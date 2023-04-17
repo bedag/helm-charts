@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 {{- $kubernetes := $.Values.kubernetes -}}
 {{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.agent.enabled }}
+=======
+{{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.agent.enabled }}
+  {{- $kubernetes := $.Values.kubernetes -}}
+>>>>>>> beef8c38a242706f175dc95366dc9ff3e766ef3a
   {{- $fullName := include "kubernetes.fullname" . -}}
 ---
 apiVersion: v1

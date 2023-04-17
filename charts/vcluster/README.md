@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.2.1](https://img.shields.io/badge/Version-0.2.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -152,35 +152,38 @@ We use a lifecycle Job/Cronjob to manage certain configurations within the vclus
 | lifecycle.cilium.enabled | bool | `true` | Install Cilium CNI |
 | lifecycle.cilium.on_install | bool | `true` | Install only on chart install (First install) |
 | lifecycle.cilium.version | string | `"1.9.18"` | Cilium version |
-| lifecycle.cleanup.enabled | bool | `true` | Enable/Disable Cleanup |
+| lifecycle.cleanup.annotations | object | `{"helm.sh/hook":"pre-delete","helm.sh/hook-delete-policy":"before-hook-creation"}` | Job Annotations |
+| lifecycle.cleanup.enabled | bool | `false` | Enable/Disable Cleanup |
+| lifecycle.cleanup.labels | object | `{}` | Job Labels |
+| lifecycle.current.cleanupScript | string | `nil` | Additional configuration script for the vcluster during cleanup (supports templating) |
 | lifecycle.current.extraManifests | object | See values.yaml | These manifests will be applied inside the cluster (supports templating) |
 | lifecycle.current.extraManifestsOnInstall | object | See values.yaml | These manifests will be applied inside the cluster, but only on $.Release.Install and wont be touched again (supports templating) |
-| lifecycle.current.script | string | `nil` | Additional configuration script for the current cluster (supports templating) |
-| lifecycle.job.affinity | object | `{}` | Affinity |
-| lifecycle.job.annotations | object | `{"helm.sh/hook":"post-install,post-upgrade","helm.sh/hook-delete-policy":"before-hook-creation"}` | Job Annotations |
-| lifecycle.job.extraVolumeMounts | list | `[]` | Additional Pod VolumeMounts |
-| lifecycle.job.extraVolumes | list | `[]` | Additional Pod Volumes |
-| lifecycle.job.failedJobsHistoryLimit | int | `3` | Cronjob failed jobs history limit |
-| lifecycle.job.image | object | `{"digest":"","pullPolicy":"Always","pullSecrets":[],"registry":"registry-group.mgmtbi.ch","repository":"sre/gitops/cluster_bootstrap","tag":"dev.clusterbuild"}` | Run Installer Jobs again (Only execute on Helm install) |
-| lifecycle.job.labels | object | `{}` | Job Labels |
-| lifecycle.job.nodeSelector | object | `{}` | Node Selector |
-| lifecycle.job.podAnnotations | object | `{}` | Pod Annotations |
-| lifecycle.job.podLabels | object | `{}` | Pod Labels |
-| lifecycle.job.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
-| lifecycle.job.priorityClassName | string | `""` | Pod PriorityClassName |
-| lifecycle.job.reconciler | bool | `true` | Deploy as Cronjob to run periodically |
-| lifecycle.job.resources | object | `{}` | Resources configuration |
-| lifecycle.job.schedule | string | `"0 0 1 */6 *"` | Cronjob Schedule |
-| lifecycle.job.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"privileged":false,"runAsGroup":20000,"runAsUser":20000}` | Container Security Context |
-| lifecycle.job.successfulJobsHistoryLimit | int | `3` | Cronjob successful jobs history limit |
-| lifecycle.job.tolerations | list | `[]` | Tolerations |
-| lifecycle.job.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints |
+| lifecycle.current.setupScript | string | `nil` | Additional configuration script for the current cluster (supports templating) |
+| lifecycle.jobs.affinity | object | `{}` | Affinity |
+| lifecycle.jobs.extraVolumeMounts | list | `[]` | Additional Pod VolumeMounts |
+| lifecycle.jobs.extraVolumes | list | `[]` | Additional Pod Volumes |
+| lifecycle.jobs.nodeSelector | object | `{}` | Node Selector |
+| lifecycle.jobs.podAnnotations | object | `{}` | Pod Annotations |
+| lifecycle.jobs.podLabels | object | `{}` | Pod Labels |
+| lifecycle.jobs.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| lifecycle.jobs.priorityClassName | string | `""` | Pod PriorityClassName |
+| lifecycle.jobs.resources | object | `{}` | Resources configuration |
+| lifecycle.jobs.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"privileged":false,"runAsGroup":20000,"runAsUser":20000}` | Container Security Context |
+| lifecycle.jobs.tolerations | list | `[]` | Tolerations |
+| lifecycle.jobs.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints |
 | lifecycle.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | lifecycle.serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | lifecycle.serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
+| lifecycle.setup.annotations | object | `{"helm.sh/hook":"post-install,post-upgrade","helm.sh/hook-delete-policy":"before-hook-creation"}` | Job Annotations |
+| lifecycle.setup.cronjob | bool | `true` | Deploy as Cronjob to run periodically |
+| lifecycle.setup.failedJobsHistoryLimit | int | `3` | Cronjob failed jobs history limit |
+| lifecycle.setup.labels | object | `{}` | Job Labels |
+| lifecycle.setup.schedule | string | `"0 0 1 */6 *"` | Cronjob Schedule |
+| lifecycle.setup.successfulJobsHistoryLimit | int | `3` | Cronjob successful jobs history limit |
+| lifecycle.vcluster.cleanupScript | string | `nil` | Additional configuration script for the vcluster during cleanup (supports templating) |
 | lifecycle.vcluster.extraManifests | object | See values.yaml | These manifests will be applied inside the vcluster (supports templating) |
 | lifecycle.vcluster.extraManifestsOnInstall | object | See values.yaml | These manifests will be applied inside the vcluster, but only on $.Release.Install and wont be touched again (supports templating) |
-| lifecycle.vcluster.script | string | `nil` | Additional configuration script for the vcluster (supports templating) |
+| lifecycle.vcluster.setupScript | string | `nil` | Additional configuration script for the vcluster during reconciler (supports templating) |
 
 ## Machine Values
 

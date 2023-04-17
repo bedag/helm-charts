@@ -1,5 +1,5 @@
+{{- $kubernetes := $.Values.kubernetes -}}
 {{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.agent.enabled }}
-  {{- $kubernetes := $.Values.kubernetes -}}
   {{- $fullName := include "kubernetes.fullname" . -}}
 ---
 apiVersion: v1
@@ -115,23 +115,27 @@ spec:
         - --service-account-token-path=/var/run/secrets/tokens/konnectivity-agent-token
 
         {{- if not (hasKey $kubernetes.konnectivity.agent.args "proxy-server-host") }}
-        {{- if and (eq $kubernetes.konnectivity.server.mode "HTTPConnect") $kubernetes.konnectivity.server.service.loadBalancerIP }}
+          {{- if and $kubernetes.konnectivity.server.sidecar (include "kubernetes.api.endpointIP" $) }}
+        - --proxy-server-host={{ include "kubernetes.api.endpointIP" $ }}
+          {{- else if and (eq $kubernetes.konnectivity.server.mode "HTTPConnect") $kubernetes.konnectivity.server.service.loadBalancerIP }}
         - --proxy-server-host={{ $kubernetes.konnectivity.server.service.loadBalancerIP }}
-        {{- else if and (eq $kubernetes.konnectivity.server.mode "GRPC") $kubernetes.apiServer.service.loadBalancerIP }}
+          {{- else if and (eq $kubernetes.konnectivity.server.mode "GRPC") $kubernetes.apiServer.service.loadBalancerIP }}
         - --proxy-server-host={{ $kubernetes.apiServer.service.loadBalancerIP }}
-        {{- else }}
-        {{- fail "kubernetes.konnectivity.agent.args.proxy-server-host must be specified!" }}
-        {{- end }}
+          {{- else }}
+            {{- fail "kubernetes.konnectivity.agent.args.proxy-server-host must be specified!" }}
+          {{- end }}
         {{- end }}
 
         {{- if not (hasKey $kubernetes.konnectivity.agent.args "proxy-server-port") }}
-        {{- if eq $kubernetes.konnectivity.server.service.type "LoadBalancer" }}
+          {{- if and $kubernetes.konnectivity.server.sidecar (include "kubernetes.api.endpointPort" $) }}
+        - --proxy-server-port={{ include "kubernetes.api.endpointPort" $ }}
+          {{- else if eq $kubernetes.konnectivity.server.service.type "LoadBalancer" }}
         - --proxy-server-port={{ $kubernetes.konnectivity.server.service.ports.agent }}
-        {{- else if $kubernetes.konnectivity.server.service.NodePort }}
+          {{- else if $kubernetes.konnectivity.server.service.NodePort }}
         - --proxy-server-port={{ $kubernetes.konnectivity.server.service.nodePorts.agent }}
-        {{- else }}
-        {{- fail "kubernetes.konnectivity.agent.args.proxy-server-port must be specified!" }}
-        {{- end }}
+          {{- else }}
+            {{- fail "kubernetes.konnectivity.agent.args.proxy-server-port must be specified!" }}
+          {{- end }}
         {{- end }}
         - --admin-server-port={{ $kubernetes.konnectivity.agent.ports.admin }}
         - --health-server-port={{ $kubernetes.konnectivity.agent.ports.health }}

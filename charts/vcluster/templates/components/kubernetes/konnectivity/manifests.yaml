@@ -1,6 +1,5 @@
-{{/* Always deploy manifests (required for removals */}}
+{{- $kubernetes := $.Values.kubernetes -}}
 {{- if (include "kubernetes.enabled" $) -}}
-  {{- $kubernetes := $.Values.kubernetes -}}
   {{- $fullName := include "kubernetes.fullname" . -}}
   {{- $component_name := "konnectivity" -}}
   {{- if $kubernetes.konnectivity.enabled -}}

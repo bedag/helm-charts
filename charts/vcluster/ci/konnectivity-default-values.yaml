@@ -1,0 +1,14 @@
+kubernetes:
+  enabled: true
+  apiServer:
+    service:
+      type: LoadBalancer
+  controlPlane:
+    endpoint: 0.0.0.0
+  konnectivity:
+    server:
+      enabled: true
+      service:
+        type: LoadBalancer
+    agent:
+      enabled: true

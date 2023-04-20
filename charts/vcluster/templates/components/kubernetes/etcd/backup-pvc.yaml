@@ -1,0 +1,35 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if and $kubernetes.etcd.enabled $kubernetes.etcd.backup.enabled (not $kubernetes.etcd.backup.persistence.existingClaim) -}}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "etcd" -}}
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ $fullName }}-etcd-backup
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+    {{- if $kubernetes.etcd.backup.persistence.labels }}
+      {{- toYaml $kubernetes.etcd.backup.persistence.labels | nindent 4 }}
+    {{- end }}
+  {{- with $kubernetes.etcd.backup.persistence.annotations  }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with $kubernetes.etcd.backup.persistence.finalizers  }}
+  finalizers:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  accessModes:
+    {{- range $kubernetes.etcd.backup.persistence.accessModes }}
+    - {{ . | quote }}
+    {{- end }}
+  storageClassName: {{ include "pkg.components.storageClass" (dict "sc" $kubernetes.etcd.backup.persistence.storageClassName "ctx" $) }}
+  resources:
+    requests:
+      storage: {{ $kubernetes.etcd.backup.persistence.size | quote }}
+  {{- end -}}
+{{- end -}}

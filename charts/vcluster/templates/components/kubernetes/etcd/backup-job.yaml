@@ -1,0 +1,155 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if and $kubernetes.etcd.enabled $kubernetes.etcd.backup.enabled -}}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "etcd" -}}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $fullName }}-etcd-backup
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+    {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.etcd.backup.labels "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.etcd.backup.annotations "ctx" $)) }}
+  annotations:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  schedule: "{{ $kubernetes.etcd.backup.schedule }}"
+  successfulJobsHistoryLimit: {{ $kubernetes.etcd.backup.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ $kubernetes.etcd.backup.failedJobsHistoryLimit }}
+  jobTemplate:
+    metadata:
+      labels:
+        {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+        {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.etcd.backup.labels "ctx" $)) }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.etcd.backup.annotations "ctx" $)) }}
+      annotations:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with $kubernetes.etcd.backup.ttlSecondsAfterFinished }}
+      ttlSecondsAfterFinished: {{ . }}
+      {{- end }}
+      template:
+        metadata:
+          labels: {{- include "kubernetes.labels" $ | nindent 12 }}
+            {{- include "pkg.components.pod_labels" (dict "labels" $kubernetes.etcd.backup.podLabels "ctx" $) | nindent 12 }}
+            {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+          annotations:
+            {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.etcd.backup.podAnnotations "ctx" $) | nindent 12 }}
+        spec:
+          {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $kubernetes.etcd.backup.nodeSelector "ctx" $)) }}
+          nodeSelector: {{- . | nindent 10 }}
+          {{- end }}
+          {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.etcd.backup.tolerations "ctx" $)) }}
+          tolerations:  {{- . | nindent 10 }}
+          {{- end }}
+          {{- with (include "pkg.components.priorityClass" (dict "pc" $kubernetes.etcd.backup.priorityClassName "ctx" $)) }}
+          priorityClassName: {{ . }}
+          {{- end }}
+          {{- with (include "pkg.components.topologySpreadConstraints" (dict "tsc" $kubernetes.etcd.backup.topologySpreadConstraints "ctx" $)) }}
+          topologySpreadConstraints: {{ . | nindent 10 }}
+          {{- end }}
+          affinity:
+          {{- with (include "pkg.components.affinity" (dict "affinity" $kubernetes.etcd.backup.affinity "ctx" $)) }}
+            {{- . | nindent 10 }}
+          {{- end }}
+          {{- if eq $kubernetes.etcd.backup.podAntiAffinity "hard" }}
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - topologyKey: "{{ $kubernetes.etcd.backup.podAntiAffinityTopologyKey }}"
+                  labelSelector:
+                    matchLabels:
+                      app: {{ $fullName }}-etcd
+          {{- else if eq $kubernetes.etcd.backup.podAntiAffinity "soft" }}
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 1
+                  podAffinityTerm:
+                    topologyKey: "{{ $kubernetes.etcd.backup.podAntiAffinityTopologyKey }}"
+                    labelSelector:
+                      matchLabels:
+                        app: {{ $fullName }}-etcd
+          {{- end }}
+          imagePullSecrets: {{- include "pkg.images.registry.pullsecrets" $ | nindent 10 }}
+            {{- with $kubernetes.etcd.backup.imagePullSecrets }}
+              {{- toYaml . | nindent 10 }}
+            {{- end }}
+          automountServiceAccountToken: false
+          restartPolicy: {{ $kubernetes.etcd.backup.restartPolicy }}
+          containers:
+          - command:
+            - /bin/sh
+            - -xc
+            - |
+              rtc() { while read k s v; do test "$k" = "rtc_$1" && echo "$v" && break; done </proc/driver/rtc; }
+              etcdctl snapshot save /snapshots/etcd-prod-hosting-$(rtc date)-$(rtc time).db
+              {{- range $key, $value := $kubernetes.etcd.backup.args }} --{{ $key }}={{ $value }}{{- end }}
+            {{- with $kubernetes.etcd.backup.envsFrom }}
+            envFrom:
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            env:  {{- include "pkg.common.env" $ | nindent 12 }}
+            - name: ETCDCTL_API
+              value: "3"
+            - name: ETCDCTL_CACERT
+              value: /pki/etcd/peer/ca.crt
+            - name: ETCDCTL_CERT
+              value: /pki/etcd/peer/tls.crt
+            - name: ETCDCTL_KEY
+              value: /pki/etcd/peer/tls.key 
+            - name: ETCDCTL_ENDPOINTS
+              value: {{ $fullName }}-etcd:{{ $kubernetes.etcd.ports.client }}
+            {{- with $kubernetes.etcd.backup.envs }}
+              {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 12 }}
+            {{- end }}
+            {{- with $kubernetes.etcd.image }}
+            image: {{ include "pkg.images.registry.convert" (dict "image" . "ctx" $) }}
+            imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .pullPolicy "ctx" $) }}
+            {{- end }}
+            name: etcd-backup
+            {{- with (include "pkg.components.securityContext" (dict "sc" $kubernetes.etcd.backup.securityContext "ctx" $)) }}
+            securityContext: {{ . | nindent 14 }}
+            {{- end }}
+            resources:
+              {{- toYaml $kubernetes.etcd.backup.resources | nindent 14 }}
+            volumeMounts:
+            - mountPath: /pki/etcd/ca
+              name: pki-etcd-certs-ca
+            - mountPath: /pki/etcd/peer
+              name: pki-etcd-certs-peer
+            - mountPath: /pki/etcd/server
+              name: pki-etcd-certs-server
+            - mountPath: /snapshots
+              name: snapshots
+              {{- with $kubernetes.etcd.backup.persistence.subPath }}
+              subPath: {{ . }}
+              {{- end }}
+          {{- with (include "pkg.components.podSecurityContext" (dict "psc" $kubernetes.etcd.backup.podSecurityContext "ctx" $)) }}
+          securityContext: {{ . | nindent 12 }}
+          {{- end }}
+          volumes:
+          - secret:
+              secretName: {{ $fullName }}-pki-etcd-ca
+            name: pki-etcd-certs-ca
+          - secret:
+              secretName: {{ $fullName }}-pki-etcd-peer
+            name: pki-etcd-certs-peer
+          - secret:
+              secretName: {{ $fullName }}-pki-etcd-server
+            name: pki-etcd-certs-server
+          - name: snapshots
+            persistentVolumeClaim: 
+              claimName: {{ $kubernetes.etcd.backup.persistence.existingClaim | default (printf "%s-etcd-backup" $fullName) }}
+          {{- with $kubernetes.etcd.backup.volumes }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+  {{- end -}}
+{{- end -}}

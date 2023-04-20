@@ -127,6 +127,8 @@ Access the ArgoCD UI by opening [http://localhost:9191]( http://localhost:9191) 
 
 ## Globals
 
+---
+
 Global Values
 
 {{- template "table.heading" $ }}
@@ -138,6 +140,8 @@ Global Values
 
 ## Utilities Values
 
+---
+
 {{- template "table.heading" $ }}
 {{- range .Values }}
   {{- if or (hasPrefix "utilities." .Key) (hasPrefix "providers." .Key) (hasPrefix "cluster." .Key) }}
@@ -147,6 +151,8 @@ Global Values
 
 
 ## Lifecycle
+
+---
 
 We use a lifecycle Job/Cronjob to manage certain configurations within the vcluster and the hosting cluster.
 
@@ -160,6 +166,8 @@ We use a lifecycle Job/Cronjob to manage certain configurations within the vclus
 
 ## Machine Values
 
+---
+
 Available Values for the [Machine Controller Component](#machine-controller). The component consists of a single deployment with a `controller` and `admission` container. Pod settings are therefor made for both subcomponents.
 
 {{- template "table.heading" $ }}
@@ -171,6 +179,8 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 
 ### Controller
 
+---
+
 {{- template "table.heading" $ }}
 {{- range .Values }}
   {{- if and (hasPrefix "machine." .Key) (contains "controller" .Key) }}
@@ -179,6 +189,8 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 {{- end }}
 
 ### Admission
+
+---
 
 {{- template "table.heading" $ }}
 {{- range .Values }}
@@ -189,6 +201,8 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 
 
 ## OSM Values
+
+---
 
 __This Component is not stable yet!__
 
@@ -203,6 +217,8 @@ Available Values for the [Operating System Manager](). The component consists of
 
 ### Controller
 
+---
+
 {{- template "table.heading" $ }}
 {{- range .Values }}
   {{- if and (hasPrefix "osm." .Key) (contains "controller" .Key) }}
@@ -212,6 +228,8 @@ Available Values for the [Operating System Manager](). The component consists of
 
 
 ### Admission
+
+---
 
 {{- template "table.heading" $ }}
 {{- range .Values }}
@@ -223,6 +241,8 @@ Available Values for the [Operating System Manager](). The component consists of
 
 ## Kubernetes Values
 
+---
+
 Available Values for the [Kubernetes component](#kubernetes).
 
 {{- template "table.heading" $ }}
@@ -233,8 +253,11 @@ Available Values for the [Kubernetes component](#kubernetes).
 {{- end }}
 
 
-
 ### API-Server
+
+---
+
+Deploys [Kubernetes API Server](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/).
 
 {{- template "table.heading" $ }}
 {{- range .Values }}
@@ -246,6 +269,10 @@ Available Values for the [Kubernetes component](#kubernetes).
 
 ### Controller Manager
 
+---
+
+Deploys [Kubernetes Controller Manager](https://kubernetes.io/docs/concepts/architecture/cloud-controller/).
+
 {{- template "table.heading" $ }}
 {{- range .Values }}
   {{- if and (hasPrefix "kubernetes." .Key)  (contains "controllerManager." .Key) }}
@@ -254,6 +281,10 @@ Available Values for the [Kubernetes component](#kubernetes).
 {{- end }}
 
 ### Scheduler
+
+---
+
+Deploys [Kubernetes Scheduler](https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/).
 
 {{- template "table.heading" $ }}
 {{- range .Values }}
@@ -264,14 +295,35 @@ Available Values for the [Kubernetes component](#kubernetes).
 
 ### ETCD
 
+---
+
+Deploys [ETCD](https://etcd.io/).
+
 {{- template "table.heading" $ }}
 {{- range .Values }}
-  {{- if and (hasPrefix "kubernetes." .Key)  (contains "etcd." .Key) }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "etcd." .Key) (not (contains "backup." .Key)) }}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}
 
+
+#### ETCD Backup
+
+---
+
+Scheduled snapshots of ETCD via Cronjob.
+
+{{- template "table.heading" $ }}
+{{- range .Values }}
+  {{- if and (hasPrefix "kubernetes." .Key)  (contains "etcd." .Key)  (contains "backup." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+
 ### Konnektivity
+
+---
 
 Konnectivity is required to establish a connection to the API Server from the cluster network. [Read More about it](https://kubernetes.io/docs/tasks/extend-kubernetes/setup-konnectivity/). The following values are available for both Konnectivity Components:
 
@@ -285,6 +337,8 @@ Konnectivity is required to establish a connection to the API Server from the cl
 
 #### Server
 
+---
+
 The Konnectivity-Server is deployed alongside with the API-Server. It must be reachable for the Konnectivity-Agent.
 
 {{- template "table.heading" $ }}
@@ -295,6 +349,8 @@ The Konnectivity-Server is deployed alongside with the API-Server. It must be re
 {{- end }}
 
 #### Agent (In-Cluster)
+
+---
 
 The konnectivity-Agent is deployed inside the vcluster and should establish a connection to the Konnectivity-Server. We recommend running the Konnectivity-Agent as Daemonset.
 
@@ -308,6 +364,8 @@ The konnectivity-Agent is deployed inside the vcluster and should establish a co
 
 ### Admin
 
+---
+
 Deploys an administration pod which has the admin kubeconfig mounted and allows for easy access to the cluster.
 
 {{- template "table.heading" $ }}
@@ -318,6 +376,8 @@ Deploys an administration pod which has the admin kubeconfig mounted and allows 
 {{- end }}
 
 ### CoreDNS (In-Cluster)
+
+---
 
 {{- template "table.heading" $ }}
 {{- range .Values }}
@@ -333,6 +393,8 @@ Available Values for the [Autsocaler component](#autoscaler).
 
 ### Settings
 
+---
+
 {{- template "table.heading" $ }}
 {{- range .Values }}
   {{- if and (hasPrefix "autoscaler." .Key) (or (contains "autoscaler.enabled" .Key) (contains "expanderPriorities" .Key) (contains "priorityConfigMapAnnotations" .Key)) }}
@@ -342,6 +404,8 @@ Available Values for the [Autsocaler component](#autoscaler).
 
 ### Workload
 
+---
+
 {{- template "table.heading" $ }}
 {{- range .Values }}
   {{- if and (hasPrefix "autoscaler." .Key) (not (contains "autoscaling" .Key)) (not (contains "metrics" .Key)) }}
@@ -350,6 +414,8 @@ Available Values for the [Autsocaler component](#autoscaler).
 {{- end }}
 
 #### Autoscaling
+
+---
 
 {{- template "table.heading" $ }}
 {{- range .Values }}
@@ -361,6 +427,8 @@ Available Values for the [Autsocaler component](#autoscaler).
 
 #### Metrics
 
+---
+
 {{- template "table.heading" $ }}
 {{- range .Values }}
   {{- if and (hasPrefix "autoscaler." .Key) (contains "metrics" .Key) }}
@@ -369,6 +437,8 @@ Available Values for the [Autsocaler component](#autoscaler).
 {{- end }}
 
 ## GitOps Values
+
+---
 
 Available Values for the [Gitops component](#gitops).
 

@@ -17,6 +17,7 @@ metadata:
   annotations:
       {{- toYaml . | nindent 4 }}
     {{- end }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   replicas: {{ $kubernetes.etcd.replicaCount }}
   serviceName: {{ $fullName }}-etcd
@@ -159,8 +160,15 @@ spec:
           name: pki-etcd-certs-server
         - mountPath: /var/lib/etcd
           name: etcd-data
+        {{- if and $kubernetes.etcd.backup.enabled $kubernetes.etcd.backup.persistence.mountOnETCD }}
+        - mountPath: /snapshots
+          name: snapshots
+          {{- with $kubernetes.etcd.backup.persistence.subPath }}
+          subPath: {{ . }}
+          {{- end }}
+        {{- end }}
         {{- with $kubernetes.etcd.volumeMounts }}
-        {{- toYaml . | nindent 8 }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
       {{- with (include "pkg.components.podSecurityContext" (dict "psc" $kubernetes.etcd.podSecurityContext "ctx" $)) }}
       securityContext: {{ . | nindent 8 }}
@@ -175,39 +183,44 @@ spec:
       - secret:
           secretName: {{ $fullName }}-pki-etcd-server
         name: pki-etcd-certs-server
-      {{- if not $kubernetes.persistence.enabled }}
+      {{- if not $kubernetes.etcd.persistence.enabled }}
       - emptyDir: {}
         name: etcd-data
       {{- end }}
-      {{- with $kubernetes.etcd.volumes }}
-      {{- toYaml . | nindent 6 }}
+      {{- if and $kubernetes.etcd.backup.enabled $kubernetes.etcd.backup.persistence.mountOnETCD }}
+      - name: snapshots
+        persistentVolumeClaim: 
+          claimName: {{ $kubernetes.etcd.backup.persistence.existingClaim | default (printf "%s-etcd-backup" $fullName) }}
       {{- end }}
-  {{- if $kubernetes.persistence.enabled }}
+      {{- with $kubernetes.etcd.volumes }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+  {{- if $kubernetes.etcd.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
       name: etcd-data
       labels:
         app: {{ $fullName }}-etcd
-        {{- if $kubernetes.persistence.labels }}
-        {{- toYaml $kubernetes.persistence.labels | nindent 4 }}
+        {{- if $kubernetes.etcd.persistence.labels }}
+        {{- toYaml $kubernetes.etcd.persistence.labels | nindent 4 }}
         {{- end }}
-      {{- with $kubernetes.persistence.annotations  }}
+      {{- with $kubernetes.etcd.persistence.annotations  }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $kubernetes.persistence.finalizers  }}
+      {{- with $kubernetes.etcd.persistence.finalizers  }}
       finalizers:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     spec:
       accessModes:
-        {{- range $kubernetes.persistence.accessModes }}
+        {{- range $kubernetes.etcd.persistence.accessModes }}
         - {{ . | quote }}
         {{- end }}
-      storageClassName: {{ include "pkg.components.storageClass" (dict "sc" $kubernetes.persistence.storageClassName "ctx" $) }}
+      storageClassName: {{ include "pkg.components.storageClass" (dict "sc" $kubernetes.etcd.persistence.storageClassName "ctx" $) }}
       resources:
         requests:
-          storage: {{ $kubernetes.persistence.size | quote }}
+          storage: {{ $kubernetes.etcd.persistence.size | quote }}
     {{- end }}
   {{- end }}
 {{- end }}

@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.2.2](https://img.shields.io/badge/Version-0.2.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -102,6 +102,8 @@ Access the ArgoCD UI by opening [http://localhost:9191]( http://localhost:9191) 
 
 ## Globals
 
+---
+
 Global Values
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -139,12 +141,16 @@ Global Values
 | global.storageClassName | string | `""` | StorageClassName for all persistent volumes |
 
 ## Utilities Values
+
+---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | cluster.name | string | The cluster name is derived from the `.Release.Name` | Define the cluster name |
 | cluster.properties | object | `{}` | Properties are substituted into the gitops component |
 
 ## Lifecycle
+
+---
 
 We use a lifecycle Job/Cronjob to manage certain configurations within the vcluster and the hosting cluster.
 | Key | Type | Default | Description |
@@ -180,12 +186,15 @@ We use a lifecycle Job/Cronjob to manage certain configurations within the vclus
 | lifecycle.setup.labels | object | `{}` | Job Labels |
 | lifecycle.setup.schedule | string | `"0 0 1 */6 *"` | Cronjob Schedule |
 | lifecycle.setup.successfulJobsHistoryLimit | int | `3` | Cronjob successful jobs history limit |
+| lifecycle.setup.ttlSecondsAfterFinished | int | `120` | ttlSecondsAfterFinished for setup |
 | lifecycle.vcluster.cleanupScript | string | `nil` | Additional configuration script for the vcluster during cleanup (supports templating) |
 | lifecycle.vcluster.extraManifests | object | See values.yaml | These manifests will be applied inside the vcluster (supports templating) |
 | lifecycle.vcluster.extraManifestsOnInstall | object | See values.yaml | These manifests will be applied inside the vcluster, but only on $.Release.Install and wont be touched again (supports templating) |
 | lifecycle.vcluster.setupScript | string | `nil` | Additional configuration script for the vcluster during reconciler (supports templating) |
 
 ## Machine Values
+
+---
 
 Available Values for the [Machine Controller Component](#machine-controller). The component consists of a single deployment with a `controller` and `admission` container. Pod settings are therefor made for both subcomponents.
 | Key | Type | Default | Description |
@@ -236,6 +245,8 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.volumes | list | `[]` | Volumes |
 
 ### Controller
+
+---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | machine.controller.args | object | `{"join-cluster-timeout":"25m","node-csr-approver":true,"worker-count":10}` | Controller Command Arguments ([See Available](https://github.com/kubermatic/machine-controller/blob/main/cmd/machine-controller/main.go)) |
@@ -253,6 +264,8 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.controller.volumeMounts | list | `[]` | Volume Mounts |
 
 ### Admission
+
+---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | machine.admission.args | object | `{"v":4}` | Webhook Command Arguments ([See Available](https://github.com/kubermatic/machine-controller/blob/main/cmd/webhook/main.go)) |
@@ -285,6 +298,8 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.admission.webhook.tls.name | string | `""` | Override the TLS Secret Name |
 
 ## OSM Values
+
+---
 
 __This Component is not stable yet!__
 
@@ -333,6 +348,8 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.volumes | list | `[]` | Volumes |
 
 ### Controller
+
+---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | osm.controller.args | object | `{"worker-count":10}` | Controller Command Arguments ([See Available](https://github.com/kubermatic/operating-system-manager/blob/main/cmd/osm-controller/main.go)) |
@@ -350,6 +367,8 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.controller.volumeMounts | list | `[]` | Pod VolumeMounts |
 
 ### Admission
+
+---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | osm.admission.args | object | `{"v":4}` | Webhook Command Arguments ([See Available](https://github.com/kubermatic/operating-system-manager/blob/main/cmd/webhook/main.go)) |
@@ -383,6 +402,8 @@ Available Values for the [Operating System Manager](). The component consists of
 
 ## Kubernetes Values
 
+---
+
 Available Values for the [Kubernetes component](#kubernetes).
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -393,6 +414,10 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.kubeProxy.enabled | bool | `true` | Install kube-proxy via KubeADM. If disabled, the cilium kube-proxy replacement will be used |
 
 ### API-Server
+
+---
+
+Deploys [Kubernetes API Server](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/).
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | kubernetes.apiServer.affinity | object | `{}` | Affinity |
@@ -434,6 +459,10 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.apiServer.volumes | list | `[]` | Additional volumes |
 
 ### Controller Manager
+
+---
+
+Deploys [Kubernetes Controller Manager](https://kubernetes.io/docs/concepts/architecture/cloud-controller/).
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | kubernetes.controllerManager.affinity | object | `{}` | Affinity |
@@ -477,6 +506,10 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.controllerManager.volumes | list | `[]` | Additional Volumes |
 
 ### Scheduler
+
+---
+
+Deploys [Kubernetes Scheduler](https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/).
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | kubernetes.scheduler.affinity | object | `{}` | Affinity |
@@ -534,6 +567,10 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.scheduler.volumes | list | `[]` | Additional Volumes |
 
 ### ETCD
+
+---
+
+Deploys [ETCD](https://etcd.io/).
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | kubernetes.etcd.affinity | object | `{}` | Affinity |
@@ -564,6 +601,12 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.etcd.metrics.serviceMonitor.targetLabels | list | `[]` | Set targetLabels for the serviceMonitor |
 | kubernetes.etcd.minReadySeconds | int | `10` | Minimum ready seconds |
 | kubernetes.etcd.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.etcd.persistence.accessModes | list | `["ReadWriteOnce"]` | Access Modes for ETCD |
+| kubernetes.etcd.persistence.annotations | object | `{"helm.sh/resource-policy":"keep"}` | Annotations for ETCD |
+| kubernetes.etcd.persistence.enabled | bool | `true` | Enable Persistence for ETCD |
+| kubernetes.etcd.persistence.finalizers | list | `["kubernetes.io/pvc-protection"]` | Finalizers for ETCD |
+| kubernetes.etcd.persistence.size | string | `"1Gi"` | Size for ETCD |
+| kubernetes.etcd.persistence.storageClassName | string | `""` | Storage Class for ETCD |
 | kubernetes.etcd.podAnnotations | object | `{}` | Pod Annotations |
 | kubernetes.etcd.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
 | kubernetes.etcd.podLabels | object | `{}` | Pod Labels |
@@ -582,7 +625,46 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.etcd.volumeMounts | list | `[]` | Additional volumemounts |
 | kubernetes.etcd.volumes | list | `[]` | Additional volumes |
 
+#### ETCD Backup
+
+---
+
+Scheduled snapshots of ETCD via Cronjob.
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| kubernetes.etcd.backup.affinity | object | `{}` | Affinity |
+| kubernetes.etcd.backup.args | object | `{}` | Extra arguments for ETCD Backup |
+| kubernetes.etcd.backup.enabled | bool | `false` | Enable ETCD Backup |
+| kubernetes.etcd.backup.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
+| kubernetes.etcd.backup.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.etcd.backup.failedJobsHistoryLimit | int | `3` | Failed Jobs History Limit for ETCD Backup |
+| kubernetes.etcd.backup.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.etcd.backup.persistence.accessModes | list | `["ReadWriteOnce"]` | Access Modes for ETCD Backup |
+| kubernetes.etcd.backup.persistence.annotations | object | `{"helm.sh/resource-policy":"keep"}` | Annotations for ETCD Backup |
+| kubernetes.etcd.backup.persistence.existingClaim | string | `""` | Use existing claim for ETCD Backup |
+| kubernetes.etcd.backup.persistence.finalizers | list | `["kubernetes.io/pvc-protection"]` | Finalizers for ETCD Backup |
+| kubernetes.etcd.backup.persistence.mountOnETCD | bool | `false` | Mounts backup volume on etcd pods (Recommended if accessModes is ReadWriteMany) |
+| kubernetes.etcd.backup.persistence.size | string | `"1Gi"` | Size for ETCD Backup |
+| kubernetes.etcd.backup.persistence.storageClassName | string | `""` | Storage Class for ETCD Backup |
+| kubernetes.etcd.backup.persistence.subPath | string | `""` | Subpath for ETCD Backup |
+| kubernetes.etcd.backup.podAnnotations | object | `{}` | Pod Annotations |
+| kubernetes.etcd.backup.podLabels | object | `{}` | Pod Labels |
+| kubernetes.etcd.backup.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| kubernetes.etcd.backup.priorityClassName | string | `""` | Pod PriorityClassName |
+| kubernetes.etcd.backup.resources | object | `{}` | Pod Requests and limits |
+| kubernetes.etcd.backup.restartPolicy | string | `"OnFailure"` | Restart Policy for ETCD Backup |
+| kubernetes.etcd.backup.schedule | string | `"0 */12 * * *"` | Schedule for ETCD Backup |
+| kubernetes.etcd.backup.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"readOnlyRootFilesystem":true}` | Container Security Context |
+| kubernetes.etcd.backup.successfulJobsHistoryLimit | int | `3` | Successful Jobs History Limit for ETCD Backup |
+| kubernetes.etcd.backup.tolerations | list | `[]` | Tolerations |
+| kubernetes.etcd.backup.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
+| kubernetes.etcd.backup.ttlSecondsAfterFinished | int | `120` | ttlSecondsAfterFinished for ETCD Backup |
+| kubernetes.etcd.backup.volumeMounts | list | `[]` | Additional volumemounts |
+| kubernetes.etcd.backup.volumes | list | `[]` | Additional volumes |
+
 ### Konnektivity
+
+---
 
 Konnectivity is required to establish a connection to the API Server from the cluster network. [Read More about it](https://kubernetes.io/docs/tasks/extend-kubernetes/setup-konnectivity/). The following values are available for both Konnectivity Components:
 | Key | Type | Default | Description |
@@ -591,6 +673,8 @@ Konnectivity is required to establish a connection to the API Server from the cl
 | kubernetes.konnectivity.version | string | `""` | Set version for both konnectivity-server and konnectivity-agent |
 
 #### Server
+
+---
 
 The Konnectivity-Server is deployed alongside with the API-Server. It must be reachable for the Konnectivity-Agent.
 | Key | Type | Default | Description |
@@ -627,6 +711,8 @@ The Konnectivity-Server is deployed alongside with the API-Server. It must be re
 
 #### Agent (In-Cluster)
 
+---
+
 The konnectivity-Agent is deployed inside the vcluster and should establish a connection to the Konnectivity-Server. We recommend running the Konnectivity-Agent as Daemonset.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -661,6 +747,8 @@ The konnectivity-Agent is deployed inside the vcluster and should establish a co
 
 ### Admin
 
+---
+
 Deploys an administration pod which has the admin kubeconfig mounted and allows for easy access to the cluster.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -693,6 +781,8 @@ Deploys an administration pod which has the admin kubeconfig mounted and allows 
 | kubernetes.admin.volumes | list | `[]` | Additional Volumes |
 
 ### CoreDNS (In-Cluster)
+
+---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | kubernetes.coredns.affinity | object | `{"podAntiAffinity":{"preferredDuringSchedulingIgnoredDuringExecution":[{"podAffinityTerm":{"labelSelector":{"matchExpressions":[{"key":"k8s-app","operator":"In","values":["kube-dns"]}]},"topologyKey":"kubernetes.io/hostname"},"weight":100}]}}` | Affinity |
@@ -724,6 +814,8 @@ Deploys an administration pod which has the admin kubeconfig mounted and allows 
 Available Values for the [Autsocaler component](#autoscaler).
 
 ### Settings
+
+---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | autoscaler.enabled | bool | `true` | Enable autsocaler component |
@@ -731,6 +823,8 @@ Available Values for the [Autsocaler component](#autoscaler).
 | autoscaler.priorityConfigMapAnnotations | object | `{}` | Annotations to add to `cluster-autoscaler-priority-expander` ConfigMap. |
 
 ### Workload
+
+---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | autoscaler.affinity | object | `{}` | Affinity |
@@ -766,6 +860,8 @@ Available Values for the [Autsocaler component](#autoscaler).
 | autoscaler.volumes | list | `[]` | Volumes |
 
 #### Autoscaling
+
+---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | autoscaler.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler |
@@ -775,6 +871,8 @@ Available Values for the [Autsocaler component](#autoscaler).
 | autoscaler.autoscaling.targetMemoryUtilizationPercentage | string | `nil` | Benchmark Memory Usage |
 
 #### Metrics
+
+---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | autoscaler.metrics.serviceMonitor.annotations | object | `{}` | Assign additional Annotations |
@@ -789,6 +887,8 @@ Available Values for the [Autsocaler component](#autoscaler).
 | autoscaler.metrics.serviceMonitor.targetLabels | list | `[]` | Set targetLabels for the serviceMonitor |
 
 ## GitOps Values
+
+---
 
 Available Values for the [Gitops component](#gitops).
 

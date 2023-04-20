@@ -13,6 +13,7 @@ metadata:
     {{- include "pkg.components.svc_labels" (dict "labels" $kubernetes.etcd.service.labels "ctx" $) | nindent 4 }}
   annotations:
     {{- include "pkg.components.svc_annotations" (dict "annotations" $kubernetes.etcd.service.annotations "ctx" $) | nindent 4 }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   type: {{ $kubernetes.etcd.service.type }}
   {{- with $kubernetes.etcd.service.loadBalancerIP }}

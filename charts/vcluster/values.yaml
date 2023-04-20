@@ -341,7 +341,8 @@ lifecycle:
     successfulJobsHistoryLimit: 3
     # -- Cronjob failed jobs history limit
     failedJobsHistoryLimit: 3
-    # -- Run Installer Jobs again (Only execute on Helm install)
+    # -- ttlSecondsAfterFinished for setup
+    ttlSecondsAfterFinished: 120
 
   # Cleanup (Runs on uninstall)
   # Uses the workload settings from the jobs section above
@@ -356,8 +357,6 @@ lifecycle:
       # argocd.argoproj.io/hook-delete-policy: HookSucceeded
     # -- Job Labels
     labels: {}
-
-
 
   # ServiceAccount
   serviceAccount:
@@ -1175,7 +1174,6 @@ kubernetes:
   # -- Version for API Server, Scheduler, Controller Manager (Tag for all kubernetes components)
   version: "v1.25.0"
 
-
   # -- ControlerPlaneEndpoint
   controlPlane:
     # -- Endpoint for ControlPlane (eg `128.1314.1234.4242:6443`). If not set, the vcluster will try to find the endpoint automatically.
@@ -1185,16 +1183,6 @@ kubernetes:
     dnsDomain: cluster.local
     serviceSubnet: "10.2.0.0/16"
     podSubnet: "10.3.0.0/16"
-
-  persistence:
-    enabled: true
-    accessModes:
-      - ReadWriteOnce
-    size: 1Gi
-    # storageClassName: default
-    annotations: {}
-    finalizers:
-      - kubernetes.io/pvc-protection
 
   # Kube-Proxy (via KubeADM)
   kubeProxy:
@@ -1290,6 +1278,25 @@ kubernetes:
     # -- Update Strategy
     updateStrategy: {}
 
+    # Persistence
+    persistence:
+      # -- Enable Persistence for ETCD
+      enabled: true
+      # -- Access Modes for ETCD
+      accessModes:
+        - ReadWriteOnce
+      # -- Size for ETCD
+      size: 1Gi
+      # storageClassName: default
+      # -- Storage Class for ETCD
+      storageClassName: ""
+      # -- Annotations for ETCD
+      annotations:
+        helm.sh/resource-policy: keep
+      # -- Finalizers for ETCD
+      finalizers:
+        - kubernetes.io/pvc-protection
+
     ports:
       # -- ETCD Client Port
       client: 2379
@@ -1344,6 +1351,91 @@ kubernetes:
           metricRelabelings: []
           # -- Set relabelings for the endpoint of the serviceMonitor
           relabelings: []
+
+    # ETCD Backup
+    backup:
+      # -- Enable ETCD Backup
+      enabled: false
+      # -- Schedule for ETCD Backup
+      schedule: "0 */12 * * *"
+      # -- Successful Jobs History Limit for ETCD Backup
+      successfulJobsHistoryLimit: 3
+      # -- Failed Jobs History Limit for ETCD Backup
+      failedJobsHistoryLimit: 3
+      # -- ttlSecondsAfterFinished for ETCD Backup
+      ttlSecondsAfterFinished: 120
+      # -- Restart Policy for ETCD Backup
+      restartPolicy: OnFailure
+      # -- Extra arguments for ETCD Backup
+      args: {}
+      # -- Pod Requests and limits
+      resources: {}
+      # -- Labels for Workload
+      labels: {}
+      # -- Annotations for Workload
+      annotations: {}
+      # -- Pod Labels
+      podLabels: {}
+      # -- Pod Annotations
+      podAnnotations: {}
+      # -- Extra environment variables (`key: value` style, allows templating)
+      envs: {}
+      # -- Extra environment variables from
+      envsFrom: []
+      # -- Pod Security Context
+      podSecurityContext:
+        enabled: true
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      # -- Container Security Context
+      securityContext:
+        enabled: true
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+          - ALL
+      # -- Node Selector
+      nodeSelector: {}
+      # -- Tolerations
+      tolerations: []
+      podAntiAffinity: soft
+      podAntiAffinityTopologyKey: kubernetes.io/hostname
+      # -- Affinity
+      affinity: {}
+      # -- Additional volumemounts
+      volumeMounts: []
+      # -- Additional volumes
+      volumes: []
+      # -- Pod PriorityClassName
+      priorityClassName: ""
+      # -- TopologySpreadConstraints for all workloads
+      topologySpreadConstraints: []
+      # Persistence
+      persistence:
+        # -- Use existing claim for ETCD Backup
+        existingClaim: ""
+        # -- Subpath for ETCD Backup
+        subPath: ""
+        # -- Mounts backup volume on etcd pods (Recommended if accessModes is ReadWriteMany)
+        mountOnETCD: false
+        # -- Access Modes for ETCD Backup
+        accessModes:
+          - ReadWriteOnce
+        # -- Size for ETCD Backup
+        size: 1Gi
+        # -- Storage Class for ETCD Backup
+        storageClassName: ""
+        # -- Annotations for ETCD Backup
+        annotations:
+          helm.sh/resource-policy: keep
+        # -- Finalizers for ETCD Backup
+        finalizers:
+          - kubernetes.io/pvc-protection
+
+
+
 
   ## Kubernetes API-Server
   apiServer:

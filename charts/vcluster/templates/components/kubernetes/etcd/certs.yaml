@@ -11,6 +11,7 @@ metadata:
   name: "{{ $fullName }}-pki-etcd-ca"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   commonName: "{{ $certName }}-etcd-ca"
   secretName: "{{ $fullName }}-pki-etcd-ca"
@@ -33,6 +34,7 @@ metadata:
   name: "{{ $fullName }}-etcd-issuer"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   ca:
     secretName: "{{ $fullName }}-pki-etcd-ca"
@@ -52,6 +54,7 @@ metadata:
   name: "{{ $fullName }}-pki-etcd-peer"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   commonName: "{{ $certName }}-etcd-peer"
   secretName: "{{ $fullName }}-pki-etcd-peer"
@@ -85,6 +88,7 @@ metadata:
   name: "{{ $fullName }}-pki-etcd-server"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   commonName: "{{ $certName }}-etcd-server"
   secretName: "{{ $fullName }}-pki-etcd-server"
@@ -132,6 +136,7 @@ metadata:
   name: "{{ $fullName }}-pki-etcd-healthcheck-client"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   commonName: "{{ $certName }}-etcd-healthcheck-client"
   secretName: "{{ $fullName }}-pki-etcd-healthcheck-client"
@@ -154,6 +159,7 @@ metadata:
   name: "{{ $fullName }}-pki-apiserver-etcd-client"
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ $.Release.Namespace }}
 spec:
   commonName: "{{ $certName }}-apiserver-etcd-client"
   secretName: "{{ $fullName }}-pki-apiserver-etcd-client"

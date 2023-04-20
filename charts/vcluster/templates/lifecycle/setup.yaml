@@ -17,7 +17,9 @@ metadata:
       {{-  . | nindent 4 }}
     {{- end }}
 spec:
-  ttlSecondsAfterFinished: 120
+  {{- with $manifest.ttlSecondsAfterFinished }}
+  ttlSecondsAfterFinished: {{ . }}
+  {{- end }}
   template:
     metadata:
       labels: {{- include "kubernetes.labels" $ | nindent 8 }}

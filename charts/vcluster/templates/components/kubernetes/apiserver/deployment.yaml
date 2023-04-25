@@ -143,7 +143,7 @@ spec:
         {{- with $kubernetes.apiServer.envs }}
           {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
         {{- end }}
-        {{- include "pkg.common.env" $ | nindent 8 }}
+        {{- include "pkg.common.proxy.env" $ | nindent 8 }}
         volumeMounts:
         - mountPath: /etc/kubernetes
           name: apiserver-config

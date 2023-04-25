@@ -92,7 +92,7 @@ Common Selector Labels
     {{- $no_proxy = ($no_proxy | trimSuffix ",") -}}
 
     {{/* Standard Stuff */}}
-    {{- $no_proxy = printf "%s,%s" $no_proxy "localhost,127.0.0.1,.svc,svc." -}}
+    {{- $no_proxy = printf "%s,%s,.%s" $no_proxy "localhost,127.0.0.1,.svc,svc.,$KUBERNETES_SERVICE_HOST" ($.Release.Namespace | trimAll ".") -}}
 
     {{/* Kubernetes Component */}}
     {{- if (include "kubernetes.enabled" $) -}}
@@ -104,7 +104,7 @@ Common Selector Labels
         {{- $no_proxy = printf "%s,%s" $no_proxy . -}}
       {{- end -}}
       {{- with $kubernetes.networking.dnsDomain -}}
-        {{- $no_proxy = printf "%s,%s" $no_proxy . -}}
+        {{- $no_proxy = printf "%s,%s,%s." $no_proxy . . -}}
       {{- end -}}
       {{/* Inject Subnet CIDRs (GO will understand, not bash) */}}
       {{- with $kubernetes.networking.podSubnet -}}

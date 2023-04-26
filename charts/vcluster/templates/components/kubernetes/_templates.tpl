@@ -87,7 +87,7 @@ Generate etcd servers list.
   {{- range $etcdcount, $e := until (int $kubernetes.etcd.replicaCount) -}}
     {{- printf "https://" -}}
     {{- printf "%s-etcd-%d." $fullName $etcdcount -}}
-    {{- printf "%s-etcd:%d" $fullName (int $kubernetes.etcd.ports.client) -}}
+    {{- printf "%s-etcd.%s:%d" $fullName $.Release.Namespace (int $kubernetes.etcd.ports.client) -}}
     {{- if lt $etcdcount (sub (int $kubernetes.etcd.replicaCount) 1 ) -}}
       {{- printf "," -}}
     {{- end -}}
@@ -101,7 +101,7 @@ Generate etcd servers list.
     {{- printf "%s-etcd-%d=" $fullName $etcdcount -}}
     {{- printf "https://" -}}
     {{- printf "%s-etcd-%d." $fullName $etcdcount -}}
-    {{- printf "%s-etcd:%d" $fullName (int $kubernetes.etcd.ports.peer) -}}
+    {{- printf "%s-etcd.%s:%d" $fullName $.Release.Namespace (int $kubernetes.etcd.ports.peer) -}}
     {{- if lt $etcdcount (sub (int $kubernetes.etcd.replicaCount) 1 ) -}}
       {{- printf "," -}}
     {{- end -}}
@@ -254,7 +254,7 @@ Template for API Server
 {{- define "kubernetes.api.url" -}}
   {{- $kubernetes := $.Values.kubernetes -}}
   {{- with $kubernetes.apiServer.service.port -}}
-    {{- printf "https://%s:%s" (include "kubernetes.api.service" $) (. | toString) -}}
+    {{- printf "https://%s.%s:%s" (include "kubernetes.api.service" $) $.Release.Namespace (. | toString) -}}
   {{- end -}}
 {{- end -}}
 

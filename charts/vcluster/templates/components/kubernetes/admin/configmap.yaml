@@ -16,7 +16,7 @@ data:
     clusters:
     - cluster:
         certificate-authority: /pki/admin-client/ca.crt
-        server: https://{{ $fullName }}-apiserver:{{ $kubernetes.apiServer.service.port }}
+        server: {{ include "kubernetes.api.url" $ }}
       name: default-cluster
     contexts:
     - context:

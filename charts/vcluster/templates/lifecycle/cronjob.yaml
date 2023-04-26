@@ -1,4 +1,4 @@
-{{- $manifest := $.Values.lifecycle.job -}}
+{{- $manifest := $.Values.lifecycle.setup -}}
 {{- if $manifest.reconciler }}
 ---
 apiVersion: batch/v1

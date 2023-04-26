@@ -8,14 +8,15 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ $fullName }}-etcd
-  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+  labels: 
+    {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
     {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.etcd.labels "ctx" $)) }}
-      {{- toYaml . | nindent 4 }}
+      {{-  . | nindent 4 }}
     {{- end }}
     {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.etcd.annotations "ctx" $)) }}
   annotations:
-      {{- toYaml . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
   namespace: {{ $.Release.Namespace }}
 spec:

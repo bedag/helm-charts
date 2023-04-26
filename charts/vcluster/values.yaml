@@ -263,6 +263,11 @@ lifecycle:
     #   metadata:
     #     name: example
 
+  # ArgoCD Lifecycle configuration
+  argocd:
+    # -- Installation namespace of ArgoCD
+    namespace: "argocd"  
+
   # Workload configuration for all jobs
   jobs:
     image:

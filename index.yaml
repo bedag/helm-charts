@@ -1518,6 +1518,28 @@ entries:
   vcluster:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2023-04-26T07:09:58.142781423Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 2.2.4
+    description: Virtual Kubernetes Cluster
+    digest: ac9f439bfa53fd8e2f3d550ab30d9d10a65f4630e2323bd929d624ad8af13f51
+    home: https://artifacthub.io/packages/helm/kvaps/kubernetes
+    keywords:
+    - vcluster
+    - kubernetes
+    - machine-controller
+    maintainers:
+    - email: sre@bedag.ch
+      name: Bedag Informatik AG
+    name: vcluster
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/vcluster-0.3.1/vcluster-0.3.1.tgz
+    version: 0.3.1
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2023-04-20T23:51:23.120324739Z"
     dependencies:
     - name: common
@@ -1680,4 +1702,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/vcluster-0.1.0/vcluster-0.1.0.tgz
     version: 0.1.0
-generated: "2023-04-20T23:51:23.120610355Z"
+generated: "2023-04-26T07:09:58.143244225Z"

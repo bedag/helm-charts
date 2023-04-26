@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.3.2](https://img.shields.io/badge/Version-0.3.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -134,7 +134,7 @@ Global Values
 | global.components.workloads.tolerations | list | `[]` | Tolerations for all workloads (Overwrites all workloads tolerations) |
 | global.components.workloads.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads (Overwrites all workloads topologySpreadConstraints) |
 | global.proxy.host | string | `""` | Proxy Host |
-| global.proxy.no_proxy | string | `""` | No Proxy Hosts |
+| global.proxy.no_proxy | string | `"10.0.0.0/8"` | No Proxy Hosts |
 | global.registry.creds.password | string | `""` | Registry Password |
 | global.registry.creds.username | string | `""` | Registry Username |
 | global.registry.endpoint | string | `""` | Registry Endpoint |

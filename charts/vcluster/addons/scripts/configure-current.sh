@@ -27,10 +27,11 @@ C_KEY=$(base64 /pki/admin-client/tls.key | tr -d '\n')
 
   {{/* Add Default Argo Kubeconfig */}}
   {{- $kubeconfigs = append $kubeconfigs (dict "name" (include "gitops.converter.argocd.secretName" $) "type" "argo") }}
-{{- end -}}
+{{- end -}}{{"\n"}}
 
 # Iterate over all kubeconfigs
 {{- range $kubeconfigs }}{{"\n"}}
+  {{- $name := (include "pkg.utils.template" (dict "tpl" (required "kubeconfig.name is required" .name) "ctx" $)) -}}
   {{- $namespace := default $.Release.Namespace .namespace -}}
   {{- $key := default "kubeconfig" .key -}}
   {{- $type := default "kubeconfig" .type | lower -}}
@@ -39,11 +40,11 @@ C_KEY=$(base64 /pki/admin-client/tls.key | tr -d '\n')
   {{- if (eq $endpoint "external") -}}
     {{- $endpoint = (include "kubernetes.api.endpoint" $) -}}
   {{- end -}}
-KCFG=$(echo -e """
+KCFG=$(cat <<EOT
 ---
 apiVersion: v1
 metadata:
-  name: {{ (include "pkg.utils.template" (dict "tpl" (required "kubeconfig.name is required" .name) "ctx" $)) }}
+  name: {{ $name }}
   {{- with .annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -65,30 +66,30 @@ kind: Secret
 stringData:
 {{- end }}
 {{- if (eq $type "argo") }}
-  {{- include "pkg.kubeconfigs.argo" (dict "name" .clustername "endpoint" $endpoint "ctx" $) | nindent 2 }}
+  name: {{ (default $name .clustername) }}
+  server: {{ $endpoint }}
+  config: |
+    {
+      "tlsClientConfig": {
+        "insecure": false,
+        "caData": "${CA}",
+        "keyData": "${C_KEY}",
+        "certData": "${C_CERT}"
+      }
+    }
 {{- else }}
   {{- default "kubeconfig" $key | nindent 2 }}: |
     {{- include "pkg.kubeconfigs.kubeconfig.certs" (dict "endpoint" $endpoint "ctx" $) | nindent 4 }}
 {{- end }}
-""")
+EOT
+)
 
 if k8s::replace_or_create "${KCFG}"; then
-  echo "✅ ({{ $namespace }}/{{ .name }}) Kubeconfig Present"
+  echo "✅ ({{ $namespace }}/{{ $name }}) Kubeconfig Present"
 else
-  echo "🔥 ({{ $namespace }}/{{ .name }}) Kubeconfig Not Present"
+  echo "🔥 ({{ $namespace }}/{{ $name }}) Kubeconfig Not Present"
 fi
 {{- end }}
-
-
-# Install ArgoCD for VCluster
-# {{- if $argocd.enabled }}
-#   {{- with $argocd }}
-# helm repo add argocd {{ .repoURL }}
-# helm upgrade --install --skip-crds --set crds.install=false --namespace {{ $.Release.Namespace }} {{ include "pkg.argo.release" $ }} argocd/{{ .chart }} -f /argocd/values.yaml {{ with .targetRevision }}--version {{ . }} {{ end }}
-#   {{- end }}
-# {{- else }}
-# helm delete {{ include "pkg.argo.release" $ }} --namespace {{ $.Release.Namespace }} --timeout 5m0s | true
-# {{- end }}
 
 {{- with $lifecycle.current.script }}
 # ------------------------------------------------------------------------------

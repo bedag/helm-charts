@@ -51,3 +51,37 @@ subjects:
 - kind: ServiceAccount
   name: {{ include "vcluster.serviceAccountName"  . }}
   namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "vcluster.fullname" .  }}
+  labels: {{- include "vcluster.labels" . | nindent 4 }}  
+  namespace: {{ $.Values.lifecycle.argocd.namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "vcluster.fullname" .  }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "vcluster.serviceAccountName"  . }}
+  namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "vcluster.fullname" .  }}
+  labels: {{- include "vcluster.labels" . | nindent 4 }}
+  namespace: {{ $.Values.lifecycle.argocd.namespace }}
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - watch
+  - list
+  - create
+  - update
+  - delete

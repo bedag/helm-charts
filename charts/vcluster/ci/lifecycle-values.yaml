@@ -44,32 +44,30 @@ global:
       topologySpreadConstraints: []
 
 lifecycle:
-  job:
+  
+  jobs:
     reconciler: true
     labels: 
       argocd.argoproj.io/hook: PreSync
     annotations:
       argocd.argoproj.io/hook: PreSync
-  current:
-    extraManifests:
-      project.yaml: |
-        {{- include "pkg.manifests.argo-cluster-project" $ | nindent 4 }}
-      bootstrap-app.yaml: |
-        {{- include "pkg.manifests.argo-bootstrap-app" $ | nindent 4 }}
-      bootstrap-app-ejson.yaml: |
-        {{- include "pkg.manifests.argo-app-ejson"  $ | nindent 4 }}
-      bootstrap-repository.yaml: |
-        {{- include "pkg.manifests.argo-bootstrap-repository" $ | nindent 4 }}
-  vcluster:
-    extraManifests:
-      bootstrap-app-ejson.yaml: |
-        {{- include "pkg.manifests.argo-app-ejson"  $ | nindent 4 }}
+  kubeconfigs:
+  - name: '{{ include "pkg.cluster.name" $ }}'
+    namespace: argocd
+    type: argo
+  - endpoint: external
+    name: external-access
 gitops:
   enabled: false
 osm:
   enabled: false
 kubernetes:
-  enabled: false
+  enabled: true
+  apiServer:
+    service:
+      type: LoadBalancer
+  controlPlane:
+    endpoint: 0.0.0.0
 autoscaler:
   enabled: false
 machine:

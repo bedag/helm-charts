@@ -1,7 +1,6 @@
 {{- $kubernetes := $.Values.kubernetes -}}
 {{- $jobs := $.Values.lifecycle -}}
 {{- $manifest := $jobs.jobs -}}
-{{- $argocd := $.Values.gitops.argocd.bootstrap -}}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -79,10 +78,6 @@ spec:
           name: scripts
         - mountPath: /cache
           name: cache-current
-        {{- if (include "gitops.enabled" $) }}
-        - mountPath: /argocd
-          name: argocd
-        {{- end }}
       - name: vcluster
         image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
         imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy  "ctx" $) }}
@@ -107,7 +102,6 @@ spec:
         {{- end }}
         volumeMounts:
         {{- include "pkg.cluster.cp.vms" $ | nindent 8 }}
-        {{- include "gitops.volumemounts" $ | nindent 8 }}
         {{- include "machine-controller.volumemounts" $ | nindent 8 }}
         {{- include "operating-system-manager.volumemounts" $ | nindent 8 }}
         - mountPath: /scripts
@@ -123,7 +117,6 @@ spec:
         {{- end }}
       volumes:
       {{- include "pkg.cluster.cp.vs" $ | nindent 6 }}
-      {{- include "gitops.volumes" $ | nindent 6 }}
       {{- include "machine-controller.volumes" $ | nindent 6 }}
       {{- include "operating-system-manager.volumes" $ | nindent 6 }}
       # Create dedicated caches, otherwise the lock file might block concurrent helm operations
@@ -152,12 +145,6 @@ spec:
       {{- if $kubernetes.coredns.enabled }}
           - configMap:
               name: "{{ include "kubernetes.fullname" $  }}-coredns-manifests"
-      {{- end }}
-      {{- if (include "gitops.enabled" $) }}
-      - name: argocd
-        secret:
-          defaultMode: 420
-          secretName: {{ include "gitops.fullname" .  }}-argocd-values
       {{- end }}
       {{- with $manifest.extraVolumes }}
         {{- toYaml . | nindent 6 }}

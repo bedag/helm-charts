@@ -44,7 +44,6 @@ global:
       topologySpreadConstraints: []
 
 lifecycle:
-  
   jobs:
     reconciler: true
     labels: 
@@ -57,8 +56,6 @@ lifecycle:
     type: argo
   - endpoint: external
     name: external-access
-gitops:
-  enabled: false
 osm:
   enabled: false
 kubernetes:

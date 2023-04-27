@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.3.3](https://img.shields.io/badge/Version-0.3.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.3.4](https://img.shields.io/badge/Version-0.3.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -155,6 +155,7 @@ Global Values
 We use a lifecycle Job/Cronjob to manage certain configurations within the vcluster and the hosting cluster.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| lifecycle.argocd.rbac | bool | `true` | Creates required rbac in argoCD namespace to create cluster secrets |
 | lifecycle.cilium.enabled | bool | `true` | Install Cilium CNI |
 | lifecycle.cilium.on_install | bool | `true` | Install only on chart install (First install) |
 | lifecycle.cilium.version | string | `"1.9.18"` | Cilium version |
@@ -183,6 +184,7 @@ We use a lifecycle Job/Cronjob to manage certain configurations within the vclus
 | lifecycle.setup.annotations | object | `{"helm.sh/hook":"post-install,post-upgrade","helm.sh/hook-delete-policy":"before-hook-creation"}` | Job Annotations |
 | lifecycle.setup.cronjob | bool | `true` | Deploy as Cronjob to run periodically |
 | lifecycle.setup.failedJobsHistoryLimit | int | `3` | Cronjob failed jobs history limit |
+| lifecycle.setup.injectProxy | bool | `true` | Inject Proxy as Environment Variables |
 | lifecycle.setup.labels | object | `{}` | Job Labels |
 | lifecycle.setup.schedule | string | `"0 0 1 */6 *"` | Cronjob Schedule |
 | lifecycle.setup.successfulJobsHistoryLimit | int | `3` | Cronjob successful jobs history limit |
@@ -257,6 +259,7 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.controller.image.registry | string | `"quay.io"` | Image registry |
 | machine.controller.image.repository | string | `"kubermatic/machine-controller"` | Image repository |
 | machine.controller.image.tag | string | `""` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
+| machine.controller.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | machine.controller.livenessProbe | object | `{"httpGet":{"path":"/healthz","port":8085,"scheme":"HTTP"},"initialDelaySeconds":5,"periodSeconds":5}` | Livenessprobe configuration |
 | machine.controller.readinessProbe | object | `{"httpGet":{"path":"/healthz","port":8085,"scheme":"HTTP"},"initialDelaySeconds":5,"periodSeconds":5}` | Readinessprobe configuration |
 | machine.controller.resources | object | `{}` | Resources configuration |
@@ -281,6 +284,7 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.admission.ingress.annotations | object | `{}` | Annotations for admission ingress |
 | machine.admission.ingress.contextPath | string | `"/admission/machine"` | Context path for admission ingress |
 | machine.admission.ingress.ingressClassName | string | `""` | Ingressclass for all ingresses |
+| machine.admission.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | machine.admission.livenessProbe | object | `{"httpGet":{"path":"/healthz","port":9876,"scheme":"HTTPS"},"initialDelaySeconds":5,"periodSeconds":5}` | Livenessprobe configuration |
 | machine.admission.readinessProbe | object | `{"httpGet":{"path":"/healthz","port":9876,"scheme":"HTTPS"},"periodSeconds":5}` | Readinessprobe configuration |
 | machine.admission.resources | object | `{}` | Resources configuration |
@@ -360,6 +364,7 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.controller.image.registry | string | `"quay.io"` | Image registry |
 | osm.controller.image.repository | string | `"kubermatic/operating-system-manager"` | Image repository |
 | osm.controller.image.tag | string | `""` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
+| osm.controller.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | osm.controller.livenessProbe | object | `{"httpGet":{"path":"/readyz","port":8085,"scheme":"HTTP"},"initialDelaySeconds":5,"periodSeconds":5}` | Livenessprobe configuration |
 | osm.controller.readinessProbe | object | `{"httpGet":{"path":"/healthz","port":8085,"scheme":"HTTP"},"initialDelaySeconds":5,"periodSeconds":5}` | Readinessprobe configuration |
 | osm.controller.resources | object | `{}` | Pod Requests and limits |
@@ -384,6 +389,7 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.admission.ingress.annotations | object | `{}` | Annotations for admission ingress |
 | osm.admission.ingress.contextPath | string | `"/admission/osm"` | Context path for admission ingress |
 | osm.admission.ingress.ingressClassName | string | `""` | Ingressclass for all ingresses |
+| osm.admission.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | osm.admission.livenessProbe | object | `{"httpGet":{"path":"/healthz","port":9085,"scheme":"HTTP"},"initialDelaySeconds":5,"periodSeconds":5}` | Livenessprobe configuration |
 | osm.admission.readinessProbe | object | `{"httpGet":{"path":"/healthz","port":9085,"scheme":"HTTP"},"initialDelaySeconds":5,"periodSeconds":5}` | Readinessprobe configuration |
 | osm.admission.resources | object | `{}` | Pod Requests and limits |
@@ -441,6 +447,7 @@ Deploys [Kubernetes API Server](https://kubernetes.io/docs/reference/command-lin
 | kubernetes.apiServer.ingress.annotations | object | `{}` | Annotations for admission ingress |
 | kubernetes.apiServer.ingress.contextPath | string | `"/admission/machine"` | Context path for admission ingress |
 | kubernetes.apiServer.ingress.ingressClassName | string | `""` | Ingressclass for all ingresses |
+| kubernetes.apiServer.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.apiServer.nodeSelector | object | `{}` | Node Selector |
 | kubernetes.apiServer.podAnnotations | object | `{}` | Pod Annotations |
 | kubernetes.apiServer.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
@@ -482,6 +489,7 @@ Deploys [Kubernetes Controller Manager](https://kubernetes.io/docs/concepts/arch
 | kubernetes.controllerManager.image.repository | string | `"kube-controller-manager"` | Image repository |
 | kubernetes.controllerManager.image.tag | string | `""` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
 | kubernetes.controllerManager.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.controllerManager.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.controllerManager.labels | object | `{}` | Labels for Workload |
 | kubernetes.controllerManager.nodeSelector | object | `{}` | Node Selector |
 | kubernetes.controllerManager.podAnnotations | object | `{}` | Pod Annotations |
@@ -530,6 +538,7 @@ Deploys [Kubernetes Scheduler](https://kubernetes.io/docs/concepts/scheduling-ev
 | kubernetes.scheduler.image.repository | string | `"kube-scheduler"` | Image repository |
 | kubernetes.scheduler.image.tag | string | `""` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
 | kubernetes.scheduler.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.scheduler.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.scheduler.labels | object | `{}` | Labels for Workload |
 | kubernetes.scheduler.metrics.service.annotations | object | `{}` | Service Annotations |
 | kubernetes.scheduler.metrics.service.labels | object | `{}` | Service Labels |
@@ -586,6 +595,7 @@ Deploys [ETCD](https://etcd.io/).
 | kubernetes.etcd.image.repository | string | `"etcd"` | Image repository |
 | kubernetes.etcd.image.tag | string | `"3.5.6-0"` | Image tag |
 | kubernetes.etcd.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.etcd.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.etcd.metrics.service.annotations | object | `{}` | Service Annotations |
 | kubernetes.etcd.metrics.service.labels | object | `{}` | Service Labels |
 | kubernetes.etcd.metrics.serviceMonitor.annotations | object | `{}` | Assign additional Annotations |
@@ -638,6 +648,7 @@ Scheduled snapshots of ETCD via Cronjob.
 | kubernetes.etcd.backup.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.etcd.backup.envsFrom | list | `[]` | Extra environment variables from |
 | kubernetes.etcd.backup.failedJobsHistoryLimit | int | `3` | Failed Jobs History Limit for ETCD Backup |
+| kubernetes.etcd.backup.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.etcd.backup.nodeSelector | object | `{}` | Node Selector |
 | kubernetes.etcd.backup.persistence.accessModes | list | `["ReadWriteOnce"]` | Access Modes for ETCD Backup |
 | kubernetes.etcd.backup.persistence.annotations | object | `{"helm.sh/resource-policy":"keep"}` | Annotations for ETCD Backup |
@@ -691,6 +702,7 @@ The Konnectivity-Server is deployed alongside with the API-Server. It must be re
 | kubernetes.konnectivity.server.image.repository | string | `"kas-network-proxy/proxy-server"` | Image repository |
 | kubernetes.konnectivity.server.image.tag | string | `"v0.0.37"` | Image tag |
 | kubernetes.konnectivity.server.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.konnectivity.server.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.konnectivity.server.labels | object | `{}` | Labels for Workload |
 | kubernetes.konnectivity.server.mode | string | `"GRPC"` | This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment. |
 | kubernetes.konnectivity.server.nodeSelector | object | `{}` | Node Selector |
@@ -729,6 +741,7 @@ The konnectivity-Agent is deployed inside the vcluster and should establish a co
 | kubernetes.konnectivity.agent.image.repository | string | `"kas-network-proxy/proxy-agent"` | Image repository |
 | kubernetes.konnectivity.agent.image.tag | string | `"v0.0.37"` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
 | kubernetes.konnectivity.agent.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.konnectivity.agent.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.konnectivity.agent.labels | object | `{}` | Labels for Workload |
 | kubernetes.konnectivity.agent.nodeSelector | object | `{}` | Node Selector |
 | kubernetes.konnectivity.agent.podAnnotations | object | `{}` | Pod Annotations |
@@ -764,6 +777,7 @@ Deploys an administration pod which has the admin kubeconfig mounted and allows 
 | kubernetes.admin.image.tag | string | `"v0.13.4"` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
 | kubernetes.admin.image.use_jobs | bool | `true` | Use the Job Image (used for kubectl admin and kubeadmin bootstrap) |
 | kubernetes.admin.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.admin.injectProxy | bool | `true` | Inject Proxy as Environment Variables |
 | kubernetes.admin.labels | object | `{}` | Labels for Workload |
 | kubernetes.admin.nodeSelector | object | `{}` | Node Selector |
 | kubernetes.admin.podAnnotations | object | `{}` | Pod Annotations |
@@ -796,6 +810,7 @@ Deploys an administration pod which has the admin kubeconfig mounted and allows 
 | kubernetes.coredns.image.repository | string | `"coredns/coredns"` | Image repository |
 | kubernetes.coredns.image.tag | string | `"1.10.0"` | Image tag |
 | kubernetes.coredns.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.coredns.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.coredns.labels | object | `{}` | Labels for Workload |
 | kubernetes.coredns.nodeSelector | object | `{"kubernetes.io/os":"linux"}` | Node Selector |
 | kubernetes.coredns.podAnnotations | object | `{}` | Pod Annotations |
@@ -839,6 +854,7 @@ Available Values for the [Autsocaler component](#autoscaler).
 | autoscaler.image.repository | string | `"autoscaling/cluster-autoscaler"` | Image repository |
 | autoscaler.image.tag | string | `"v1.23.0"` | Image tag |
 | autoscaler.imagePullSecrets | list | `[]` | Image pull Secrets |
+| autoscaler.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | autoscaler.livenessProbe | object | `{"httpGet":{"path":"/health-check","port":8085},"initialDelaySeconds":5,"periodSeconds":5}` | Livenessprobe configuration |
 | autoscaler.nodeSelector | object | `{}` | Node Selector |
 | autoscaler.podAnnotations | object | `{}` | Pod Annotations |

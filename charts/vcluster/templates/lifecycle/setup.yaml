@@ -8,16 +8,16 @@ kind: Job
 metadata:
   name: {{ include "vcluster.fullname" $ }}-setup
   labels: {{- include "vcluster.labels" $ | nindent 4 }}
-    {{- with (include "pkg.components.labels" (dict "labels" $manifest.labels "ctx" $)) }}
+    {{- with (include "pkg.components.labels" (dict "labels" $jobs.setup.labels "ctx" $)) }}
       {{-  . | nindent 4 }}
     {{- end }}
   annotations:
     checksum/config: {{ .Files.Get (printf "templates/bootstrap/kubeadm-config.yaml") | sha256sum  }}
-    {{- with (include "pkg.components.annotations" (dict "annotations" $manifest.annotations "ctx" $)) }}
+    {{- with (include "pkg.components.annotations" (dict "annotations" $jobs.setup.annotations "ctx" $)) }}
       {{-  . | nindent 4 }}
     {{- end }}
 spec:
-  {{- with $manifest.ttlSecondsAfterFinished }}
+  {{- with $jobs.setup.ttlSecondsAfterFinished }}
   ttlSecondsAfterFinished: {{ . }}
   {{- end }}
   template:
@@ -59,7 +59,12 @@ spec:
         image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
         imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy  "ctx" $) }}
         command: [ '/bin/bash', '/scripts/configure-current.sh' ]
-        env: {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
+        env:
+        {{- if $jobs.setup.injectProxy }}
+          {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
+        {{- else }}
+          {{- include "pkg.common.env" $ | nindent 8 }}
+        {{- end }}
         {{- include "pkg.utils.xdg-env" $ | nindent 8 }}
         {{- with (include "pkg.components.securityContext" (dict "sc" $manifest.securityContext "ctx" $)) }}
         securityContext: {{ . | nindent 10 }}
@@ -82,7 +87,12 @@ spec:
         image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
         imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy  "ctx" $) }}
         command: [ '/bin/bash', '/scripts/configure-vcluster.sh' ]
-        env: {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
+        env:
+        {{- if $jobs.setup.injectProxy }}
+          {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
+        {{- else }}
+          {{- include "pkg.common.env" $ | nindent 8 }}
+        {{- end }}        
         {{- include "pkg.utils.xdg-env" $ | nindent 8 }}
         - name: KUBECONFIG
           value: "/etc/kubernetes/admin.conf"
@@ -96,14 +106,10 @@ spec:
         resources: {{ . | nindent 10 }}
         {{- end }}
         volumeMounts:
+        {{- include "pkg.cluster.cp.vms" $ | nindent 8 }}
         {{- include "gitops.volumemounts" $ | nindent 8 }}
         {{- include "machine-controller.volumemounts" $ | nindent 8 }}
         {{- include "operating-system-manager.volumemounts" $ | nindent 8 }}
-        - mountPath: /etc/kubernetes/
-          name: kubeconfig
-          readOnly: true
-        - mountPath: /pki/admin-client
-          name: pki-admin-client
         - mountPath: /scripts
           name: scripts
         - mountPath: /manifests
@@ -112,28 +118,19 @@ spec:
           name: config
         - mountPath: /cache
           name: cache-vcluster
-        {{- if (include "gitops.enabled" $) }}
-        - mountPath: /argocd
-          name: argocd
-        {{- end }}
         {{- with $manifest.extraVolumeMounts }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
       volumes:
+      {{- include "pkg.cluster.cp.vs" $ | nindent 6 }}
       {{- include "gitops.volumes" $ | nindent 6 }}
       {{- include "machine-controller.volumes" $ | nindent 6 }}
       {{- include "operating-system-manager.volumes" $ | nindent 6 }}
-      - configMap:
-          name: "{{ include "kubernetes.fullname" $  }}-admin-conf"
-        name: kubeconfig
       # Create dedicated caches, otherwise the lock file might block concurrent helm operations
       - name: cache-current
         emptyDir: {}
       - name: cache-vcluster
         emptyDir: {}
-      - secret:
-          secretName: "{{ include "kubernetes.fullname" $  }}-pki-admin-client"
-        name: pki-admin-client
       - name: scripts
         configMap:
           name: {{ include "vcluster.fullname" $ }}-lifecycle-scripts

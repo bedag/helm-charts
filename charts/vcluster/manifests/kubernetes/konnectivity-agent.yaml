@@ -142,9 +142,14 @@ spec:
         {{- with $kubernetes.konnectivity.agent.args }}
           {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 10 }}
         {{- end }}
-        {{- with $kubernetes.konnectivity.agent.envs }}
         env: 
-          {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
+        {{- if $kubernetes.konnectivity.agent.injectProxy }}
+          {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
+        {{- else }}
+          {{- include "pkg.common.env" $ | nindent 8 }}
+        {{- end }}
+        {{- with $kubernetes.konnectivity.agent.envs }}
+          {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
         {{- end }}
         {{- with $kubernetes.konnectivity.agent.envsFrom }}
         envFrom:

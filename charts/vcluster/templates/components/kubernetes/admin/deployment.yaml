@@ -103,10 +103,14 @@ spec:
           {{- toYaml . | nindent 8 }}
         {{- end }}
         env:
+          {{- if $kubernetes.admin.injectProxy }}
+            {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
+          {{- else }}
+            {{- include "pkg.common.env" $ | nindent 8 }}
+          {{- end }}
           {{- with $kubernetes.admin.envs }}
             {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
           {{- end }}
-          {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
           {{- include "pkg.utils.xdg-env" $ | nindent 8 }}
         - name: KUBECONFIG
           value: "/etc/kubernetes/admin.conf"
@@ -114,11 +118,7 @@ spec:
               {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
             {{- end }}
         volumeMounts:
-        - mountPath: /etc/kubernetes/
-          name: kubeconfig
-          readOnly: true
-        - mountPath: /pki/admin-client
-          name: pki-admin-client
+        {{- include "pkg.cluster.cp.vms" $ | nindent 8 }}
         - mountPath: /addons
           name: addon-scripts
         - mountPath: /cache
@@ -139,15 +139,10 @@ spec:
       securityContext: {{ . | nindent 8 }}
       {{- end }}
       volumes:
+      {{- include "pkg.cluster.cp.vs" $ | nindent 6 }}
       - name: cache
         emptyDir:
           sizeLimit: 500Mi
-      - configMap:
-          name: "{{ $fullName }}-admin-conf"
-        name: kubeconfig
-      - secret:
-          secretName: "{{ $fullName }}-pki-admin-client"
-        name: pki-admin-client
       {{- if or $kubernetes.extraManifests $kubernetes.konnectivity.server.enabled $kubernetes.konnectivity.agent.enabled }}
       - name: manifests
         projected:

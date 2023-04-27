@@ -56,14 +56,19 @@ spec:
             {{- end }}
           image: {{ include "pkg.images.registry.convert" (dict "image" .image "tag_overwrite" $osm.version "ctx" $) }}
           imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .image.pullPolicy "ctx" $) }}
-          env: {{- include "pkg.common.env" $ | nindent 10 }}
-            {{- with .envs }}
-              {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
-            {{- end }}
-            {{- with .envsFrom }}
+          env: 
+          {{- if .injectProxy }}
+            {{- include "pkg.common.env.w-proxy" $ | nindent 10 }}
+          {{- else }}
+            {{- include "pkg.common.env" $ | nindent 10 }}
+          {{- end }}          
+          {{- with .envs }}
+            {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
+          {{- end }}
+          {{- with .envsFrom }}
           envFrom:
-              {{- toYaml . | nindent 10 }}
-            {{- end }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
           command:
             - /usr/local/bin/osm-controller
             - -namespace=kube-system
@@ -106,14 +111,19 @@ spec:
               {{- end }}
           image: {{ include "pkg.images.registry.convert" (dict "image" .image "tag_overwrite" $osm.version "ctx" $) }}
           imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .image.pullPolicy "ctx" $) }}
-          env: {{- include "pkg.common.env" $ | nindent 10 }}
-            {{- with .envs }}
-              {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
-            {{- end }}
-            {{- with .envsFrom }}
+          env:
+          {{- if .injectProxy }}
+            {{- include "pkg.common.env.w-proxy" $ | nindent 10 }}
+          {{- else }}
+            {{- include "pkg.common.env" $ | nindent 10 }}
+          {{- end }}
+          {{- with .envs }}
+            {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
+          {{- end }}
+          {{- with .envsFrom }}
           envFrom:
-              {{- toYaml . | nindent 10 }}
-            {{- end }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
           command:
             - /usr/local/bin/webhook
             - -kubeconfig={{ include "pkg.cluster.cp.env.mount" $ }}

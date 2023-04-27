@@ -53,7 +53,12 @@ spec:
           {{- end }}
           image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
           imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy "ctx" $) }}
-          env: {{- include "pkg.common.env" $ | nindent 10 }}
+          env:
+            {{- if $manifest.injectProxy }}
+              {{- include "pkg.common.env.w-proxy" $ | nindent 10 }}
+            {{- else }}
+              {{- include "pkg.common.env" $ | nindent 10 }}
+            {{- end }}
             {{- with $manifest.envs }}
               {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
             {{- end }}

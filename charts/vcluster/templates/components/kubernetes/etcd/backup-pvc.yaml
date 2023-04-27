@@ -27,7 +27,9 @@ spec:
     {{- range $kubernetes.etcd.backup.persistence.accessModes }}
     - {{ . | quote }}
     {{- end }}
-  storageClassName: {{ include "pkg.components.storageClass" (dict "sc" $kubernetes.etcd.backup.persistence.storageClassName "ctx" $) }}
+  {{- with (include "pkg.components.storageClass" (dict "sc" $kubernetes.etcd.backup.persistence.storageClassName "ctx" $)) }}
+  storageClassName: {{ . }}
+  {{- end }}
   resources:
     requests:
       storage: {{ $kubernetes.etcd.backup.persistence.size | quote }}

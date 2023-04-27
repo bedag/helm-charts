@@ -192,11 +192,12 @@ Template for konnectivityServer containers
   envFrom:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  env: {{- include "pkg.common.env" $ | nindent 2 }}
-  - name: POD_NAME
-    valueFrom:
-      fieldRef:
-        fieldPath: metadata.name
+  env:
+  {{- if $kubernetes.konnectivity.server.injectProxy }}
+    {{- include "pkg.common.env.w-proxy" $ | nindent 2 }}
+  {{- else }}
+    {{- include "pkg.common.env" $ | nindent 2 }}
+  {{- end }}
   {{- with $kubernetes.konnectivity.server.envs }}
     {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 2 }}
   {{- end }}

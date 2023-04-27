@@ -112,7 +112,12 @@ spec:
         envFrom:
           {{- toYaml . | nindent 8 }}
         {{- end }}
-        env: {{- include "pkg.common.env" $ | nindent 8 }}
+        env: 
+        {{- if $kubernetes.scheduler.injectProxy }}
+          {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
+        {{- else }}
+          {{- include "pkg.common.env" $ | nindent 8 }}
+        {{- end }}
         {{- with $kubernetes.scheduler.envs }}
           {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
         {{- end }}

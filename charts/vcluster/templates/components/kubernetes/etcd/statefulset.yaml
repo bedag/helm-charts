@@ -109,11 +109,12 @@ spec:
         envFrom:
           {{- toYaml . | nindent 8 }}
         {{- end }}
-        env: {{- include "pkg.common.env" $ | nindent 8 }}
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
+        env: 
+        {{- if $kubernetes.etcd.injectProxy }}
+          {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
+        {{- else }}
+          {{- include "pkg.common.env" $ | nindent 8 }}
+        {{- end }}
         - name: ETCDCTL_API
           value: "3"
         - name: ETCDCTL_CACERT
@@ -218,7 +219,9 @@ spec:
         {{- range $kubernetes.etcd.persistence.accessModes }}
         - {{ . | quote }}
         {{- end }}
-      storageClassName: {{ include "pkg.components.storageClass" (dict "sc" $kubernetes.etcd.persistence.storageClassName "ctx" $) }}
+      {{- with (include "pkg.components.storageClass" (dict "sc" $kubernetes.etcd.persistence.storageClassName "ctx" $)) }}
+      storageClassName: {{ . }}
+      {{- end }}
       resources:
         requests:
           storage: {{ $kubernetes.etcd.persistence.size | quote }}

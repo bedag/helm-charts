@@ -167,9 +167,14 @@ spec:
         resources:
           {{- toYaml $kubernetes.coredns.resources | nindent 10 }}
         args: [ "-conf", "/etc/coredns/Corefile" ]
+        env:
+        {{- if $kubernetes.coredns.injectProxy }}
+          {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
+        {{- else }}
+          {{- include "pkg.common.env" $ | nindent 8 }}
+        {{- end }}
         {{- with $kubernetes.coredns.envs }}
-        env: 
-          {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
+          {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
         {{- end }}
         {{- with $kubernetes.coredns.envsFrom }}
         envFrom:

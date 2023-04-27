@@ -197,9 +197,10 @@ lifecycle:
   #   type: ""
   #   -- Endpoint of the kubeconfig. Can be "internal" or "external" (Default internal)
   #   endpoint: ""
-  #   -- Clustername of the kubeconfig. Also used for argo clsuter name (Default pkg.cluster.name)
+  #   -- Clustername of the kubeconfig. Also used for argo cluster name (Default pkg.cluster.name)
   #   clustername: ""
-
+  #   -- Create ownerrefference for the kubeconfig (Default false)
+  #   ownerref: true
 
   # Additional customization for interactions with the current cluster
   current:
@@ -265,6 +266,8 @@ lifecycle:
 
   # ArgoCD Lifecycle configuration
   argocd:
+    # -- Creates required rbac in argoCD namespace to create cluster secrets
+    rbac: true 
     # -- Installation namespace of ArgoCD
     namespace: "argocd"  
 
@@ -348,6 +351,8 @@ lifecycle:
     failedJobsHistoryLimit: 3
     # -- ttlSecondsAfterFinished for setup
     ttlSecondsAfterFinished: 120
+    # -- Inject Proxy as Environment Variables
+    injectProxy: true
 
   # Cleanup (Runs on uninstall)
   # Uses the workload settings from the jobs section above
@@ -658,6 +663,8 @@ machine:
     # EXTRA: "value"
     # -- Extra environment variables from
     envsFrom: []
+    # -- Inject Proxy as Environment Variables
+    injectProxy: false
 
   # Admission Webhook (Webhook Controller is deployed to cluster namespace)
   # The Admission Webhooks are deployed into the new cluster (Testing)
@@ -741,6 +748,8 @@ machine:
     # EXTRA: "value"
     # -- Extra environment variables from
     envsFrom: []
+    # -- Inject Proxy as Environment Variables
+    injectProxy: false
 
     # -- How to expose the admission service to be reachable from the vcluster. Can be `ingress` or `loadbalancer
     expose: ""
@@ -951,6 +960,8 @@ osm:
     # EXTRA: "value"
     # -- Extra environment variables from
     envsFrom: []
+    # -- Inject Proxy as Environment Variables
+    injectProxy: false
 
   # Admission Webhook (Webhook Controller is deployed to cluster namespace)
   # The Admission Webhooks are deployed into the new cluster (Testing)
@@ -1034,6 +1045,8 @@ osm:
     # EXTRA: "value"
     # -- Extra environment variables from
     envsFrom: []
+    # -- Inject Proxy as Environment Variables
+    injectProxy: false
 
     # -- How to expose the admission service to be reachable from the vcluster. Can be `ingress` or `loadbalancer
     expose: ""
@@ -1242,6 +1255,8 @@ kubernetes:
     envs: {}
     # -- Extra environment variables from
     envsFrom: []
+    # -- Inject Proxy as Environment Variables
+    injectProxy: false
     # -- Pod Security Context
     podSecurityContext:
       enabled: true
@@ -1387,6 +1402,8 @@ kubernetes:
       envs: {}
       # -- Extra environment variables from
       envsFrom: []
+      # -- Inject Proxy as Environment Variables
+      injectProxy: false
       # -- Pod Security Context
       podSecurityContext:
         enabled: true
@@ -1501,6 +1518,8 @@ kubernetes:
     envs: {}
     # -- Extra environment variables from
     envsFrom: []
+    # -- Inject Proxy as Environment Variables
+    injectProxy: false
     # -- Pod Security Context
     podSecurityContext:
       enabled: true
@@ -1609,6 +1628,8 @@ kubernetes:
     envs: {}
     # -- Extra environment variables from
     envsFrom: []
+    # -- Inject Proxy as Environment Variables
+    injectProxy: false
     # -- Pod Security Context
     podSecurityContext:
       enabled: true
@@ -1721,6 +1742,8 @@ kubernetes:
     envs: {}
     # -- Extra environment variables from
     envsFrom: []
+    # -- Inject Proxy as Environment Variables
+    injectProxy: false
     # -- Pod Security Context
     podSecurityContext:
       enabled: true
@@ -1864,6 +1887,8 @@ kubernetes:
     envs: {}
     # -- Extra environment variables from
     envsFrom: []
+    # -- Inject Proxy as Environment Variables
+    injectProxy: true
     # -- Pod Security Context
     podSecurityContext:
       enabled: true
@@ -1939,6 +1964,8 @@ kubernetes:
     envs: {}
     # -- Extra environment variables from
     envsFrom: []
+    # -- Inject Proxy as Environment Variables
+    injectProxy: false
     # -- Pod Security Context
     podSecurityContext:
       enabled: true
@@ -2031,6 +2058,8 @@ kubernetes:
       envs: {}
       # -- Extra environment variables from
       envsFrom: []
+      # -- Inject Proxy as Environment Variables
+      injectProxy: false
       # -- Container Security Context
       securityContext:
         enabled: true
@@ -2136,6 +2165,8 @@ kubernetes:
       envs: {}
       # -- Extra environment variables from
       envsFrom: []
+      # -- Inject Proxy as Environment Variables
+      injectProxy: false
       # -- Container Security Context
       securityContext:
         enabled: true
@@ -2285,6 +2316,8 @@ autoscaler:
     CAPI_GROUP: "cluster.k8s.io"
   # -- Extra environment variables from
   envsFrom: []
+  # -- Inject Proxy as Environment Variables
+  injectProxy: false
   # -- Image pull Secrets
   imagePullSecrets: []
   # -- Replicas for Admission Pods

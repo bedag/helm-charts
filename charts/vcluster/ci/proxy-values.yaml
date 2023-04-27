@@ -1,0 +1,64 @@
+global:
+  #torageClassName: "local-path"
+  proxy:
+    host: "http://proxy.company.com:8080"
+    no_proxy: "10.0.0.0/8,.company.com"
+lifecycle:
+  setup:
+    enabled: true
+    injectProxy: true
+  enabled: true  
+  jobs:
+    reconciler: true
+    labels: 
+      argocd.argoproj.io/hook: PreSync
+    annotations:
+      argocd.argoproj.io/hook: PreSync
+machine:
+  enabled: true
+  controller:
+    injectProxy: true
+  admission:
+    enabled: false
+    injectProxy: true
+osm:
+  enabled: true
+  controller:
+    injectProxy: true
+  admission:
+    enabled: false
+    injectProxy: true
+    service:
+      loadBalancerIP: 0.0.0.0
+autoscaler:
+  enabled: true
+  injectProxy: true
+kubernetes: 
+  enabled: true
+  apiServer:
+    injectProxy: true
+    service:
+      loadBalancerIP: 0.0.0.0
+  controllerManager:
+    injectProxy: true
+  scheduler:
+    injectProxy: true
+  coredns:
+    injectProxy: true
+  konnectivity:
+    enabled: true
+    server:
+      enabled: true
+      injectProxy: true
+    agent:
+      enabled: true
+      injectProxy: true
+  admin:
+    enabled: true
+    injectProxy: true
+  etcd:
+    enabled: true
+    injectProxy: true
+    backup:
+      enabled: true
+      injectProxy: true

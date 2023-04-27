@@ -57,10 +57,15 @@ spec:
             {{- end }}
           image: {{ include "pkg.images.registry.convert" (dict "image" .image "tag_overwrite" $machine.version "ctx" $) }}
           imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .image.pullPolicy "ctx" $) }}
-          env: {{- include "pkg.common.env" $ | nindent 10 }}
-            {{- with .envs }}
-              {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
-            {{- end }}
+          env: 
+          {{- if .injectProxy }}
+            {{- include "pkg.common.env.w-proxy" $ | nindent 10 }}
+          {{- else }}
+            {{- include "pkg.common.env" $ | nindent 10 }}
+          {{- end }}          
+          {{- with .envs }}
+            {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
+          {{- end }}
           envFrom:
           - secretRef:
               name: {{ include "machine-controller.fullname" $ }}-providers
@@ -109,10 +114,15 @@ spec:
         - name: webhook
           image: {{ include "pkg.images.registry.convert" (dict "image" .image "tag_overwrite" $machine.version "ctx" $) }}
           imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .image.pullPolicy "ctx" $) }}
-          env: {{- include "pkg.common.env" $ | nindent 10 }}
-            {{- with .envs }}
-              {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
-            {{- end }}
+          env: 
+          {{- if .injectProxy }}
+            {{- include "pkg.common.env.w-proxy" $ | nindent 10 }}
+          {{- else }}
+            {{- include "pkg.common.env" $ | nindent 10 }}
+          {{- end }}           
+          {{- with .envs }}
+            {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
+          {{- end }}
           envFrom:
           - secretRef:
               name: {{ include "machine-controller.fullname" $ }}-providers

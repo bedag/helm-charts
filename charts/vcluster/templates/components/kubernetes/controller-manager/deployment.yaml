@@ -125,10 +125,14 @@ spec:
           {{- toYaml . | nindent 8 }}
         {{- end }}
         env:
+        {{- if $kubernetes.controllerManager.injectProxy }}
+          {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
+        {{- else }}
+          {{- include "pkg.common.env" $ | nindent 8 }}
+        {{- end }}
         {{- with $kubernetes.controllerManager.envs }}
           {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
         {{- end }}
-        {{- include "pkg.common.env" $ | nindent 8 }}
         volumeMounts:
         - mountPath: /etc/kubernetes/
           name: kubeconfig

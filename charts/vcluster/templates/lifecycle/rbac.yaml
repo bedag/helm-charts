@@ -51,6 +51,7 @@ subjects:
 - kind: ServiceAccount
   name: {{ include "vcluster.serviceAccountName"  . }}
   namespace: {{ .Release.Namespace }}
+{{- if $.Values.lifecycle.argocd.rbac }}  
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -85,3 +86,4 @@ rules:
   - create
   - update
   - delete
+{{- end }}

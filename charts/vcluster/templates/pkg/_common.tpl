@@ -51,6 +51,10 @@ Common Selector Labels
 
 {{/* Common Environment */}}
 {{- define "pkg.common.env" -}}
+- name: POD_NAME
+  valueFrom:
+    fieldRef:
+      fieldPath: metadata.name
   {{- with (include "pkg.utils.tz" $) }}
 - name: TZ
   value: {{ . | quote }}

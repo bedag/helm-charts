@@ -96,7 +96,12 @@ spec:
             envFrom:
               {{- toYaml . | nindent 12 }}
             {{- end }}
-            env:  {{- include "pkg.common.env" $ | nindent 12 }}
+            env: 
+            {{- if $kubernetes.etcd.backup.injectProxy }}
+              {{- include "pkg.common.env.w-proxy" $ | nindent 12 }}
+            {{- else }}
+              {{- include "pkg.common.env" $ | nindent 12 }}
+            {{- end }}
             - name: ETCDCTL_API
               value: "3"
             - name: ETCDCTL_CACERT

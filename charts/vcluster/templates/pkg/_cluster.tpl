@@ -30,11 +30,18 @@ https://kubernetes.default.svc
 {{/*
     Cluster Access (Volumes)
 */}}
+{{- define "pkg.cluster.admin.cfg" -}}
+{{ include "pkg.cluster.name" $ }}-kubernetes-kubeconfig
+{{- end -}}
+
+{{/*
+    Cluster Access (Volumes)
+*/}}
 {{- define "pkg.cluster.cp.vs" -}}
 - name: kubeconfig
   configMap:
     defaultMode: 420
-    name: {{ include "pkg.cluster.name" $ }}-kubernetes-admin-conf
+    name: {{ include "pkg.cluster.admin.cfg" $ }}
 - name: pki-admin-client
   secret:
     defaultMode: 420

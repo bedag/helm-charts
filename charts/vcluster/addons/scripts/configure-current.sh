@@ -66,17 +66,7 @@ kind: Secret
 stringData:
 {{- end }}
 {{- if (eq $type "argo") }}
-  name: {{ (default $name .clustername) }}
-  server: {{ $endpoint }}
-  config: |
-    {
-      "tlsClientConfig": {
-        "insecure": false,
-        "caData": "${CA}",
-        "keyData": "${C_KEY}",
-        "certData": "${C_CERT}"
-      }
-    }
+  {{- include "pkg.kubeconfigs.argo" (dict "name" (default $name .clustername) "endpoint" $endpoint "ctx" $) | nindent 2 }}
 {{- else }}
   {{- default "kubeconfig" $key | nindent 2 }}: |
     {{- include "pkg.kubeconfigs.kubeconfig.certs" (dict "endpoint" $endpoint "ctx" $) | nindent 4 }}

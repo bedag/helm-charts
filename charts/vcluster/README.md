@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.3.4](https://img.shields.io/badge/Version-0.3.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -64,39 +64,11 @@ Based on [Cluster Autoscaler](https://github.com/kubernetes/autoscaler).
 Allows to scale Kubernetes clusters based on the number of pods and nodes.
 The component is deployed as a single deployment with a `controller` container. Since it's deployed on a hosting cluster, it's possible to downscale workers to zero and scale up again.
 
-## GitOps
-
 # Guides
 
 ## Exposure
 
 ### Admission
-
-## ArgoCD Access
-
-### Forwards the ArgoCD UI to your local machine
-
-We must forward the ArgoCD within the new cluster in the kubectl client.
-You can access the ArgoCD UI by running the following command:
-
-```bash
-# Execute Kubectl Container
-kubectl exec -it test-cluster-kubectl sh -n machine-controller2
-
-# Extract Admin Password
-kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d
-
-# Forward ArgoCD UI
-kubectl port-forward svc/argocd-server 8080:80 -n argocd
-```
-
-Open second terminal and run the following command:
-
-```bash
-kubectl port-forward pod/test-cluster-kubectl 9191:8080 -n machine-controller2
-```
-
-Access the ArgoCD UI by opening [http://localhost:9191]( http://localhost:9191) in your browser. Login with `admin` and previously extract password.
 
 # Values
 
@@ -901,10 +873,3 @@ Available Values for the [Autsocaler component](#autoscaler).
 | autoscaler.metrics.serviceMonitor.matchLabels | object | `{}` | Change matching labels |
 | autoscaler.metrics.serviceMonitor.namespace | string | `""` | Install the ServiceMonitor into a different Namespace, as the monitoring stack one (default: the release one) |
 | autoscaler.metrics.serviceMonitor.targetLabels | list | `[]` | Set targetLabels for the serviceMonitor |
-
-## GitOps Values
-
----
-
-Available Values for the [Gitops component](#gitops).
-

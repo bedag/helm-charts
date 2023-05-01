@@ -119,8 +119,6 @@ spec:
             {{- end }}
         volumeMounts:
         {{- include "pkg.cluster.cp.vms" $ | nindent 8 }}
-        - mountPath: /addons
-          name: addon-scripts
         - mountPath: /cache
           name: cache
         {{- if or $kubernetes.extraManifests $kubernetes.konnectivity.server.enabled $kubernetes.konnectivity.agent.enabled }}
@@ -161,9 +159,6 @@ spec:
       - name: config
         configMap:
           name: "{{ $fullName }}-kubeadm-config"
-      - name: addon-scripts
-        configMap:
-          name: "{{ $fullName }}-admin-scripts"
       {{- with $kubernetes.admin.extraVolumes }}
         {{- toYaml . | nindent 6 }}
       {{- end }}

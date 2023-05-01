@@ -1,16 +1,10 @@
-{{- $manifest := $.Values.gitops -}}
-{{- $argocd := $manifest.argocd -}}
 {{- $lifecycle := $.Values.lifecycle -}}
 #!/bin/bash
 
 # ------------------------------------------------------------------------------
 # Functions
 # ------------------------------------------------------------------------------
-{{- include "gitops.converter.script.functions" $ | nindent 0 }}
-
-# ------------------------------------------------------------------------------
-# GitOps Setup
-# ------------------------------------------------------------------------------
+{{- include "pkg.functions.kubernetes" $ | nindent 0 }}
 
 # -- Convert Kubeconfigs
 
@@ -22,15 +16,6 @@ C_CERT=$(base64 /pki/admin-client/tls.crt | tr -d '\n')
 C_KEY=$(base64 /pki/admin-client/tls.key | tr -d '\n')
 
 {{- $kubeconfigs := $.Values.lifecycle.kubeconfigs }}
-
-{{- if (include "gitops.enabled" $) }}{{"\n"}}
-  {{/* Add Default Flux Kubeconfig */}}
-  {{- $kubeconfigs = append $kubeconfigs (dict "name" (include "gitops.converter.flux.secretName" $) "key" (include "gitops.converter.secretKey" $)) }}
-
-  {{/* Add Default Argo Kubeconfig */}}
-  {{- $kubeconfigs = append $kubeconfigs (dict "name" (include "gitops.converter.argocd.secretName" $) "type" "argo") }}
-{{- end -}}{{"\n"}}
-
 # Iterate over all kubeconfigs
 {{- range $kubeconfigs }}{{"\n"}}
   {{- $name := (include "pkg.utils.template" (dict "tpl" (required "kubeconfig.name is required" .name) "ctx" $)) -}}

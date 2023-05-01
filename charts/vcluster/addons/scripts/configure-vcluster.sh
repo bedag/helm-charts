@@ -1,7 +1,6 @@
 {{- $kubernetes := $.Values.kubernetes -}}
 {{- $fullName := include "kubernetes.fullname" . -}}
 {{- $lifecycle := $.Values.lifecycle -}}
-{{- $argocd := $.Values.gitops.argocd -}}
 #!/bin/bash
 ENDPOINT=$(awk -F'[ "]+' '$1 == "controlPlaneEndpoint:" {print $2}' /config/kubeadmcfg.yaml)
 # Decrypt Cert Data to Base64
@@ -12,7 +11,7 @@ C_KEY=$(base64 /pki/admin-client/tls.key | tr -d '\n')
 # ------------------------------------------------------------------------------
 # Functions
 # ------------------------------------------------------------------------------
-{{- include "gitops.converter.script.functions" $ | nindent 0 }}
+{{- include "pkg.functions.kubernetes" $ | nindent 0 }}
 
 # ------------------------------------------------------------------------------
 # Cluster configuration

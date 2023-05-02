@@ -6,9 +6,6 @@
 # ------------------------------------------------------------------------------
 {{- include "pkg.functions.kubernetes" $ | nindent 0 }}
 
-# -- Convert Kubeconfigs
-UID=$(kubectl get namespace -n {{ $.Release.Namespace }} -o jsonpath='{.metadata.uid}') || true
-
 # Decrypt Cert Data to Base64
 CA=$(base64 /pki/admin-client/ca.crt | tr -d '\n')
 C_CERT=$(base64 /pki/admin-client/tls.crt | tr -d '\n')
@@ -44,13 +41,6 @@ metadata:
     argocd.argoproj.io/secret-type: cluster
     {{- end }}
   namespace: {{ $namespace }}
-  {{- if .ownerref }}
-  ownerReferences:
-  - apiVersion: v1
-    kind: Namespace
-    name: {{ $.Release.Namespace }}
-    uid: "${UID}"
-  {{- end }}
 {{- if (eq $kind "configmap") }}
 kind: ConfigMap
 data:
@@ -66,8 +56,6 @@ stringData:
 {{- end }}
 EOT
 )
-
-echo -e "$KCFG"
 
 if k8s::replace_or_create "${KCFG}"; then
   echo "✅ ({{ $namespace }}/{{ $name }}) Kubeconfig Present"

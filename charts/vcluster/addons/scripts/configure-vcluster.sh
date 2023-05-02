@@ -98,6 +98,9 @@ kubectl -n kube-system delete configmap/kube-proxy daemonset/kube-proxy 2>/dev/n
 
 {{- $job := $.Values.lifecycle }}
 {{- if $job.cilium.enabled }}
+if kubectl get ds cilium -n kube-system &> /dev/null; then
+	echo "Cilium already installed"
+else 
   {{- if or (and ($job.cilium.on_install) ($.Release.IsInstall)) (not $job.cilium.on_install) }}
 # install cilium
 helm repo add cilium https://helm.cilium.io/
@@ -114,6 +117,7 @@ helm upgrade --install cilium cilium/cilium {{ with $job.cilium.version }}--vers
     {{- end }}
     --namespace kube-system
   {{- end }}
+fi
 {{- end }}
 
 # ------------------------------------------------------------------------------

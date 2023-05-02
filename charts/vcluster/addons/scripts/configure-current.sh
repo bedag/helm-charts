@@ -7,8 +7,7 @@
 {{- include "pkg.functions.kubernetes" $ | nindent 0 }}
 
 # -- Convert Kubeconfigs
-
-UID=$(kubectl get cm -n {{ $.Release.Namespace }} {{ include "pkg.cluster.admin.cfg" $ }} -o jsonpath='{.metadata.uid}') || true
+UID=$(kubectl get namespace -n {{ $.Release.Namespace }} -o jsonpath='{.metadata.uid}') || true
 
 # Decrypt Cert Data to Base64
 CA=$(base64 /pki/admin-client/ca.crt | tr -d '\n')
@@ -48,8 +47,8 @@ metadata:
   {{- if .ownerref }}
   ownerReferences:
   - apiVersion: v1
-    kind: ConfigMap
-    name: {{ include "pkg.cluster.admin.cfg" $ }}
+    kind: Namespace
+    name: {{ $.Release.Namespace }}
     uid: "${UID}"
   {{- end }}
 {{- if (eq $kind "configmap") }}
@@ -67,6 +66,8 @@ stringData:
 {{- end }}
 EOT
 )
+
+echo -e "$KCFG"
 
 if k8s::replace_or_create "${KCFG}"; then
   echo "✅ ({{ $namespace }}/{{ $name }}) Kubeconfig Present"

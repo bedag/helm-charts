@@ -107,7 +107,7 @@ helm repo add cilium https://helm.cilium.io/
 helm upgrade --install cilium cilium/cilium {{ with $job.cilium.version }}--version {{ . }} {{ end }} \
     {{- if not ($kubernetes.kubeProxy.enabled) }}
     --set kubeProxyReplacement=strict \
-      {{- if $kubernetes.controlPlaneEndpoint }}
+      {{- if (include "kubernetes.api.endpointIP" $) }}
     --set k8sServiceHost={{ include "kubernetes.api.endpointIP" $ }} \
     --set k8sServicePort={{ include "kubernetes.api.endpointPort" $ }} \
       {{- else }}

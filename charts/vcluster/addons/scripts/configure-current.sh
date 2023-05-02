@@ -6,10 +6,6 @@
 # ------------------------------------------------------------------------------
 {{- include "pkg.functions.kubernetes" $ | nindent 0 }}
 
-# -- Convert Kubeconfigs
-
-UID=$(kubectl get cm -n {{ $.Release.Namespace }} {{ include "pkg.cluster.admin.cfg" $ }} -o jsonpath='{.metadata.uid}') || true
-
 # Decrypt Cert Data to Base64
 CA=$(base64 /pki/admin-client/ca.crt | tr -d '\n')
 C_CERT=$(base64 /pki/admin-client/tls.crt | tr -d '\n')
@@ -45,13 +41,6 @@ metadata:
     argocd.argoproj.io/secret-type: cluster
     {{- end }}
   namespace: {{ $namespace }}
-  {{- if .ownerref }}
-  ownerReferences:
-  - apiVersion: v1
-    kind: ConfigMap
-    name: {{ include "pkg.cluster.admin.cfg" $ }}
-    uid: "${UID}"
-  {{- end }}
 {{- if (eq $kind "configmap") }}
 kind: ConfigMap
 data:

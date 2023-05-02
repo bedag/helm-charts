@@ -96,7 +96,7 @@ kubeadm init phase addon kube-proxy --config /config/kubeadmcfg.yaml
 kubectl -n kube-system delete configmap/kube-proxy daemonset/kube-proxy 2>/dev/null || true
 {{- end }}
 
-{{- $job := $.Values.jobs }}
+{{- $job := $.Values.lifecycle }}
 {{- if $job.cilium.enabled }}
   {{- if or (and ($job.cilium.on_install) ($.Release.IsInstall)) (not $job.cilium.on_install) }}
 # install cilium

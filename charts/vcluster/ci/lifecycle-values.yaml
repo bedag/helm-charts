@@ -1,9 +1,9 @@
-global: 
-  components:    
+global:
+  components:
     workloads:
       labels:
         components: "label"
-      annotations: 
+      annotations:
         components: "annotation"
       podLabels:
         components: "podLabels"
@@ -19,7 +19,7 @@ global:
       #  enabled: true
       #  seccompProfile:
       #    type: RuntimeDefault
-  
+
       # -- Container Security Context for all workloads (Overwrites per workload securityContext)
       securityContext:
         enabled: false
@@ -30,9 +30,9 @@ global:
       #    drop:
       #    - ALL
       #  readOnlyRootFilesystem: true
-  
+
       # -- Node Selector for all workloads (Overwrites all workloads nodeSelector)
-      nodeSelector: 
+      nodeSelector:
         components: "nodeSelector"
       # -- Tolerations for all workloads (Overwrites all workloads tolerations)
       tolerations: []
@@ -46,7 +46,7 @@ global:
 lifecycle:
   jobs:
     reconciler: true
-    labels: 
+    labels:
       argocd.argoproj.io/hook: PreSync
     annotations:
       argocd.argoproj.io/hook: PreSync

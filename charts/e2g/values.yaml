@@ -313,15 +313,15 @@ pod:
   ## Container Ports
   # pod.ports -- Configure Container Ports
   ports:
-   - name: "icap"
-     containerPort: 1344
-     protocol: TCP
-   - name: "http"
-     containerPort: 8080
-     protocol: TCP
-   - name: "https"
-     containerPort: 8443
-     protocol: TCP
+    - name: "icap"
+      containerPort: 1344
+      protocol: TCP
+    - name: "http"
+      containerPort: 8080
+      protocol: TCP
+    - name: "https"
+      containerPort: 8443
+      protocol: TCP
 
   ## Additional Volume Mounts
   # pod.volumeMounts -- Configure Container [volumeMounts](https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/)
@@ -408,7 +408,7 @@ deployment:
   ## Deployment Update Strategy
   # deployment.strategy -- Deployment [Update Strategy](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend). **Deployments only**
   strategy:
-   type: RollingUpdate
+    type: RollingUpdate
 
   ## Deployment Extra Values
   # deployment.deploymentExtras -- Extra Fields for Deployment Manifest

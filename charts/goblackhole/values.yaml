@@ -87,15 +87,10 @@ deployment:
   ## Deployment Update Strategy
   # deployment.strategy -- Deployment [Update Strategy](https://kubernetes.io/docs/concepts/services-networking/ingress/#resource-backend). **Deployments only**
   strategy: {}
-    #type: RollingUpdate
-    #  maxSurge: 1
-    #  maxUnavailable: 0
 
   ## Deployment Extra Values
   # deployment.deploymentExtras -- Extra Fields for Deployment Manifest
   deploymentExtras: {}
-    # progressDeadlineSeconds: "600s"
-    #
 
   ## Pod Configuration
   ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#pod-template
@@ -120,16 +115,10 @@ deployment:
   ## Extra Pod Fields
   # deployment.podFields -- Add extra field to the [Pod Template](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#podtemplate-v1-core) if not available as value.
   podFields: {}
-    #hostNetwork: true
 
   ## Additional Kubernetes Volumes
   # deployment.volumes -- Additional [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/)
   volumes: []
-    #- name: cache
-    #  emptyDir: {}
-    #- name: share
-    #  persistentVolumeClaim:
-    #    claimName: 'shared'
 
   ## RestartPolicy Configuration
   # deployment.restartPolicy -- Restart policy for all containers within the pod. One of Always, OnFailure, Never. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
@@ -161,9 +150,6 @@ deployment:
   ## Pod Initcontainers
   # deployment.initContainers -- Pod [initContainers](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/)
   initContainers: []
-    #- name: init-myservice
-    #  image: busybox:1.28
-    #  command: ['sh', '-c', "until nslookup myservice.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local; do echo waiting for myservice; sleep 2; done"]
 
   ## Pod SideCar Containers
   # deployment.sidecars -- Allows to add sidecars to your [maincar]](https://kubernetes.io/docs/concepts/workloads/pods/#using-pods)
@@ -222,7 +208,6 @@ deployment:
   ## https://github.com/bedag/helm-charts/tree/master/charts/manifests/templates/manifests/README.md#container-template
   ## Full Configuration
 
-
   #
   ## -- Container
   ## Reference: https://kubernetes.io/de/docs/concepts/containers/
@@ -253,11 +238,11 @@ deployment:
   # deployment.resources -- Configure Container [Resource](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
   resources:
     requests:
-     memory: "25Mi"
-     cpu: "100m"
+      memory: "25Mi"
+      cpu: "100m"
     limits:
-     memory: "218Mi"
-     cpu: "200m"
+      memory: "218Mi"
+      cpu: "200m"
 
   ## Container Command
   # deployment.command -- Configure executed container command
@@ -273,39 +258,25 @@ deployment:
   # deployment.environment -- Configure Environment Variables (Refer to values.yaml)
   environment:
     []
-    #- name: "MY_ENV"
-    #  value: "someValue"
-    #  secret: true
-    #- name: SOME_SPEC
-    #  valueFrom:
-    #    fieldRef:
-    #      fieldPath: spec.*
 
   ## Environment from Source
   # deployment.envFrom -- Configure Environment from Source
   envFrom:
     []
-    #- configMapRef:
-        #name: configmapname
-    #- secretRef:
-        #name: secretname
 
   ## Container Ports
   # deployment.ports -- Configure Container Ports
   ports:
     []
-    #- name: "health"
-    #  containerPort: 9090
-    #  protocol: TCP
 
   ## Additional Volume Mounts
   # deployment.volumeMounts -- Configure Container [volumeMounts](https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/)
   volumeMounts:
     []
-    #- name: "cache"
-    #  mountPath: /cache
-    #- name: "share"
-    #  mountPath: /var/data/share
+    # - name: "cache"
+    #   mountPath: /cache
+    # - name: "share"
+    #   mountPath: /var/data/share
 
   ## Container SecurityContext
   # deployment.securityContext -- Container [SecurityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/)
@@ -329,27 +300,26 @@ deployment:
       - /usr/bin/gobgp
       - neig
 
-
   ## StartupProbe Configuration
   # deployment.startupProbe -- Container [StartupProbe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/#define-startup-probes)
   startupProbe:
     {}
-    #httpGet:
-    #  path: /health
-    #  port: http
-    #failureThreshold: 30
-    #periodSeconds: 10
+    # httpGet:
+    #   path: /health
+    #   port: http
+    # failureThreshold: 30
+    # periodSeconds: 10
 
   ## Container Lifecycle Hooks
   # deployment.lifecycle -- Container [Lifecycle](https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/)
   lifecycle:
     {}
-    #postStart:
-    #  exec:
-    #    command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
+    # postStart:
+    #   exec:
+    #     command: ["/bin/sh", "-c", "echo Hello from the postStart handler > /usr/share/message"]
 
   ## Container ExtraFields
   # deployment.containerFields -- Extra fields used on the container definition
   containerFields:
     {}
-    #stdinOnce: true
+    # stdinOnce: true

@@ -35,4 +35,30 @@ Major Changes to functions are documented with the version affected. **Before up
 {{/*
   Chart Values
 */}}
-{{ template "chart.valuesSection" . }}
+
+
+# Values by Component
+
+{{- define "table.heading" }}
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+{{- end }}
+
+
+## Ingress
+
+{{ template "table.heading" . }}
+{{- range .Values }}
+  {{- if and (hasPrefix "ingress." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}
+
+## ServiceMonitor
+
+{{ template "table.heading" . }}
+{{- range .Values }}
+  {{- if and (hasPrefix "servicemonitor." .Key) }}
+| {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
+  {{- end }}
+{{- end }}

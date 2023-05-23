@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.4.3](https://img.shields.io/badge/Version-0.4.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.4.4](https://img.shields.io/badge/Version-0.4.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -127,6 +127,7 @@ Global Values
 We use a lifecycle Job/Cronjob to manage certain configurations within the vcluster and the hosting cluster.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| lifecycle.argocd.namespace | string | `"argocd"` | Installation namespace of ArgoCD |
 | lifecycle.argocd.rbac | bool | `true` | Creates required rbac in argoCD namespace to create cluster secrets |
 | lifecycle.cilium.enabled | bool | `true` | Install Cilium CNI |
 | lifecycle.cilium.on_install | bool | `true` | Install only on chart install (First install) |
@@ -139,6 +140,7 @@ We use a lifecycle Job/Cronjob to manage certain configurations within the vclus
 | lifecycle.current.extraManifestsOnInstall | object | See values.yaml | These manifests will be applied inside the cluster, but only on $.Release.Install and wont be touched again (supports templating) |
 | lifecycle.current.setupScript | string | `nil` | Additional configuration script for the current cluster (supports templating) |
 | lifecycle.jobs.affinity | object | `{}` | Affinity |
+| lifecycle.jobs.extraEnv | list | `[]` | Additional Pod Environment variables |
 | lifecycle.jobs.extraVolumeMounts | list | `[]` | Additional Pod VolumeMounts |
 | lifecycle.jobs.extraVolumes | list | `[]` | Additional Pod Volumes |
 | lifecycle.jobs.nodeSelector | object | `{}` | Node Selector |
@@ -174,6 +176,7 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | machine.affinity | object | `{}` | Affinity |
+| machine.annotations | object | `{}` | Annotations for Workload |
 | machine.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler |
 | machine.autoscaling.maxReplicas | int | `100` | Maximum available Replicas |
 | machine.autoscaling.minReplicas | int | `1` | Minimum available Replicas |
@@ -181,8 +184,10 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.autoscaling.targetMemoryUtilizationPercentage | string | `nil` | Benchmark Memory Usage |
 | machine.component.ensureManifestsOnStartup | bool | `true` | Ensure all components manifests are present on controller start (as initContainer) |
 | machine.component.removeManifestsOnDisable | bool | `true` | Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well) |
+| machine.enabled | bool | `true` | Enable Machine-Controller Component |
 | machine.imagePullSecrets | list | `[]` | Image pull Secrets |
 | machine.kubelet.featureGates | list | `[]` | FeatureGates for kubelet |
+| machine.labels | object | `{}` | Labels for Workload |
 | machine.metrics.service.annotations | object | `{}` | Service Annotations |
 | machine.metrics.service.labels | object | `{}` | Service Labels |
 | machine.metrics.serviceMonitor.annotations | object | `{}` | Assign additional Annotations |
@@ -283,6 +288,7 @@ Available Values for the [Operating System Manager](). The component consists of
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | osm.affinity | object | `{}` | Affinity |
+| osm.annotations | object | `{}` | Annotations for Workload |
 | osm.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler |
 | osm.autoscaling.maxReplicas | int | `100` | Maximum available Replicas |
 | osm.autoscaling.minReplicas | int | `1` | Minimum available Replicas |
@@ -293,6 +299,7 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.component.removeManifestsOnDisable | bool | `true` | Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well) |
 | osm.enabled | bool | `false` | Enable Operating System Manager Component |
 | osm.imagePullSecrets | list | `[]` | Image pull Secrets |
+| osm.labels | object | `{}` | Labels for Workload |
 | osm.metrics.enabled | bool | `true` | Enable Metrics |
 | osm.metrics.service.annotations | object | `{}` | Service Annotations |
 | osm.metrics.service.labels | object | `{}` | Service Labels |
@@ -390,6 +397,7 @@ Available Values for the [Kubernetes component](#kubernetes).
 | kubernetes.controlPlane.endpoint | string | `nil` | Endpoint for ControlPlane (eg `128.1314.1234.4242:6443`). If not set, the vcluster will try to find the endpoint automatically. |
 | kubernetes.enabled | bool | `true` | Enable Kubernetes Component |
 | kubernetes.kubeProxy.enabled | bool | `true` | Install kube-proxy via KubeADM. If disabled, the cilium kube-proxy replacement will be used |
+| kubernetes.version | string | `"v1.25.0"` | Version for API Server, Scheduler, Controller Manager (Tag for all kubernetes components) |
 
 ### API-Server
 
@@ -399,6 +407,7 @@ Deploys [Kubernetes API Server](https://kubernetes.io/docs/reference/command-lin
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | kubernetes.apiServer.affinity | object | `{}` | Affinity |
+| kubernetes.apiServer.annotations | object | `{}` | Annotations for Workload |
 | kubernetes.apiServer.args | object | `{}` | Extra arguments for the kube-apiserver |
 | kubernetes.apiServer.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler |
 | kubernetes.apiServer.autoscaling.maxReplicas | int | `5` | Maximum available Replicas |
@@ -420,6 +429,7 @@ Deploys [Kubernetes API Server](https://kubernetes.io/docs/reference/command-lin
 | kubernetes.apiServer.ingress.contextPath | string | `"/admission/machine"` | Context path for admission ingress |
 | kubernetes.apiServer.ingress.ingressClassName | string | `""` | Ingressclass for all ingresses |
 | kubernetes.apiServer.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
+| kubernetes.apiServer.labels | object | `{}` | Labels for Workload |
 | kubernetes.apiServer.nodeSelector | object | `{}` | Node Selector |
 | kubernetes.apiServer.podAnnotations | object | `{}` | Pod Annotations |
 | kubernetes.apiServer.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
@@ -555,6 +565,7 @@ Deploys [ETCD](https://etcd.io/).
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | kubernetes.etcd.affinity | object | `{}` | Affinity |
+| kubernetes.etcd.annotations | object | `{}` | Annotations for Workload |
 | kubernetes.etcd.args | object | `{"snapshot-count":10000}` | Extra arguments for ETCD |
 | kubernetes.etcd.certSANs.dnsNames | list | `[]` | Additonal DNS names for ETCD ceritifcate |
 | kubernetes.etcd.certSANs.ipAddresses | list | `[]` | Additonal IP adresses names for ETCD ceritifcate |
@@ -568,6 +579,7 @@ Deploys [ETCD](https://etcd.io/).
 | kubernetes.etcd.image.tag | string | `"3.5.6-0"` | Image tag |
 | kubernetes.etcd.imagePullSecrets | list | `[]` | Image pull Secrets |
 | kubernetes.etcd.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
+| kubernetes.etcd.labels | object | `{}` | Labels for Workload |
 | kubernetes.etcd.metrics.service.annotations | object | `{}` | Service Annotations |
 | kubernetes.etcd.metrics.service.labels | object | `{}` | Service Labels |
 | kubernetes.etcd.metrics.serviceMonitor.annotations | object | `{}` | Assign additional Annotations |
@@ -615,12 +627,14 @@ Scheduled snapshots of ETCD via Cronjob.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | kubernetes.etcd.backup.affinity | object | `{}` | Affinity |
+| kubernetes.etcd.backup.annotations | object | `{}` | Annotations for Workload |
 | kubernetes.etcd.backup.args | object | `{}` | Extra arguments for ETCD Backup |
 | kubernetes.etcd.backup.enabled | bool | `false` | Enable ETCD Backup |
 | kubernetes.etcd.backup.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.etcd.backup.envsFrom | list | `[]` | Extra environment variables from |
 | kubernetes.etcd.backup.failedJobsHistoryLimit | int | `3` | Failed Jobs History Limit for ETCD Backup |
 | kubernetes.etcd.backup.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
+| kubernetes.etcd.backup.labels | object | `{}` | Labels for Workload |
 | kubernetes.etcd.backup.nodeSelector | object | `{}` | Node Selector |
 | kubernetes.etcd.backup.persistence.accessModes | list | `["ReadWriteOnce"]` | Access Modes for ETCD Backup |
 | kubernetes.etcd.backup.persistence.annotations | object | `{"helm.sh/resource-policy":"keep"}` | Annotations for ETCD Backup |
@@ -664,7 +678,7 @@ The Konnectivity-Server is deployed alongside with the API-Server. It must be re
 |-----|------|---------|-------------|
 | kubernetes.konnectivity.server.affinity | object | `{}` | Affinity |
 | kubernetes.konnectivity.server.annotations | object | `{}` | Annotations for Workload |
-| kubernetes.konnectivity.server.args | object | `{}` | Konnectivity Server extra arguments  |
+| kubernetes.konnectivity.server.args | object | `{}` | Konnectivity Server extra arguments |
 | kubernetes.konnectivity.server.enabled | bool | `true` | Enable Konnectivity Server |
 | kubernetes.konnectivity.server.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.konnectivity.server.envsFrom | list | `[]` | Extra environment variables from |
@@ -702,7 +716,7 @@ The konnectivity-Agent is deployed inside the vcluster and should establish a co
 |-----|------|---------|-------------|
 | kubernetes.konnectivity.agent.affinity | object | `{}` | Affinity |
 | kubernetes.konnectivity.agent.annotations | object | `{}` | Annotations for Workload |
-| kubernetes.konnectivity.agent.args | object | `{}` | Konnectivity Agent extra arguments  |
+| kubernetes.konnectivity.agent.args | object | `{}` | Konnectivity Agent extra arguments |
 | kubernetes.konnectivity.agent.enabled | bool | `false` | Enable Konnectivity Agent |
 | kubernetes.konnectivity.agent.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.konnectivity.agent.envsFrom | list | `[]` | Extra environment variables from |
@@ -815,6 +829,7 @@ Available Values for the [Autsocaler component](#autoscaler).
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | autoscaler.affinity | object | `{}` | Affinity |
+| autoscaler.annotations | object | `{}` | Annotations for Workload |
 | autoscaler.args | object | `{"leader-elect":true,"logtostderr":true,"scale-down-enabled":true,"stderrthreshold":"info","v":4}` | Additional container arguments. Refer to https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-the-parameters-to-ca for the full list of cluster autoscaler parameters and their default values. Everything after the first _ will be ignored allowing the use of multi-string arguments. |
 | autoscaler.enabled | bool | `true` | Enable autsocaler component |
 | autoscaler.envs | object | `{"CAPI_GROUP":"cluster.k8s.io"}` | Extra environment variables (`key: value` style, allows templating) |
@@ -827,6 +842,7 @@ Available Values for the [Autsocaler component](#autoscaler).
 | autoscaler.image.tag | string | `"v1.23.0"` | Image tag |
 | autoscaler.imagePullSecrets | list | `[]` | Image pull Secrets |
 | autoscaler.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
+| autoscaler.labels | object | `{}` | Labels for Workload |
 | autoscaler.livenessProbe | object | `{"httpGet":{"path":"/health-check","port":8085},"initialDelaySeconds":5,"periodSeconds":5}` | Livenessprobe configuration |
 | autoscaler.nodeSelector | object | `{}` | Node Selector |
 | autoscaler.podAnnotations | object | `{}` | Pod Annotations |

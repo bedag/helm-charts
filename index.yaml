@@ -3,6 +3,30 @@ entries:
   common:
   - annotations:
       artifacthub.io/changes: |
+        - "[Added]: support for clusterIP field"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    created: "2023-05-23T10:57:05.582298329Z"
+    description: Bedag's common Helm chart to use for creating other Helm charts
+    digest: b133512a001bdea7d07564da50b0813ff0cc3c7542aea2751c6046e032b46b17
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Common
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: common
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/common
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/common-10.2.0/common-10.2.0.tgz
+    version: 10.2.0
+  - annotations:
+      artifacthub.io/changes: |
         - "[Added]: add emptyDir volumes"
       artifacthub.io/containsSecurityUpdates: "false"
       artifacthub.io/license: Apache-2.0
@@ -348,6 +372,46 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - "[Added]: filtergroups config"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/images: |
+        - name: e2g-5
+          image: bedag/e2g:5
+        - name: e2g-4
+          image: bedag/e2g:4
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: "5.4"
+    created: "2023-05-23T10:57:05.748905754Z"
+    dependencies:
+    - name: manifests
+      repository: https://bedag.github.io/helm-charts/
+      version: '>=0.4.0'
+    description: e2guardian Chart
+    digest: b83282015a2745722363c30b380ed55d8710394d4100b79df64817fe0d9c874a
+    home: https://github.com/e2guardian/e2guardian/
+    icon: http://e2guardian.org/cms/images/banners/logo-guardian.png
+    keywords:
+    - proxy
+    - forwardproxy
+    - e2guardian
+    - e2g
+    maintainers:
+    - email: noc@bedag.ch
+      name: NOC
+    - email: sre@bedag.ch
+      name: SRE
+    name: e2g
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/e2g
+    - https://github.com/e2guardian/e2guardian/
+    - https://github.com/bedag/docker-e2g
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/e2g-1.2.3/e2g-1.2.3.tgz
+    version: 1.2.3
+  - annotations:
+      artifacthub.io/changes: |
+        - "[Added]: filtergroups config"
         - "[Bump] e2g to 5.4"
       artifacthub.io/containsSecurityUpdates: "false"
       artifacthub.io/images: |
@@ -534,6 +598,37 @@ entries:
     - https://github.com/bedag/helm-charts/releases/download/e2g-1.0.0/e2g-1.0.0.tgz
     version: 1.0.0
   goblackhole:
+  - annotations:
+      artifacthub.io/changes: |
+        - "[Added]: Chart Release"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: 0.2.0
+    created: "2023-05-23T10:57:05.946897125Z"
+    dependencies:
+    - name: manifests
+      repository: https://bedag.github.io/helm-charts
+      version: ~0.5.0
+    description: Offical Helm Chart for goblackhole
+    digest: c2a93af49e892a8ecd383c71fcbad74bd09eda687d48f9605245e8b9a02f0225
+    home: https://github.com/bedag/goblackhole
+    icon: https://raw.githubusercontent.com/bedag/goblackhole/main/media/gopher.png
+    keywords:
+    - bgp
+    - blackhole
+    - network
+    maintainers:
+    - email: noc@bedag.ch
+      name: NOC
+    name: goblackhole
+    sources:
+    - https://github.com/bedag/goblackhole
+    - https://hub.docker.com/r/bedag/goblackhole
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/goblackhole-0.0.4/goblackhole-0.0.4.tgz
+    version: 0.0.4
   - annotations:
       artifacthub.io/changes: |
         - "[Added]: Chart Release"
@@ -1518,6 +1613,29 @@ entries:
   vcluster:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2023-05-23T10:57:06.131844402Z"
+    dependencies:
+    - name: common
+      repository: https://charts.bitnami.com/bitnami
+      version: 2.2.4
+    description: Virtual Kubernetes Cluster
+    digest: acf0d1b1a86b63b4525d50b905d523400b93dc1e4dc43cbe19a00f27f12510fc
+    home: https://artifacthub.io/packages/helm/kvaps/kubernetes
+    keywords:
+    - vcluster
+    - kubernetes
+    - machine-controller
+    - kubermatic
+    maintainers:
+    - email: sre@bedag.ch
+      name: Bedag Informatik AG
+    name: vcluster
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/vcluster-0.4.4/vcluster-0.4.4.tgz
+    version: 0.4.4
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2023-05-02T11:18:16.934095389Z"
     dependencies:
     - name: common
@@ -1856,4 +1974,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/vcluster-0.1.0/vcluster-0.1.0.tgz
     version: 0.1.0
-generated: "2023-05-02T11:18:16.934460217Z"
+generated: "2023-05-23T10:57:06.132048309Z"

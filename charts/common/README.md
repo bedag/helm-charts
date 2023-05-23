@@ -1,6 +1,6 @@
 # common
 
-![Version: 10.1.0](https://img.shields.io/badge/Version-10.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 10.2.0](https://img.shields.io/badge/Version-10.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Bedag's common Helm chart to use for creating other Helm charts
 
@@ -24,53 +24,41 @@ Major Changes to functions are documented with the version affected. **Before up
 |networkpolicy template changes|9.0.0|add possibility to define more than one Port in networkpolicy|https://github.com/bedag/helm-charts/pull/70|
 |networkpolicy template changes|10.0.0|add possibility to create multiple networkpolicies|https://github.com/bedag/helm-charts/pull/77|
 
-## Values
+# Values by Component
+
+## Ingress
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| components.component-1.controller.affinity | object | `{}` |  |
-| components.component-1.controller.automountServiceAccountToken | bool | `false` |  |
-| components.component-1.controller.containers | object | `{}` |  |
-| components.component-1.controller.deploy | bool | `false` |  |
-| components.component-1.controller.disableChecksumAnnotations | bool | `false` |  |
-| components.component-1.controller.extraAnnotations | object | `{}` |  |
-| components.component-1.controller.extraChecksumAnnotations | list | `[]` |  |
-| components.component-1.controller.extraLabels | object | `{}` |  |
-| components.component-1.controller.extraVolumeClaimTemplates | list | `[]` |  |
-| components.component-1.controller.forceRedeploy | bool | `false` |  |
-| components.component-1.controller.gatherMetrics | bool | `false` |  |
-| components.component-1.controller.initContainers | object | `{}` |  |
-| components.component-1.controller.nodeSelector | object | `{}` |  |
-| components.component-1.controller.podSecurityContext.enabled | bool | `false` |  |
-| components.component-1.controller.strategy | object | `{}` |  |
-| components.component-1.controller.tolerations | list | `[]` |  |
-| components.component-1.controller.type | string | `"Deployment"` |  |
-| components.component-1.controller.volumes | list | `[]` |  |
-| components.component-1.networkpolicies | object | `{}` |  |
-| components.component-1.services.service-1.deploy | bool | `false` |  |
-| defaultTag | string | `"latest"` |  |
-| ingress.annotations."nginx.ingress.kubernetes.io/ssl-redirect" | string | `"true"` |  |
-| ingress.deploy | bool | `false` |  |
-| ingress.ingressClassName | string | `""` |  |
-| ingress.rules[0].host | string | `"myapp.cluster.local"` |  |
-| ingress.rules[0].http.paths[0].backend.serviceNameSuffix | string | `"component-1"` |  |
-| ingress.rules[0].http.paths[0].backend.servicePort | string | `"http"` |  |
-| ingress.rules[0].http.paths[0].path | string | `"/"` |  |
-| ingress.tls.existing.secret | string | `""` |  |
-| ingress.tls.provided.cert | string | `""` |  |
-| ingress.tls.provided.key | string | `""` |  |
-| ingress.tls.self.alternativeDnsNames | list | `[]` |  |
-| ingress.tls.self.commonName | string | `"*.cluster.local"` |  |
-| ingress.tls.self.ipAddresses | list | `[]` |  |
-| ingress.tls.self.validityDuration | int | `365` |  |
-| ingress.tls.type | string | `"none"` |  |
-| networkpolicy.deploy | bool | `false` |  |
-| pvcs | string | `nil` |  |
-| secrets.data.registry.pullSecret | string | `""` |  |
-| servicemonitor.basicAuth.enabled | bool | `false` |  |
-| servicemonitor.basicAuth.existingSecret | string | `""` |  |
-| servicemonitor.basicAuth.newSecret | object | `{}` |  |
-| servicemonitor.basicAuth.passwordKey | string | `"password"` |  |
-| servicemonitor.basicAuth.userKey | string | `"username"` |  |
-| servicemonitor.deploy | bool | `false` |  |
+| ingress.annotations | object | `{"nginx.ingress.kubernetes.io/ssl-redirect":"true"}` | annotations is a dictionary for defining ingress controller specific annotations |
+| ingress.deploy | bool | `false` | deploy has to be set to true for rendering to be applied |
+| ingress.ingressClassName | string | `""` | ingressClassName, defines the class of the ingress controller. |
+| ingress.rules[0] | object | `{"host":"myapp.cluster.local","http":{"paths":[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}}` | host is the URL which ingress is listening |
+| ingress.rules[0].http | object | `{"paths":[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}` | http is a list of http selectors pointing to backends |
+| ingress.rules[0].http.paths | list | `[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]` | paths is a list of paths that map requests to backends |
+| ingress.rules[0].http.paths[0] | object | `{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}` | backend defines the referenced service endpoint to which the traffic will be forwarded to |
+| ingress.rules[0].http.paths[0].backend.serviceNameSuffix | string | `"component-1"` | serviceNameSuffix describes the suffix of the serviceName |
+| ingress.rules[0].http.paths[0].backend.servicePort | string | `"http"` | servicePort describes the port where the service is listening at (can be either a string or a number) |
+| ingress.rules[0].http.paths[0].path | string | `"/"` | path which ingress is listening |
+| ingress.rules[0].http.paths[0].pathType | string | `"ImplementationSpecific"` | pathType Each path in an Ingress is required to have a corresponding path type. Comment out for using default ("ImplementationSpecific") |
+| ingress.tls.existing.secret | string | `""` | name of an existing secret with tls.crt & tls.key content |
+| ingress.tls.provided.cert | string | `""` | If SSL is terminated on ingress and you have a generated (preferrably CERT-001) certificate/key Has to be base64 encoded and should be encrypted in the ejson vault Add Variable to your CI/CD Settings "SKIP_DECRYPT" with value "" that it doesnt decrypt the cert and fails. |
+| ingress.tls.provided.key | string | `""` | The key must not have a passphrase |
+| ingress.tls.self | object | `{"alternativeDnsNames":[],"commonName":"*.cluster.local","ipAddresses":[],"validityDuration":365}` | depending on the type you have further configuration options: |
+| ingress.tls.self.alternativeDnsNames | list | `[]` | alternativeDnsNames is an optional list of DNS names to add in the Subject Alternative Names (SAN) sectiom |
+| ingress.tls.self.commonName | string | `"*.cluster.local"` | commonName of the certificate (mandatory) |
+| ingress.tls.self.ipAddresses | list | `[]` | ipAddresses is an optional list of IP addresses to add in the Subject Alternative Names (SAN) section |
+| ingress.tls.self.validityDuration | int | `365` | validityDuration defines how long the certificate is valid (in days) |
+
+## ServiceMonitor
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| servicemonitor.basicAuth | object | `{"enabled":false,"existingSecret":"","newSecret":{},"passwordKey":"password","userKey":"username"}` | basicAuth is a dictionary for defining values for setting up basic Authentication |
+| servicemonitor.basicAuth.enabled | bool | `false` | enabled when set to 'true', adds basic authentication to all endpoints |
+| servicemonitor.basicAuth.existingSecret | string | `""` | existingSecret if not empty (""), points to an existing secret (matching name of the resource) |
+| servicemonitor.basicAuth.newSecret | object | `{}` | newSecret is a dictionary for defining key/value pairs to be stored in a new secret (See `values.yaml`) |
+| servicemonitor.basicAuth.passwordKey | string | `"password"` | passwordKey is the default key to grab the password in the secret |
+| servicemonitor.basicAuth.userKey | string | `"username"` | userKey is the default key to grab the username in the secret |
+| servicemonitor.deploy | bool | `false` | deploy has to be set to true for rendering to be applied |
 | servicemonitor.endpoints | object | `{}` |  |

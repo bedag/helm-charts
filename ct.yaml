@@ -10,7 +10,7 @@ chart-repos:
   - bitnami=https://charts.bitnami.com/bitnami
 validate-chart-schema: true
 validate-maintainers: false
-validate-yaml: false
+validate-yaml: true
 exclude-deprecated: true
 excluded-charts:
   - "manifests"

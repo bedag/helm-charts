@@ -1,5 +1,4 @@
 global:
-  #torageClassName: "local-path"
   proxy:
     host: "http://proxy.company.com:8080"
     no_proxy: "10.0.0.0/8,.company.com"
@@ -7,10 +6,10 @@ lifecycle:
   setup:
     enabled: true
     injectProxy: true
-  enabled: true  
+  enabled: true
   jobs:
     reconciler: true
-    labels: 
+    labels:
       argocd.argoproj.io/hook: PreSync
     annotations:
       argocd.argoproj.io/hook: PreSync
@@ -33,7 +32,7 @@ osm:
 autoscaler:
   enabled: true
   injectProxy: true
-kubernetes: 
+kubernetes:
   enabled: true
   apiServer:
     injectProxy: true

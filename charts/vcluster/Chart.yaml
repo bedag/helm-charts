@@ -2,12 +2,13 @@ apiVersion: v2
 name: vcluster
 description: Virtual Kubernetes Cluster
 type: application
-version: 0.4.3
+version: 0.4.4
 appVersion: 0.1.0
 keywords:
   - vcluster
   - kubernetes
   - machine-controller
+  - kubermatic
 home: https://artifacthub.io/packages/helm/kvaps/kubernetes
 maintainers:
   - name: "Bedag Informatik AG"

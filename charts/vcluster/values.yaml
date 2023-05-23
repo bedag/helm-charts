@@ -17,14 +17,14 @@ global:
       password: ""
 
   # -- StorageClassName for all persistent volumes
-  storageClassName: ""    
+  storageClassName: ""
 
   # Configuration for all components from the vcluster (not within the vcluster, excluded: coredns, konnectivity)
-  components:    
+  components:
 
     # Configuration for all workloads
     workloads:
-  
+
       # -- Labels for all workloads (merged with workload labels)
       labels: {}
       # -- Annotations for all workloads (merged with workload annotations)
@@ -41,7 +41,7 @@ global:
         pullPolicy: ""
         # -- Additional image pull secrets for all components
         pullSecrets: []
-  
+
       # -- Pod Security Context for all workloads  (Overwrites per workload podSecurityContext)
       podSecurityContext:
         enabled: false
@@ -49,7 +49,7 @@ global:
       #  enabled: true
       #  seccompProfile:
       #    type: RuntimeDefault
-  
+
       # -- Container Security Context for all workloads (Overwrites per workload securityContext)
       securityContext:
         enabled: false
@@ -60,7 +60,7 @@ global:
       #    drop:
       #    - ALL
       #  readOnlyRootFilesystem: true
-  
+
       # -- Node Selector for all workloads (Overwrites all workloads nodeSelector)
       nodeSelector: {}
       # -- Tolerations for all workloads (Overwrites all workloads tolerations)
@@ -71,7 +71,7 @@ global:
       priorityClassName: ""
       # -- TopologySpreadConstraints for all workloads (Overwrites all workloads topologySpreadConstraints)
       topologySpreadConstraints: []
-    
+
     service:
       # -- Labels for all services
       labels: {}
@@ -95,7 +95,7 @@ global:
     exposure:
       # -- Define how admission webhooks are expose (ingress or loadbalancer). Overwrites expose for all admission webhooks.
       expose: "loadbalancer"
-  
+
       certificates:
         # -- Uses Existing Secret for all certificates
         secretName: ""
@@ -106,7 +106,7 @@ global:
           kind: Issuer # Issuer or ClusterIssuer
           # -- Set the name of the ClusterIssuer if issuer kind is ClusterIssuer and if cert manager will generate CA signed SSL certificates
           name: "" #  Name of the ClusterIssuer
-  
+
       # Ingress Configuration for all component ingresses
       ingress:
         # -- Port for Ingresses
@@ -123,7 +123,6 @@ global:
         ingressClassName: ""
         # -- Host for admission ingresses (admission endpoints are exposed via path). supports templating
         host: "{{ include \"pkg.cluster.name\" $ }}.example.com"
-  
 
 # Cluster Configuration
 cluster:
@@ -152,7 +151,7 @@ providers: {}
 # Nutanix Configuration
 # These values are used if nothing is set on the machine level.
 # https://github.com/kubermatic/machine-controller/blob/main/pkg/cloudprovider/provider/nutanix/provider.go#L108
-# nutanix: 
+# nutanix:
 #   endpoint: ""
 #   port:
 #   username: ""
@@ -168,7 +167,6 @@ providers: {}
 #  All Jobs use the below configuration for the workload.
 # ----------------------------
 lifecycle:
-
   # Cilium Installation
   cilium:
     # -- Install Cilium CNI
@@ -200,7 +198,7 @@ lifecycle:
   #   -- Clustername of the kubeconfig. Also used for argo cluster name (Default pkg.cluster.name)
   #   clustername: ""
   #   -- Create ownerrefference for the kubeconfig (Default false)
-  #   ownerref: true
+  #   ownerref: true
 
   # Additional customization for interactions with the current cluster
   current:
@@ -264,12 +262,12 @@ lifecycle:
     #   metadata:
     #     name: example
 
-  # ArgoCD Lifecycle configuration
+  # ArgoCD Lifecycle configuration
   argocd:
     # -- Creates required rbac in argoCD namespace to create cluster secrets
-    rbac: true 
-    # -- Installation namespace of ArgoCD
-    namespace: "argocd"  
+    rbac: true
+    # -- Installation namespace of ArgoCD
+    namespace: "argocd"
 
   # Workload configuration for all jobs
   jobs:
@@ -285,7 +283,7 @@ lifecycle:
     podLabels: {}
     # -- Pod Annotations
     podAnnotations: {}
-    # -- Additional Pod Environment variables
+    # -- Additional Pod Environment variables
     extraEnv: []
     # -- Additional Pod VolumeMounts
     extraVolumeMounts: []
@@ -336,11 +334,11 @@ lifecycle:
     # -- Deploy as Cronjob to run periodically
     cronjob: true
     # -- Job Annotations
-    annotations: 
+    annotations:
       helm.sh/hook: post-install,post-upgrade
       helm.sh/hook-delete-policy: before-hook-creation
-      # argocd.argoproj.io/hook: Sync
-      # argocd.argoproj.io/hook-delete-policy: HookSucceeded
+      # argocd.argoproj.io/hook: Sync
+      # argocd.argoproj.io/hook-delete-policy: HookSucceeded
     # -- Job Labels
     labels: {}
     # -- Cronjob Schedule
@@ -360,11 +358,11 @@ lifecycle:
     # -- Enable/Disable Cleanup
     enabled: false
     # -- Job Annotations
-    annotations: 
+    annotations:
       helm.sh/hook: pre-delete
       helm.sh/hook-delete-policy: before-hook-creation
-      # argocd.argoproj.io/hook: Sync
-      # argocd.argoproj.io/hook-delete-policy: HookSucceeded
+      # argocd.argoproj.io/hook: Sync
+      # argocd.argoproj.io/hook-delete-policy: HookSucceeded
     # -- Job Labels
     labels: {}
 
@@ -382,7 +380,7 @@ lifecycle:
 # Machine Controller Component
 # ----------------------------
 machine:
-  # -- Enable Machine-Controller Component
+  # -- Enable Machine-Controller Component
   enabled: true
   # Component Settings
   component:
@@ -392,7 +390,7 @@ machine:
     ensureManifestsOnStartup: true
 
   # -- Tag Version used for machine-controller components
-  version: "v1.56.0" #"v1.54.2"
+  version: "v1.56.0"
 
   # Kubelect Configuration
   kubelet:
@@ -488,9 +486,8 @@ machine:
     injectProxy: false
 
   # Admission Webhook (Webhook Controller is deployed to cluster namespace)
-  # The Admission Webhooks are deployed into the new cluster (Testing)
+  # The Admission Webhooks are deployed into the new cluster (Testing)
   admission:
-
     # -- Enable Admission Webhook Feature
     enabled: false
 
@@ -604,9 +601,9 @@ machine:
   imagePullSecrets: []
   # -- Replicas for Admission Pods
   replicaCount: 1
-  # -- Labels for Workload
+  # -- Labels for Workload
   labels: {}
-  # -- Annotations for Workload
+  # -- Annotations for Workload
   annotations: {}
   # -- Pod Labels
   podLabels: {}
@@ -641,7 +638,7 @@ machine:
   # Metrics Configuration
   metrics:
     enabled: true
-    # Metrics Service
+    # Metrics Service
     service:
       # -- Service Labels
       labels: {}
@@ -785,7 +782,7 @@ osm:
     injectProxy: false
 
   # Admission Webhook (Webhook Controller is deployed to cluster namespace)
-  # The Admission Webhooks are deployed into the new cluster (Testing)
+  # The Admission Webhooks are deployed into the new cluster (Testing)
   admission:
     # -- Enable Admission Webhook
     enabled: true
@@ -902,9 +899,9 @@ osm:
   imagePullSecrets: []
   # -- Replicas for Admission Pods
   replicaCount: 1
-  # -- Labels for Workload
+  # -- Labels for Workload
   labels: {}
-  # -- Annotations for Workload
+  # -- Annotations for Workload
   annotations: {}
   # -- Pod Labels
   podLabels: {}
@@ -937,11 +934,11 @@ osm:
   podDisruptionBudget: {}
   # maxUnavailable: 1
 
-  # Metrics Configuration
+  # Metrics Configuration
   metrics:
     # -- Enable Metrics
     enabled: true
-    # Metrics Service
+    # Metrics Service
     service:
       # -- Service Labels
       labels: {}
@@ -973,7 +970,7 @@ osm:
         # -- Set relabelings for the endpoint of the serviceMonitor
         relabelings: []
 
-  # SericeAccount
+  # SericeAccount
   serviceAccount:
     # -- Specifies whether a service account should be created
     create: true
@@ -1010,7 +1007,7 @@ kubernetes:
     # -- Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well)
     removeManifestsOnDisable: true
 
-  # -- Version for API Server, Scheduler, Controller Manager (Tag for all kubernetes components)
+  # -- Version for API Server, Scheduler, Controller Manager (Tag for all kubernetes components)
   version: "v1.25.0"
 
   # -- ControlerPlaneEndpoint
@@ -1064,9 +1061,9 @@ kubernetes:
       requests:
         cpu: 100m
         memory: 128Mi
-    # -- Labels for Workload
+    # -- Labels for Workload
     labels: {}
-    # -- Annotations for Workload
+    # -- Annotations for Workload
     annotations: {}
     # -- Pod Labels
     podLabels: {}
@@ -1161,7 +1158,7 @@ kubernetes:
     # ETCD Metrics Configuration
     metrics:
       enabled: true
-      # Metrics Service
+      # Metrics Service
       service:
         # -- Service Labels
         labels: {}
@@ -1211,9 +1208,9 @@ kubernetes:
       args: {}
       # -- Pod Requests and limits
       resources: {}
-      # -- Labels for Workload
+      # -- Labels for Workload
       labels: {}
-      # -- Annotations for Workload
+      # -- Annotations for Workload
       annotations: {}
       # -- Pod Labels
       podLabels: {}
@@ -1277,9 +1274,6 @@ kubernetes:
         finalizers:
           - kubernetes.io/pvc-protection
 
-
-
-
   ## Kubernetes API-Server
   apiServer:
     # -- Enable Kubernetes API-Server
@@ -1304,7 +1298,7 @@ kubernetes:
     # -- Extra arguments for the kube-apiserver
     args: {}
     # advertise-address is required for kube-proxy
-    #advertise-address: 10.9.8.10
+    # advertise-address: 10.9.8.10
 
     image:
       # -- Image registry
@@ -1327,9 +1321,9 @@ kubernetes:
       requests:
         cpu: 100m
         memory: 128Mi
-    # -- Labels for Workload
+    # -- Labels for Workload
     labels: {}
-    # -- Annotations for Workload
+    # -- Annotations for Workload
     annotations: {}
     # -- Pod Labels
     podLabels: {}
@@ -1637,7 +1631,7 @@ kubernetes:
     ## Metrics Configuration
     metrics:
       enabled: true
-      # Metrics Service
+      # Metrics Service
       service:
         # -- Service Labels
         labels: {}
@@ -1811,17 +1805,17 @@ kubernetes:
       - key: "CriticalAddonsOnly"
         operator: "Exists"
     # -- Affinity
-    affinity: 
-       podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                  - key: k8s-app
-                    operator: In
-                    values: ["kube-dns"]
-              topologyKey: kubernetes.io/hostname
+    affinity:
+      podAntiAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: k8s-app
+                  operator: In
+                  values: ["kube-dns"]
+            topologyKey: kubernetes.io/hostname
     # -- Pod PriorityClassName
     priorityClassName: "system-cluster-critical"
     # -- TopologySpreadConstraints for all workloads
@@ -1835,11 +1829,11 @@ kubernetes:
   # Konnectivity Server
   konnectivity:
     # -- En/Disable konnectivity-server and konnectivity-agent
-    enabled: true 
+    enabled: true
     # -- Set version for both konnectivity-server and konnectivity-agent
     version: ""
     # Konnectivity Server
-    server: 
+    server:
       # -- Enable Konnectivity Server
       enabled: true
       # -- This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment.
@@ -1921,9 +1915,8 @@ kubernetes:
         type: RollingUpdate
         rollingUpdate:
           maxUnavailable: 50%
-      # -- Konnectivity Server extra arguments 
+      # -- Konnectivity Server extra arguments
       args: {}
-  
       ports:
         server: 8131
         agent: 8132
@@ -1943,7 +1936,7 @@ kubernetes:
         labels: {}
         annotations: {}
         loadBalancerIP:
-  
+
     # Konnectivity Agent
     agent:
       # -- Enable Konnectivity Agent
@@ -2023,14 +2016,14 @@ kubernetes:
         type: RollingUpdate
         rollingUpdate:
           maxUnavailable: 50%
-      # -- Konnectivity Agent extra arguments 
+      # -- Konnectivity Agent extra arguments
       args: {}
       ports:
         # -- Konnectivity Agent Administration Port
         admin: 8133
         # -- Konnectivity Agent Health Port
         health: 8134
-  
+
 # ----------------------------
 #  Cluster-Autoscaler (Autoscaler) Component
 #   Reference: https://github.com/kube-green/kube-green
@@ -2143,9 +2136,9 @@ autoscaler:
   imagePullSecrets: []
   # -- Replicas for Admission Pods
   replicaCount: 1
-  # -- Labels for Workload
+  # -- Labels for Workload
   labels: {}
-  # -- Annotations for Workload
+  # -- Annotations for Workload
   annotations: {}
   # -- Pod Labels
   podLabels: {}

@@ -2,7 +2,7 @@ apiVersion: v2
 name: e2g
 description: "e2guardian Chart"
 type: application
-version: 1.2.2
+version: 1.2.3
 appVersion: "5.4"
 icon: "http://e2guardian.org/cms/images/banners/logo-guardian.png"
 home: "https://github.com/e2guardian/e2guardian/"
@@ -12,9 +12,9 @@ keywords:
   - e2guardian
   - e2g
 dependencies:
- - name: manifests
-   version: ">=0.4.0"
-   repository: "https://bedag.github.io/helm-charts/"
+  - name: manifests
+    version: ">=0.4.0"
+    repository: "https://bedag.github.io/helm-charts/"
 maintainers:
   - name: NOC
     email: noc@bedag.ch
@@ -28,7 +28,6 @@ annotations:
   artifacthub.io/containsSecurityUpdates: "false"
   artifacthub.io/changes: |
     - "[Added]: filtergroups config"
-    - "[Bump] e2g to 5.4"
   artifacthub.io/prerelease: "false"
   artifacthub.io/images: |
     - name: e2g-5

@@ -84,7 +84,7 @@ ingress:
       validityDuration: 365
     existing:
       # -- name of an existing secret with tls.crt & tls.key content
-      secret: ""
+      - secret: ""
     provided:
       # -- If SSL is terminated on ingress and you have a generated (preferrably CERT-001) certificate/key
       # Has to be base64 encoded and should be encrypted in the ejson vault

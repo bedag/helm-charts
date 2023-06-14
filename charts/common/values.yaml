@@ -84,6 +84,7 @@ ingress:
       validityDuration: 365
 
     existing:
+      # -- name of an existing secret with tls.crt & tls.key content
       - host: myapp.cluster.local
         secret: ""
 

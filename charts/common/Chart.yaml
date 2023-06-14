@@ -1,7 +1,7 @@
 apiVersion: v2
 name: common
 description: "Bedag's common Helm chart to use for creating other Helm charts"
-version: 10.2.1
+version: 10.3.0
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives

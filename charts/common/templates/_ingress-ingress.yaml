@@ -45,8 +45,13 @@ spec:
       {{- if or (eq $ingress.tls.type "self") (eq $ingress.tls.type "provided") }}
       secretName: {{ template "library.name" . }}-ingress-tls
       {{- else if eq $ingress.tls.type "existing" }}
+
       {{- range $ingress.tls.existing }}
-      secretName: {{ .secret }}
+      {{- if has $.host .host }}
+      secretName: {{ $.host.secret }}
+      {{- end }}
+      {{- end }}
+
       {{- end }}
   {{- end }}
   {{- end }}

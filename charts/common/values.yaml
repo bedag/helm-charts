@@ -63,11 +63,24 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
   # tls configuration
   tls:
+    # define your type of tls certificate, it can be one of:
+    # none: tls will be disabled
+    # existing: use an existing secret already present in the namespace. Requires secret name to be specified
+    # provided: use an officially generated certificate/key
+    # k8s: use the default k8s-ingress tls. no further configuration needed
+    # self: generate a self signed certificate, which is stored as secret. Needs commonName and validityDuration at least
     type: "none"
+    # -- depending on the type you have further configuration options:
     self:
+      # -- commonName of the certificate (mandatory)
       commonName: "*.cluster.local"
+      # -- ipAddresses is an optional list of IP addresses to add in the Subject Alternative Names (SAN) section
       ipAddresses: []
+      #  - "10.0.0.1"
+      # -- alternativeDnsNames is an optional list of DNS names to add in the Subject Alternative Names (SAN) sectiom
       alternativeDnsNames: []
+      #  - "foo.com"
+      # -- validityDuration defines how long the certificate is valid (in days)
       validityDuration: 365
 
     existing:

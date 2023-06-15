@@ -39,7 +39,7 @@ ingress:
   # rules is a list of host rules used to configure the Ingress
   rules:
     # -- host is the URL which ingress is listening
-    - host: myapp.cluster.local
+    - host: myapp.cluster.local_1
       # -- http is a list of http selectors pointing to backends
       http:
         # -- paths is a list of paths that map requests to backends
@@ -48,6 +48,21 @@ ingress:
           - backend:
               # -- serviceNameSuffix describes the suffix of the serviceName
               serviceNameSuffix: component-1
+              # -- servicePort describes the port where the service is listening at (can be either a string or a number)
+              servicePort: http
+            # -- path which ingress is listening
+            path: "/"
+            # -- pathType Each path in an Ingress is required to have a corresponding path type. Comment out for using default ("ImplementationSpecific")
+            pathType: "ImplementationSpecific"
+    - host: myapp.cluster.local_2
+      # -- http is a list of http selectors pointing to backends
+      http:
+        # -- paths is a list of paths that map requests to backends
+        paths:
+          # -- backend defines the referenced service endpoint to which the traffic will be forwarded to
+          - backend:
+              # -- serviceNameSuffix describes the suffix of the serviceName
+              serviceNameSuffix: component-2
               # -- servicePort describes the port where the service is listening at (can be either a string or a number)
               servicePort: http
             # -- path which ingress is listening
@@ -69,7 +84,7 @@ ingress:
     # provided: use an officially generated certificate/key
     # k8s: use the default k8s-ingress tls. no further configuration needed
     # self: generate a self signed certificate, which is stored as secret. Needs commonName and validityDuration at least
-    type: "none"
+    type: "k8s"
     # -- depending on the type you have further configuration options:
     self:
       # -- commonName of the certificate (mandatory)
@@ -82,12 +97,10 @@ ingress:
       #  - "foo.com"
       # -- validityDuration defines how long the certificate is valid (in days)
       validityDuration: 365
-
     existing:
-      # -- name of an existing secret with tls.crt & tls.key content
-      - host: myapp.cluster.local
-        secret: ""
-
+      # -- name of an existing secret for a specific host, with tls.crt & tls.key content
+      - host: "exmaple_host"
+        secret: "exapmle-certificate-tls"
     provided:
       # -- If SSL is terminated on ingress and you have a generated (preferrably CERT-001) certificate/key
       # Has to be base64 encoded and should be encrypted in the ejson vault
@@ -123,8 +136,7 @@ servicemonitor:
   # endpoints is a dictionary of one or more endpoints to configure
   endpoints: {}
     # komponente is a sample endpoint
-    # komponente:
-      # componentSelector is used for selecting specific pods
+tls:      # componentSelector is used for selecting specific pods
       # componentSelector:
         # key is the name of the label
         # key: app.kubernetes.io/component

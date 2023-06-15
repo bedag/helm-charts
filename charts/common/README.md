@@ -33,7 +33,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | ingress.annotations | object | `{"nginx.ingress.kubernetes.io/ssl-redirect":"true"}` | annotations is a dictionary for defining ingress controller specific annotations |
 | ingress.deploy | bool | `false` | deploy has to be set to true for rendering to be applied |
 | ingress.ingressClassName | string | `""` | ingressClassName, defines the class of the ingress controller. |
-| ingress.rules[0] | object | `{"host":"myapp.cluster.local","http":{"paths":[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}}` | host is the URL which ingress is listening |
+| ingress.rules[0] | object | `{"host":"myapp.cluster.local_1","http":{"paths":[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}}` | host is the URL which ingress is listening |
 | ingress.rules[0].http | object | `{"paths":[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}` | http is a list of http selectors pointing to backends |
 | ingress.rules[0].http.paths | list | `[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]` | paths is a list of paths that map requests to backends |
 | ingress.rules[0].http.paths[0] | object | `{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}` | backend defines the referenced service endpoint to which the traffic will be forwarded to |
@@ -41,7 +41,14 @@ Major Changes to functions are documented with the version affected. **Before up
 | ingress.rules[0].http.paths[0].backend.servicePort | string | `"http"` | servicePort describes the port where the service is listening at (can be either a string or a number) |
 | ingress.rules[0].http.paths[0].path | string | `"/"` | path which ingress is listening |
 | ingress.rules[0].http.paths[0].pathType | string | `"ImplementationSpecific"` | pathType Each path in an Ingress is required to have a corresponding path type. Comment out for using default ("ImplementationSpecific") |
-| ingress.tls.existing[0] | object | `{"host":"myapp.cluster.local","secret":""}` | name of an existing secret with tls.crt & tls.key content |
+| ingress.rules[1].http | object | `{"paths":[{"backend":{"serviceNameSuffix":"component-2","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}` | http is a list of http selectors pointing to backends |
+| ingress.rules[1].http.paths | list | `[{"backend":{"serviceNameSuffix":"component-2","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]` | paths is a list of paths that map requests to backends |
+| ingress.rules[1].http.paths[0] | object | `{"backend":{"serviceNameSuffix":"component-2","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}` | backend defines the referenced service endpoint to which the traffic will be forwarded to |
+| ingress.rules[1].http.paths[0].backend.serviceNameSuffix | string | `"component-2"` | serviceNameSuffix describes the suffix of the serviceName |
+| ingress.rules[1].http.paths[0].backend.servicePort | string | `"http"` | servicePort describes the port where the service is listening at (can be either a string or a number) |
+| ingress.rules[1].http.paths[0].path | string | `"/"` | path which ingress is listening |
+| ingress.rules[1].http.paths[0].pathType | string | `"ImplementationSpecific"` | pathType Each path in an Ingress is required to have a corresponding path type. Comment out for using default ("ImplementationSpecific") |
+| ingress.tls.existing[0] | object | `{"host":"exmaple_host","secret":"exapmle-certificate-tls"}` | name of an existing secret for a specific host, with tls.crt & tls.key content |
 | ingress.tls.provided.cert | string | `""` | If SSL is terminated on ingress and you have a generated (preferrably CERT-001) certificate/key Has to be base64 encoded and should be encrypted in the ejson vault Add Variable to your CI/CD Settings "SKIP_DECRYPT" with value "" that it doesnt decrypt the cert and fails. |
 | ingress.tls.provided.key | string | `""` | The key must not have a passphrase |
 | ingress.tls.self | object | `{"alternativeDnsNames":[],"commonName":"*.cluster.local","ipAddresses":[],"validityDuration":365}` | depending on the type you have further configuration options: |

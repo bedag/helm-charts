@@ -62,7 +62,7 @@ ingress:
           # -- backend defines the referenced service endpoint to which the traffic will be forwarded to
           - backend:
               # -- serviceNameSuffix describes the suffix of the serviceName
-              serviceNameSuffix: component-2
+              serviceNameSuffix: component-1
               # -- servicePort describes the port where the service is listening at (can be either a string or a number)
               servicePort: http
             # -- path which ingress is listening
@@ -84,7 +84,7 @@ ingress:
     # provided: use an officially generated certificate/key
     # k8s: use the default k8s-ingress tls. no further configuration needed
     # self: generate a self signed certificate, which is stored as secret. Needs commonName and validityDuration at least
-    type: "k8s"
+    type: "none"
     # -- depending on the type you have further configuration options:
     self:
       # -- commonName of the certificate (mandatory)
@@ -99,8 +99,11 @@ ingress:
       validityDuration: 365
     existing:
       # -- name of an existing secret for a specific host, with tls.crt & tls.key content
-      - host: "exmaple_host"
+      - host:
+        - "myapp.cluster.local_tls_1"
+        - "myapp.cluster.local_tls_2"
         secret: "exapmle-certificate-tls"
+
     provided:
       # -- If SSL is terminated on ingress and you have a generated (preferrably CERT-001) certificate/key
       # Has to be base64 encoded and should be encrypted in the ejson vault

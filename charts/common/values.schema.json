@@ -512,6 +512,8 @@
               "type": "string",
               "default": "none"
             },
+
+
             "existing": {
               "type": "array",
               "items": {
@@ -521,10 +523,10 @@
                 ],
                 "properties": {
                   "host": {
-                    "type": "string",
-                    "examples": [
-                      "myapp.cluster.local"
-                    ]
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "secret": {
                     "type": "string"
@@ -532,6 +534,9 @@
                 }
               }
             },
+
+
+
             "provided": {
               "type": "object",
               "required": [

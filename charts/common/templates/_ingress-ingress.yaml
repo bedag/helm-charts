@@ -41,26 +41,17 @@ spec:
   tls:
     - hosts:
       {{- range $outer :=$ingress.rules }}
-        {{- $exists := false }}
-        {{- range $element2 := $ingress.tls.existing }}
-          {{- if eq $outer.host $element2.host }}
-            {{- $exists = true }}
-          {{- end }}
-        {{- end }}
-        {{- if not $exists }}
       - {{ .host }}
-        {{- end }}
         {{- end }}
       secretName: {{ template "library.name" . }}-ingress-tls
 
-    {{- if or (eq $ingress.tls.type "existing")}}
+    {{- if eq $ingress.tls.type "existing"}}
     {{- range $outer := $ingress.tls.existing }}
     - hosts:
-      - {{ $outer.host }}
-
-        {{- if eq $ingress.tls.type "existing" }}
+      {{- range $outer_2 := $outer.host }}
+      - {{ . }}
+      {{- end }}
       secretName: {{ $outer.secret }}
-        {{- end }}
       {{- end }}
     {{- end }}
 

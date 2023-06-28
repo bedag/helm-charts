@@ -133,7 +133,6 @@ spec:
             - /usr/local/bin/webhook
             - -kubeconfig={{ include "pkg.cluster.cp.env.mount" $ }}
             - -namespace={{ $.Release.Namespace }}
-            - -logtostderr
             - -tls-cert-path={{ include "machine-controller.volumemounts.certs.path" $ }}/tls.crt
             - -tls-key-path={{ include "machine-controller.volumemounts.certs.path" $ }}/tls.key
               {{- if (include "operating-system-manager.enabled" $) }}

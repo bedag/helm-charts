@@ -148,7 +148,6 @@ checksum/webhooks: {{ (.Files.Glob (include "machine-controller.webhooks" $) | t
 */}}
 {{- define "machine-controller.controller.args" -}}
 - -kubeconfig={{ include "pkg.cluster.cp.env.mount" $ }}
-- -logtostderr
   {{- if (include "pkg.common.proxy.enabled" $) }}
     {{- with (include "pkg.common.proxy.host" $) }}
 - -node-http-proxy={{ . }}

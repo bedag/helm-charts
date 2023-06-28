@@ -1043,15 +1043,16 @@ kubernetes:
     # https://console.cloud.google.com/gcr/images/etcd-development/GLOBAL/etcd?pli=1
     image:
       # -- Image registry
-      registry: registry.k8s.io
+      registry: quay.io
       # -- Image repository
-      repository: etcd
+      repository: coreos/etcd
       # -- Image tag
-      tag: 3.5.6-0
+      tag: v3.5.9
       # -- Image Digest
       digest: ""
       # -- Image pull policy
       pullPolicy: IfNotPresent
+
     # -- Image pull Secrets
     imagePullSecrets: []
     # -- Replicas for ETCD Pods

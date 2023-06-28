@@ -574,9 +574,9 @@ Deploys [ETCD](https://etcd.io/).
 | kubernetes.etcd.envsFrom | list | `[]` | Extra environment variables from |
 | kubernetes.etcd.image.digest | string | `""` | Image Digest |
 | kubernetes.etcd.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| kubernetes.etcd.image.registry | string | `"registry.k8s.io"` | Image registry |
-| kubernetes.etcd.image.repository | string | `"etcd"` | Image repository |
-| kubernetes.etcd.image.tag | string | `"3.5.6-0"` | Image tag |
+| kubernetes.etcd.image.registry | string | `"quay.io"` | Image registry |
+| kubernetes.etcd.image.repository | string | `"coreos/etcd"` | Image repository |
+| kubernetes.etcd.image.tag | string | `"v3.5.9"` | Image tag |
 | kubernetes.etcd.imagePullSecrets | list | `[]` | Image pull Secrets |
 | kubernetes.etcd.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.etcd.labels | object | `{}` | Labels for Workload |

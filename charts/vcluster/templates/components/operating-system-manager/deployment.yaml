@@ -128,7 +128,6 @@ spec:
             - /usr/local/bin/webhook
             - -kubeconfig={{ include "pkg.cluster.cp.env.mount" $ }}
             - -namespace={{ $.Release.Namespace }}
-            - -logtostderr
             - -metrics-bind-address=0.0.0.0:9191
             - -health-probe-bind-address=0.0.0.0:9085
             - -cert-dir={{ include "operating-system-manager.volumemounts.certs.path" $ }}

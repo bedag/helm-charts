@@ -49,7 +49,7 @@ kube-system
 {{- define "pkg.images.dockerconfigjson" -}}
   {{- if and (include "pkg.images.registry.set" $) (include "pkg.images.registry.auth" $) -}}
     {{- $registry := $.Values.global.registry -}}
-    {{- printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"email\":\"%s\",\"auth\":\"%s\"}}}" (include "pkg.images.registry.url" $) $registry.creds.username $registry.creds.password (default "" $registry.creds.email) (printf "%s:%s" .username .password | b64enc) | b64enc }}
+    {{- printf "{\"auths\":{\"%s\":{\"auth\":\"%s\"}}}" (include "pkg.images.registry.url" $) (printf "%s:%s" $registry.creds.username $registry.creds.password | b64enc) | b64enc }}
   {{- end -}}
 {{- end -}}
 

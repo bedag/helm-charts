@@ -390,7 +390,7 @@ machine:
     ensureManifestsOnStartup: true
 
   # -- Tag Version used for machine-controller components
-  version: "v1.56.0"
+  version: "v1.57.0"
 
   # Kubelect Configuration
   kubelet:
@@ -711,7 +711,7 @@ osm:
     ensureManifestsOnStartup: true
 
   # -- Tag Version used for both components
-  version: "v1.2.0"
+  version: "v1.3.0"
 
   # Controller Component
   controller:
@@ -1047,7 +1047,7 @@ kubernetes:
       # -- Image repository
       repository: etcd
       # -- Image tag
-      tag: 3.5.6-0
+      tag: 3.5.7-0
       # -- Image Digest
       digest: ""
       # -- Image pull policy
@@ -1302,7 +1302,7 @@ kubernetes:
 
     image:
       # -- Image registry
-      registry: k8s.gcr.io
+      registry: registry.k8s.io
       # -- Image repository
       repository: kube-apiserver
       # -- Image tag
@@ -1412,7 +1412,7 @@ kubernetes:
 
     image:
       # -- Image registry
-      registry: k8s.gcr.io
+      registry: registry.k8s.io
       # -- Image repository
       repository: kube-controller-manager
       # -- Image pull policy

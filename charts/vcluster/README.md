@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.4.5](https://img.shields.io/badge/Version-0.4.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.4.6](https://img.shields.io/badge/Version-0.4.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -220,7 +220,7 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy |
 | machine.tolerations | list | `[]` | Tolerations |
 | machine.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
-| machine.version | string | `"v1.56.0"` | Tag Version used for machine-controller components |
+| machine.version | string | `"v1.57.0"` | Tag Version used for machine-controller components |
 | machine.volumes | list | `[]` | Volumes |
 
 ### Controller
@@ -327,7 +327,7 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy |
 | osm.tolerations | list | `[]` | Tolerations |
 | osm.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
-| osm.version | string | `"v1.2.0"` | Tag Version used for both components |
+| osm.version | string | `"v1.3.0"` | Tag Version used for both components |
 | osm.volumes | list | `[]` | Volumes |
 
 ### Controller
@@ -421,7 +421,7 @@ Deploys [Kubernetes API Server](https://kubernetes.io/docs/reference/command-lin
 | kubernetes.apiServer.envsFrom | list | `[]` | Extra environment variables from |
 | kubernetes.apiServer.image.digest | string | `""` | Image digest |
 | kubernetes.apiServer.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| kubernetes.apiServer.image.registry | string | `"k8s.gcr.io"` | Image registry |
+| kubernetes.apiServer.image.registry | string | `"registry.k8s.io"` | Image registry |
 | kubernetes.apiServer.image.repository | string | `"kube-apiserver"` | Image repository |
 | kubernetes.apiServer.image.tag | string | `""` | Image tag |
 | kubernetes.apiServer.imagePullSecrets | list | `[]` | Image pull Secrets |
@@ -467,7 +467,7 @@ Deploys [Kubernetes Controller Manager](https://kubernetes.io/docs/concepts/arch
 | kubernetes.controllerManager.envsFrom | list | `[]` | Extra environment variables from |
 | kubernetes.controllerManager.image.digest | string | `""` | Image Digest |
 | kubernetes.controllerManager.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| kubernetes.controllerManager.image.registry | string | `"k8s.gcr.io"` | Image registry |
+| kubernetes.controllerManager.image.registry | string | `"registry.k8s.io"` | Image registry |
 | kubernetes.controllerManager.image.repository | string | `"kube-controller-manager"` | Image repository |
 | kubernetes.controllerManager.image.tag | string | `""` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
 | kubernetes.controllerManager.imagePullSecrets | list | `[]` | Image pull Secrets |
@@ -576,7 +576,7 @@ Deploys [ETCD](https://etcd.io/).
 | kubernetes.etcd.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | kubernetes.etcd.image.registry | string | `"registry.k8s.io"` | Image registry |
 | kubernetes.etcd.image.repository | string | `"etcd"` | Image repository |
-| kubernetes.etcd.image.tag | string | `"3.5.6-0"` | Image tag |
+| kubernetes.etcd.image.tag | string | `"3.5.7-0"` | Image tag |
 | kubernetes.etcd.imagePullSecrets | list | `[]` | Image pull Secrets |
 | kubernetes.etcd.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.etcd.labels | object | `{}` | Labels for Workload |

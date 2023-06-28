@@ -13,7 +13,7 @@ stringData:
   {{- if (include "pkg.images.registry.auth" $) }}
   regcred.yaml: |
     apiVersion: v1
-    data:
+    stringData:
       .dockerconfigjson: {{ include "pkg.images.dockerconfigjson" $ }}
     kind: Secret
     metadata:

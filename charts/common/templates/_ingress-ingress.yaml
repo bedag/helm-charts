@@ -37,16 +37,24 @@ spec:
     {{- end }}
   {{- if $ingress.tls }}
   {{- if and (ne $ingress.tls.type "none") (ne $ingress.tls.type "") }}
+
   tls:
     - hosts:
-      {{- range $ingress.rules }}
-        - {{ .host }}
-      {{- end }}
-      {{- if or (eq $ingress.tls.type "self") (eq $ingress.tls.type "provided") }}
+      {{- range $outer :=$ingress.rules }}
+      - {{ .host }}
+        {{- end }}
       secretName: {{ template "library.name" . }}-ingress-tls
-      {{- else if eq $ingress.tls.type "existing" }}
-      secretName: {{ $ingress.tls.existing.secret }}
+
+    {{- if eq $ingress.tls.type "existing"}}
+    {{- range $outer := $ingress.tls.existing }}
+    - hosts:
+      {{- range $outer_2 := $outer.host }}
+      - {{ . }}
       {{- end }}
+      secretName: {{ $outer.secret }}
+      {{- end }}
+    {{- end }}
+
   {{- end }}
   {{- end }}
 {{- end }}

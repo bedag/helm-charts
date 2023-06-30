@@ -82,7 +82,10 @@
           }
         },
         "env": {
-          "type": ["array", "object"]
+          "type": [
+            "array",
+            "object"
+          ]
         },
         "envSecret": {
           "type": "object"
@@ -509,17 +512,31 @@
               "type": "string",
               "default": "none"
             },
+
+
             "existing": {
-              "type": "object",
-              "required": [
-                "secret"
-              ],
-              "properties": {
-                "secret": {
-                  "type": "string"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "host"
+                ],
+                "properties": {
+                  "host": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "secret": {
+                    "type": "string"
+                  }
                 }
               }
             },
+
+
+
             "provided": {
               "type": "object",
               "required": [
@@ -703,7 +720,10 @@
                       "type": "array",
                       "items": {
                         "type": "string",
-                        "enum": ["Ingress", "Egress"]
+                        "enum": [
+                          "Ingress",
+                          "Egress"
+                        ]
                       }
                     },
                     "ingress": {

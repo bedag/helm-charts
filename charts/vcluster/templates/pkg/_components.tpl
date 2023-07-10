@@ -277,3 +277,26 @@ name: {{ default (include "vcluster.fullname" $) .name }}
   {{- end -}}
 {{- end -}}
 
+{{/*
+    Components NetworkPolicies enabled
+*/}}
+{{- define "pkg.components.netpol.enabled" -}}
+  {{- $components := $.Values.global.components -}}
+  {{- if $components.networkPolicy.enabled -}}
+    {{- true -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+    Components NetworkPolicies Sources
+*/}}
+{{- define "pkg.components.netpol.from" -}}
+  {{- $components := $.ctx.Values.global.components -}}
+  {{- $np := (default list $.np.from) -}}
+  {{- if $components.networkPolicy.from -}}
+    {{- $np = concat $np $components.networkPolicy.from -}}
+  {{- end -}}
+  {{- if $np -}}
+    {{- toYaml $np | nindent 0 -}}
+  {{- end -}}
+{{- end -}}

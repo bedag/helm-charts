@@ -89,7 +89,12 @@ global:
 
     # NetworkPolicies
     networkPolicy:
+      # -- Enable NetworkPolicies
       enabled: false
+      # -- Add `from` block for networkPolicies (by default from anywhere)
+      from: []
+      # - ipBlock:
+      #     cidr: 192.168.0.0/24
 
     # Components Exposure
     exposure:
@@ -1390,6 +1395,13 @@ kubernetes:
       annotations: {}
       loadBalancerIP:
 
+    # NetworkPolicies Configuration
+    networkPolicy:
+      # -- Add `from` block for networkPolicies (by default from anywhere)
+      from: []
+      # - ipBlock:
+      #     cidr: 192.168.0.0/24
+
     # Autoscaler Configuration
     autoscaling:
       # -- Enable Horizontal Pod Autoscaler
@@ -1936,6 +1948,13 @@ kubernetes:
         labels: {}
         annotations: {}
         loadBalancerIP:
+
+      # NetworkPolicies Configuration
+      networkPolicy:
+        # -- Add `from` block for networkPolicies (by default from anywhere)
+        from: []
+        # - ipBlock:
+        #     cidr: 192.168.0.0/24
 
     # Konnectivity Agent
     agent:

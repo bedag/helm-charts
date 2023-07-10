@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.4.7](https://img.shields.io/badge/Version-0.4.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -89,7 +89,8 @@ Global Values
 | global.components.exposure.ingress.ingressClassName | string | `""` | Ingressclass for admission ingresses |
 | global.components.exposure.ingress.port | int | `443` | Port for Ingresses |
 | global.components.metrics | object | `{}` |  |
-| global.components.networkPolicy.enabled | bool | `false` |  |
+| global.components.networkPolicy.enabled | bool | `false` | Enable NetworkPolicies |
+| global.components.networkPolicy.from | list | `[]` |  |
 | global.components.service.annotations | object | `{}` | Annotations for all services |
 | global.components.service.labels | object | `{}` | Labels for all services |
 | global.components.workloads.affinity | object | `{}` | Affinity for all workloads (Overwrites all workloads affinities) |

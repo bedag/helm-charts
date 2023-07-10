@@ -1,0 +1,39 @@
+{{- if (include "pkg.components.netpol.enabled" $) -}} 
+  {{- if (include "kubernetes.enabled" $) -}}
+    {{- $kubernetes := $.Values.kubernetes -}}
+    {{- if $kubernetes.apiServer.enabled }}
+      {{- $fullName := include "kubernetes.fullname" . -}}
+      {{- $certName := include "kubernetes.certname" . -}}
+      {{- $component_name := "apiserver" -}}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: "{{ $fullName }}-apiserver"
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+      {{- include "kubernetes.labels" $ | nindent 6 }}
+  policyTypes:
+  - Ingress
+  ingress:
+  - ports:
+    - protocol: TCP
+      port: {{ $kubernetes.apiServer.port }}
+        {{- with (include "pkg.components.netpol.from" (dict "ctx" $ "np" $kubernetes.apiServer.networkPolicy )) }}
+    from: {{ . | nindent 6 }}
+        {{- end }}
+      {{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.server.enabled $kubernetes.konnectivity.server.sidecar }}
+  - ports:
+    - protocol: TCP
+      port: {{ $kubernetes.konnectivity.server.ports.agent }}
+        {{- with (include "pkg.components.netpol.from" (dict "ctx" $ "np" $kubernetes.konnectivity.server.networkPolicy )) }}
+    from: {{ . | nindent 6 }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end -}}

@@ -1,0 +1,46 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $manifest := $.Values.kubernetes.apiServer -}}
+  {{- $fullName := include "kubernetes.fullname" . -}}
+  {{- $component_name := "apiServer" -}}
+  {{- if (include "pkg.components.metrics.enabled" (dict "metrics" $manifest.metrics "ctx" $)) -}}
+    {{- if (include "pkg.components.probe.enabled" (dict "sm" $manifest.metrics.probe "ctx" $)) -}}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: {{ $fullName }}-api-probe
+  namespace: {{ $manifest.metrics.probe.namespace | default .Release.Namespace }}
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+    {{- with $manifest.metrics.probe.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with $manifest.metrics.probe.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  jobName: {{ $manifest.metrics.probe.namespace | default "k8s-apiserver-probe" }}
+  interval: {{ $manifest.metrics.probe.interval | default "5s" }}
+  module: {{ $manifest.metrics.probe.module | default "http_2xx" }}
+  {{- with $manifest.metrics.probe.prober }}
+  prober:
+    url: {{ .url | default "blackbox-exporter-prometheus-blackbox-exporter:9115" }}
+    path: {{ .path | default "/probe" }}
+    scheme: {{ .scheme | default "http" }}
+    proxyUrl: {{ .proxyUrl | default ""}}
+  {{- end }}
+  targets:
+  staticConfig:
+    static:
+      {{- with (include "kubernetes.api.endpoint" $) }}
+      - {{ . }}
+      {{- end }}
+    labels:
+      cluster: {{ include "pkg.cluster.name" $ }}
+  {{- with $manifest.metrics.probe.tlsConfig }}
+  tlsConfig: {{- toYaml . | nindent 4 }}
+  {{- end }}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

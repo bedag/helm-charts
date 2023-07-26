@@ -31,13 +31,13 @@ spec:
     proxyUrl: {{ .proxyUrl | default ""}}
   {{- end }}
   targets:
-  staticConfig:
-    static:
-      {{- with (include "kubernetes.api.endpoint" $) }}
-      - {{ . }}
-      {{- end }}
-    labels:
-      cluster: {{ include "pkg.cluster.name" $ }}
+    staticConfig:
+      static:
+        {{- with (include "kubernetes.api.endpoint" $) }}
+        - {{ . }}
+        {{- end }}
+      labels:
+        cluster: {{ include "pkg.cluster.name" $ }}
   {{- with $manifest.metrics.probe.tlsConfig }}
   tlsConfig: {{- toYaml . | nindent 4 }}
   {{- end }}

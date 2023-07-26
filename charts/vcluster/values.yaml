@@ -91,10 +91,10 @@ global:
     networkPolicy:
       # -- Enable NetworkPolicies
       enabled: false
-      # -- Add `from` block for networkPolicies (by default from anywhere)
+      # -- Add `from` block for networkPolicies (by default from anywhere)
       from: []
-      # - ipBlock:
-      #     cidr: 192.168.0.0/24
+      # - ipBlock:
+      #     cidr: 192.168.0.0/24
 
     # Components Exposure
     exposure:
@@ -1397,10 +1397,10 @@ kubernetes:
 
     # NetworkPolicies Configuration
     networkPolicy:
-      # -- Add `from` block for networkPolicies (by default from anywhere)
+      # -- Add `from` block for networkPolicies (by default from anywhere)
       from: []
-      # - ipBlock:
-      #     cidr: 192.168.0.0/24
+      # - ipBlock:
+      #     cidr: 192.168.0.0/24
 
     # Autoscaler Configuration
     autoscaling:
@@ -1414,7 +1414,7 @@ kubernetes:
       targetCPUUtilizationPercentage: 80
       # -- Benchmark Memory Usage
       targetMemoryUtilizationPercentage:
-    
+
     # API Server Metrics Configuration
     metrics:
       enabled: false
@@ -1989,10 +1989,10 @@ kubernetes:
 
       # NetworkPolicies Configuration
       networkPolicy:
-        # -- Add `from` block for networkPolicies (by default from anywhere)
+        # -- Add `from` block for networkPolicies (by default from anywhere)
         from: []
-        # - ipBlock:
-        #     cidr: 192.168.0.0/24
+        # - ipBlock:
+        #     cidr: 192.168.0.0/24
 
     # Konnectivity Agent
     agent:

@@ -16,6 +16,17 @@ metadata:
 {{- end }}
 spec:
   ingressClassName: {{ $ingress.ingressClassName }}
+  {{- if $ingress.defaultBackend }}
+  defaultBackend:
+    service:
+      name: {{ template "library.name" $root }}-{{ $ingress.defaultBackend.serviceNameSuffix }}
+      port:
+        {{- if kindIs "float64" $ingress.defaultBackend.servicePort }}
+        number: {{ $ingress.defaultBackend.servicePort }}
+        {{- else }}
+        name: {{ $ingress.defaultBackend.servicePort | quote }}
+        {{- end }}
+  {{- end }}
   rules:
     {{- range $ingress.rules }}
     - host: {{ .host }}

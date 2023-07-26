@@ -425,6 +425,24 @@
         "ingressClassName": {
           "type": "string"
         },
+        "defaultBackend":{
+            "type":"object",
+            "required": [
+                "serviceNameSuffix",
+                "servicePort"
+            ],
+            "properties": {
+                "serviceNameSuffix": {
+                    "type": "string"
+                },
+                "servicePort": {
+                    "type": [
+                    "number",
+                    "string"
+                    ]
+                }
+            }
+        },
         "rules": {
           "type": "array",
           "items": {

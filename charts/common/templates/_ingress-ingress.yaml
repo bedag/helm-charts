@@ -16,6 +16,20 @@ metadata:
 {{- end }}
 spec:
   ingressClassName: {{ $ingress.ingressClassName }}
+  {{- if $ingress.defaultBackend }}
+  {{- if not $ingress.rules }}
+  defaultBackend:
+    service:
+      name: {{ template "library.name" $root }}-{{ $ingress.defaultBackend.serviceNameSuffix }}
+      port:
+        {{- if kindIs "float64" $ingress.defaultBackend.servicePort }}
+        number: {{ $ingress.defaultBackend.servicePort }}
+        {{- else }}
+        name: {{ $ingress.defaultBackend.servicePort | quote }}
+        {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- if not $ingress.defaultBackend }}
   rules:
     {{- range $ingress.rules }}
     - host: {{ .host }}
@@ -47,6 +61,7 @@ spec:
       {{- else if eq $ingress.tls.type "existing" }}
       secretName: {{ $ingress.tls.existing.secret }}
       {{- end }}
+  {{- end }}
   {{- end }}
   {{- end }}
 {{- end }}

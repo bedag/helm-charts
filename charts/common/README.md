@@ -1,6 +1,6 @@
 # common
 
-![Version: 10.2.0](https://img.shields.io/badge/Version-10.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 10.3.0](https://img.shields.io/badge/Version-10.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Bedag's common Helm chart to use for creating other Helm charts
 
@@ -31,11 +31,11 @@ Major Changes to functions are documented with the version affected. **Before up
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | ingress.annotations | object | `{"nginx.ingress.kubernetes.io/ssl-redirect":"true"}` | annotations is a dictionary for defining ingress controller specific annotations |
-| ingress.deploy | bool | `false` | deploy has to be set to true for rendering to be applied |
-| ingress.ingressClassName | string | `""` | ingressClassName, defines the class of the ingress controller. |
-| ingress.defaultBackend | object | `{"serviceNameSuffix":"component-1","servicePort":"http"}` | defaultBackend is a backend to use when no other rules can be applied for this ingress |
+| ingress.defaultBackend | object | `{"serviceNameSuffix":"component-1","servicePort":"http"}` | defaultBackend is the default backend to use, if no other can be assigned. Comment out if not needed. |
 | ingress.defaultBackend.serviceNameSuffix | string | `"component-1"` | serviceNameSuffix describes the suffix of the serviceName |
 | ingress.defaultBackend.servicePort | string | `"http"` | servicePort describes the port where the service is listening at (can be either a string or a number) |
+| ingress.deploy | bool | `false` | deploy has to be set to true for rendering to be applied |
+| ingress.ingressClassName | string | `""` | ingressClassName, defines the class of the ingress controller. |
 | ingress.rules[0] | object | `{"host":"myapp.cluster.local","http":{"paths":[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}}` | host is the URL which ingress is listening |
 | ingress.rules[0].http | object | `{"paths":[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}` | http is a list of http selectors pointing to backends |
 | ingress.rules[0].http.paths | list | `[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]` | paths is a list of paths that map requests to backends |

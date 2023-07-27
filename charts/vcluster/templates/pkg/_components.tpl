@@ -278,6 +278,22 @@ name: {{ default (include "vcluster.fullname" $) .name }}
 {{- end -}}
 
 {{/*
+    Components Metrics enabled
+*/}}
+{{- define "pkg.components.probe.enabled" -}}
+  {{- $components := $.ctx.Values.global.components -}}
+  {{- $sm := $.sm -}}
+  {{- if $components.metrics -}}
+    {{- if $components.metrics.probe -}}
+      {{- $sm = $components.metrics.probe -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if $sm.enabled -}}
+    {{- true -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
     Components NetworkPolicies enabled
 */}}
 {{- define "pkg.components.netpol.enabled" -}}

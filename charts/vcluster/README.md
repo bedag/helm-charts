@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.5.1](https://img.shields.io/badge/Version-0.5.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -90,7 +90,7 @@ Global Values
 | global.components.exposure.ingress.port | int | `443` | Port for Ingresses |
 | global.components.metrics | object | `{}` |  |
 | global.components.networkPolicy.enabled | bool | `false` | Enable NetworkPolicies |
-| global.components.networkPolicy.from | list | `[]` |  |
+| global.components.networkPolicy.from | list | `[]` | Add `from` block for networkPolicies (by default from anywhere) |
 | global.components.service.annotations | object | `{}` | Annotations for all services |
 | global.components.service.labels | object | `{}` | Labels for all services |
 | global.components.workloads.affinity | object | `{}` | Affinity for all workloads (Overwrites all workloads affinities) |
@@ -431,6 +431,22 @@ Deploys [Kubernetes API Server](https://kubernetes.io/docs/reference/command-lin
 | kubernetes.apiServer.ingress.ingressClassName | string | `""` | Ingressclass for all ingresses |
 | kubernetes.apiServer.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.apiServer.labels | object | `{}` | Labels for Workload |
+| kubernetes.apiServer.metrics.probe.annotations | object | `{}` | Assign additional Annotations |
+| kubernetes.apiServer.metrics.probe.enabled | bool | `false` | Enable Probe |
+| kubernetes.apiServer.metrics.probe.interval | string | `""` | Probeing Interval |
+| kubernetes.apiServer.metrics.probe.jobName | string | `""` | Name of the scrape_job |
+| kubernetes.apiServer.metrics.probe.labels | object | `{}` | Assign additional labels according to Prometheus' probeSelector matching labels |
+| kubernetes.apiServer.metrics.probe.module | string | `""` | Module to use for the probeing |
+| kubernetes.apiServer.metrics.probe.namespace | string | `""` | Install the Probe into a different Namespace, as the monitoring stack one (default: the release one) |
+| kubernetes.apiServer.metrics.probe.prober | object | `{"path":"","proxyUrl":"","scheme":"","url":""}` | Prober Configuration |
+| kubernetes.apiServer.metrics.probe.prober.path | string | `""` | Prober path |
+| kubernetes.apiServer.metrics.probe.prober.proxyUrl | string | `""` | Optional Proxy URL |
+| kubernetes.apiServer.metrics.probe.prober.scheme | string | `""` | Scheme to use for Probing |
+| kubernetes.apiServer.metrics.probe.prober.url | string | `""` | URL to the Prober |
+| kubernetes.apiServer.metrics.probe.tlsConfig | object | `{}` | Probe tls Configuration |
+| kubernetes.apiServer.metrics.service.annotations | object | `{}` | Service Annotations |
+| kubernetes.apiServer.metrics.service.labels | object | `{}` | Service Labels |
+| kubernetes.apiServer.networkPolicy.from | list | `[]` | Add `from` block for networkPolicies (by default from anywhere) |
 | kubernetes.apiServer.nodeSelector | object | `{}` | Node Selector |
 | kubernetes.apiServer.podAnnotations | object | `{}` | Pod Annotations |
 | kubernetes.apiServer.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
@@ -692,6 +708,7 @@ The Konnectivity-Server is deployed alongside with the API-Server. It must be re
 | kubernetes.konnectivity.server.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.konnectivity.server.labels | object | `{}` | Labels for Workload |
 | kubernetes.konnectivity.server.mode | string | `"GRPC"` | This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment. |
+| kubernetes.konnectivity.server.networkPolicy.from | list | `[]` | Add `from` block for networkPolicies (by default from anywhere) |
 | kubernetes.konnectivity.server.nodeSelector | object | `{}` | Node Selector |
 | kubernetes.konnectivity.server.podAnnotations | object | `{}` | Pod Annotations |
 | kubernetes.konnectivity.server.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |

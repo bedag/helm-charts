@@ -576,7 +576,19 @@
             }
           }
         }
-      }
+      },
+      "oneOf": [
+        {
+            "required": [
+                "defaultBackend"
+            ]
+        },
+        {
+            "required": [
+                "rules"
+            ]
+        }
+      ]
     },
     "servicemonitor": {
       "type": "object",

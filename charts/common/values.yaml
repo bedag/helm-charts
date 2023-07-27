@@ -36,13 +36,16 @@ ingress:
   deploy: false
   # -- ingressClassName, defines the class of the ingress controller.
   ingressClassName: ""
-  # -- defaultBackend is the default backend to use, if no other can be assigned. Comment out if not needed.
-  defaultBackend:
+  # START ONLY FOR SINGLE-SERVICE INGRESSES AND NOT RULESETS
+  # -- defaultBackend may be used if only a single Service Backend with no Rulesets is needed.
+  # defaultBackend:
     # -- serviceNameSuffix describes the suffix of the serviceName
-    serviceNameSuffix: component-1
+    # serviceNameSuffix: component-1
     # -- servicePort describes the port where the service is listening at (can be either a string or a number)
-    servicePort: http
-  # rules is a list of host rules used to configure the Ingress
+    # servicePort: http
+  # END ONLY FOR SINGLE-SERVICE INGRESSES AND NOT RULESETS
+  # START ONLY FOR MULTI-SERVICE INGRESSES AND/OR SPECIFIC RULES
+  # -- rules is a list of host rules used to configure the Ingress
   rules:
     # -- host is the URL which ingress is listening
     - host: myapp.cluster.local
@@ -60,6 +63,7 @@ ingress:
             path: "/"
             # -- pathType Each path in an Ingress is required to have a corresponding path type. Comment out for using default ("ImplementationSpecific")
             pathType: "ImplementationSpecific"
+  # END ONLY FOR MULTI-SERVICE INGRESSES AND/OR SPECIFIC RULES
 
   # -- annotations is a dictionary for defining ingress controller specific annotations
   annotations:

@@ -17,6 +17,7 @@ metadata:
 spec:
   ingressClassName: {{ $ingress.ingressClassName }}
   {{- if $ingress.defaultBackend }}
+  {{- if not $ingress.rules }}
   defaultBackend:
     service:
       name: {{ template "library.name" $root }}-{{ $ingress.defaultBackend.serviceNameSuffix }}
@@ -27,7 +28,9 @@ spec:
         name: {{ $ingress.defaultBackend.servicePort | quote }}
         {{- end }}
   {{- end }}
+  {{- end }}
   rules:
+    {{- if not $ingress.defaultBackend }}
     {{- range $ingress.rules }}
     - host: {{ .host }}
       http:
@@ -46,10 +49,12 @@ spec:
             pathType: {{ .pathType | default "ImplementationSpecific" | quote }}
           {{- end }}
     {{- end }}
+    {{- end }}
   {{- if $ingress.tls }}
   {{- if and (ne $ingress.tls.type "none") (ne $ingress.tls.type "") }}
   tls:
     - hosts:
+      {{- if $ingress.rules }}
       {{- range $ingress.rules }}
         - {{ .host }}
       {{- end }}
@@ -57,6 +62,7 @@ spec:
       secretName: {{ template "library.name" . }}-ingress-tls
       {{- else if eq $ingress.tls.type "existing" }}
       secretName: {{ $ingress.tls.existing.secret }}
+      {{- end }}
       {{- end }}
   {{- end }}
   {{- end }}

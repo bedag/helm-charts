@@ -25,7 +25,7 @@ spec:
   - interval: {{ .interval }}
     port: http-metrics
     path: /metrics
-    scheme: https
+    scheme: http
     bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
     tlsConfig:
       caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt

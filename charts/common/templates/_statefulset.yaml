@@ -30,7 +30,7 @@ spec:
 {{ include "library.labels.stable" $root | indent 8 }}
         app.kubernetes.io/component: {{ $name }}
         {{- range $key, $value := $statefulset.extraLabels }}
-        {{ $key }}: {{ $value }}
+        {{ $key }}: {{ $value | quote }}
         {{- end }}
         {{- if $statefulset.gatherMetrics }}
         gatherMetrics: "enabled"

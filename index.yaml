@@ -8,6 +8,30 @@ entries:
       artifacthub.io/license: Apache-2.0
       artifacthub.io/prerelease: "false"
     apiVersion: v2
+    created: "2023-08-17T15:53:27.386232815Z"
+    description: Bedag's common Helm chart to use for creating other Helm charts
+    digest: 1109f5175de7e355a5035135a711c94410af4ccad3e297abb95c34ae357a1d98
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Common
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: common
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/common
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/common-10.3.2/common-10.3.2.tgz
+    version: 10.3.2
+  - annotations:
+      artifacthub.io/changes: |
+        - "[Added]: support for clusterIP field"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
     created: "2023-08-07T15:09:32.234511322Z"
     description: Bedag's common Helm chart to use for creating other Helm charts
     digest: 14f86e14ce3fc00118685a9167ec7ec78f3517a5674db2730a067502239959e9
@@ -2137,4 +2161,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/vcluster-0.1.0/vcluster-0.1.0.tgz
     version: 0.1.0
-generated: "2023-08-07T15:09:32.234695222Z"
+generated: "2023-08-17T15:53:27.388040726Z"

@@ -1,10 +1,13 @@
 {{- define "common.pod" -}}
+{{- $root := .root }}
+{{- $name := .name }}
+{{- $controllerValues := .controller }}
 
 {{- /*
 Distinguish between sensitive and non-sensitive config, first initialize empty dictionaries
 (We need to know this here also, to specify the volumes or not)
 */ -}}
-{{- $configFiles := .controller.configFiles }}
+{{- $configFiles := $controllerValues.configFiles }}
 {{- $secretConfigs := dict }}
 {{- $nonSecretConfigs := dict }}
 {{- /* now separating the configs */ -}}
@@ -16,37 +19,35 @@ Distinguish between sensitive and non-sensitive config, first initialize empty d
   {{- end }}
 {{- end }}
 
-{{- $root := .root }}
-{{- $name := .name }}
-{{- if .controller.serviceAccountName }}
-serviceAccountName: {{ .controller.serviceAccountName | quote }}
+{{- if $controllerValues.serviceAccountName }}
+serviceAccountName: {{ $controllerValues.serviceAccountName | quote }}
 {{- end }}
-automountServiceAccountToken: {{ .controller.automountServiceAccountToken | default false }}
-{{- if .controller.priorityClassName }}
-priorityClassName: {{ .controller.priorityClassName | quote }}
+automountServiceAccountToken: {{ $controllerValues.automountServiceAccountToken | default false }}
+{{- if $controllerValues.priorityClassName }}
+priorityClassName: {{ $controllerValues.priorityClassName | quote }}
 {{- end }}
-{{- if .controller.restartPolicy }}
-restartPolicy: {{ .controller.restartPolicy | quote }}
+{{- if $controllerValues.restartPolicy }}
+restartPolicy: {{ $controllerValues.restartPolicy | quote }}
 {{- end }}
-{{- if .controller.containers }}
+{{- if $controllerValues.containers }}
 containers:
-{{- range $containerName, $containerValues := .controller.containers }}
-{{- include "common.container" (dict "root" $root "componentName" $name "containerName" $containerName "containerValues" $containerValues "configFiles" $configFiles) | indent 2 }}
+{{- range $containerName, $containerValues := $controllerValues.containers }}
+{{- include "common.container" (dict "root" $root "componentName" $name "controllerValues" $controllerValues "containerName" $containerName "containerValues" $containerValues "configFiles" $configFiles) | indent 2 }}
 {{- end }}
 {{- end }}
-{{- if .controller.initContainers }}
+{{- if $controllerValues.initContainers }}
 initContainers:
-{{- range $containerName, $containerValues := .controller.initContainers }}
-{{- include "common.container" (dict "root" $root "componentName" $name "containerName" $containerName "containerValues" $containerValues "configFiles" $configFiles) | indent 2 }}
+{{- range $containerName, $containerValues := $controllerValues.initContainers }}
+{{- include "common.container" (dict "root" $root "componentName" $name "controllerValues" $controllerValues "containerName" $containerName "containerValues" $containerValues "configFiles" $configFiles) | indent 2 }}
 {{- end }}
 {{- end }}
-{{- if .controller.podSecurityContext }}
-{{- if .controller.podSecurityContext.enabled }}
-securityContext: {{- omit .controller.podSecurityContext "enabled" | toYaml | nindent 2 }}
+{{- if $controllerValues.podSecurityContext }}
+{{- if $controllerValues.podSecurityContext.enabled }}
+securityContext: {{- omit $controllerValues.podSecurityContext "enabled" | toYaml | nindent 2 }}
 {{- end }}
 {{- end }}
 volumes:
-  {{- range .controller.volumes }}
+  {{- range $controllerValues.volumes }}
   {{- if and .name .type }}
   - name: {{ template "library.name" $root }}-{{ .name }}
   {{- if eq .type "secret" }}
@@ -90,8 +91,8 @@ volumes:
   {{- end }}
   {{- end }}
   {{- end }}
-  {{- if or .controller.containers .controller.initContainers }}
-  {{- $containers := merge (.controller.containers | default dict) (.controller.initContainers | default dict) }}
+  {{- if or $controllerValues.containers $controllerValues.initContainers }}
+  {{- $containers := merge ($controllerValues.containers | default dict) ($controllerValues.initContainers | default dict) }}
   {{- range $containerName, $containerValues := $containers }}
   {{- $configFiles := $containerValues.configFiles }}
   {{- if $configFiles }}
@@ -124,15 +125,15 @@ volumes:
   {{- end }}
   {{- end }}
   {{- end }}
-{{- with .controller.nodeSelector }}
+{{- with $controllerValues.nodeSelector }}
 nodeSelector:
 {{ toYaml . | indent 2 }}
 {{- end }}
-{{- with .controller.affinity }}
+{{- with $controllerValues.affinity }}
 affinity:
 {{ toYaml . | indent 2 }}
 {{- end }}
-{{- with .controller.tolerations }}
+{{- with $controllerValues.tolerations }}
 tolerations:
 {{ toYaml . | indent 2 }}
 {{- end }}

@@ -293,6 +293,12 @@ components:
       extraLabels: {}
       # foo: bar
 
+      # envSecret is a dictionary of environment variables set for every container in a pod, key: value
+      # envSecret: {}
+
+      # envConfigMap is a dictionary of environment variables set for every container in a pod, key: value
+      # envConfigMap: {}
+
       # gatherMetrics is true: service get a label which triggers serviceMonitor to gather metrics
       gatherMetrics: false
 
@@ -499,10 +505,10 @@ components:
           # You can define environment variables as map
           #  foo: bar
 
-          # envSecret is a dictionary of environment variables, key: value
+          # envSecret is a dictionary of environment variables set for the current container, key: value
           # envSecret: {}
 
-          # envConfigMap is a dictionary of environment variables, key: value
+          # envConfigMap is a dictionary of environment variables set for the current container, key: value
           # envConfigMap: {}
 
           # configFiles is a dictionary of arbitrary config files in the structure below

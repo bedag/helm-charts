@@ -3,6 +3,21 @@
 {{- range $componentName, $componentValues := .Values.components }}
 {{- if $componentValues.controller }}
 {{- if $componentValues.controller.deploy }}
+{{- $podConfigMap := $componentValues.controller.envConfigMap }}
+{{- if $podConfigMap }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "library.name" $root }}-{{ $componentName }}
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ $componentName }}
+data:
+{{- range $key, $value := $podConfigMap }}
+  {{ $key }}: {{ $value | quote }}
+{{- end }}
+{{- end }}
 {{- if or $componentValues.controller.containers $componentValues.controller.initContainers }}
 {{- $containers := merge ($componentValues.controller.containers | default dict) ($componentValues.controller.initContainers | default dict) }}
 {{- range $containerName, $containerValues := $containers }}

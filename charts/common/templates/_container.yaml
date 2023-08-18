@@ -1,6 +1,7 @@
 {{- define "common.container" -}}
 {{- $root := .root }}
 {{- $componentName := .componentName }}
+{{- $controllerValues := .controllerValues }}
 {{- $containerName := .containerName }}
 {{- $containerValues := .containerValues }}
 {{- $configFiles := .configFiles }}
@@ -71,6 +72,14 @@
   {{- end }}
   {{- if or $containerValues.envSecret $containerValues.envConfigMap }}
   envFrom:
+    {{- if $controllerValues.envSecret }}
+    - secretRef:
+        name: {{ template "library.name" $root }}-{{ $componentName }}
+    {{- end }}
+    {{- if $controllerValues.envConfigMap }}
+    - configMapRef:
+        name: {{ template "library.name" $root }}-{{ $componentName }}
+    {{- end }}
     {{- if $containerValues.envSecret }}
     - secretRef:
         name: {{ template "library.name" $root }}-{{ $componentName }}-{{ $containerName }}

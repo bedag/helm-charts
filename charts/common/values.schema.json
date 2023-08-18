@@ -776,6 +776,12 @@
                 "extraLabels": {
                   "type": "object"
                 },
+                "envSecret": {
+                  "type": "object"
+                },
+                "envConfigMap": {
+                  "type": "object"
+                },
                 "replicas": {
                   "type": "integer",
                   "default": 1

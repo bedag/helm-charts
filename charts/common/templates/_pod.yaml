@@ -79,6 +79,14 @@ volumes:
     {{- else }}
     emptyDir: {}
     {{- end }}
+  {{- else if eq .type "external" }}
+    {{- if .pvcName }}
+    persistentVolumeClaim:
+      claimName: {{ .pvcName }}
+      {{- if .readOnly }}
+      readOnly: {{ .readOnly }}
+      {{- end }}
+    {{- end }}
   {{- end }}
   {{- end }}
   {{- end }}

@@ -425,7 +425,7 @@ components:
       volumes: []
       #   -- name of the volume
       # - name: generic-name
-      #   -- type can either be "secret", "configMap", "persistentVolumeClaim" or "emptyDir"
+      #   -- type can either be "secret", "configMap", "persistentVolumeClaim", "emptyDir" or "external"
       #    type: "secret"
       #   START ONLY FOR SECRET or CONFIGMAP
       #   filePath is optional for specifying a filePath in the helm chart where the file is located.
@@ -445,6 +445,12 @@ components:
       #   sizeLimit is the total amount of local storage required for this EmptyDir volume. Default is nil which means that the limit is undefined.
       #    sizeLimit: 100Mi
       #   END ONLY FOR EMPTYDIR
+      #   START ONLY FOR EXTERNAL
+      #   pvcName represents what name the external existing PVC has.
+      #    pvcName: "foo"
+      #   readOnly will force the ReadOnly setting in VolumeMounts. Comment out for using default (false)
+      #    readOnly: true
+      #   END ONLY FOR EXTERNAL
       # end pod
 
       # start containers

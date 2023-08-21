@@ -90,6 +90,9 @@
         "envConfigMap": {
           "type": "object"
         },
+        "configFilesDefaultMode": {
+          "type": "integer"
+        },
         "configFiles": {
           "type": "object",
           "patternProperties": {

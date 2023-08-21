@@ -511,6 +511,11 @@ components:
           # envConfigMap is a dictionary of environment variables set for the current container, key: value
           # envConfigMap: {}
 
+          # configFilesDefaultMode sets permissions for all configFiles mounted.
+          # See  'pod.spec.volumes.configMap.defaultMode' or 'pod.spec.volumes.secret.defaultMode' for more information
+          # Comment out for using default (0644)
+          # configFilesDefaultMode: 0644
+
           # configFiles is a dictionary of arbitrary config files in the structure below
           # format has to be "key=value", "yaml" or "simple". Default: "key=value"
           # secret is optional for specifying if file should be created as a Secret (= true) or ConfigMap (= false or not specified)

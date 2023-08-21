@@ -110,11 +110,17 @@ volumes:
   - name: {{ $containerName }}-configfiles
     configMap:
       name: {{ template "library.name" $root }}-{{ $name }}-{{ $containerName }}-configfiles
+      {{- if $containerValues.configFilesDefaultMode }}
+      defaultMode: {{ $containerValues.configFilesDefaultMode }}
+      {{- end }}
   {{- end }}
   {{- if $secretConfigs }}
   - name: {{ $containerName }}-secret-configfiles
     secret:
       secretName: {{ template "library.name" $root }}-{{ $name }}-{{ $containerName }}-secret-configfiles
+      {{- if $containerValues.configFilesDefaultMode }}
+      defaultMode: {{ $containerValues.configFilesDefaultMode }}
+      {{- end }}
   {{- end }}
   {{- end }}
   {{- $binaryFiles := $containerValues.binaryFiles }}

@@ -70,7 +70,7 @@
       subPath: {{ $key }}
     {{- end }}
   {{- end }}
-  {{- if or $containerValues.envSecret $containerValues.envConfigMap }}
+  {{- if or $containerValues.envSecret $containerValues.envConfigMap $controllerValues.envSecret $controllerValues.envConfigMap }}
   envFrom:
     {{- if $controllerValues.envSecret }}
     - secretRef:

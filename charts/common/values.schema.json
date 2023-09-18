@@ -788,6 +788,9 @@
                 "envConfigMap": {
                   "type": "object"
                 },
+                "envFrom": {
+                  "type": ["array"]
+                },
                 "replicas": {
                   "type": "integer",
                   "default": 1

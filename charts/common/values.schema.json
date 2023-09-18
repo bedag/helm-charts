@@ -87,6 +87,9 @@
         "envSecret": {
           "type": "object"
         },
+        "envFrom": {
+          "type": ["array"]
+        },
         "envConfigMap": {
           "type": "object"
         },

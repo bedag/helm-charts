@@ -70,8 +70,11 @@
       subPath: {{ $key }}
     {{- end }}
   {{- end }}
-  {{- if or $containerValues.envSecret $containerValues.envConfigMap $controllerValues.envSecret $controllerValues.envConfigMap }}
+  {{- if or $containerValues.envFrom $containerValues.envSecret $containerValues.envConfigMap $controllerValues.envSecret $controllerValues.envConfigMap }}
   envFrom:
+    {{- with $containerValues.envFrom }}
+      {{- toYaml . | nidnent 4 }}
+    {{- end }}
     {{- if $controllerValues.envSecret }}
     - secretRef:
         name: {{ template "library.name" $root }}-{{ $componentName }}

@@ -300,7 +300,7 @@ components:
       # envConfigMap: {}
 
       # envFrom is a list of environment references
-      envFrom: []
+      # envFrom: []
       # - secretRef:
       #     name: my-secret
       # - configMapRef:

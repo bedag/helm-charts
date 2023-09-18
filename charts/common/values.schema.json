@@ -87,6 +87,9 @@
         "envSecret": {
           "type": "object"
         },
+        "envFrom": {
+          "type": ["array"]
+        },
         "envConfigMap": {
           "type": "object"
         },
@@ -784,6 +787,9 @@
                 },
                 "envConfigMap": {
                   "type": "object"
+                },
+                "envFrom": {
+                  "type": ["array"]
                 },
                 "replicas": {
                   "type": "integer",

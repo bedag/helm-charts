@@ -299,6 +299,13 @@ components:
       # envConfigMap is a dictionary of environment variables set for every container in a pod, key: value
       # envConfigMap: {}
 
+      # envFrom is a list of environment references
+      # envFrom: []
+      # - secretRef:
+      #     name: my-secret
+      # - configMapRef:
+      #     name: my-configmap
+
       # gatherMetrics is true: service get a label which triggers serviceMonitor to gather metrics
       gatherMetrics: false
 
@@ -510,6 +517,13 @@ components:
 
           # envConfigMap is a dictionary of environment variables set for the current container, key: value
           # envConfigMap: {}
+
+          # envFrom is a list of environment references
+          # envFrom: []
+          # - secretRef:
+          #     name: my-secret
+          # - configMapRef:
+          #     name: my-configmap
 
           # configFilesDefaultMode sets permissions for all configFiles mounted.
           # See  'pod.spec.volumes.configMap.defaultMode' or 'pod.spec.volumes.secret.defaultMode' for more information

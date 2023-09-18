@@ -73,10 +73,10 @@
   {{- if or $containerValues.envFrom $controllerValues.envFrom $containerValues.envSecret $containerValues.envConfigMap $controllerValues.envSecret $controllerValues.envConfigMap }}
   envFrom:
     {{- with $containerValues.envFrom }}
-      {{- toYaml . | nidnent 4 }}
+      {{- toYaml . | nindent 4 }}
     {{- end }}
     {{- with $controllerValues.envFrom }}
-      {{- toYaml . | nidnent 4 }}
+      {{- toYaml . | nindent 4 }}
     {{- end }}
     {{- if $controllerValues.envSecret }}
     - secretRef:

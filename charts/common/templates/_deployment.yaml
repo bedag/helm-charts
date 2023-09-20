@@ -39,9 +39,7 @@ spec:
       labels:
 {{ include "library.labels.stable" $root | indent 8 }}
         app.kubernetes.io/component: {{ $name }}
-        {{- range $key, $value := $deployment.extraLabels }}
-        {{ $key }}: {{ $value | quote }}
-        {{- end }}
+        {{- include "library.mapify" (dict "map" $deployment.extraLabels "ctx" $root) | nindent 8 }}
         {{- if $deployment.gatherMetrics }}
         gatherMetrics: "enabled"
         {{- end }}
@@ -51,9 +49,7 @@ spec:
         # and thus re-pull the image even if the tag has not changed (if imagePullPolicy = Always)
         timestamp: {{ now.Unix | quote }}
         {{- end }}
-        {{- range $key, $value := $deployment.extraAnnotations }}
-        {{ $key }}: {{ $value | quote }}
-        {{- end }}
+        {{- include "library.mapify" (dict "map" $deployment.extraAnnotations "ctx" $root) | nindent 8 }}
         {{- range $deployment.extraChecksumAnnotations }}
         {{ .key }}: {{ include (print $.Template.BasePath .checksumFrom) $root | sha256sum }}
         {{- end }}

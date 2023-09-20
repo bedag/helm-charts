@@ -32,16 +32,12 @@ spec:
       labels:
 {{ include "library.labels.stable" $root | indent 8 }}
         app.kubernetes.io/component: {{ $name }}
-        {{- range $key, $value := $cronjob.extraLabels }}
-        {{ $key }}: {{ $value | quote }}
-        {{- end }}
+        {{- include "library.mapify" (dict "map" $cronjob.extraLabels "ctx" $root) | nindent 8 }}
         {{- if $cronjob.gatherMetrics }}
         gatherMetrics: "enabled"
         {{- end }}
       annotations:
-        {{- range $key, $value := $cronjob.extraAnnotations }}
-        {{ $key }}: {{ $value | quote }}
-        {{- end }}
+        {{- include "library.mapify" (dict "map" $cronjob.extraAnnotations "ctx" $root) | nindent 8 }}
     spec:
 {{- include "common.jobspec" (dict "root" $root "job" $cronjob "name" $name) | indent 6 }}
 {{- end }}

@@ -1,14 +1,13 @@
 {{- /*
-library.labelize takes a dict or map and generates labels.
-Values will be quoted. Keys will not.
-Example output:
-  first: "Matt"
-  last: "Butcher"
+library.mapify is used to generate annotations and labels
+where the value can be templated with the given context
 */ -}}
-{{- define "library.labelize" -}}
-{{- range $k, $v := . }}
-{{ $k }}: {{ $v | quote }}
-{{- end -}}
+{{- define "library.mapify" -}}
+  {{- if $.map -}}
+    {{- range $k, $v := $.map -}}
+      {{- $k | nindent 0 }}: {{ (tpl $v $.ctx) | quote }}
+    {{- end -}}
+  {{- end -}}
 {{- end -}}
 
 {{- /*

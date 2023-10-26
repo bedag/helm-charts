@@ -16,12 +16,16 @@ defaultTag: latest
 # timezone to set as environment variable 'TZ' in each pod. Comment out for using default ("Europe/Zurich")
 # timezone: "Europe/Zurich"
 
-# secrets contains the pullSecret for the container registry to pull images. Set to 'true' to use a pullSecret.
-# The secret name consists of the 'library.name' variable and the suffix '-registry-pull-secret'.
+# secrets contains the pullSecret for the container registry to pull images. Set 'enabled' to 'true' to use a pullSecret.
+# The secret name consists of the 'library.name' variable and the suffix '-registry-pull-secret' if 'name' is not specified.
 secrets:
   data:
     registry:
-      pullSecret: false
+      pullSecret:
+        # enabled activates the imagePullSecrets in the pod spec
+        enabled: false
+        # name is optional to override the default name, if omitted uses '{{ template "library.name" $root }}-registry-pull-secret'
+        # name: example-foo
 
 # start common.networkpolicy
 # -- networkpolicy restricts all access between the pods. To configure allowed connections, go to components.*.networkpolicy.podSelector

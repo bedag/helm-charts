@@ -146,9 +146,13 @@ tolerations:
 {{- if $root.Values.secrets }}
 {{- if $root.Values.secrets.data }}
 {{- if $root.Values.secrets.data.registry }}
-{{- if $root.Values.secrets.data.registry.pullSecret }}
+{{- if $root.Values.secrets.data.registry.pullSecret.enabled }}
 imagePullSecrets:
+{{- if $root.Values.secrets.data.registry.pullSecret.name }}
+  - name: {{ $root.Values.secrets.data.registry.pullSecret.name }}
+{{- else }}
   - name: {{ template "library.name" $root }}-registry-pull-secret
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}

@@ -103,7 +103,6 @@ volumes:
         {{- end }}
       {{- end }}
     {{- end }}
-  {{- end}}
   {{- end }}
   {{- end }}
   {{- if or $controllerValues.containers $controllerValues.initContainers }}

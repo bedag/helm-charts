@@ -13,6 +13,22 @@
 # defaultTag is used when no imageTag is specified in .Values.components.*.controller.image.tag
 defaultTag: latest
 
+# includes is used to include the desired template functions (see templates/includes.yaml)
+includes:
+  networkpolicy: false
+  deployment: false
+  statefulset: false
+  service: false
+  envSecret: false
+  envConfigMap: false
+  # files is needed for mounted volumes (secrets or configmaps)
+  files: false
+  configFiles: false
+  binaryFiles: false
+  pvcs: false
+  job: false
+  cronjob: false
+
 # timezone to set as environment variable 'TZ' in each pod. Comment out for using default ("Europe/Zurich")
 # timezone: "Europe/Zurich"
 

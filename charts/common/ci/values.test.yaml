@@ -1,3 +1,19 @@
+# includes is used to include the desired template functions (see templates/includes.yaml)
+includes:
+  networkpolicy: true
+  deployment: true
+  statefulset: true
+  service: true
+  envSecret: true
+  envConfigMap: true
+  # files is needed for mounted volumes (secrets or configmaps)
+  files: true
+  configFiles: true
+  binaryFiles: true
+  pvcs: true
+  job: true
+  cronjob: true
+
 # start common.ingress
 ingress:
   deploy: true

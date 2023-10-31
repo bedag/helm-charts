@@ -1,61 +1,58 @@
-{{- /* This file is used for developing & testing the common chart.
-Uncomment each "template" line to use the corresponding function */ -}}
+{{- if .Values.ingress.deploy }}
+  {{- template "common.ingress.ingress" . }}
+  {{- template "common.ingress.secret" . }}
+{{- end }}
 
-{{- /* ingress
-{{- template "common.ingress.ingress" . }}
-{{- template "common.ingress.secret" . }}
-*/ -}}
+{{- if .Values.includes.service }}
+  {{- template "common.service" . }}
+{{- end -}}
 
-{{- /* services
-{{- template "common.service" . }}
-*/ -}}
+{{- if .Values.includes.statefulset }}
+  {{- template "common.statefulset" . }}
+{{- end -}}
 
-{{- /* statefulset
-{{- template "common.statefulset" . }}
-*/ -}}
+{{- if .Values.includes.deployment }}
+  {{- template "common.deployment" . }}
+{{- end -}}
 
-{{- /* deployment
-{{- template "common.deployment" . }}
-*/ -}}
+{{- if .Values.includes.job }}
+  {{- template "common.job" . }}
+{{- end -}}
 
-{{- /* job
-{{- template "common.job" . }}
-*/ -}}
+{{- if .Values.includes.cronjob }}
+  {{- template "common.cronjob" . }}
+{{- end -}}
 
-{{- /* cronjob
-{{- template "common.cronjob" . }}
-*/ -}}
+{{- if .Values.includes.envSecret }}
+  {{- template "common.controller.envSecret" . }}
+{{- end -}}
 
-{{- /* envSecret
-{{- template "common.controller.envSecret" . }}
-*/ -}}
+{{- if .Values.includes.envConfigMap }}
+  {{- template "common.controller.envConfigMap" . }}
+{{- end -}}
 
-{{- /* envConfigMap
-{{- template "common.controller.envConfigMap" . }}
-*/ -}}
+{{- if .Values.includes.configFiles }}
+  {{- template "common.controller.configFiles" . }}
+{{- end -}}
 
-{{- /* configFiles
-{{- template "common.controller.configFiles" . }}
-*/ -}}
+{{- if .Values.includes.binaryFiles }}
+  {{- template "common.controller.binaryFiles" . }}
+{{- end -}}
 
-{{- /* binaryFiles
-{{- template "common.controller.binaryFiles" . }}
-*/ -}}
+{{- if .Values.includes.files }}
+  {{- template "common.controller.files" . }}
+{{- end -}}
 
-{{- /* files
-{{- template "common.controller.files" . }}
-*/ -}}
+{{- if .Values.includes.pvcs }}
+  {{- template "common.pvcs" . }}
+{{- end -}}
 
-{{- /* pvcs
-{{- template "common.pvcs" . }}
-*/ -}}
+{{- if .Values.servicemonitor.deploy }}
+  {{- template "common.servicemonitor.headless.service" . }}
+  {{- template "common.servicemonitor.servicemonitor" . }}
+  {{- template "common.servicemonitor.secret" . }}
+{{- end -}}
 
-{{- /* servicemonitor
-{{- template "common.servicemonitor.headless.service" . }}
-{{- template "common.servicemonitor.servicemonitor" . }}
-{{- template "common.servicemonitor.secret" . }}
-*/ -}}
-
-{{- /* networkpolicy
-{{- template "common.networkpolicy" . }}
-*/ -}}
+{{- if .Values.servicemonitor.deploy }}
+  {{- template "common.networkpolicy" . }}
+{{- end -}}

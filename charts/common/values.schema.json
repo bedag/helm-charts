@@ -368,6 +368,73 @@
         "1.0.0"
       ]
     },
+    "includes": {
+      "type": "object",
+      "required": [
+        "networkpolicy",
+        "deployment",
+        "statefulset",
+        "service",
+        "envSecret",
+        "envConfigMap",
+        "files",
+        "configFiles",
+        "binaryFiles",
+        "pvcs",
+        "job",
+        "cronjob"
+      ],
+      "properties": {
+        "networkpolicy": {
+          "type": "boolean",
+          "default": false
+        },
+        "deployment": {
+          "type": "boolean",
+          "default": false
+        },
+        "statefulset": {
+          "type": "boolean",
+          "default": false
+        },
+        "service": {
+          "type": "boolean",
+          "default": false
+        },
+        "envSecret": {
+          "type": "boolean",
+          "default": false
+        },
+        "envConfigMap": {
+          "type": "boolean",
+          "default": false
+        },
+        "files": {
+          "type": "boolean",
+          "default": false
+        },
+        "configFiles": {
+          "type": "boolean",
+          "default": false
+        },
+        "binaryFiles": {
+          "type": "boolean",
+          "default": false
+        },
+        "pvcs": {
+          "type": "boolean",
+          "default": false
+        },
+        "job": {
+          "type": "boolean",
+          "default": false
+        },
+        "cronjob": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
     "secrets": {
       "type": "object",
       "properties": {

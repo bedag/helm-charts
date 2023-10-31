@@ -88,7 +88,6 @@ volumes:
       readOnly: {{ .readOnly }}
       {{- end }}
     {{- end }}
-  {{- end }}
   {{- else if eq .type "csi" }}
     {{- if .driver }}
     csi:
@@ -103,6 +102,7 @@ volumes:
         {{- end }}
       {{- end }}
     {{- end }}
+  {{- end }}
   {{- end }}
   {{- end }}
   {{- if or $controllerValues.containers $controllerValues.initContainers }}

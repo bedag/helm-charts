@@ -195,6 +195,12 @@ components:
         - name: emptydir-volume
           type: "emptyDir"
           sizeLimit: 100Mi
+        - name: secret-store
+          type: "csi"
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "azure-kvname"
 
       containers:
         container-1:

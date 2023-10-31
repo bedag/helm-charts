@@ -8,6 +8,30 @@ entries:
       artifacthub.io/license: Apache-2.0
       artifacthub.io/prerelease: "false"
     apiVersion: v2
+    created: "2023-10-31T06:38:45.809256144Z"
+    description: Bedag's common Helm chart to use for creating other Helm charts
+    digest: 30e7ed340065cfa001876f86cd31ccf62843ac54ee6c5fef6fb91c737bf0a114
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Common
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: common
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/common
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/common-10.10.0/common-10.10.0.tgz
+    version: 10.10.0
+  - annotations:
+      artifacthub.io/changes: |
+        - "[Changed]: extra annotations and labesl support sprig statements"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
     created: "2023-10-30T13:03:13.212559476Z"
     description: Bedag's common Helm chart to use for creating other Helm charts
     digest: c9f5028db4dd8a4c50471aafd234fae4fcc6d922ce13fd4541cb755e37b358a5
@@ -2353,4 +2377,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/vcluster-0.1.0/vcluster-0.1.0.tgz
     version: 0.1.0
-generated: "2023-10-30T13:03:13.212787679Z"
+generated: "2023-10-31T06:38:45.809748946Z"

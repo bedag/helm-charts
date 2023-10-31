@@ -96,7 +96,7 @@ Common Selector Labels
     {{- $no_proxy = ($no_proxy | trimSuffix ",") -}}
 
     {{/* Standard Stuff */}}
-    {{- $no_proxy = printf "%s,%s,.%s" $no_proxy "localhost,127.0.0.1,.svc,svc.,$KUBERNETES_SERVICE_HOST" ($.Release.Namespace | trimAll ".") -}}
+    {{- $no_proxy = printf "%s,%s,.%s" $no_proxy "localhost,127.0.0.1,.svc,svc." ($.Release.Namespace | trimAll ".") -}}
 
     {{/* Kubernetes Component */}}
     {{- if (include "kubernetes.enabled" $) -}}

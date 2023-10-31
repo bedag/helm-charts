@@ -89,6 +89,20 @@ volumes:
       {{- end }}
     {{- end }}
   {{- end }}
+  {{- else if eq .type "csi" }}
+    {{- if .driver }}
+    csi:
+      driver: {{ .driver }}
+      {{- if .readOnly }}
+      readOnly: {{ .readOnly }}
+      {{- end }}
+      {{- if .volumeAttributes }}
+      volumeAttributes:
+        {{- range $key, $val := .volumeAttributes }}
+        {{ $key }}: {{ $val }}
+        {{- end }}
+      {{- end }}
+    {{- end }}
   {{- end }}
   {{- end }}
   {{- if or $controllerValues.containers $controllerValues.initContainers }}

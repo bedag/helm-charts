@@ -106,7 +106,7 @@ volumes:
   {{- end }}
   {{- end }}
   {{- if or $controllerValues.containers $controllerValues.initContainers }}
-  {{- $containers := merge ($controllerValues.containers | default dict) ($controllerValues.initContainers | default dict) }}
+  {{- $containers := merge (dict) ($controllerValues.containers | default dict) ($controllerValues.initContainers | default dict) }}
   {{- range $containerName, $containerValues := $containers }}
   {{- $configFiles := $containerValues.configFiles }}
   {{- if $configFiles }}

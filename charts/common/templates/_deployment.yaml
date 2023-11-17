@@ -54,7 +54,7 @@ spec:
         {{ .key }}: {{ include (print $.Template.BasePath .checksumFrom) $root | sha256sum }}
         {{- end }}
         {{- if or $deployment.containers $deployment.initContainers }}
-        {{- $containers := merge ($deployment.containers | default dict) ($deployment.initContainers | default dict) }}
+        {{- $containers := merge (dict) ($deployment.containers | default dict) ($deployment.initContainers | default dict) }}
         {{- range $containerName, $containerValues := $containers }}
         {{- $configMap := $containerValues.envConfigMap }}
         {{- if and $configMap (not $deployment.disableChecksumAnnotations) }}

@@ -4,7 +4,7 @@
 {{- if $componentValues.controller }}
 {{- if $componentValues.controller.deploy }}
 {{- if or $componentValues.controller.containers $componentValues.controller.initContainers }}
-{{- $containers := merge ($componentValues.controller.containers | default dict) ($componentValues.controller.initContainers | default dict) }}
+{{- $containers := merge (dict) ($componentValues.controller.containers | default dict) ($componentValues.controller.initContainers | default dict) }}
 {{- range $containerName, $containerValues := $containers }}
 {{- $configBinarys := $containerValues.binaryFiles }}
 {{- if $configBinarys }}

@@ -44,7 +44,8 @@ spec:
         {{ .key }}: {{ include (print $.Template.BasePath .checksumFrom) $root | sha256sum }}
         {{- end }}
         {{- if or $statefulset.containers $statefulset.initContainers }}
-        {{- range $containerName, $containerValues := merge ($statefulset.containers | default dict) ($statefulset.initContaineris | default dict) }}
+        {{- $containers := merge (dict) ($statefulset.containers | default dict) ($statefulset.initContainers | default dict) }}
+        {{- range $containerName, $containerValues := $containers }}
         {{- $configMap := $containerValues.envConfigMap }}
         {{- if and $configMap (not $statefulset.disableChecksumAnnotations) }}
         checksum/envConfigMap: {{ print $configMap | sha256sum }}

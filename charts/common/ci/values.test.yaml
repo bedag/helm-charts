@@ -155,6 +155,12 @@ components:
               mountPath: /opt/my-binary-license
               content: 'base64 encoded data'
           resources: {}
+      initContainers:
+        init-container-1:
+          image:
+            repository: db-init
+            tag: "latest"
+          resources: {}
   component-2:
     # start common.service
     services:

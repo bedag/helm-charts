@@ -30,7 +30,7 @@ Sensitive configs goes inside a Secret and non-sensitive configs are put in a Co
 {{- if $componentValues.controller }}
 {{- if $componentValues.controller.deploy }}
 {{- if or $componentValues.controller.containers $componentValues.controller.initContainers }}
-{{- $containers := merge ($componentValues.controller.containers | default dict) ($componentValues.controller.initContainers | default dict) }}
+{{- $containers := merge (dict) ($componentValues.controller.containers | default dict) ($componentValues.controller.initContainers | default dict) }}
 {{- range $containerName, $containerValues := $containers }}
 {{- $configFiles := $containerValues.configFiles }}
 {{- if $configFiles }}

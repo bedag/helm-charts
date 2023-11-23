@@ -15,19 +15,21 @@ defaultTag: latest
 
 # includes is used to include the desired template functions (see templates/includes.yaml)
 includes:
-  networkpolicy: false
-  deployment: false
-  statefulset: false
+  ingress: false
   service: false
-  envSecret: false
-  envConfigMap: false
-  # files is needed for mounted volumes (secrets or configmaps)
-  files: false
-  configFiles: false
-  binaryFiles: false
-  pvcs: false
+  statefulset: false
+  deployment: false
   job: false
   cronjob: false
+  envSecret: false
+  envConfigMap: false
+  configFiles: false
+  binaryFiles: false
+  # files is needed for mounted volumes (secrets or configmaps)
+  files: false
+  pvcs: false
+  servicemonitor: false
+  networkpolicy: false
 
 # timezone to set as environment variable 'TZ' in each pod. Comment out for using default ("Europe/Zurich")
 # timezone: "Europe/Zurich"
@@ -164,6 +166,8 @@ servicemonitor:
       # path: /metrics
       # interval sets the scrape interval. Comment out for using default ("30s")
       # interval: 30s
+      # scrapeTimeout sets the scrape timeout. Comment out for using default (global timeout of your prometheus)
+      # scrapeTimeout: 30s
       # port is used for matching the headless service. Comment out for using default ("http")
       # port: http
     # custom-komponente is a sample endpoint

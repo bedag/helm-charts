@@ -1,4 +1,4 @@
-{{- if .Values.ingress.deploy }}
+{{- if .Values.includes.ingress }}
   {{- template "common.ingress.ingress" . }}
   {{- template "common.ingress.secret" . }}
 {{- end }}
@@ -47,12 +47,12 @@
   {{- template "common.pvcs" . }}
 {{- end -}}
 
-{{- if .Values.servicemonitor.deploy }}
+{{- if .Values.includes.servicemonitor }}
   {{- template "common.servicemonitor.headless.service" . }}
   {{- template "common.servicemonitor.servicemonitor" . }}
   {{- template "common.servicemonitor.secret" . }}
 {{- end -}}
 
-{{- if .Values.servicemonitor.deploy }}
+{{- if .Values.includes.networkpolicy }}
   {{- template "common.networkpolicy" . }}
 {{- end -}}

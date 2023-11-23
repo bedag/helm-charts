@@ -271,6 +271,9 @@
           "type": "string",
           "default": "30s"
         },
+        "scrapeTimeout": {
+          "type": "string"
+        },
         "overrideUserKey": {
           "type": "string"
         },
@@ -371,25 +374,27 @@
     "includes": {
       "type": "object",
       "required": [
-        "networkpolicy",
-        "deployment",
-        "statefulset",
+        "ingress",
         "service",
+        "statefulset",
+        "deployment",
+        "job",
+        "cronjob",
         "envSecret",
         "envConfigMap",
-        "files",
         "configFiles",
         "binaryFiles",
+        "files",
         "pvcs",
-        "job",
-        "cronjob"
+        "servicemonitor",
+        "networkpolicy"
       ],
       "properties": {
-        "networkpolicy": {
+        "ingress": {
           "type": "boolean",
           "default": false
         },
-        "deployment": {
+        "service": {
           "type": "boolean",
           "default": false
         },
@@ -397,7 +402,15 @@
           "type": "boolean",
           "default": false
         },
-        "service": {
+        "deployment": {
+          "type": "boolean",
+          "default": false
+        },
+        "job": {
+          "type": "boolean",
+          "default": false
+        },
+        "cronjob": {
           "type": "boolean",
           "default": false
         },
@@ -409,10 +422,6 @@
           "type": "boolean",
           "default": false
         },
-        "files": {
-          "type": "boolean",
-          "default": false
-        },
         "configFiles": {
           "type": "boolean",
           "default": false
@@ -421,15 +430,19 @@
           "type": "boolean",
           "default": false
         },
+        "files": {
+          "type": "boolean",
+          "default": false
+        },
         "pvcs": {
           "type": "boolean",
           "default": false
         },
-        "job": {
+        "servicemonitor": {
           "type": "boolean",
           "default": false
         },
-        "cronjob": {
+        "networkpolicy": {
           "type": "boolean",
           "default": false
         }

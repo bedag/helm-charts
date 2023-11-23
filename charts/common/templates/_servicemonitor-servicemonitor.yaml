@@ -19,6 +19,9 @@ spec:
   endpoints:
   - path: {{ .path | default "/metrics" }}
     interval: {{ .interval | default "30s" }}
+    {{- if .scrapeTimeout }}
+    scrapeTimeout: {{ .scrapeTimeout }}
+    {{- end }}
     port: {{ .port | default "http" }}
     {{- if $root.Values.servicemonitor.basicAuth.enabled }}
     basicAuth:

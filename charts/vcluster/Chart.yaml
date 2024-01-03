@@ -2,7 +2,7 @@ apiVersion: v2
 name: vcluster
 description: Virtual Kubernetes Cluster
 type: application
-version: 0.5.2
+version: 0.5.3
 appVersion: 0.1.0
 keywords:
   - vcluster
@@ -15,5 +15,5 @@ maintainers:
     email: sre@bedag.ch
 dependencies:
   - name: common
-    version: 2.2.4
+    version: 2.14.1
     repository: https://charts.bitnami.com/bitnami

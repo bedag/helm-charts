@@ -37,7 +37,7 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/components/kubernetes/apiserver/config.yaml" ) . | sha256sum }}
         {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.apiServer.podAnnotations "ctx" $) | nindent 8 }}
     spec:
-      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $kubernetes.apiServer.nodeSelector "ctx" $)) }}
+      {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $kubernetes.apiServer.nodeSelector "ctx" $)) }}
       nodeSelector: {{- . | nindent 8 }}
       {{- end }}
       {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.apiServer.tolerations "ctx" $)) }}
@@ -168,7 +168,7 @@ spec:
           {{- end }}
           {{- if (eq $kubernetes.konnectivity.server.mode "GRPC") }}
         - mountPath: /run/konnectivity-server
-          name: konnectivity-uds      
+          name: konnectivity-uds
           {{- end }}
         {{- end }}
         {{- with $kubernetes.apiServer.volumeMounts }}

@@ -36,7 +36,7 @@ spec:
       annotations:
         {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.controllerManager.podAnnotations "ctx" $) | nindent 8 }}
     spec:
-      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $kubernetes.controllerManager.nodeSelector "ctx" $)) }}
+      {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $kubernetes.controllerManager.nodeSelector "ctx" $)) }}
       nodeSelector: {{- . | nindent 8 }}
       {{- end }}
       {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.controllerManager.tolerations "ctx" $)) }}

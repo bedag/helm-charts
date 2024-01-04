@@ -46,16 +46,16 @@ spec:
             {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.etcd.backup.podAnnotations "ctx" $) | nindent 12 }}
         spec:
           {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $kubernetes.etcd.backup.nodeSelector "ctx" $)) }}
-          nodeSelector: {{- . | nindent 10 }}
+          nodeSelector: {{- . | nindent 12 }}
           {{- end }}
           {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.etcd.backup.tolerations "ctx" $)) }}
-          tolerations:  {{- . | nindent 10 }}
+          tolerations:  {{- . | nindent 12 }}
           {{- end }}
           {{- with (include "pkg.components.priorityClass" (dict "pc" $kubernetes.etcd.backup.priorityClassName "ctx" $)) }}
           priorityClassName: {{ . }}
           {{- end }}
           {{- with (include "pkg.components.topologySpreadConstraints" (dict "tsc" $kubernetes.etcd.backup.topologySpreadConstraints "ctx" $)) }}
-          topologySpreadConstraints: {{ . | nindent 10 }}
+          topologySpreadConstraints: {{ . | nindent 12 }}
           {{- end }}
           affinity:
           {{- with (include "pkg.components.affinity" (dict "affinity" $kubernetes.etcd.backup.affinity "ctx" $)) }}

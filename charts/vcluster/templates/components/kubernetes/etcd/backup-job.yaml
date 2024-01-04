@@ -45,7 +45,7 @@ spec:
           annotations:
             {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.etcd.backup.podAnnotations "ctx" $) | nindent 12 }}
         spec:
-          {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $kubernetes.etcd.backup.nodeSelector "ctx" $)) }}
+          {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $kubernetes.etcd.backup.nodeSelector "ctx" $)) }}
           nodeSelector: {{- . | nindent 10 }}
           {{- end }}
           {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.etcd.backup.tolerations "ctx" $)) }}
@@ -96,7 +96,7 @@ spec:
             envFrom:
               {{- toYaml . | nindent 12 }}
             {{- end }}
-            env: 
+            env:
             {{- if $kubernetes.etcd.backup.injectProxy }}
               {{- include "pkg.common.env.w-proxy" $ | nindent 12 }}
             {{- else }}
@@ -109,7 +109,7 @@ spec:
             - name: ETCDCTL_CERT
               value: /pki/etcd/peer/tls.crt
             - name: ETCDCTL_KEY
-              value: /pki/etcd/peer/tls.key 
+              value: /pki/etcd/peer/tls.key
             - name: ETCDCTL_ENDPOINTS
               value: {{ $fullName }}-etcd:{{ $kubernetes.etcd.ports.client }}
             {{- with $kubernetes.etcd.backup.envs }}
@@ -151,7 +151,7 @@ spec:
               secretName: {{ $fullName }}-pki-etcd-server
             name: pki-etcd-certs-server
           - name: snapshots
-            persistentVolumeClaim: 
+            persistentVolumeClaim:
               claimName: {{ $kubernetes.etcd.backup.persistence.existingClaim | default (printf "%s-etcd-backup" $fullName) }}
           {{- with $kubernetes.etcd.backup.volumes }}
             {{- toYaml . | nindent 10 }}

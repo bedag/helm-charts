@@ -135,22 +135,15 @@ spec:
       {{- end }}
       priorityClassName: {{ $kubernetes.coredns.priorityClassName }}
       serviceAccountName: coredns
+      {{- with $kubernetes.coredns.affinity }}
       affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 100
-            podAffinityTerm:
-              labelSelector:
-                matchExpressions:
-                  - key: k8s-app
-                    operator: In
-                    values: ["kube-dns"]
-              topologyKey: kubernetes.io/hostname
-      {{- with $kubernetes.coredns.tolerations }}        
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $kubernetes.coredns.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $kubernetes.coredns.nodeSelector }}        
+      {{- with $kubernetes.coredns.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}

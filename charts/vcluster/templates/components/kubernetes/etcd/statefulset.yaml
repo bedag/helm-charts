@@ -8,7 +8,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ $fullName }}-etcd
-  labels: 
+  labels:
     {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
     {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.etcd.labels "ctx" $)) }}
@@ -43,7 +43,7 @@ spec:
       annotations:
         {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.etcd.podAnnotations "ctx" $) | nindent 8 }}
     spec:
-      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $kubernetes.etcd.nodeSelector "ctx" $)) }}
+      {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $kubernetes.etcd.nodeSelector "ctx" $)) }}
       nodeSelector: {{- . | nindent 8 }}
       {{- end }}
       {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.etcd.tolerations "ctx" $)) }}
@@ -109,7 +109,7 @@ spec:
         envFrom:
           {{- toYaml . | nindent 8 }}
         {{- end }}
-        env: 
+        env:
         {{- if $kubernetes.etcd.injectProxy }}
           {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
         {{- else }}
@@ -191,7 +191,7 @@ spec:
       {{- end }}
       {{- if and $kubernetes.etcd.backup.enabled $kubernetes.etcd.backup.persistence.mountOnETCD }}
       - name: snapshots
-        persistentVolumeClaim: 
+        persistentVolumeClaim:
           claimName: {{ $kubernetes.etcd.backup.persistence.existingClaim | default (printf "%s-etcd-backup" $fullName) }}
       {{- end }}
       {{- with $kubernetes.etcd.volumes }}

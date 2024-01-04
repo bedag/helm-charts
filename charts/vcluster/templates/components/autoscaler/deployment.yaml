@@ -28,9 +28,9 @@ spec:
       {{- include "autoscaler.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      annotations: 
+      annotations:
         {{- include "pkg.components.pod_annotations" (dict "annotations" $manifest.podAnnotations "ctx" $) | nindent 8 }}
-      labels: 
+      labels:
         {{- include "pkg.components.pod_labels" (dict "labels" $manifest.podLabels "ctx" $) | nindent 8 }}
         {{- include "autoscaler.selectorLabels" . | nindent 8 }}
     spec:
@@ -89,7 +89,7 @@ spec:
           {{- with $manifest.volumeMounts }}
             {{- toYaml . | nindent 10 }}
           {{- end }}
-      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $manifest.nodeSelector "ctx" $)) }}
+      {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $manifest.nodeSelector "ctx" $)) }}
       nodeSelector: {{- . | nindent 8 }}
       {{- end }}
       {{- with (include "pkg.components.affinity" (dict "affinity" $manifest.affinity "ctx" $)) }}

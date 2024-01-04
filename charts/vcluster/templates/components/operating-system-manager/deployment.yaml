@@ -56,12 +56,12 @@ spec:
             {{- end }}
           image: {{ include "pkg.images.registry.convert" (dict "image" .image "tag_overwrite" $osm.version "ctx" $) }}
           imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .image.pullPolicy "ctx" $) }}
-          env: 
+          env:
           {{- if .injectProxy }}
             {{- include "pkg.common.env.w-proxy" $ | nindent 10 }}
           {{- else }}
             {{- include "pkg.common.env" $ | nindent 10 }}
-          {{- end }}          
+          {{- end }}
           {{- with .envs }}
             {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 10 }}
           {{- end }}
@@ -157,7 +157,7 @@ spec:
               {{- end }}
             {{- end }}
           {{- end }}
-      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $osm.nodeSelector "ctx" $)) }}
+      {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $osm.nodeSelector "ctx" $)) }}
       nodeSelector: {{- . | nindent 8 }}
       {{- end }}
       {{- with (include "pkg.components.affinity" (dict "affinity" $osm.affinity "ctx" $)) }}

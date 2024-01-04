@@ -26,7 +26,7 @@ spec:
       annotations:
         {{- include "pkg.components.pod_annotations" (dict "annotations" $manifest.podAnnotations "ctx" $) | nindent 8 }}
     spec:
-      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $manifest.nodeSelector "ctx" $)) }}
+      {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $manifest.nodeSelector "ctx" $)) }}
       nodeSelector: {{- . | nindent 8 }}
       {{- end }}
       {{- with (include "pkg.components.tolerations" (dict "tolerations" $manifest.tolerations "ctx" $)) }}
@@ -87,7 +87,7 @@ spec:
           {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
         {{- else }}
           {{- include "pkg.common.env" $ | nindent 8 }}
-        {{- end }}        
+        {{- end }}
         {{- include "pkg.utils.xdg-env" $ | nindent 8 }}
         - name: KUBECONFIG
           value: "/etc/kubernetes/admin.conf"

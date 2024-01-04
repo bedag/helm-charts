@@ -35,7 +35,7 @@ spec:
       annotations:
         {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.scheduler.podAnnotations "ctx" $) | nindent 8 }}
     spec:
-      {{- with (include "pkg.components.nodeselector" (dict "nodeselector" $kubernetes.scheduler.nodeSelector "ctx" $)) }}
+      {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $kubernetes.scheduler.nodeSelector "ctx" $)) }}
       nodeSelector: {{- . | nindent 8 }}
       {{- end }}
       {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.scheduler.tolerations "ctx" $)) }}
@@ -112,7 +112,7 @@ spec:
         envFrom:
           {{- toYaml . | nindent 8 }}
         {{- end }}
-        env: 
+        env:
         {{- if $kubernetes.scheduler.injectProxy }}
           {{- include "pkg.common.env.w-proxy" $ | nindent 8 }}
         {{- else }}

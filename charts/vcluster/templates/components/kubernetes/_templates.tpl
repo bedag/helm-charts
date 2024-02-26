@@ -144,6 +144,7 @@ Template for konnectivityServer containers
   {{- else }}
   - --mode=grpc
   - --uds-name=/run/konnectivity-server/konnectivity-server.socket
+  - --delete-existing-uds-file=true
   - --server-port=0
   {{- end }}
   - --agent-port={{ $kubernetes.konnectivity.server.ports.agent }}

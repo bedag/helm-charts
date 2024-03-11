@@ -28,7 +28,7 @@ spec:
     url: {{ .url | default "blackbox-exporter-prometheus-blackbox-exporter:9115" }}
     path: {{ .path | default "/probe" }}
     scheme: {{ .scheme | default "http" }}
-    proxyUrl: {{ .proxyUrl | default ""}}
+    proxyUrl: {{ .proxyUrl | default "" | quote }}
   {{- end }}
   targets:
     staticConfig:

@@ -499,6 +499,10 @@ components:
       #   END ONLY FOR CSI
       # end pod
 
+      # hostAliases defines host names for IP addresses
+      # see also https://kubernetes.io/docs/tasks/network/customize-hosts-file-for-pods/#adding-additional-entries-with-hostaliases
+      # hostAliases: {}
+
       # start containers
       # dictionary of containers in a pod
       containers: {}

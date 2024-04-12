@@ -1090,6 +1090,24 @@
                     ]
                   }
                 },
+                "hostAliases": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ip": {
+                        "type": "string"
+                      },
+                      "hostnames": {
+                        "type": "array"
+                      }
+                    },
+                    "required": [
+                      "ip",
+                      "hostnames"
+                    ]
+                  }
+                },
                 "containers": {
                   "type": "object",
                   "patternProperties": {

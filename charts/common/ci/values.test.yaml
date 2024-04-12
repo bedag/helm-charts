@@ -80,7 +80,15 @@ components:
     controller:
       deploy: true
       type: "Deployment"
-
+      hostAliases:
+      - ip: "127.0.0.1"
+        hostnames:
+        - "foo.local"
+        - "bar.local"
+      - ip: "10.1.2.3"
+        hostnames:
+        - "foo.remote"
+        - "bar.remote"
       containers:
         container-1:
           image:
@@ -208,6 +216,15 @@ components:
           volumeAttributes:
             secretProviderClass: "azure-kvname"
 
+      hostAliases:
+      - ip: "127.0.0.1"
+        hostnames:
+        - "foo.local"
+        - "bar.local"
+      - ip: "10.1.2.3"
+        hostnames:
+        - "foo.remote"
+        - "bar.remote"
       containers:
         container-1:
           image:
@@ -285,6 +302,16 @@ components:
         runAsNonRoot: true
         runAsUser: 1001
 
+      hostAliases:
+      - ip: "127.0.0.1"
+        hostnames:
+        - "foo.local"
+        - "bar.local"
+      - ip: "10.1.2.3"
+        hostnames:
+        - "foo.remote"
+        - "bar.remote"
+
       # start containers
       # dictionary of containers in a pod
       containers:
@@ -344,6 +371,16 @@ components:
         runAsGroup: 1001
         runAsNonRoot: true
         runAsUser: 1001
+
+      hostAliases:
+      - ip: "127.0.0.1"
+        hostnames:
+        - "foo.local"
+        - "bar.local"
+      - ip: "10.1.2.3"
+        hostnames:
+        - "foo.remote"
+        - "bar.remote"
 
       # start containers
       # dictionary of containers in a pod

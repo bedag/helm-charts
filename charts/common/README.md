@@ -1,6 +1,6 @@
 # common
 
-![Version: 10.11.1](https://img.shields.io/badge/Version-10.11.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 10.12.0](https://img.shields.io/badge/Version-10.12.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Bedag's common Helm chart to use for creating other Helm charts
 

@@ -502,6 +502,14 @@ components:
       # hostAliases defines host names for IP addresses
       # see also https://kubernetes.io/docs/tasks/network/customize-hosts-file-for-pods/#adding-additional-entries-with-hostaliases
       # hostAliases: {}
+      # - ip: "127.0.0.1"
+      #   hostnames:
+      #   - "foo.local"
+      #   - "bar.local"
+      # - ip: "10.1.2.3"
+      #   hostnames:
+      #   - "foo.remote"
+      #   - "bar.remote"
 
       # start containers
       # dictionary of containers in a pod

@@ -89,6 +89,7 @@ components:
         hostnames:
         - "foo.remote"
         - "bar.remote"
+
       containers:
         container-1:
           image:

@@ -19,6 +19,13 @@ Distinguish between sensitive and non-sensitive config, first initialize empty d
   {{- end }}
 {{- end }}
 
+{{- if $controllerValues.hostAliases }}
+hostAliases:
+  {{- with $controllerValues.hostAliases }}
+  {{- toYaml . | nindent 2 }}
+  {{- end -}}
+{{- end }}
+
 {{- if $controllerValues.serviceAccountName }}
 serviceAccountName: {{ $controllerValues.serviceAccountName | quote }}
 {{- end }}

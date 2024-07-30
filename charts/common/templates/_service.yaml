@@ -21,15 +21,15 @@ spec:
   {{- if $service.loadBalancerClass }}
   loadBalancerClass: {{ $service.loadBalancerClass }}
   {{- end }}
-  {{- if $service.clusterIP }}
-  clusterIP: {{ . }}
-  {{- end }}
   {{- if $service.loadBalancerSourceRanges }}
   loadBalancerSourceRanges:
   {{- with $service.loadBalancerSourceRanges }}
   {{- toYaml . | nindent 4 }}
   {{- end }}
   {{- end }}
+  {{- end }}
+  {{- if $service.clusterIP }}
+  clusterIP: {{ . }}
   {{- end }}
   ports:
     - name: {{ $service.name | default "http" }}

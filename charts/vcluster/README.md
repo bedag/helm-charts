@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.5.7](https://img.shields.io/badge/Version-0.5.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.6.0](https://img.shields.io/badge/Version-0.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -18,7 +18,7 @@ Virtual Kubernetes Cluster
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.bitnami.com/bitnami | common | 2.14.1 |
+| http://charts.bitnami.com/bitnami | common | 2.14.1 |
 
 # Major Changes
 
@@ -410,6 +410,14 @@ Deploys [Kubernetes API Server](https://kubernetes.io/docs/reference/command-lin
 | kubernetes.apiServer.affinity | object | `{}` | Affinity |
 | kubernetes.apiServer.annotations | object | `{}` | Annotations for Workload |
 | kubernetes.apiServer.args | object | `{}` | Extra arguments for the kube-apiserver |
+| kubernetes.apiServer.audit.enabled | bool | `false` | Enable Audit Log |
+| kubernetes.apiServer.audit.maxAge | int | `7` | Defines the maximum number of days to retain old audit log files |
+| kubernetes.apiServer.audit.maxBackup | int | `2` | Defines the maximum number of audit log files to retain |
+| kubernetes.apiServer.audit.maxSize | int | `100` | Defines the maximum size in megabytes of the audit log file before it gets rotated |
+| kubernetes.apiServer.audit.policy | string | `"# Log all requests at the Metadata level.\napiVersion: audit.k8s.io/v1\nkind: Policy\nrules:\n  - level: Metadata\n"` | Audit Policy |
+| kubernetes.apiServer.audit.truncateEnabled | bool | `false` | Whether event and batch truncating is enabled |
+| kubernetes.apiServer.audit.truncateMaxBatchSize | int | `10485760` | Maximum size in bytes of the batch sent to the underlying backend |
+| kubernetes.apiServer.audit.truncateMaxEventSize | int | `102400` | Maximum size in bytes of the audit event sent to the underlying backend |
 | kubernetes.apiServer.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler |
 | kubernetes.apiServer.autoscaling.maxReplicas | int | `5` | Maximum available Replicas |
 | kubernetes.apiServer.autoscaling.minReplicas | int | `1` | Minimum available Replicas |

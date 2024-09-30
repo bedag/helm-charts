@@ -111,6 +111,18 @@ spec:
         - --advertise-address={{ . }}
           {{- end }}
         {{- end }}
+        {{- if $kubernetes.apiServer.audit.enabled }}
+        - --audit-policy-file=/etc/kubernetes/audit-policy.yaml
+        - --audit-log-path=/var/log/kubernetes/audit/audit.log
+        - --audit-log-maxage={{ $kubernetes.apiServer.audit.maxAge }}
+        - --audit-log-maxbackup={{ $kubernetes.apiServer.audit.maxBackup }}
+        - --audit-log-maxsize={{ $kubernetes.apiServer.audit.maxSize }}
+        {{- if $kubernetes.apiServer.audit.truncateEnabled }}
+        - --audit-log-truncate-enabled={{ $kubernetes.apiServer.audit.truncateEnabled }}
+        - --audit-log-truncate-max-batch-size={{ $kubernetes.apiServer.audit.truncateMaxBatchSize }}
+        - --audit-log-truncate-max-event-size={{ $kubernetes.apiServer.audit.truncateMaxEventSize }}
+        {{- end }}
+        {{- end }}
         {{- with $kubernetes.apiServer.args }}
           {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 8 }}
         {{- end }}
@@ -171,6 +183,15 @@ spec:
           name: konnectivity-uds
           {{- end }}
         {{- end }}
+        {{- if $kubernetes.apiServer.audit.enabled }}
+        - mountPath: /etc/kubernetes/audit-policy.yaml
+          name: audit
+          readOnly: true
+          subPath: audit-policy.yaml
+        - mountPath: /var/log/kubernetes/audit/
+          name: audit-log
+          readOnly: false
+        {{- end }}
         {{- with $kubernetes.apiServer.volumeMounts }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -206,6 +227,15 @@ spec:
         {{- if $kubernetes.konnectivity.server.sidecar }}
           {{- include "kubernetes.konnectivityServer.volumes" $ | nindent 6 }}
         {{- end }}
+      {{- end }}
+      {{- if $kubernetes.apiServer.audit.enabled }}
+      - configMap:
+          name: "{{ $fullName }}-audit-policy"
+        name: audit
+      - name: audit-log
+        hostPath:
+          path: /var/log/kubernetes/audit/
+          type: DirectoryOrCreate
       {{- end }}
       {{- with $kubernetes.apiServer.volumes }}
         {{- toYaml . | nindent 6 }}

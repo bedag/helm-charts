@@ -32,6 +32,7 @@ Major Changes to functions are documented with the version affected. **Before up
 |logPersistence removed|8.0.0|Removes logPersistence functionality as it can be achieved with volumeMounts & extraVolumeClaimTemplates and is buggy anyway.|https://github.com/bedag/helm-charts/pull/68|
 |networkpolicy template changes|9.0.0|add possibility to define more than one Port in networkpolicy|https://github.com/bedag/helm-charts/pull/70|
 |networkpolicy template changes|10.0.0|add possibility to create multiple networkpolicies|https://github.com/bedag/helm-charts/pull/77|
+|ingress template changes|11.0.0|add possibility to create multiple ingress objects|https://github.com/bedag/helm-charts/pull/134
 {{/*
   Chart Values
 */}}
@@ -49,7 +50,7 @@ Major Changes to functions are documented with the version affected. **Before up
 
 {{ template "table.heading" . }}
 {{- range .Values }}
-  {{- if and (hasPrefix "ingress." .Key) }}
+  {{- if and (hasPrefix "ingresses.ingress-1" .Key) }}
 | {{ .Key }} | {{ .Type }} | {{ if .Default }}{{ .Default }}{{ else }}{{ .AutoDefault }}{{ end }} | {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }} |
   {{- end }}
 {{- end }}

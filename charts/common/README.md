@@ -1,6 +1,6 @@
 # common
 
-![Version: 10.12.0](https://img.shields.io/badge/Version-10.12.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 11.0.0](https://img.shields.io/badge/Version-11.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Bedag's common Helm chart to use for creating other Helm charts
 
@@ -23,6 +23,7 @@ Major Changes to functions are documented with the version affected. **Before up
 |logPersistence removed|8.0.0|Removes logPersistence functionality as it can be achieved with volumeMounts & extraVolumeClaimTemplates and is buggy anyway.|https://github.com/bedag/helm-charts/pull/68|
 |networkpolicy template changes|9.0.0|add possibility to define more than one Port in networkpolicy|https://github.com/bedag/helm-charts/pull/70|
 |networkpolicy template changes|10.0.0|add possibility to create multiple networkpolicies|https://github.com/bedag/helm-charts/pull/77|
+|ingress template changes|11.0.0|add possibility to create multiple ingress objects|https://github.com/bedag/helm-charts/pull/134
 
 # Values by Component
 
@@ -30,26 +31,28 @@ Major Changes to functions are documented with the version affected. **Before up
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| ingress.annotations | object | `{"nginx.ingress.kubernetes.io/ssl-redirect":"true"}` | annotations is a dictionary for defining ingress controller specific annotations |
-| ingress.deploy | bool | `false` | deploy has to be set to true for rendering to be applied |
-| ingress.ingressClassName | string | `""` | ingressClassName, defines the class of the ingress controller. |
-| ingress.rules | list | `[{"host":"myapp.cluster.local","http":{"paths":[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}}]` | rules is a list of host rules used to configure the Ingress |
-| ingress.rules[0] | object | `{"host":"myapp.cluster.local","http":{"paths":[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}}` | host is the URL which ingress is listening |
-| ingress.rules[0].http | object | `{"paths":[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}` | http is a list of http selectors pointing to backends |
-| ingress.rules[0].http.paths | list | `[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]` | paths is a list of paths that map requests to backends |
-| ingress.rules[0].http.paths[0] | object | `{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}` | backend defines the referenced service endpoint to which the traffic will be forwarded to |
-| ingress.rules[0].http.paths[0].backend.serviceNameSuffix | string | `"component-1"` | serviceNameSuffix describes the suffix of the serviceName |
-| ingress.rules[0].http.paths[0].backend.servicePort | string | `"http"` | servicePort describes the port where the service is listening at (can be either a string or a number) |
-| ingress.rules[0].http.paths[0].path | string | `"/"` | path which ingress is listening |
-| ingress.rules[0].http.paths[0].pathType | string | `"ImplementationSpecific"` | pathType Each path in an Ingress is required to have a corresponding path type. Comment out for using default ("ImplementationSpecific") |
-| ingress.tls.existing.secret | string | `""` | name of an existing secret with tls.crt & tls.key content |
-| ingress.tls.provided.cert | string | `""` | If SSL is terminated on ingress and you have a generated (preferrably CERT-001) certificate/key Has to be base64 encoded and should be encrypted in the ejson vault Add Variable to your CI/CD Settings "SKIP_DECRYPT" with value "" that it doesnt decrypt the cert and fails. |
-| ingress.tls.provided.key | string | `""` | The key must not have a passphrase |
-| ingress.tls.self | object | `{"alternativeDnsNames":[],"commonName":"*.cluster.local","ipAddresses":[],"validityDuration":365}` | depending on the type you have further configuration options: |
-| ingress.tls.self.alternativeDnsNames | list | `[]` | alternativeDnsNames is an optional list of DNS names to add in the Subject Alternative Names (SAN) sectiom |
-| ingress.tls.self.commonName | string | `"*.cluster.local"` | commonName of the certificate (mandatory) |
-| ingress.tls.self.ipAddresses | list | `[]` | ipAddresses is an optional list of IP addresses to add in the Subject Alternative Names (SAN) section |
-| ingress.tls.self.validityDuration | int | `365` | validityDuration defines how long the certificate is valid (in days) |
+| ingresses.ingress-1.annotations | object | `{"nginx.ingress.kubernetes.io/ssl-redirect":"true"}` | annotations is a dictionary for defining ingress controller specific annotations |
+| ingresses.ingress-1.annotations."nginx.ingress.kubernetes.io/ssl-redirect" | string | `"true"` | nginx.ingress.kubernetes.io/ssl-redirect needs to be set to 'true' when using SSL/TLS offloading with a LB outside of Kubernetes |
+| ingresses.ingress-1.deploy | bool | `false` | deploy has to be set to true for rendering to be applied |
+| ingresses.ingress-1.ingressClassName | string | `""` | ingressClassName, defines the class of the ingress controller. |
+| ingresses.ingress-1.rules | list | `[{"host":"myapp.cluster.local","http":{"paths":[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}}]` | rules is a list of host rules used to configure the Ingress |
+| ingresses.ingress-1.rules[0] | object | `{"host":"myapp.cluster.local","http":{"paths":[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}}` | host is the URL which ingress is listening |
+| ingresses.ingress-1.rules[0].http | object | `{"paths":[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]}` | http is a list of http selectors pointing to backends |
+| ingresses.ingress-1.rules[0].http.paths | list | `[{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}]` | paths is a list of paths that map requests to backends |
+| ingresses.ingress-1.rules[0].http.paths[0] | object | `{"backend":{"serviceNameSuffix":"component-1","servicePort":"http"},"path":"/","pathType":"ImplementationSpecific"}` | backend defines the referenced service endpoint to which the traffic will be forwarded to |
+| ingresses.ingress-1.rules[0].http.paths[0].backend.serviceNameSuffix | string | `"component-1"` | serviceNameSuffix describes the suffix of the serviceName |
+| ingresses.ingress-1.rules[0].http.paths[0].backend.servicePort | string | `"http"` | servicePort describes the port where the service is listening at (can be either a string or a number) |
+| ingresses.ingress-1.rules[0].http.paths[0].path | string | `"/"` | path which ingress is listening |
+| ingresses.ingress-1.rules[0].http.paths[0].pathType | string | `"ImplementationSpecific"` | pathType Each path in an Ingress is required to have a corresponding path type. Comment out for using default ("ImplementationSpecific") |
+| ingresses.ingress-1.tls.existing.secret | string | `""` | name of an existing secret with tls.crt & tls.key content |
+| ingresses.ingress-1.tls.provided.cert | string | `""` | If SSL is terminated on ingress and you have a generated (preferrably CERT-001) certificate/key Has to be base64 encoded and should be encrypted in the ejson vault Add Variable to your CI/CD Settings "SKIP_DECRYPT" with value "" that it doesnt decrypt the cert and fails. |
+| ingresses.ingress-1.tls.provided.key | string | `""` | The key must not have a passphrase |
+| ingresses.ingress-1.tls.self | object | `{"alternativeDnsNames":[],"commonName":"*.cluster.local","ipAddresses":[],"validityDuration":365}` | depending on the type you have further configuration options: |
+| ingresses.ingress-1.tls.self.alternativeDnsNames | list | `[]` | alternativeDnsNames is an optional list of DNS names to add in the Subject Alternative Names (SAN) sectiom |
+| ingresses.ingress-1.tls.self.commonName | string | `"*.cluster.local"` | commonName of the certificate (mandatory) |
+| ingresses.ingress-1.tls.self.ipAddresses | list | `[]` | ipAddresses is an optional list of IP addresses to add in the Subject Alternative Names (SAN) section |
+| ingresses.ingress-1.tls.self.validityDuration | int | `365` | validityDuration defines how long the certificate is valid (in days) |
+| ingresses.ingress-1.tls.type | string | `"none"` | define your type of tls certificate, it can be one of: none: tls will be disabled existing: use an existing secret already present in the namespace. Requires secret name to be specified provided: use an officially generated certificate/key k8s: use the default k8s-ingress tls. no further configuration needed self: generate a self signed certificate, which is stored as secret. Needs commonName and validityDuration at least |
 
 ## ServiceMonitor
 

@@ -496,197 +496,200 @@
         }
       }
     },
-    "ingress": {
+    "ingresses": {
       "type": "object",
-      "required": [
-        "deploy"
-      ],
-      "if": {
-        "properties": {
-          "deploy": {
-            "const": true
-          }
-        }
-      },
-      "then": {
-        "required": [
-          "rules",
-          "annotations",
-          "tls"
-        ]
-      },
-      "properties": {
-        "deploy": {
-          "type": "boolean",
-          "default": false
-        },
-        "ingressClassName": {
-          "type": "string"
-        },
-        "defaultBackend":{
-            "type":"object",
-            "required": [
-                "serviceNameSuffix",
-                "servicePort"
-            ],
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "required": [
+            "deploy"
+          ],
+          "if": {
             "properties": {
-                "serviceNameSuffix": {
-                    "type": "string"
-                },
-                "servicePort": {
-                    "type": [
-                    "number",
-                    "string"
-                    ]
-                }
+              "deploy": {
+                "const": true
+              }
             }
-        },
-        "rules": {
-          "type": "array",
-          "items": {
-            "type": "object",
+          },
+          "then": {
             "required": [
-              "host",
-              "http"
-            ],
-            "properties": {
-              "host": {
-                "type": "string",
-                "examples": [
-                  "myapp.cluster.local"
-                ]
-              },
-              "http": {
-                "type": "object",
+              "tls"
+            ]
+          },
+          "properties": {
+            "deploy": {
+              "type": "boolean",
+              "default": false
+            },
+            "ingressClassName": {
+              "type": "string"
+            },
+            "defaultBackend":{
+                "type":"object",
                 "required": [
-                  "paths"
+                    "serviceNameSuffix",
+                    "servicePort"
                 ],
                 "properties": {
-                  "paths": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": [
-                        "backend",
-                        "path"
-                      ],
-                      "properties": {
-                        "backend": {
+                    "serviceNameSuffix": {
+                        "type": "string"
+                    },
+                    "servicePort": {
+                        "type": [
+                        "number",
+                        "string"
+                        ]
+                    }
+                }
+            },
+            "rules": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "host",
+                  "http"
+                ],
+                "properties": {
+                  "host": {
+                    "type": "string",
+                    "examples": [
+                      "myapp.cluster.local"
+                    ]
+                  },
+                  "http": {
+                    "type": "object",
+                    "required": [
+                      "paths"
+                    ],
+                    "properties": {
+                      "paths": {
+                        "type": "array",
+                        "items": {
                           "type": "object",
                           "required": [
-                            "serviceNameSuffix",
-                            "servicePort"
+                            "backend",
+                            "path"
                           ],
                           "properties": {
-                            "serviceNameSuffix": {
-                              "type": "string"
+                            "backend": {
+                              "type": "object",
+                              "required": [
+                                "serviceNameSuffix",
+                                "servicePort"
+                              ],
+                              "properties": {
+                                "serviceNameSuffix": {
+                                  "type": "string"
+                                },
+                                "servicePort": {
+                                  "type": [
+                                    "number",
+                                    "string"
+                                  ]
+                                }
+                              }
                             },
-                            "servicePort": {
-                              "type": [
-                                "number",
-                                "string"
+                            "path": {
+                              "type": "string",
+                              "examples": [
+                                "/"
+                              ]
+                            },
+                            "pathType": {
+                              "type": "string",
+                              "default": "ImplementationSpecific",
+                              "examples": [
+                                "ImplementationSpecific",
+                                "Exact",
+                                "Prefix"
                               ]
                             }
                           }
-                        },
-                        "path": {
-                          "type": "string",
-                          "examples": [
-                            "/"
-                          ]
-                        },
-                        "pathType": {
-                          "type": "string",
-                          "default": "ImplementationSpecific",
-                          "examples": [
-                            "ImplementationSpecific",
-                            "Exact",
-                            "Prefix"
-                          ]
                         }
                       }
                     }
                   }
                 }
               }
+            },
+            "annotations": {
+              "type": "object"
+            },
+            "tls": {
+              "type": "object",
+              "required": [
+                "type"
+              ],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "default": "none"
+                },
+                "existing": {
+                  "type": "object",
+                  "required": [
+                    "secret"
+                  ],
+                  "properties": {
+                    "secret": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "provided": {
+                  "type": "object",
+                  "required": [
+                    "cert",
+                    "key"
+                  ],
+                  "properties": {
+                    "cert": {
+                      "type": "string"
+                    },
+                    "key": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "self": {
+                  "type": "object",
+                  "required": [
+                    "commonName",
+                    "validityDuration"
+                  ],
+                  "properties": {
+                    "commonName": {
+                      "type": "string"
+                    },
+                    "ipAddresses": {
+                      "type": "array"
+                    },
+                    "alternativeDnsNames": {
+                      "type": "array"
+                    },
+                    "validityDuration": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
             }
-          }
-        },
-        "annotations": {
-          "type": "object"
-        },
-        "tls": {
-          "type": "object",
-          "required": [
-            "type"
-          ],
-          "properties": {
-            "type": {
-              "type": "string",
-              "default": "none"
+          },
+          "oneOf": [
+            {
+                "required": [
+                    "rules"
+                ]
             },
-            "existing": {
-              "type": "object",
-              "required": [
-                "secret"
-              ],
-              "properties": {
-                "secret": {
-                  "type": "string"
-                }
-              }
-            },
-            "provided": {
-              "type": "object",
-              "required": [
-                "cert",
-                "key"
-              ],
-              "properties": {
-                "cert": {
-                  "type": "string"
-                },
-                "key": {
-                  "type": "string"
-                }
-              }
-            },
-            "self": {
-              "type": "object",
-              "required": [
-                "commonName",
-                "validityDuration"
-              ],
-              "properties": {
-                "commonName": {
-                  "type": "string"
-                },
-                "ipAddresses": {
-                  "type": "array"
-                },
-                "alternativeDnsNames": {
-                  "type": "array"
-                },
-                "validityDuration": {
-                  "type": "integer"
-                }
-              }
+            {
+                "required": [
+                    "defaultBackend"
+                ]
             }
-          }
+          ]
         }
-      },
-      "oneOf": [
-        {
-            "required": [
-                "defaultBackend"
-            ]
-        },
-        {
-            "required": [
-                "rules"
-            ]
-        }
-      ]
+      }
     },
     "servicemonitor": {
       "type": "object",

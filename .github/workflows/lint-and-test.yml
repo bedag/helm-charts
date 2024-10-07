@@ -53,20 +53,3 @@ jobs:
       - name: Run chart-testing (lint)
         run: ct lint --config ct.yaml --lint-conf lintconf.yaml
         if: steps.list-changed.outputs.changed == 'true'
-
-      - name: Create kind cluster
-        uses: helm/kind-action@v1.5.0
-        if: steps.list-changed.outputs.changed == 'true'
-        #with:
-        #  kubectl_version: v1.22.0
-
-      # Install Dependencies
-      - name: Install Required dependencies
-        if: steps.list-changed.outputs.changed == 'true'
-        run: |
-          kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
-          kubectl create -f https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.58.0/bundle.yaml
-
-      - name: Run chart-testing (install)
-        run: ct install --config ct.yaml
-        if: steps.list-changed.outputs.changed == 'true'

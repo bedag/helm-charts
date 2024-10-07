@@ -12,7 +12,7 @@ metadata:
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
   namespace: {{ $.Release.Namespace }}
 data:
-  audit-policy.yaml: |
+  policy.yaml: |
     {{- $kubernetes.apiServer.audit.policy | nindent 4 }}
   {{- end -}}
 {{- end -}}

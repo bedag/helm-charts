@@ -2,7 +2,7 @@ apiVersion: v2
 name: vcluster
 description: Virtual Kubernetes Cluster
 type: application
-version: 0.5.7
+version: 0.6.0
 appVersion: 0.1.0
 keywords:
   - vcluster

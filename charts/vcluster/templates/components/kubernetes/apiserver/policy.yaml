@@ -1,0 +1,18 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if and $kubernetes.apiServer.enabled $kubernetes.apiServer.audit.enabled -}}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "apiserver" -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullName }}-audit-policy
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ $.Release.Namespace }}
+data:
+  policy.yaml: |
+    {{- $kubernetes.apiServer.audit.policy | nindent 4 }}
+  {{- end -}}
+{{- end -}}

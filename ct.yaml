@@ -7,7 +7,7 @@ chart-dirs:
 chart-repos:
   - buttahtoast=https://buttahtoast.github.io/helm-charts/
   - bedag=https://bedag.github.io/helm-charts/
-  - bitnami=http://charts.bitnami.com/bitnami
+  - bitnami=https://charts.bitnami.com/bitnami
 validate-chart-schema: true
 validate-maintainers: false
 validate-yaml: true

@@ -18,7 +18,7 @@ Virtual Kubernetes Cluster
 
 | Repository | Name | Version |
 |------------|------|---------|
-| http://charts.bitnami.com/bitnami | common | 2.14.1 |
+| https://charts.bitnami.com/bitnami | common | 2.14.1 |
 
 # Major Changes
 

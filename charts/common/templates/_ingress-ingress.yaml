@@ -1,14 +1,15 @@
 {{- define "common.ingress.ingress" -}}
 {{- $root := . }}
-{{- $ingress := .Values.ingress }}
+{{- $ingresses := .Values.ingresses }}
+{{- range $name, $ingress := $ingresses }}
 {{- if $ingress.deploy }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ template "library.name" . }}-ingress
+  name: {{ template "library.name" $root }}-{{$name}}
   labels:
-{{ include "library.labels.standard" . | indent 4 }}
+{{ include "library.labels.standard" $root | indent 4 }}
     app.kubernetes.io/component: ingress
 {{- if $ingress.annotations }}
   annotations:
@@ -57,12 +58,13 @@ spec:
         - {{ .host }}
       {{- end }}
       {{- if or (eq $ingress.tls.type "self") (eq $ingress.tls.type "provided") }}
-      secretName: {{ template "library.name" . }}-ingress-tls
+      secretName: {{ template "library.name" $root }}-{{$name}}-tls
       {{- else if eq $ingress.tls.type "existing" }}
       secretName: {{ $ingress.tls.existing.secret }}
       {{- end }}
   {{- end }}
   {{- end }}
   {{- end }}
+{{- end }}
 {{- end }}
 {{- end -}}

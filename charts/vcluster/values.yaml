@@ -1458,17 +1458,17 @@ kubernetes:
       enabled: false
 
       # -- Defines the maximum number of days to retain old audit log files
-      maxAge: 7
+      maxAge: "7"
       # -- Defines the maximum number of audit log files to retain
-      maxBackup: 2
+      maxBackup: "2"
       # -- Defines the maximum size in megabytes of the audit log file before it gets rotated
-      maxSize: 100
+      maxSize: "100"
       # -- Whether event and batch truncating is enabled
       truncateEnabled: false
       # -- Maximum size in bytes of the batch sent to the underlying backend
-      truncateMaxBatchSize: 10485760
+      truncateMaxBatchSize: "10485760"
       # -- Maximum size in bytes of the audit event sent to the underlying backend
-      truncateMaxEventSize: 102400
+      truncateMaxEventSize: "102400"
 
       # -- Audit Policy
       policy: |

@@ -114,13 +114,13 @@ spec:
         {{- if $kubernetes.apiServer.audit.enabled }}
         - --audit-policy-file=/etc/kubernetes/audit-policy.yaml
         - --audit-log-path=/var/log/kubernetes/audit/audit.log
-        - --audit-log-maxage={{ $kubernetes.apiServer.audit.maxAge }}
-        - --audit-log-maxbackup={{ $kubernetes.apiServer.audit.maxBackup }}
-        - --audit-log-maxsize={{ $kubernetes.apiServer.audit.maxSize }}
+        - --audit-log-maxage={{ $kubernetes.apiServer.audit.maxAge | int }}
+        - --audit-log-maxbackup={{ $kubernetes.apiServer.audit.maxBackup | int }}
+        - --audit-log-maxsize={{ $kubernetes.apiServer.audit.maxSize | int }}
         {{- if $kubernetes.apiServer.audit.truncateEnabled }}
         - --audit-log-truncate-enabled={{ $kubernetes.apiServer.audit.truncateEnabled }}
-        - --audit-log-truncate-max-batch-size={{ $kubernetes.apiServer.audit.truncateMaxBatchSize }}
-        - --audit-log-truncate-max-event-size={{ $kubernetes.apiServer.audit.truncateMaxEventSize }}
+        - --audit-log-truncate-max-batch-size={{ $kubernetes.apiServer.audit.truncateMaxBatchSize | int }}
+        - --audit-log-truncate-max-event-size={{ $kubernetes.apiServer.audit.truncateMaxEventSize | int }}
         {{- end }}
         {{- end }}
         {{- with $kubernetes.apiServer.args }}

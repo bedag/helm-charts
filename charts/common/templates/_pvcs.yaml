@@ -9,6 +9,10 @@ metadata:
   name: {{ template "library.name" $root }}-{{ .name }}
   labels:
 {{ include "library.labels.stable" $root | indent 4 }}
+{{- if .annotations }}
+  annotations:
+{{ toYaml .annotations | indent 4 }}
+{{- end }}
 spec:
   accessModes:
     {{- if .accessModes }}

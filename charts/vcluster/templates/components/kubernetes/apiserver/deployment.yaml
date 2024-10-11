@@ -113,7 +113,7 @@ spec:
         {{- end }}
         {{- if $kubernetes.apiServer.audit.enabled }}
         - --audit-policy-file=/etc/kubernetes/audit/policy.yaml
-        - --audit-log-path=/var/log/kubernetes/audit/audit.log
+        - --audit-log-path=/var/log/kubernetes/audit/{{ include "pkg.cluster.name" $ }}-audit.log
         - --audit-log-maxage={{ $kubernetes.apiServer.audit.maxAge | int }}
         - --audit-log-maxbackup={{ $kubernetes.apiServer.audit.maxBackup | int }}
         - --audit-log-maxsize={{ $kubernetes.apiServer.audit.maxSize | int }}

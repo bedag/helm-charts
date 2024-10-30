@@ -57,7 +57,7 @@ spec:
     - hosts:
         - {{ .host }}
       {{- if or (eq $ingress.tls.type "self") (eq $ingress.tls.type "provided") }}
-      secretName:  {{ regexReplaceAll "\\W+" .host "-" }}
+      secretName: {{ regexReplaceAll "\\W+" .host "-" }}
       {{- else if eq $ingress.tls.type "existing" }}
       secretName: {{ .secretName }}
       {{- end }}

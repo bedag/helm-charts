@@ -609,6 +609,9 @@
                         }
                       }
                     }
+                  },
+                  "secretName": {
+                    "type": "string"
                   }
                 }
               }
@@ -625,17 +628,6 @@
                 "type": {
                   "type": "string",
                   "default": "none"
-                },
-                "existing": {
-                  "type": "object",
-                  "required": [
-                    "secret"
-                  ],
-                  "properties": {
-                    "secret": {
-                      "type": "string"
-                    }
-                  }
                 },
                 "provided": {
                   "type": "object",

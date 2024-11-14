@@ -100,13 +100,13 @@ kubectl -n kube-system delete configmap/kube-proxy daemonset/kube-proxy 2>/dev/n
 {{- if $job.cilium.enabled }}
 if kubectl get ds cilium -n kube-system &> /dev/null; then
 	echo "Cilium already installed"
-else 
+else
   {{- if or (and ($job.cilium.on_install) ($.Release.IsInstall)) (not $job.cilium.on_install) }}
 # install cilium
 helm repo add cilium https://helm.cilium.io/
 helm upgrade --install cilium cilium/cilium {{ with $job.cilium.version }}--version {{ . }} {{ end }} \
     {{- if not ($kubernetes.kubeProxy.enabled) }}
-    --set kubeProxyReplacement=strict \
+    --set kubeProxyReplacement=true \
       {{- if (include "kubernetes.api.endpointIP" $) }}
     --set k8sServiceHost={{ include "kubernetes.api.endpointIP" $ }} \
     --set k8sServicePort={{ include "kubernetes.api.endpointPort" $ }} \

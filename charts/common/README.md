@@ -53,7 +53,7 @@ Major Changes to functions are documented with the version affected. **Before up
 | ingresses.ingress-1.tls.self.commonName | string | `"*.cluster.local"` | commonName of the certificate (mandatory) |
 | ingresses.ingress-1.tls.self.ipAddresses | list | `[]` | ipAddresses is an optional list of IP addresses to add in the Subject Alternative Names (SAN) section |
 | ingresses.ingress-1.tls.self.validityDuration | int | `365` | validityDuration defines how long the certificate is valid (in days) |
-| ingresses.ingress-1.tls.type | string | `"none"` | define your type of tls certificate, it can be one of: none: tls will be disabled existing: use an existing secret already present in the namespace. Requires secret name to be specified in .rules.host.secret provided: use an officially generated certificate/key k8s: use the default k8s-ingress tls. no further configuration needed self: generate a self signed certificate, which is stored as secret. Needs commonName and validityDuration at least |
+| ingresses.ingress-1.tls.type | string | `"none"` | define your type of tls certificate, it can be one of: none: tls will be disabled existing: use an existing secret already present in the namespace. Requires secret name to be specified in .rules.host[].secretName provided: use an officially generated certificate/key k8s: use the default k8s-ingress tls. no further configuration needed self: generate a self signed certificate, which is stored as secret. Needs commonName and validityDuration at least |
 
 ## ServiceMonitor
 

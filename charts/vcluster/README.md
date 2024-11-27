@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.6.2](https://img.shields.io/badge/Version-0.6.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.7.0](https://img.shields.io/badge/Version-0.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -130,6 +130,8 @@ We use a lifecycle Job/Cronjob to manage certain configurations within the vclus
 |-----|------|---------|-------------|
 | lifecycle.argocd.namespace | string | `"argocd"` | Installation namespace of ArgoCD |
 | lifecycle.argocd.rbac | bool | `true` | Creates required rbac in argoCD namespace to create cluster secrets |
+| lifecycle.cilium.bgpControlPlane | object | `{"enabled":true}` | Enable BGP Control Plane feature |
+| lifecycle.cilium.devices | string | `""` | Specify which network interfaces can run the eBPF datapath |
 | lifecycle.cilium.enabled | bool | `true` | Install Cilium CNI |
 | lifecycle.cilium.on_install | bool | `true` | Install only on chart install (First install) |
 | lifecycle.cilium.version | string | `"1.9.18"` | Cilium version |

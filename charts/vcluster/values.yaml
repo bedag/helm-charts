@@ -180,6 +180,11 @@ lifecycle:
     version: 1.9.18
     # -- Install only on chart install (First install)
     on_install: true
+    # -- Enable BGP Control Plane feature
+    bgpControlPlane:
+      enabled: true
+    # -- Specify which network interfaces can run the eBPF datapath
+    devices: ""
 
   # Create Additional Kubeconfigs which you can directly use to access the cluster in your existing toolchain (See values.yaml)
   # @default -- See values.yaml

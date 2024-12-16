@@ -234,34 +234,11 @@ lifecycle:
 
   # Additional customization for interactions with the vcluster cluster
   vcluster:
+    # -- List of URLs which will be applied inside the vcluster (supports templating)
+    extraOnlineManifests: []
 
-    # -- Additional configuration script for the vcluster during reconciler (supports templating)
-    setupScript:
-    #  echo "I am a script which runs on the vcluster"
-
-    # -- Additional configuration script for the vcluster during cleanup (supports templating)
-    cleanupScript:
-    #  echo "I am a script which runs on the vcluster"
-
-    # -- These manifests will be applied inside the vcluster (supports templating)
-    # @default -- See values.yaml
-    extraManifests: {}
-    # -- Filename of the manifest
-    # namespace.yaml:
-    #   apiVersion: v1
-    #   kind: Namespace
-    #   metadata:
-    #     name: example
-
-    # -- These manifests will be applied inside the vcluster, but only on $.Release.Install and wont be touched again (supports templating)
-    # @default -- See values.yaml
-    extraManifestsOnInstall: {}
-    # -- Filename of the manifest
-    # namespace.yaml:
-    #   apiVersion: v1
-    #   kind: Namespace
-    #   metadata:
-    #     name: example
+    # -- List of URLs which will be applied inside the vcluster, but only on $.Release.Install and wont be touched again (supports templating)
+    extraOnlineManifestsOnInstall: []
 
   # ArgoCD Lifecycle configuration
   argocd:
@@ -2102,7 +2079,7 @@ kubernetes:
 # ----------------------------
 autoscaler:
   # -- Enable autsocaler component
-  enabled: true
+  enabled: false
   ## Priorities Expander
   # -- The expanderPriorities is used if `extraArgs.expander` contains `priority` and expanderPriorities is also set with the priorities.
   # If `args.expander` contains `priority`, then expanderPriorities is used to define cluster-autoscaler-priority-expander priorities.

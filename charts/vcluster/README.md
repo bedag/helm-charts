@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.7.1](https://img.shields.io/badge/Version-0.7.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.8.0](https://img.shields.io/badge/Version-0.8.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -164,10 +164,8 @@ We use a lifecycle Job/Cronjob to manage certain configurations within the vclus
 | lifecycle.setup.schedule | string | `"0 0 1 */6 *"` | Cronjob Schedule |
 | lifecycle.setup.successfulJobsHistoryLimit | int | `3` | Cronjob successful jobs history limit |
 | lifecycle.setup.ttlSecondsAfterFinished | int | `120` | ttlSecondsAfterFinished for setup |
-| lifecycle.vcluster.cleanupScript | string | `nil` | Additional configuration script for the vcluster during cleanup (supports templating) |
-| lifecycle.vcluster.extraManifests | object | See values.yaml | These manifests will be applied inside the vcluster (supports templating) |
-| lifecycle.vcluster.extraManifestsOnInstall | object | See values.yaml | These manifests will be applied inside the vcluster, but only on $.Release.Install and wont be touched again (supports templating) |
-| lifecycle.vcluster.setupScript | string | `nil` | Additional configuration script for the vcluster during reconciler (supports templating) |
+| lifecycle.vcluster.extraOnlineManifests | list | `[]` | List of URLs which will be applied inside the vcluster (supports templating) |
+| lifecycle.vcluster.extraOnlineManifestsOnInstall | list | `[]` | List of URLs which will be applied inside the vcluster, but only on $.Release.Install and wont be touched again (supports templating) |
 
 ## Machine Values
 
@@ -844,7 +842,7 @@ Available Values for the [Autsocaler component](#autoscaler).
 ---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| autoscaler.enabled | bool | `true` | Enable autsocaler component |
+| autoscaler.enabled | bool | `false` | Enable autsocaler component |
 | autoscaler.expanderPriorities | object | `{}` | The expanderPriorities is used if `extraArgs.expander` contains `priority` and expanderPriorities is also set with the priorities. If `args.expander` contains `priority`, then expanderPriorities is used to define cluster-autoscaler-priority-expander priorities. See: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/expander/priority/readme.md |
 | autoscaler.priorityConfigMapAnnotations | object | `{}` | Annotations to add to `cluster-autoscaler-priority-expander` ConfigMap. |
 
@@ -856,7 +854,7 @@ Available Values for the [Autsocaler component](#autoscaler).
 | autoscaler.affinity | object | `{}` | Affinity |
 | autoscaler.annotations | object | `{}` | Annotations for Workload |
 | autoscaler.args | object | `{"leader-elect":true,"logtostderr":true,"scale-down-enabled":true,"stderrthreshold":"info","v":4}` | Additional container arguments. Refer to https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-the-parameters-to-ca for the full list of cluster autoscaler parameters and their default values. Everything after the first _ will be ignored allowing the use of multi-string arguments. |
-| autoscaler.enabled | bool | `true` | Enable autsocaler component |
+| autoscaler.enabled | bool | `false` | Enable autsocaler component |
 | autoscaler.envs | object | `{"CAPI_GROUP":"cluster.k8s.io"}` | Extra environment variables (`key: value` style, allows templating) |
 | autoscaler.envsFrom | list | `[]` | Extra environment variables from |
 | autoscaler.expanderPriorities | object | `{}` | The expanderPriorities is used if `extraArgs.expander` contains `priority` and expanderPriorities is also set with the priorities. If `args.expander` contains `priority`, then expanderPriorities is used to define cluster-autoscaler-priority-expander priorities. See: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/expander/priority/readme.md |

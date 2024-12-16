@@ -2,20 +2,20 @@
 repos:
 
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
-    rev: v4.3.0
+    rev: v5.0.0
     hooks:
       - id: end-of-file-fixer
         exclude_types: ['markdown']
-        stages: [commit]
+        stages: [pre-commit]
       - id: trailing-whitespace
         exclude_types: ['markdown']
-        stages: [commit]
+        stages: [pre-commit]
       - id: mixed-line-ending
-        stages: [commit]
+        stages: [pre-commit]
       - id: check-byte-order-marker
-        stages: [commit]
+        stages: [pre-commit]
       - id: check-executables-have-shebangs
-        stages: [commit]
+        stages: [pre-commit]
       - id: check-merge-conflict
 
   - repo: local
@@ -26,11 +26,11 @@ repos:
         args: ["helm-docs"]
         language: system
         pass_filenames: false
-        stages: [commit]
+        stages: [pre-commit]
       - id: ct-lint
         name: ct-lint
         entry: make
         args: ["helm-lint"]
         language: system
         pass_filenames: false
-        stages: [commit]
+        stages: [pre-commit]

@@ -7,10 +7,11 @@ chart-dirs:
 chart-repos:
   - buttahtoast=https://buttahtoast.github.io/helm-charts/
   - bedag=https://bedag.github.io/helm-charts/
-  - bitnami=https://charts.bitnami.com/bitnami
+  # - bitnami=registry-1.docker.io/bitnamicharts
 validate-chart-schema: true
 validate-maintainers: false
 validate-yaml: true
 exclude-deprecated: true
 excluded-charts:
   - "manifests"
+  - "vcluster"

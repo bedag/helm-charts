@@ -11,7 +11,7 @@ CA=$(base64 /pki/admin-client/ca.crt | tr -d '\n')
 C_CERT=$(base64 /pki/admin-client/tls.crt | tr -d '\n')
 C_KEY=$(base64 /pki/admin-client/tls.key | tr -d '\n')
 
-{{- $kubeconfigs := $.Values.lifecycle.kubeconfigs }}
+{{- $kubeconfigs := $lifecycle.kubeconfigs }}
 # Iterate over all kubeconfigs
 {{- range $kubeconfigs }}{{"\n"}}
   {{- $name := (include "pkg.utils.template" (dict "tpl" (required "kubeconfig.name is required" .name) "ctx" $)) -}}

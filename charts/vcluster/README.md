@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.7.0](https://img.shields.io/badge/Version-0.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.7.1](https://img.shields.io/badge/Version-0.7.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -138,10 +138,8 @@ We use a lifecycle Job/Cronjob to manage certain configurations within the vclus
 | lifecycle.cleanup.annotations | object | `{"helm.sh/hook":"pre-delete","helm.sh/hook-delete-policy":"before-hook-creation"}` | Job Annotations |
 | lifecycle.cleanup.enabled | bool | `false` | Enable/Disable Cleanup |
 | lifecycle.cleanup.labels | object | `{}` | Job Labels |
-| lifecycle.current.cleanupScript | string | `nil` | Additional configuration script for the vcluster during cleanup (supports templating) |
 | lifecycle.current.extraManifests | object | See values.yaml | These manifests will be applied inside the cluster (supports templating) |
 | lifecycle.current.extraManifestsOnInstall | object | See values.yaml | These manifests will be applied inside the cluster, but only on $.Release.Install and wont be touched again (supports templating) |
-| lifecycle.current.setupScript | string | `nil` | Additional configuration script for the current cluster (supports templating) |
 | lifecycle.jobs.affinity | object | `{}` | Affinity |
 | lifecycle.jobs.extraEnv | list | `[]` | Additional Pod Environment variables |
 | lifecycle.jobs.extraVolumeMounts | list | `[]` | Additional Pod VolumeMounts |
@@ -395,7 +393,6 @@ Available Values for the [Operating System Manager](). The component consists of
 Available Values for the [Kubernetes component](#kubernetes).
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| kubernetes.component.removeManifestsOnDisable | bool | `true` | Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well) |
 | kubernetes.controlPlane | object | `{"endpoint":null}` | ControlerPlaneEndpoint |
 | kubernetes.controlPlane.endpoint | string | `nil` | Endpoint for ControlPlane (eg `128.1314.1234.4242:6443`). If not set, the vcluster will try to find the endpoint automatically. |
 | kubernetes.enabled | bool | `true` | Enable Kubernetes Component |

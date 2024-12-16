@@ -15,8 +15,8 @@ data:
     apiVersion: kubeadm.k8s.io/v1beta3
     kind: ClusterConfiguration
     clusterName: {{ include "pkg.cluster.name" $ }}
-    {{- if $kubernetes.controlPlaneEndpoint }}
-    controlPlaneEndpoint: {{ $kubernetes.controlPlaneEndpoint }}
+    {{- if $kubernetes.controlPlane.endpoint }}
+    controlPlaneEndpoint: {{ $kubernetes.controlPlane.endpoint }}
     {{- else }}
     controlPlaneEndpoint: {{ include "kubernetes.api.service" $ }}:{{ $kubernetes.apiServer.service.port }}
     {{- end }}

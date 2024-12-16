@@ -147,11 +147,11 @@ fi
 # Additional Manifests
 # ------------------------------------------------------------------------------
 {{- if $.Release.IsInstall }}
-  {{- with $lifecycle.vcluster.extraManifestsOnInstall }}
-kubectl apply{{- range $key, $value := . }} -f /manifests/{{ $key }} {{- end }}
+  {{- range $lifecycle.vcluster.extraOnlineManifests }}
+kubectl apply -f {{ . | quote }}
   {{- end }}
 {{- end }}
 
-{{- with $lifecycle.vcluster.extraManifests }}
-kubectl apply{{- range $key, $value := . }} -f /manifests/{{ $key }} {{- end }}
+{{- range $lifecycle.vcluster.extraOnlineManifestsOnInstall }}
+kubectl apply -f {{ . | quote }}
 {{- end }}

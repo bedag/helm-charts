@@ -212,15 +212,6 @@ lifecycle:
 
   # Additional customization for interactions with the current cluster
   current:
-
-    # -- Additional configuration script for the current cluster (supports templating)
-    setupScript:
-    #  echo "I am a script which runs on the current cluster"
-
-    # -- Additional configuration script for the vcluster during cleanup (supports templating)
-    cleanupScript:
-    #  echo "I am a script which runs on the current cluster"
-
     # -- These manifests will be applied inside the cluster (supports templating)
     # @default -- See values.yaml
     extraManifests: {}
@@ -243,34 +234,11 @@ lifecycle:
 
   # Additional customization for interactions with the vcluster cluster
   vcluster:
+    # -- List of URLs which will be applied inside the vcluster (supports templating)
+    extraOnlineManifests: []
 
-    # -- Additional configuration script for the vcluster during reconciler (supports templating)
-    setupScript:
-    #  echo "I am a script which runs on the vcluster"
-
-    # -- Additional configuration script for the vcluster during cleanup (supports templating)
-    cleanupScript:
-    #  echo "I am a script which runs on the vcluster"
-
-    # -- These manifests will be applied inside the vcluster (supports templating)
-    # @default -- See values.yaml
-    extraManifests: {}
-    # -- Filename of the manifest
-    # namespace.yaml:
-    #   apiVersion: v1
-    #   kind: Namespace
-    #   metadata:
-    #     name: example
-
-    # -- These manifests will be applied inside the vcluster, but only on $.Release.Install and wont be touched again (supports templating)
-    # @default -- See values.yaml
-    extraManifestsOnInstall: {}
-    # -- Filename of the manifest
-    # namespace.yaml:
-    #   apiVersion: v1
-    #   kind: Namespace
-    #   metadata:
-    #     name: example
+    # -- List of URLs which will be applied inside the vcluster, but only on $.Release.Install and wont be touched again (supports templating)
+    extraOnlineManifestsOnInstall: []
 
   # ArgoCD Lifecycle configuration
   argocd:
@@ -706,7 +674,7 @@ machine:
 # ----------------------------
 #  Operating System Manager
 # ----------------------------
-# Refernece:
+# Reference:
 osm:
   # -- Enable Operating System Manager Component
   enabled: false
@@ -1009,12 +977,6 @@ osm:
 kubernetes:
   # -- Enable Kubernetes Component
   enabled: true
-
-  # Component Settings
-  component:
-
-    # -- Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well)
-    removeManifestsOnDisable: true
 
   # -- Version for API Server, Scheduler, Controller Manager (Tag for all kubernetes components)
   version: "v1.25.0"
@@ -2117,7 +2079,7 @@ kubernetes:
 # ----------------------------
 autoscaler:
   # -- Enable autsocaler component
-  enabled: true
+  enabled: false
   ## Priorities Expander
   # -- The expanderPriorities is used if `extraArgs.expander` contains `priority` and expanderPriorities is also set with the priorities.
   # If `args.expander` contains `priority`, then expanderPriorities is used to define cluster-autoscaler-priority-expander priorities.
@@ -2165,7 +2127,7 @@ autoscaler:
     # balancing-ignore-label_1: first-label-to-ignore
     # balancing-ignore-label_2: second-label-to-ignore
 
-  # Image COnfiguration
+  # Image Configuration
   image:
     # -- Image registry
     registry: registry.k8s.io
@@ -2308,13 +2270,12 @@ autoscaler:
 # ----------------------------
 # Utilities
 # ----------------------------
-# -- kubeVersion Override Kubernetes version
-kubeVersion: ""
-
 utils:
   # -- Base Label used for labels
   base_label: "app.kubernetes.io"
-  # -- Timezone
-  timezone: "Europe/Zurich"
   # -- All controllers are installed on the current cluster without expecting a virtual API
   currentcluster: false
+  # -- kubeVersion Override Kubernetes version
+  kubeVersion: ""
+  # -- Timezone
+  timezone: "Europe/Zurich"

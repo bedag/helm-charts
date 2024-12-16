@@ -8,7 +8,7 @@ items:
   {{- if $.Release.IsInstall }}
     {{- with $.Values.lifecycle.current.extraManifestsOnInstall }}
       {{- range $file, $content := . }}
-    - {{- include "pkg.utils.template" (dict "tpl" $content "ctx" $) | nindent 4 }}
+  - {{- include "pkg.utils.template" (dict "tpl" $content "ctx" $) | nindent 4 }}
       {{- end }}
     {{- end }}
   {{- end }}

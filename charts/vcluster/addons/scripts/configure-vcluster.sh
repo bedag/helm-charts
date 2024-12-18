@@ -148,10 +148,10 @@ fi
 # ------------------------------------------------------------------------------
 {{- if $.Release.IsInstall }}
   {{- range $lifecycle.vcluster.extraOnlineManifests }}
-kubectl apply -f {{ . | quote }}
+kubectl apply --server-side -f {{ . | quote }}
   {{- end }}
 {{- end }}
 
 {{- range $lifecycle.vcluster.extraOnlineManifestsOnInstall }}
-kubectl apply -f {{ . | quote }}
+kubectl apply --server-side -f {{ . | quote }}
 {{- end }}

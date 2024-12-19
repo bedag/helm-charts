@@ -146,12 +146,12 @@ fi
 # ------------------------------------------------------------------------------
 # Additional Manifests
 # ------------------------------------------------------------------------------
-{{- if $.Release.IsInstall }}
-  {{- range $lifecycle.vcluster.extraOnlineManifests }}
-kubectl apply --server-side -f {{ . | quote }}
-  {{- end }}
+{{- range $lifecycle.vcluster.extraOnlineManifests }}
+kubectl apply --server-side -f {{ . | quote }} 2>/dev/null || true
 {{- end }}
 
-{{- range $lifecycle.vcluster.extraOnlineManifestsOnInstall }}
-kubectl apply --server-side -f {{ . | quote }}
+{{- if $.Release.IsInstall }}
+  {{- range $lifecycle.vcluster.extraOnlineManifestsOnInstall }}
+kubectl apply --server-side -f {{ . | quote }} 2>/dev/null || true
+  {{- end }}
 {{- end }}

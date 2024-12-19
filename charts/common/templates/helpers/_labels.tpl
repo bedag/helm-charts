@@ -21,7 +21,7 @@ app.kubernetes.io/name: {{ template "library.name" . }}
 helm.sh/chart: {{ template "library.chartrefshort" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
 app.kubernetes.io/instance: {{ .Release.Name | quote }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+app.kubernetes.io/version: {{ .Values.appVersion | default .Chart.AppVersion | quote }}
 {{- end -}}
 
 {{- /*

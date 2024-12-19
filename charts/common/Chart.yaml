@@ -1,7 +1,7 @@
 apiVersion: v2
 name: common
 description: "Bedag's common Helm chart to use for creating other Helm charts"
-version: 12.0.0
+version: 12.1.0
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -27,4 +27,5 @@ annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
-    - "[Changed]: extra annotations and labesl support sprig statements"
+    - "[Changed]: extra annotations and labels support sprig statements"
+    - "[Added]: Possibility to optionally set appVersion in values"

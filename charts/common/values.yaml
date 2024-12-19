@@ -10,6 +10,9 @@
 # nameSuffix: ""
 # nameOverride: ""
 
+## appVersion is optional to override the default .Chart.appVersion
+# appVersion: "1.0.0"
+
 # defaultTag is used when no imageTag is specified in .Values.components.*.controller.image.tag
 defaultTag: latest
 

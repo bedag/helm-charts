@@ -361,6 +361,17 @@
     }
   },
   "properties": {
+    "appVersion": {
+      "title": "SemVer check",
+      "description": "https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string using ECMA compatible regex with double escaping (\\)",
+      "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
+      "examples": [
+        "1.0.0",
+        "1.0.0-beta",
+        "1.2.1"
+      ]
+    },
     "defaultTag": {
       "title": "SemVer check",
       "description": "https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string using ECMA compatible regex with double escaping (\\) and option for 'latest' but then be compatible with postgres-tag format of XX.MM (without patch part)",

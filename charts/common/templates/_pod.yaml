@@ -65,9 +65,18 @@ volumes:
       {{- end }}
   {{- else if eq .type "configMap" }}
     configMap:
+      {{- if .items }}
+      name: {{ .name }}
+      items:
+      {{- range .items }}
+        - key: {{ .key }}
+          path: {{ .path }}
+      {{- end }}
+      {{- else }}
       name: {{ template "library.name" $root }}-{{ .name }}
       {{- if .defaultMode }}
       defaultMode: {{ .defaultMode }}
+      {{- end }}
       {{- end }}
   {{- else if eq .type "persistentVolumeClaim" }}
     persistentVolumeClaim:

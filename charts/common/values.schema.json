@@ -1090,6 +1090,25 @@
                   "type": "array",
                   "items": {
                     "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "items": {
+                        "type": "array",
+                        "properties": {
+                          "key": {
+                            "type": "string"
+                          },
+                          "path": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
                     "required": [
                       "name",
                       "type"

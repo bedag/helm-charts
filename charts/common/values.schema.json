@@ -1097,6 +1097,12 @@
                       "type": {
                         "type": "string"
                       },
+                      "existing": {
+                        "type": "boolean"
+                      },
+                      "optional": {
+                        "type": "boolean"
+                      },
                       "items": {
                         "type": "array",
                         "properties": {

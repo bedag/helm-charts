@@ -465,10 +465,12 @@ components:
       # volumes is a list of volumes to be created as secret or configMap
       volumes: []
       #   -- name of the volume
-      # - name: generic-name or existing-cm-name
+      # - name: generic-name, existing-cm-name or existing-secret-name
       #   -- type can either be "secret", "configMap", "persistentVolumeClaim", "emptyDir", "external" or "csi"
       #    type: "secret"
-      #   START ONLY FOR CONFIGMAP
+      #   START ONLY FOR EXISTING CONFIGMAP AND EXISTING SECRET
+      #    existing: true # when mounting an existpöing ressource this has to be true
+      #    optional: true # false - prevents pod startup if the resource doesn't exist. See: https://kubernetes.io/docs/concepts/configuration/secret/#restriction-secret-must-exist
       #    items:
       #      - key: foo.txt
       #        path: opt/foo.txt

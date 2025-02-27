@@ -201,6 +201,8 @@ servicemonitor:
 pvcs:
     # -- specify the name of the pvc
 # - name: name-of-pvc
+    # -- add pvc specific annotations
+#   annotations: {}
     # size is optional with a default value of "1Gi"
 #   size: 10Gi
     # -- accessModes is an optional list with a default list with the following slice: "ReadWriteOnce"

@@ -780,6 +780,9 @@
               "name-of-pvc"
             ]
           },
+          "annotations": {
+            "type": "object"
+          },
           "size": {
             "type": "string",
             "default": "1Gi"

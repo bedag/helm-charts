@@ -59,18 +59,37 @@ volumes:
   - name: {{ template "library.name" $root }}-{{ .name }}
   {{- if eq .type "secret" }}
     secret:
+      {{- if .existing }}
+      secretName: {{ .name }}
+      {{- if .optional }}
+      optional: true
+      {{- end }}
+      {{- if .items }}
+      items:
+      {{- range .items }}
+        - key: {{ .key }}
+          path: {{ .path }}
+      {{- end }}
+      {{- end }}
+      {{- else }}
       secretName: {{ template "library.name" $root }}-{{ .name }}
+      {{- end }}
       {{- if .defaultMode }}
       defaultMode: {{ .defaultMode }}
       {{- end }}
   {{- else if eq .type "configMap" }}
     configMap:
-      {{- if .items }}
+      {{- if .existing }}
       name: {{ .name }}
+      {{- if .optional }}
+      optional: true
+      {{- end }}
+      {{- if .items }}
       items:
       {{- range .items }}
         - key: {{ .key }}
           path: {{ .path }}
+      {{- end }}
       {{- end }}
       {{- else }}
       name: {{ template "library.name" $root }}-{{ .name }}

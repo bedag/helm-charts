@@ -370,7 +370,7 @@ machine:
   # -- Tag Version used for machine-controller components
   version: "v1.57.0"
 
-  # Kubelect Configuration
+  # Kubelet Configuration
   kubelet:
     # -- FeatureGates for kubelet
     featureGates: []
@@ -476,7 +476,7 @@ machine:
       tls:
         # -- Additional DNS Names for ADmission certificate
         dnsNames: []
-        # -- Additional IP adresses for Admission certificate
+        # -- Additional IP addresses for Admission certificate
         ipAddresses: []
         # -- Override the TLS Secret Name
         name: ""
@@ -772,7 +772,7 @@ osm:
       tls:
         # -- Additional DNS Names for ADmission certificate
         dnsNames: []
-        # -- Additional IP adresses for Admission certificate
+        # -- Additional IP addresses for Admission certificate
         ipAddresses: []
         # -- Override the TLS Secret Name
         name: ""
@@ -948,7 +948,7 @@ osm:
         # -- Set relabelings for the endpoint of the serviceMonitor
         relabelings: []
 
-  # SericeAccount
+  # ServiceAccount
   serviceAccount:
     # -- Specifies whether a service account should be created
     create: true
@@ -981,7 +981,7 @@ kubernetes:
   # -- Version for API Server, Scheduler, Controller Manager (Tag for all kubernetes components)
   version: "v1.25.0"
 
-  # -- ControlerPlaneEndpoint
+  # -- ControllerPlaneEndpoint
   controlPlane:
     # -- Endpoint for ControlPlane (eg `128.1314.1234.4242:6443`). If not set, the vcluster will try to find the endpoint automatically.
     endpoint:
@@ -1002,9 +1002,9 @@ kubernetes:
     enabled: true
 
     certSANs:
-      # -- Additonal DNS names for ETCD ceritifcate
+      # -- Additional DNS names for ETCD certificate
       dnsNames: []
-      # -- Additonal IP adresses names for ETCD ceritifcate
+      # -- Additional IP addresses names for ETCD certificate
       ipAddresses: []
 
     # -- Extra arguments for ETCD
@@ -1079,7 +1079,7 @@ kubernetes:
     # -- Configure PodDisruptionBudget
     podDisruptionBudget: {}
     # maxUnavailable: 1
-    # We recommend giving etcd some time to start up to garantuee a healthy cluster
+    # We recommend giving etcd some time to start up to guarantee a healthy cluster
     # -- Pod Management Policy
     podManagementPolicy: OrderedReady
     # -- Minimum ready seconds
@@ -1348,9 +1348,9 @@ kubernetes:
     etcdEndpoints: "pods"
 
     certSANs:
-      # -- Additonal API-Server dns names for ETCD ceritifcate
+      # -- Additional API-Server dns names for ETCD certificate
       dnsNames: []
-      # -- Additonal API-Server adresses for ETCD ceritifcate
+      # -- Additional API-Server addresses for ETCD certificate
       ipAddresses: []
 
     ## Ingress
@@ -1495,9 +1495,9 @@ kubernetes:
         namespace: ''
         # -- Name of the scrape_job
         jobName: ''
-        # -- Probeing Interval
+        # -- Probing Interval
         interval: ''
-        # -- Module to use for the probeing
+        # -- Module to use for the probing
         module: ''
         # -- Prober Configuration
         prober:
@@ -1977,7 +1977,7 @@ kubernetes:
       enabled: true
       # -- This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment.
       mode: GRPC
-      # -- Enable Konnectivity Server as sidecfar for API Server
+      # -- Enable Konnectivity Server as sidecar for API Server
       sidecar: true
       # Konnectivity Server Image
       image:
@@ -2175,7 +2175,7 @@ kubernetes:
 #   Reference: https://github.com/kube-green/kube-green
 # ----------------------------
 autoscaler:
-  # -- Enable autsocaler component
+  # -- Enable autoscaler component
   enabled: false
   ## Priorities Expander
   # -- The expanderPriorities is used if `extraArgs.expander` contains `priority` and expanderPriorities is also set with the priorities.

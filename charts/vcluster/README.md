@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.8.2](https://img.shields.io/badge/Version-0.8.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.9.0](https://img.shields.io/badge/Version-0.9.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -425,6 +425,7 @@ Deploys [Kubernetes API Server](https://kubernetes.io/docs/reference/command-lin
 | kubernetes.apiServer.enabled | bool | `true` | Enable Kubernetes API-Server |
 | kubernetes.apiServer.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.apiServer.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.apiServer.etcdEndpoints | string | `"pods"` | ETCD Endpoints on how the API-Server should communicate with the etcd cluster. Can be "pods" or "service" |
 | kubernetes.apiServer.image.digest | string | `""` | Image digest |
 | kubernetes.apiServer.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | kubernetes.apiServer.image.registry | string | `"registry.k8s.io"` | Image registry |
@@ -591,6 +592,33 @@ Deploys [ETCD](https://etcd.io/).
 | kubernetes.etcd.args | object | `{"snapshot-count":10000}` | Extra arguments for ETCD |
 | kubernetes.etcd.certSANs.dnsNames | list | `[]` | Additonal DNS names for ETCD ceritifcate |
 | kubernetes.etcd.certSANs.ipAddresses | list | `[]` | Additonal IP adresses names for ETCD ceritifcate |
+| kubernetes.etcd.cleanup.affinity | object | `{}` | Affinity |
+| kubernetes.etcd.cleanup.annotations | object | `{}` | Annotations for Workload |
+| kubernetes.etcd.cleanup.enabled | bool | `false` | Enable ETCD Backup Cleanup |
+| kubernetes.etcd.cleanup.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
+| kubernetes.etcd.cleanup.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.etcd.cleanup.failedJobsHistoryLimit | int | `3` | Failed Jobs History Limit for ETCD Backup Cleanup |
+| kubernetes.etcd.cleanup.image.digest | string | `""` | Image Digest |
+| kubernetes.etcd.cleanup.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| kubernetes.etcd.cleanup.image.registry | string | `"docker.io"` | Image registry |
+| kubernetes.etcd.cleanup.image.repository | string | `"busybox"` | Image repository |
+| kubernetes.etcd.cleanup.image.tag | string | `"1.37.0"` | Image tag |
+| kubernetes.etcd.cleanup.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
+| kubernetes.etcd.cleanup.labels | object | `{}` | Labels for Workload |
+| kubernetes.etcd.cleanup.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.etcd.cleanup.podAnnotations | object | `{}` | Pod Annotations |
+| kubernetes.etcd.cleanup.podLabels | object | `{}` | Pod Labels |
+| kubernetes.etcd.cleanup.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| kubernetes.etcd.cleanup.priorityClassName | string | `""` | Pod PriorityClassName |
+| kubernetes.etcd.cleanup.resources | object | `{}` | Pod Requests and limits |
+| kubernetes.etcd.cleanup.restartPolicy | string | `"OnFailure"` | Restart Policy for ETCD Backup Cleanup |
+| kubernetes.etcd.cleanup.retentionDays | string | `"7"` | Number of days to keep backups |
+| kubernetes.etcd.cleanup.schedule | string | `"0 8 * * *"` | Schedule for ETCD Backup Cleanup |
+| kubernetes.etcd.cleanup.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"readOnlyRootFilesystem":true}` | Container Security Context |
+| kubernetes.etcd.cleanup.successfulJobsHistoryLimit | int | `3` | Successful Jobs History Limit for ETCD Backup Cleanup |
+| kubernetes.etcd.cleanup.tolerations | list | `[]` | Tolerations |
+| kubernetes.etcd.cleanup.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
+| kubernetes.etcd.cleanup.ttlSecondsAfterFinished | int | `120` | ttlSecondsAfterFinished for ETCD Backup Cleanup |
 | kubernetes.etcd.enabled | bool | `true` | Enable ETCD |
 | kubernetes.etcd.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.etcd.envsFrom | list | `[]` | Extra environment variables from |
@@ -598,10 +626,15 @@ Deploys [ETCD](https://etcd.io/).
 | kubernetes.etcd.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | kubernetes.etcd.image.registry | string | `"registry.k8s.io"` | Image registry |
 | kubernetes.etcd.image.repository | string | `"etcd"` | Image repository |
-| kubernetes.etcd.image.tag | string | `"3.5.7-0"` | Image tag |
+| kubernetes.etcd.image.tag | string | `"3.5.21-0"` | Image tag |
 | kubernetes.etcd.imagePullSecrets | list | `[]` | Image pull Secrets |
 | kubernetes.etcd.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.etcd.labels | object | `{}` | Labels for Workload |
+| kubernetes.etcd.livenessProbe.failureThreshold | int | `8` | Set failure threshold for livenessProbe |
+| kubernetes.etcd.livenessProbe.initialDelaySeconds | int | `15` | Set initial delay seconds for livenessProbe |
+| kubernetes.etcd.livenessProbe.path | string | `"/livez"` | Set path for livenessProbe |
+| kubernetes.etcd.livenessProbe.scheme | string | `"HTTP"` | Set scheme for livenessProbe |
+| kubernetes.etcd.livenessProbe.timeoutSeconds | int | `15` | Set timeout seconds for livenessProbe |
 | kubernetes.etcd.metrics.service.annotations | object | `{}` | Service Annotations |
 | kubernetes.etcd.metrics.service.labels | object | `{}` | Service Labels |
 | kubernetes.etcd.metrics.serviceMonitor.annotations | object | `{}` | Assign additional Annotations |
@@ -632,6 +665,11 @@ Deploys [ETCD](https://etcd.io/).
 | kubernetes.etcd.ports.metrics | int | `2381` | ETCD Metrics Port |
 | kubernetes.etcd.ports.peer | int | `2380` | ETCD Peer Port |
 | kubernetes.etcd.priorityClassName | string | `""` | Pod PriorityClassName |
+| kubernetes.etcd.readinessProbe.failureThreshold | int | `3` | Set failure threshold for readinessProbe |
+| kubernetes.etcd.readinessProbe.initialDelaySeconds | int | `15` | Set initial delay seconds for readinessProbe |
+| kubernetes.etcd.readinessProbe.path | string | `"/readyz"` | Set path for readinessProbe |
+| kubernetes.etcd.readinessProbe.scheme | string | `"HTTP"` | Set scheme for readinessProbe |
+| kubernetes.etcd.readinessProbe.timeoutSeconds | int | `5` | Set timeout seconds for readinessProbe |
 | kubernetes.etcd.replicaCount | int | `3` | Replicas for ETCD Pods |
 | kubernetes.etcd.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Pod Requests and limits |
 | kubernetes.etcd.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"readOnlyRootFilesystem":true}` | Container Security Context |

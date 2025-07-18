@@ -1018,7 +1018,7 @@ kubernetes:
       # -- Image repository
       repository: etcd
       # -- Image tag
-      tag: 3.5.7-0
+      tag: 3.5.21-0
       # -- Image Digest
       digest: ""
       # -- Image pull policy
@@ -1086,7 +1086,30 @@ kubernetes:
     minReadySeconds: 10
     # -- Update Strategy
     updateStrategy: {}
-
+    # livenessProbe
+    livenessProbe:
+      # -- Set failure threshold for livenessProbe
+      failureThreshold: 8
+      # -- Set initial delay seconds for livenessProbe
+      initialDelaySeconds: 15
+      # -- Set timeout seconds for livenessProbe
+      timeoutSeconds: 15
+      # -- Set path for livenessProbe
+      path: "/livez"
+      # -- Set scheme for livenessProbe
+      scheme: "HTTP"
+    # readinessProbe
+    readinessProbe:
+      # -- Set failure threshold for readinessProbe
+      failureThreshold: 3
+      # -- Set initial delay seconds for readinessProbe
+      initialDelaySeconds: 15
+      # -- Set timeout seconds for readinessProbe
+      timeoutSeconds: 5
+      # -- Set path for readinessProbe
+      path: "/readyz"
+      # -- Set scheme for readinessProbe
+      scheme: "HTTP"
     # Persistence
     persistence:
       # -- Enable Persistence for ETCD
@@ -1245,10 +1268,84 @@ kubernetes:
         finalizers:
           - kubernetes.io/pvc-protection
 
+    # ETCD Backup Cleanup
+    cleanup:
+      # -- Enable ETCD Backup Cleanup
+      enabled: false
+      # -- Number of days to keep backups
+      retentionDays: "7"
+      # -- Schedule for ETCD Backup Cleanup
+      schedule: "0 8 * * *"
+      # -- Successful Jobs History Limit for ETCD Backup Cleanup
+      successfulJobsHistoryLimit: 3
+      # -- Failed Jobs History Limit for ETCD Backup Cleanup
+      failedJobsHistoryLimit: 3
+      # -- ttlSecondsAfterFinished for ETCD Backup Cleanup
+      ttlSecondsAfterFinished: 120
+      # -- Restart Policy for ETCD Backup Cleanup
+      restartPolicy: OnFailure
+      # Image
+      image:
+        # -- Image registry
+        registry: docker.io
+        # -- Image repository
+        repository: busybox
+        # -- Image tag
+        tag: 1.37.0
+        # -- Image Digest
+        digest: ""
+        # -- Image pull policy
+        pullPolicy: IfNotPresent
+      # -- Pod Requests and limits
+      resources: {}
+      # -- Labels for Workload
+      labels: {}
+      # -- Annotations for Workload
+      annotations: {}
+      # -- Pod Labels
+      podLabels: {}
+      # -- Pod Annotations
+      podAnnotations: {}
+      # -- Extra environment variables (`key: value` style, allows templating)
+      envs: {}
+      # -- Extra environment variables from
+      envsFrom: []
+      # -- Inject Proxy as Environment Variables
+      injectProxy: false
+      # -- Pod Security Context
+      podSecurityContext:
+        enabled: true
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      # -- Container Security Context
+      securityContext:
+        enabled: true
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+          - ALL
+      # -- Node Selector
+      nodeSelector: {}
+      # -- Tolerations
+      tolerations: []
+      podAntiAffinity: soft
+      podAntiAffinityTopologyKey: kubernetes.io/hostname
+      # -- Affinity
+      affinity: {}
+      # -- Pod PriorityClassName
+      priorityClassName: ""
+      # -- TopologySpreadConstraints for all workloads
+      topologySpreadConstraints: []
+
   ## Kubernetes API-Server
   apiServer:
     # -- Enable Kubernetes API-Server
     enabled: true
+
+    # -- ETCD Endpoints on how the API-Server should communicate with the etcd cluster. Can be "pods" or "service"
+    etcdEndpoints: "pods"
 
     certSANs:
       # -- Additonal API-Server dns names for ETCD ceritifcate

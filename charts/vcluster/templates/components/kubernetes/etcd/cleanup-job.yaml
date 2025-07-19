@@ -104,8 +104,8 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end }}
             env:
-              - name: ETCD_SNAPSHOT_RETENTION_DAYS
-                value: {{ $kubernetes.etcd.cleanup.retentionDays | quote }}
+            - name: ETCD_SNAPSHOT_RETENTION_DAYS
+              value: {{ $kubernetes.etcd.cleanup.retentionDays | quote }}
             {{- if $kubernetes.etcd.cleanup.injectProxy }}
               {{- include "pkg.common.env.w-proxy" $ | nindent 12 }}
             {{- else }}

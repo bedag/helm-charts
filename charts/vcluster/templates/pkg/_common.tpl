@@ -143,11 +143,11 @@ Common Selector Labels
 {{- define "pkg.common.proxy.env" -}}
   {{- if (include "pkg.common.proxy.enabled" $) -}}
     {{- with (include "pkg.common.proxy.host" $) }}
-- name: "HTTP_RROXY"
+- name: "HTTP_PROXY"
   value: {{ . | quote }}
 - name: "http_proxy"
   value: {{ . | quote }}
-- name: "HTTPS_RROXY"
+- name: "HTTPS_PROXY"
   value: {{ . | quote }}
 - name: "https_proxy"
   value: {{ . | quote }}

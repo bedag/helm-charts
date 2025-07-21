@@ -98,6 +98,19 @@ Generate etcd servers list.
   {{- end -}}
 {{- end -}}
 
+{{- define "kubernetes.etcdCtlEndpoints" -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- $fullName := include "kubernetes.fullname" . -}}
+  {{- range $etcdcount, $e := until (int $kubernetes.etcd.replicaCount) -}}
+    {{- printf "https://" -}}
+    {{- printf "%s-etcd-%d." $fullName $etcdcount -}}
+    {{- printf "%s-etcd.%s:%d" $fullName $.Release.Namespace (int $kubernetes.etcd.ports.client) -}}
+    {{- if lt $etcdcount (sub (int $kubernetes.etcd.replicaCount) 1 ) -}}
+      {{- printf "," -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
 {{- define "kubernetes.etcdInitialCluster" -}}
   {{- $kubernetes := $.Values.kubernetes -}}
   {{- $fullName := include "kubernetes.fullname" . -}}

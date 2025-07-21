@@ -1198,6 +1198,8 @@ kubernetes:
       ttlSecondsAfterFinished: 120
       # -- Restart Policy for ETCD Backup
       restartPolicy: OnFailure
+      # -- Image pull Secrets
+      imagePullSecrets: []
       # -- Extra arguments for ETCD Backup
       args: {}
       # -- Pod Requests and limits
@@ -1296,6 +1298,8 @@ kubernetes:
         digest: ""
         # -- Image pull policy
         pullPolicy: IfNotPresent
+      # -- Image pull Secrets
+      imagePullSecrets: []
       # -- Pod Requests and limits
       resources: {}
       # -- Labels for Workload

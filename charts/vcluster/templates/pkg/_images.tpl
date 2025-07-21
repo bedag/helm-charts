@@ -59,8 +59,8 @@ kube-system
   {{- if (include "pkg.images.registry.auth" $) }}
 - name: {{ template "pkg.images.registry.secretname" $ }}
   {{- end }}
-  {{- if $components.workloads.image.pullsecrets }}
-     {{- toYaml $components.workloads.image.pullsecrets | nindent 0 }}
+  {{- if $components.workloads.image.pullSecrets }}
+    {{- toYaml $components.workloads.image.pullSecrets | nindent 0 }}
   {{- end }}
 {{- end -}}
 

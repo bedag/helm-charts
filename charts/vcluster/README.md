@@ -603,6 +603,7 @@ Deploys [ETCD](https://etcd.io/).
 | kubernetes.etcd.cleanup.image.registry | string | `"docker.io"` | Image registry |
 | kubernetes.etcd.cleanup.image.repository | string | `"busybox"` | Image repository |
 | kubernetes.etcd.cleanup.image.tag | string | `"1.37.0"` | Image tag |
+| kubernetes.etcd.cleanup.imagePullSecrets | list | `[]` | Image pull Secrets |
 | kubernetes.etcd.cleanup.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.etcd.cleanup.labels | object | `{}` | Labels for Workload |
 | kubernetes.etcd.cleanup.nodeSelector | object | `{}` | Node Selector |
@@ -693,6 +694,7 @@ Scheduled snapshots of ETCD via Cronjob.
 | kubernetes.etcd.backup.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.etcd.backup.envsFrom | list | `[]` | Extra environment variables from |
 | kubernetes.etcd.backup.failedJobsHistoryLimit | int | `3` | Failed Jobs History Limit for ETCD Backup |
+| kubernetes.etcd.backup.imagePullSecrets | list | `[]` | Image pull Secrets |
 | kubernetes.etcd.backup.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.etcd.backup.labels | object | `{}` | Labels for Workload |
 | kubernetes.etcd.backup.nodeSelector | object | `{}` | Node Selector |

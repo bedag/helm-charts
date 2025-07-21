@@ -143,13 +143,21 @@ spec:
         - containerPort: {{ $kubernetes.etcd.ports.metrics }}
           name: http-metrics
         livenessProbe:
-          failureThreshold: 8
+          failureThreshold: {{ $kubernetes.etcd.livenessProbe.failureThreshold }}
           httpGet:
-            path: /health
+            path: {{ $kubernetes.etcd.livenessProbe.path | quote }}
             port: {{ $kubernetes.etcd.ports.metrics }}
-            scheme: HTTP
-          initialDelaySeconds: 15
-          timeoutSeconds: 15
+            scheme: {{ $kubernetes.etcd.livenessProbe.scheme | quote }}
+          initialDelaySeconds: {{ $kubernetes.etcd.livenessProbe.initialDelaySeconds }}
+          timeoutSeconds: {{ $kubernetes.etcd.livenessProbe.timeoutSeconds }}
+        readinessProbe:
+          failureThreshold: {{ $kubernetes.etcd.readinessProbe.failureThreshold }}
+          httpGet:
+            path: {{ $kubernetes.etcd.readinessProbe.path | quote }}
+            port: {{ $kubernetes.etcd.ports.metrics }}
+            scheme: {{ $kubernetes.etcd.readinessProbe.scheme | quote }}
+          initialDelaySeconds: {{ $kubernetes.etcd.readinessProbe.initialDelaySeconds }}
+          timeoutSeconds: {{ $kubernetes.etcd.readinessProbe.timeoutSeconds }}
         name: etcd
         resources:
           {{- toYaml $kubernetes.etcd.resources | nindent 10 }}

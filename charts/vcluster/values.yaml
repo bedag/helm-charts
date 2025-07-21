@@ -370,7 +370,7 @@ machine:
   # -- Tag Version used for machine-controller components
   version: "v1.57.0"
 
-  # Kubelect Configuration
+  # Kubelet Configuration
   kubelet:
     # -- FeatureGates for kubelet
     featureGates: []
@@ -476,7 +476,7 @@ machine:
       tls:
         # -- Additional DNS Names for ADmission certificate
         dnsNames: []
-        # -- Additional IP adresses for Admission certificate
+        # -- Additional IP addresses for Admission certificate
         ipAddresses: []
         # -- Override the TLS Secret Name
         name: ""
@@ -772,7 +772,7 @@ osm:
       tls:
         # -- Additional DNS Names for ADmission certificate
         dnsNames: []
-        # -- Additional IP adresses for Admission certificate
+        # -- Additional IP addresses for Admission certificate
         ipAddresses: []
         # -- Override the TLS Secret Name
         name: ""
@@ -948,7 +948,7 @@ osm:
         # -- Set relabelings for the endpoint of the serviceMonitor
         relabelings: []
 
-  # SericeAccount
+  # ServiceAccount
   serviceAccount:
     # -- Specifies whether a service account should be created
     create: true
@@ -981,7 +981,7 @@ kubernetes:
   # -- Version for API Server, Scheduler, Controller Manager (Tag for all kubernetes components)
   version: "v1.25.0"
 
-  # -- ControlerPlaneEndpoint
+  # -- ControllerPlaneEndpoint
   controlPlane:
     # -- Endpoint for ControlPlane (eg `128.1314.1234.4242:6443`). If not set, the vcluster will try to find the endpoint automatically.
     endpoint:
@@ -1002,9 +1002,9 @@ kubernetes:
     enabled: true
 
     certSANs:
-      # -- Additonal DNS names for ETCD ceritifcate
+      # -- Additional DNS names for ETCD certificate
       dnsNames: []
-      # -- Additonal IP adresses names for ETCD ceritifcate
+      # -- Additional IP addresses names for ETCD certificate
       ipAddresses: []
 
     # -- Extra arguments for ETCD
@@ -1018,7 +1018,7 @@ kubernetes:
       # -- Image repository
       repository: etcd
       # -- Image tag
-      tag: 3.5.7-0
+      tag: 3.5.21-0
       # -- Image Digest
       digest: ""
       # -- Image pull policy
@@ -1079,14 +1079,37 @@ kubernetes:
     # -- Configure PodDisruptionBudget
     podDisruptionBudget: {}
     # maxUnavailable: 1
-    # We recommend giving etcd some time to start up to garantuee a healthy cluster
+    # We recommend giving etcd some time to start up to guarantee a healthy cluster
     # -- Pod Management Policy
     podManagementPolicy: OrderedReady
     # -- Minimum ready seconds
     minReadySeconds: 10
     # -- Update Strategy
     updateStrategy: {}
-
+    # livenessProbe
+    livenessProbe:
+      # -- Set failure threshold for livenessProbe
+      failureThreshold: 8
+      # -- Set initial delay seconds for livenessProbe
+      initialDelaySeconds: 15
+      # -- Set timeout seconds for livenessProbe
+      timeoutSeconds: 15
+      # -- Set path for livenessProbe
+      path: "/livez"
+      # -- Set scheme for livenessProbe
+      scheme: "HTTP"
+    # readinessProbe
+    readinessProbe:
+      # -- Set failure threshold for readinessProbe
+      failureThreshold: 3
+      # -- Set initial delay seconds for readinessProbe
+      initialDelaySeconds: 15
+      # -- Set timeout seconds for readinessProbe
+      timeoutSeconds: 5
+      # -- Set path for readinessProbe
+      path: "/readyz"
+      # -- Set scheme for readinessProbe
+      scheme: "HTTP"
     # Persistence
     persistence:
       # -- Enable Persistence for ETCD
@@ -1175,6 +1198,8 @@ kubernetes:
       ttlSecondsAfterFinished: 120
       # -- Restart Policy for ETCD Backup
       restartPolicy: OnFailure
+      # -- Image pull Secrets
+      imagePullSecrets: []
       # -- Extra arguments for ETCD Backup
       args: {}
       # -- Pod Requests and limits
@@ -1245,15 +1270,91 @@ kubernetes:
         finalizers:
           - kubernetes.io/pvc-protection
 
+    # ETCD Backup Cleanup
+    cleanup:
+      # -- Enable ETCD Backup Cleanup
+      enabled: false
+      # -- Number of days to keep backups
+      retentionDays: "7"
+      # -- Schedule for ETCD Backup Cleanup
+      schedule: "0 8 * * *"
+      # -- Successful Jobs History Limit for ETCD Backup Cleanup
+      successfulJobsHistoryLimit: 3
+      # -- Failed Jobs History Limit for ETCD Backup Cleanup
+      failedJobsHistoryLimit: 3
+      # -- ttlSecondsAfterFinished for ETCD Backup Cleanup
+      ttlSecondsAfterFinished: 120
+      # -- Restart Policy for ETCD Backup Cleanup
+      restartPolicy: OnFailure
+      # Image
+      image:
+        # -- Image registry
+        registry: docker.io
+        # -- Image repository
+        repository: busybox
+        # -- Image tag
+        tag: 1.37.0
+        # -- Image Digest
+        digest: ""
+        # -- Image pull policy
+        pullPolicy: IfNotPresent
+      # -- Image pull Secrets
+      imagePullSecrets: []
+      # -- Pod Requests and limits
+      resources: {}
+      # -- Labels for Workload
+      labels: {}
+      # -- Annotations for Workload
+      annotations: {}
+      # -- Pod Labels
+      podLabels: {}
+      # -- Pod Annotations
+      podAnnotations: {}
+      # -- Extra environment variables (`key: value` style, allows templating)
+      envs: {}
+      # -- Extra environment variables from
+      envsFrom: []
+      # -- Inject Proxy as Environment Variables
+      injectProxy: false
+      # -- Pod Security Context
+      podSecurityContext:
+        enabled: true
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      # -- Container Security Context
+      securityContext:
+        enabled: true
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop:
+          - ALL
+      # -- Node Selector
+      nodeSelector: {}
+      # -- Tolerations
+      tolerations: []
+      podAntiAffinity: soft
+      podAntiAffinityTopologyKey: kubernetes.io/hostname
+      # -- Affinity
+      affinity: {}
+      # -- Pod PriorityClassName
+      priorityClassName: ""
+      # -- TopologySpreadConstraints for all workloads
+      topologySpreadConstraints: []
+
   ## Kubernetes API-Server
   apiServer:
     # -- Enable Kubernetes API-Server
     enabled: true
 
+    # -- ETCD Endpoints on how the API-Server should communicate with the etcd cluster. Can be "pods" or "service"
+    etcdEndpoints: "pods"
+
     certSANs:
-      # -- Additonal API-Server dns names for ETCD ceritifcate
+      # -- Additional API-Server dns names for ETCD certificate
       dnsNames: []
-      # -- Additonal API-Server adresses for ETCD ceritifcate
+      # -- Additional API-Server addresses for ETCD certificate
       ipAddresses: []
 
     ## Ingress
@@ -1398,9 +1499,9 @@ kubernetes:
         namespace: ''
         # -- Name of the scrape_job
         jobName: ''
-        # -- Probeing Interval
+        # -- Probing Interval
         interval: ''
-        # -- Module to use for the probeing
+        # -- Module to use for the probing
         module: ''
         # -- Prober Configuration
         prober:
@@ -1880,7 +1981,7 @@ kubernetes:
       enabled: true
       # -- This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment.
       mode: GRPC
-      # -- Enable Konnectivity Server as sidecfar for API Server
+      # -- Enable Konnectivity Server as sidecar for API Server
       sidecar: true
       # Konnectivity Server Image
       image:
@@ -2078,7 +2179,7 @@ kubernetes:
 #   Reference: https://github.com/kube-green/kube-green
 # ----------------------------
 autoscaler:
-  # -- Enable autsocaler component
+  # -- Enable autoscaler component
   enabled: false
   ## Priorities Expander
   # -- The expanderPriorities is used if `extraArgs.expander` contains `priority` and expanderPriorities is also set with the priorities.

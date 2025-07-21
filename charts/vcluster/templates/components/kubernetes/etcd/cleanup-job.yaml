@@ -1,0 +1,141 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if and $kubernetes.etcd.enabled $kubernetes.etcd.cleanup.enabled -}}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "etcd" -}}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $fullName }}-etcd-cleanup
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+    {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.etcd.cleanup.labels "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.etcd.cleanup.annotations "ctx" $)) }}
+  annotations:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  schedule: "{{ $kubernetes.etcd.cleanup.schedule }}"
+  successfulJobsHistoryLimit: {{ $kubernetes.etcd.cleanup.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ $kubernetes.etcd.cleanup.failedJobsHistoryLimit }}
+  jobTemplate:
+    metadata:
+      labels:
+        {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+        {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.etcd.cleanup.labels "ctx" $)) }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.etcd.cleanup.annotations "ctx" $)) }}
+      annotations:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with $kubernetes.etcd.cleanup.ttlSecondsAfterFinished }}
+      ttlSecondsAfterFinished: {{ . }}
+      {{- end }}
+      template:
+        metadata:
+          labels: {{- include "kubernetes.labels" $ | nindent 12 }}
+            {{- include "pkg.components.pod_labels" (dict "labels" $kubernetes.etcd.cleanup.podLabels "ctx" $) | nindent 12 }}
+            {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+          annotations:
+            {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.etcd.cleanup.podAnnotations "ctx" $) | nindent 12 }}
+        spec:
+          {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $kubernetes.etcd.cleanup.nodeSelector "ctx" $)) }}
+          nodeSelector: {{- . | nindent 12 }}
+          {{- end }}
+          {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.etcd.cleanup.tolerations "ctx" $)) }}
+          tolerations:  {{- . | nindent 12 }}
+          {{- end }}
+          {{- with (include "pkg.components.priorityClass" (dict "pc" $kubernetes.etcd.cleanup.priorityClassName "ctx" $)) }}
+          priorityClassName: {{ . }}
+          {{- end }}
+          {{- with (include "pkg.components.topologySpreadConstraints" (dict "tsc" $kubernetes.etcd.cleanup.topologySpreadConstraints "ctx" $)) }}
+          topologySpreadConstraints: {{ . | nindent 12 }}
+          {{- end }}
+          affinity:
+          {{- with (include "pkg.components.affinity" (dict "affinity" $kubernetes.etcd.cleanup.affinity "ctx" $)) }}
+            {{- . | nindent 10 }}
+          {{- end }}
+          {{- if eq $kubernetes.etcd.cleanup.podAntiAffinity "hard" }}
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - topologyKey: "{{ $kubernetes.etcd.cleanup.podAntiAffinityTopologyKey }}"
+                  labelSelector:
+                    matchLabels:
+                      app: {{ $fullName }}-etcd
+          {{- else if eq $kubernetes.etcd.cleanup.podAntiAffinity "soft" }}
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 1
+                  podAffinityTerm:
+                    topologyKey: "{{ $kubernetes.etcd.cleanup.podAntiAffinityTopologyKey }}"
+                    labelSelector:
+                      matchLabels:
+                        app: {{ $fullName }}-etcd
+          {{- end }}
+          imagePullSecrets: {{- include "pkg.images.registry.pullsecrets" $ | nindent 10 }}
+            {{- with $kubernetes.etcd.cleanup.imagePullSecrets }}
+              {{- toYaml . | nindent 10 }}
+            {{- end }}
+          automountServiceAccountToken: false
+          restartPolicy: {{ $kubernetes.etcd.cleanup.restartPolicy }}
+          containers:
+          - command:
+            - /bin/sh
+            - -xc
+            - |
+              SNAPSHOT_DIR="/snapshots"
+              echo "Starting snapshot cleanup..."
+              echo "Retention: $ETCD_SNAPSHOT_RETENTION_DAYS day(s)"
+              echo "Snapshot directory: $SNAPSHOT_DIR"
+              if [ -d "$SNAPSHOT_DIR" ]; then
+                find "$SNAPSHOT_DIR" -name '*.db' -type f -mtime +"$ETCD_SNAPSHOT_RETENTION_DAYS" -print -delete
+              else
+                echo "Snapshot directory $SNAPSHOT_DIR not found!"
+                exit 1
+              fi
+            {{- with $kubernetes.etcd.cleanup.envsFrom }}
+            envFrom:
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            env:
+            - name: ETCD_SNAPSHOT_RETENTION_DAYS
+              value: {{ $kubernetes.etcd.cleanup.retentionDays | quote }}
+            {{- if $kubernetes.etcd.cleanup.injectProxy }}
+              {{- include "pkg.common.env.w-proxy" $ | nindent 12 }}
+            {{- else }}
+              {{- include "pkg.common.env" $ | nindent 12 }}
+            {{- end }}
+            {{- with $kubernetes.etcd.cleanup.envs }}
+              {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 12 }}
+            {{- end }}
+            {{- with $kubernetes.etcd.cleanup.image }}
+            image: {{ include "pkg.images.registry.convert" (dict "image" . "ctx" $) }}
+            imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .pullPolicy "ctx" $) }}
+            {{- end }}
+            name: etcd-cleanup
+            {{- with (include "pkg.components.securityContext" (dict "sc" $kubernetes.etcd.cleanup.securityContext "ctx" $)) }}
+            securityContext: {{ . | nindent 14 }}
+            {{- end }}
+            resources:
+              {{- toYaml $kubernetes.etcd.cleanup.resources | nindent 14 }}
+            volumeMounts:
+            - mountPath: /snapshots
+              name: snapshots
+              {{- with $kubernetes.etcd.backup.persistence.subPath }}
+              subPath: {{ . }}
+              {{- end }}
+          {{- with (include "pkg.components.podSecurityContext" (dict "psc" $kubernetes.etcd.cleanup.podSecurityContext "ctx" $)) }}
+          securityContext: {{ . | nindent 12 }}
+          {{- end }}
+          volumes:
+          - name: snapshots
+            persistentVolumeClaim:
+              claimName: {{ $kubernetes.etcd.backup.persistence.existingClaim | default (printf "%s-etcd-backup" $fullName) }}
+  {{- end -}}
+{{- end -}}

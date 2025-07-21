@@ -124,7 +124,7 @@ spec:
         - name: ETCDCTL_KEY
           value: /pki/etcd/peer/tls.key
         - name: ETCDCTL_ENDPOINTS
-          value: {{ template "kubernetes.etcdEndpoints" . }}
+          value: {{ template "kubernetes.etcdCtlEndpoints" . }}
         {{- with $kubernetes.etcd.envs }}
           {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 8 }}
         {{- end }}

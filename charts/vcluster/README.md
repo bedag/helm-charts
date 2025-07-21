@@ -274,7 +274,7 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.admission.volumeMounts | list | `[]` | Volume Mounts |
 | machine.admission.webhook.timeoutSeconds | int | `30` | Admission Webhook Timeout |
 | machine.admission.webhook.tls.dnsNames | list | `[]` | Additional DNS Names for ADmission certificate |
-| machine.admission.webhook.tls.ipAddresses | list | `[]` | Additional IP adresses for Admission certificate |
+| machine.admission.webhook.tls.ipAddresses | list | `[]` | Additional IP addresses for Admission certificate |
 | machine.admission.webhook.tls.name | string | `""` | Override the TLS Secret Name |
 
 ## OSM Values
@@ -381,7 +381,7 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.admission.volumeMounts | list | `[]` | Pod VolumeMounts |
 | osm.admission.webhook.timeoutSeconds | int | `30` | Admission Webhook Timeout |
 | osm.admission.webhook.tls.dnsNames | list | `[]` | Additional DNS Names for ADmission certificate |
-| osm.admission.webhook.tls.ipAddresses | list | `[]` | Additional IP adresses for Admission certificate |
+| osm.admission.webhook.tls.ipAddresses | list | `[]` | Additional IP addresses for Admission certificate |
 | osm.admission.webhook.tls.name | string | `""` | Override the TLS Secret Name |
 
 ## Kubernetes Values
@@ -391,7 +391,7 @@ Available Values for the [Operating System Manager](). The component consists of
 Available Values for the [Kubernetes component](#kubernetes).
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| kubernetes.controlPlane | object | `{"endpoint":null}` | ControlerPlaneEndpoint |
+| kubernetes.controlPlane | object | `{"endpoint":null}` | ControllerPlaneEndpoint |
 | kubernetes.controlPlane.endpoint | string | `nil` | Endpoint for ControlPlane (eg `128.1314.1234.4242:6443`). If not set, the vcluster will try to find the endpoint automatically. |
 | kubernetes.enabled | bool | `true` | Enable Kubernetes Component |
 | kubernetes.kubeProxy.enabled | bool | `true` | Install kube-proxy via KubeADM. If disabled, the cilium kube-proxy replacement will be used |
@@ -420,8 +420,8 @@ Deploys [Kubernetes API Server](https://kubernetes.io/docs/reference/command-lin
 | kubernetes.apiServer.autoscaling.minReplicas | int | `1` | Minimum available Replicas |
 | kubernetes.apiServer.autoscaling.targetCPUUtilizationPercentage | int | `80` | Benchmark CPU Usage |
 | kubernetes.apiServer.autoscaling.targetMemoryUtilizationPercentage | string | `nil` | Benchmark Memory Usage |
-| kubernetes.apiServer.certSANs.dnsNames | list | `[]` | Additonal API-Server dns names for ETCD ceritifcate |
-| kubernetes.apiServer.certSANs.ipAddresses | list | `[]` | Additonal API-Server adresses for ETCD ceritifcate |
+| kubernetes.apiServer.certSANs.dnsNames | list | `[]` | Additional API-Server dns names for ETCD certificate |
+| kubernetes.apiServer.certSANs.ipAddresses | list | `[]` | Additional API-Server addresses for ETCD certificate |
 | kubernetes.apiServer.enabled | bool | `true` | Enable Kubernetes API-Server |
 | kubernetes.apiServer.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.apiServer.envsFrom | list | `[]` | Extra environment variables from |
@@ -439,10 +439,10 @@ Deploys [Kubernetes API Server](https://kubernetes.io/docs/reference/command-lin
 | kubernetes.apiServer.labels | object | `{}` | Labels for Workload |
 | kubernetes.apiServer.metrics.probe.annotations | object | `{}` | Assign additional Annotations |
 | kubernetes.apiServer.metrics.probe.enabled | bool | `false` | Enable Probe |
-| kubernetes.apiServer.metrics.probe.interval | string | `""` | Probeing Interval |
+| kubernetes.apiServer.metrics.probe.interval | string | `""` | Probing Interval |
 | kubernetes.apiServer.metrics.probe.jobName | string | `""` | Name of the scrape_job |
 | kubernetes.apiServer.metrics.probe.labels | object | `{}` | Assign additional labels according to Prometheus' probeSelector matching labels |
-| kubernetes.apiServer.metrics.probe.module | string | `""` | Module to use for the probeing |
+| kubernetes.apiServer.metrics.probe.module | string | `""` | Module to use for the probing |
 | kubernetes.apiServer.metrics.probe.namespace | string | `""` | Install the Probe into a different Namespace, as the monitoring stack one (default: the release one) |
 | kubernetes.apiServer.metrics.probe.prober | object | `{"path":"","proxyUrl":"","scheme":"","url":""}` | Prober Configuration |
 | kubernetes.apiServer.metrics.probe.prober.path | string | `""` | Prober path |
@@ -590,8 +590,8 @@ Deploys [ETCD](https://etcd.io/).
 | kubernetes.etcd.affinity | object | `{}` | Affinity |
 | kubernetes.etcd.annotations | object | `{}` | Annotations for Workload |
 | kubernetes.etcd.args | object | `{"snapshot-count":10000}` | Extra arguments for ETCD |
-| kubernetes.etcd.certSANs.dnsNames | list | `[]` | Additonal DNS names for ETCD ceritifcate |
-| kubernetes.etcd.certSANs.ipAddresses | list | `[]` | Additonal IP adresses names for ETCD ceritifcate |
+| kubernetes.etcd.certSANs.dnsNames | list | `[]` | Additional DNS names for ETCD certificate |
+| kubernetes.etcd.certSANs.ipAddresses | list | `[]` | Additional IP addresses names for ETCD certificate |
 | kubernetes.etcd.cleanup.affinity | object | `{}` | Affinity |
 | kubernetes.etcd.cleanup.annotations | object | `{}` | Annotations for Workload |
 | kubernetes.etcd.cleanup.enabled | bool | `false` | Enable ETCD Backup Cleanup |
@@ -761,7 +761,7 @@ The Konnectivity-Server is deployed alongside with the API-Server. It must be re
 | kubernetes.konnectivity.server.replicaCount | int | `2` | Konnectivity Server Replicas (only used in HTTPConnect mode) |
 | kubernetes.konnectivity.server.resources | object | `{"requests":{"cpu":"100m","memory":"128Mi"}}` | Konnectivity Server resources |
 | kubernetes.konnectivity.server.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["all"]},"enabled":true,"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsUser":65534}` | Container Security Context |
-| kubernetes.konnectivity.server.sidecar | bool | `true` | Enable Konnectivity Server as sidecfar for API Server |
+| kubernetes.konnectivity.server.sidecar | bool | `true` | Enable Konnectivity Server as sidecar for API Server |
 | kubernetes.konnectivity.server.strategy | object | `{"rollingUpdate":{"maxUnavailable":"50%"},"type":"RollingUpdate"}` | Deployment Update Strategy |
 | kubernetes.konnectivity.server.tolerations | list | `[]` | Tolerations |
 | kubernetes.konnectivity.server.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
@@ -880,7 +880,7 @@ Available Values for the [Autsocaler component](#autoscaler).
 ---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| autoscaler.enabled | bool | `false` | Enable autsocaler component |
+| autoscaler.enabled | bool | `false` | Enable autoscaler component |
 | autoscaler.expanderPriorities | object | `{}` | The expanderPriorities is used if `extraArgs.expander` contains `priority` and expanderPriorities is also set with the priorities. If `args.expander` contains `priority`, then expanderPriorities is used to define cluster-autoscaler-priority-expander priorities. See: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/expander/priority/readme.md |
 | autoscaler.priorityConfigMapAnnotations | object | `{}` | Annotations to add to `cluster-autoscaler-priority-expander` ConfigMap. |
 
@@ -892,7 +892,7 @@ Available Values for the [Autsocaler component](#autoscaler).
 | autoscaler.affinity | object | `{}` | Affinity |
 | autoscaler.annotations | object | `{}` | Annotations for Workload |
 | autoscaler.args | object | `{"leader-elect":true,"logtostderr":true,"scale-down-enabled":true,"stderrthreshold":"info","v":4}` | Additional container arguments. Refer to https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-the-parameters-to-ca for the full list of cluster autoscaler parameters and their default values. Everything after the first _ will be ignored allowing the use of multi-string arguments. |
-| autoscaler.enabled | bool | `false` | Enable autsocaler component |
+| autoscaler.enabled | bool | `false` | Enable autoscaler component |
 | autoscaler.envs | object | `{"CAPI_GROUP":"cluster.k8s.io"}` | Extra environment variables (`key: value` style, allows templating) |
 | autoscaler.envsFrom | list | `[]` | Extra environment variables from |
 | autoscaler.expanderPriorities | object | `{}` | The expanderPriorities is used if `extraArgs.expander` contains `priority` and expanderPriorities is also set with the priorities. If `args.expander` contains `priority`, then expanderPriorities is used to define cluster-autoscaler-priority-expander priorities. See: https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/expander/priority/readme.md |

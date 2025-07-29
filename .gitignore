@@ -26,3 +26,5 @@ Sessionx.vim
 .idea/
 .intellij/
 *.iml
+.project
+.settings

@@ -1008,8 +1008,7 @@ kubernetes:
       ipAddresses: []
 
     # -- Extra arguments for ETCD
-    args:
-      snapshot-count: 10000
+    args: {}
 
     # https://console.cloud.google.com/gcr/images/etcd-development/GLOBAL/etcd?pli=1
     image:
@@ -1018,7 +1017,7 @@ kubernetes:
       # -- Image repository
       repository: etcd
       # -- Image tag
-      tag: 3.5.21-0
+      tag: 3.6.4-0
       # -- Image Digest
       digest: ""
       # -- Image pull policy

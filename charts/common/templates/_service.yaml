@@ -29,7 +29,7 @@ spec:
   {{- end }}
   {{- end }}
   {{- if $service.clusterIP }}
-  clusterIP: {{ . }}
+  clusterIP: {{ $service.clusterIP }}
   {{- end }}
   ports:
     - name: {{ $service.name | default "http" }}

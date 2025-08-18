@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.9.1](https://img.shields.io/badge/Version-0.9.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.10.0](https://img.shields.io/badge/Version-0.10.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -589,7 +589,7 @@ Deploys [ETCD](https://etcd.io/).
 |-----|------|---------|-------------|
 | kubernetes.etcd.affinity | object | `{}` | Affinity |
 | kubernetes.etcd.annotations | object | `{}` | Annotations for Workload |
-| kubernetes.etcd.args | object | `{"snapshot-count":10000}` | Extra arguments for ETCD |
+| kubernetes.etcd.args | object | `{}` | Extra arguments for ETCD |
 | kubernetes.etcd.certSANs.dnsNames | list | `[]` | Additional DNS names for ETCD certificate |
 | kubernetes.etcd.certSANs.ipAddresses | list | `[]` | Additional IP addresses names for ETCD certificate |
 | kubernetes.etcd.cleanup.affinity | object | `{}` | Affinity |
@@ -627,7 +627,7 @@ Deploys [ETCD](https://etcd.io/).
 | kubernetes.etcd.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
 | kubernetes.etcd.image.registry | string | `"registry.k8s.io"` | Image registry |
 | kubernetes.etcd.image.repository | string | `"etcd"` | Image repository |
-| kubernetes.etcd.image.tag | string | `"3.5.21-0"` | Image tag |
+| kubernetes.etcd.image.tag | string | `"3.6.4-0"` | Image tag |
 | kubernetes.etcd.imagePullSecrets | list | `[]` | Image pull Secrets |
 | kubernetes.etcd.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
 | kubernetes.etcd.labels | object | `{}` | Labels for Workload |

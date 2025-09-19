@@ -3,7 +3,7 @@
 */}}
 {{- define "pkg.images.registry.url" -}}
   {{- if (include "pkg.images.registry.set" $) -}}
-    {{- $url := $.Values.global.registry.endpoint -}}
+    {{- $url := $.Values.global.registries.primary.endpoint -}}
     {{- printf "%s" ($url | trimAll "/") -}}
   {{- end -}}
 {{- end -}}
@@ -12,7 +12,7 @@
     Docker Registry Set
 */}}
 {{- define "pkg.images.registry.set" -}}
-{{- $url := $.Values.global.registry.endpoint -}}
+{{- $url := $.Values.global.registries.primary.endpoint -}}
   {{- if $url -}}
     {{- true -}}
   {{- end -}}
@@ -22,8 +22,8 @@
     Docker Credentials Set
 */}}
 {{- define "pkg.images.registry.auth" -}}
-{{- $registry := $.Values.global.registry -}}
-  {{- if and ($registry.creds.username) ($registry.creds.password) -}}
+{{- $registry := $.Values.global.registries -}}
+  {{- if and ($registry.primary.creds.username) ($registry.primary.creds.password) -}}
     {{- true -}}
   {{- end -}}
 {{- end -}}
@@ -47,10 +47,25 @@ kube-system
     Docker Credentials (DockerConfigJSON)
 */}}
 {{- define "pkg.images.dockerconfigjson" -}}
+  {{- $auths := list }}
+
   {{- if and (include "pkg.images.registry.set" $) (include "pkg.images.registry.auth" $) -}}
-    {{- $registry := $.Values.global.registry -}}
-    {{- printf "{\"auths\":{\"%s\":{\"auth\":\"%s\"}}}" (include "pkg.images.registry.url" $) (printf "%s:%s" $registry.creds.username $registry.creds.password | b64enc) | b64enc }}
-  {{- end -}}
+    {{- $registry := $.Values.global.registries.primary -}}
+    {{- $url := include "pkg.images.registry.url" $ }}
+    {{- $auth := printf "\"%s\":{\"auth\":\"%s\"}" $url (printf "%s:%s" $registry.creds.username $registry.creds.password | b64enc) }}
+    {{- $auths = append $auths $auth }}
+  {{- end }}
+
+  {{- range $url, $cfg := $.Values.global.registries.secondaries }}
+    {{- if and $cfg.creds.username $cfg.creds.password }}
+      {{- $auth := printf "\"%s\":{\"auth\":\"%s\"}" $url (printf "%s:%s" $cfg.creds.username $cfg.creds.password | b64enc) }}
+      {{- $auths = append $auths $auth }}
+    {{- end }}
+  {{- end }}
+
+  {{- if $auths }}
+    {{- printf "{\"auths\":{%s}}" (join "," $auths) | b64enc }}
+  {{- end }}
 {{- end -}}
 
 {{/* PullSecret for Registry */}}
@@ -64,7 +79,6 @@ kube-system
   {{- end }}
 {{- end -}}
 
-
 {{/* PullPolicy */}}
 {{- define "pkg.images.registry.pullpolicy" -}}
   {{- $components := $.ctx.Values.global.components -}}
@@ -76,7 +90,6 @@ kube-system
     {{ printf "%s" $policy }}
   {{- end -}}
 {{- end -}}
-
 
 {{/*
     Prepend Registry URL to Image
@@ -108,4 +121,14 @@ kube-system
     {{- $termination = $.tag_overwrite | toString -}}
   {{- end -}}
   {{- printf "%s/%s%s%s" $image_registry $image_repository $separator $termination -}}
+{{- end -}}
+
+{{/*
+    Registry Mirrors (containerd)
+*/}}
+{{- define "pkg.images.registry.mirrors" -}}
+  {{- $primary := $.Values.global.registries.primary.endpoint -}}
+  {{- range $registry, $path := $.Values.global.registries.mirrors }}
+- -node-containerd-registry-mirrors={{ $registry }}={{ printf "%s%s" $primary $path }}
+  {{- end }}
 {{- end -}}

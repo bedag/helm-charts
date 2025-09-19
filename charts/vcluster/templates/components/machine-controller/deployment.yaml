@@ -77,15 +77,6 @@ spec:
             {{- include "machine-controller.controller.args" $ | nindent 12 }}
             - -metrics-address=0.0.0.0:8080
             - -health-probe-address=0.0.0.0:8085
-            {{- if (include "operating-system-manager.enabled" $) }}
-            - -use-external-bootstrap
-            {{- end }}
-            {{- with (include "machine-controller.runtime" $) }}
-            - -node-container-runtime={{ . }}
-            {{- end }}
-            {{- with (include "machine-controller.pause" $) }}
-            - -node-pause-image={{ . }}
-            {{- end }}
             {{- with .args }}
               {{- include "pkg.utils.args" (dict "args" . "ctx" $) | nindent 12 }}
             {{- end }}

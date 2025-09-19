@@ -9,6 +9,13 @@ Component enabled
 {{- end }}
 
 {{/*
+Component Manifests Configmap/Secret name
+*/}}
+{{- define "operating-system-manager.manifests.name" -}}
+{{- printf "%s-manifests" (include "operating-system-manager.fullname" $) -}}
+{{- end }}
+
+{{/*
 Component Manifests directory
 */}}
 {{- define "operating-system-manager.manifests.dir" -}}
@@ -16,17 +23,10 @@ Component Manifests directory
 {{- end }}
 
 {{/*
-Component Manifests directory
+Component Manifests
 */}}
 {{- define "operating-system-manager.manifests" -}}
 {{- printf "%s/**.yaml" (include "operating-system-manager.manifests.dir" $) -}}
-{{- end }}
-
-{{/*
-Component Manifests Configmap/Secret name
-*/}}
-{{- define "operating-system-manager.manifests.name" -}}
-{{- printf "%s-manifests" (include "operating-system-manager.fullname" $) -}}
 {{- end }}
 
 {{/*
@@ -43,20 +43,11 @@ Component Webhook
 {{- printf "%s/**.yaml" (include "operating-system-manager.webhooks.dir" $) -}}
 {{- end }}
 
-
 {{/*
   Component
 */}}
 {{- define "operating-system-manager.component" -}}
 operating-system-manager
-{{- end }}
-
-
-{{/*
-Expand the name of the chart.
-*/}}
-{{- define "operating-system-manager.name" -}}
-{{- include "operating-system-manager.component" $ -}}
 {{- end }}
 
 {{/*
@@ -86,7 +77,6 @@ If release name contains chart name it will be used as a full name.
 {{ include "pkg.common.selectors" $ }}
 {{- end }}
 
-
 {{/*
 Create the name of the service account to use
 */}}
@@ -111,7 +101,6 @@ Create the name of the service account to use
   {{- end -}}
 {{- end -}}
 
-
 {{/*
 Create the Admission Webhook TLS Secret
 */}}
@@ -132,6 +121,73 @@ Self-Signed Admission Webhook TLS Secret
 {{- end -}}
 
 {{/*
+    Manifests Checksum
+*/}}
+{{- define "operating-system-manager.manifests.checksum" -}}
+checksum/manifests: {{ (.Files.Glob (include "operating-system-manager.manifests" $) | toYaml | sha256sum | quote) }}
+{{- end }}
+
+{{/*
+    Webhook Checksum
+*/}}
+{{- define "operating-system-manager.webhooks.checksum" -}}
+checksum/webhooks: {{ (.Files.Glob (include "operating-system-manager.webhooks" $) | toYaml | sha256sum | quote) }}
+{{- end }}
+
+{{/*
+    Common Controller Arguments
+*/}}
+{{- define "operating-system-manager.controller.args" -}}
+- -kubeconfig={{ include "pkg.cluster.cp.env.mount" $ }}
+  {{- if (include "pkg.common.proxy.enabled" $) }}
+    {{- with (include "pkg.common.proxy.host" $) }}
+- -node-http-proxy={{ . }}
+      {{- with (include "pkg.common.proxy.no_proxy" $) }}
+- -node-no-proxy={{ . | quote }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  {{- if (include "pkg.images.registry.set" $) }}
+    {{- if (include "pkg.images.registry.auth" $) }}
+- -node-registry-credentials-secret={{ include "pkg.images.registry.secretnamespace" $ }}/regcreds
+    {{- end }}
+  {{- end }}
+  {{- include "pkg.images.registry.mirrors" $ | nindent 0 }}
+- -cluster-dns={{ include "kubernetes.getCoreDNS" $ }}
+- -override-bootstrap-kubelet-apiserver={{ include "kubernetes.api.endpoint" $ }}
+  {{- with $.Values.osm.kubelet.featureGates }}
+- -node-kubelet-feature-gates={{ . | join "," | quote }}
+  {{- end }}
+{{- end -}}
+
+{{/*
+    Pause Image / OSM Compatible
+*/}}
+{{- define "operating-system-manager.pause" -}}
+{{- $osm := $.Values.osm -}}
+  {{- with $osm.pause }}
+    {{- include "pkg.images.registry.convert" (dict "image" .image "ctx" $) -}}
+  {{- end }}
+{{- end }}
+
+{{/*
+    Runtime / OSM Compatible
+*/}}
+{{- define "operating-system-manager.runtime" -}}
+{{- $osm := $.Values.osm -}}
+  {{- with $osm.runtime }}
+    {{- printf "%s" . -}}
+  {{- end }}
+{{- end }}
+
+{{/*
+Create the Admission Webhook Name
+*/}}
+{{- define "operating-system-manager.admission.webhook-name" -}}
+operating-system-manager-webhook
+{{- end -}}
+
+{{/*
   Admission URL
 */}}
 {{- define "operating-system-manager.admission.url" -}}
@@ -144,7 +200,7 @@ Self-Signed Admission Webhook TLS Secret
     {{- if (include "operating-system-manager.admission.expose.ingress" $) -}}
       {{- $base = (printf "https://%s/%s" (include "pkg.components.ingress.host" $) (include "operating-system-manager.admission.expose.ingress.context" $ | trimPrefix "/")) -}}
     {{- end -}}
-  
+
     {{/* Expose via Service (LoadBalancer) */}}
     {{- if (include "operating-system-manager.admission.expose.loadbalancer" $) -}}
       {{- $base = (printf "https://%s:%s" (include "operating-system-manager.admission.expose.loadbalancer.ip" $) (include "operating-system-manager.admission.expose.loadbalancer.port" $)) -}}
@@ -158,13 +214,13 @@ Self-Signed Admission Webhook TLS Secret
 {{- end -}}
 
 {{- define "operating-system-manager.admission.endpoint" -}}
+  {{/* Expose via Ingress */}}
   {{- if (include "operating-system-manager.admission.expose.ingress" $) -}}
     {{- printf "%s" (include "pkg.components.ingress.host" $) -}}
   {{- else if (include "operating-system-manager.admission.expose.loadbalancer" $) -}}
     {{- printf "%s" (include "operating-system-manager.admission.expose.loadbalancer.ip" $) -}}
   {{- end -}}
 {{- end -}}
-
 
 {{/*
 Admission Expose
@@ -181,7 +237,6 @@ Admission Expose
     {{- end -}}
   {{- end -}}
 {{- end -}}
-
 
 {{- define "operating-system-manager.admission.expose.loadbalancer.ip" -}}
   {{- $manifest := $.Values.osm -}}
@@ -207,28 +262,6 @@ Admission Expose
 {{- define "operating-system-manager.admission.expose.ingress.context" -}}
   {{- $manifest := $.Values.osm -}}
   {{- printf "%s" (required "Context Required" $manifest.admission.ingress.contextPath) -}}
-{{- end -}}
-
-
-{{/*
-    Manifests Checksum
-*/}}
-{{- define "operating-system-manager.manifests.checksum" -}}
-checksum/manifests: {{ (.Files.Glob (include "operating-system-manager.manifests" $) | toYaml | sha256sum | quote) }}
-{{- end }}
-
-{{/*
-    Manifests Checksum
-*/}}
-{{- define "operating-system-manager.webhooks.checksum" -}}
-checksum/webhooks: {{ (.Files.Glob (include "operating-system-manager.webhooks" $) | toYaml | sha256sum | quote) }}
-{{- end }}
-
-{{/*
-Create the Admission Webhook Name
-*/}}
-{{- define "operating-system-manager.admission.webhook-name" -}}
-operating-system-manager-webhook
 {{- end -}}
 
 {{/* Volumes for Admission Pod */}}
@@ -260,7 +293,6 @@ operating-system-manager-webhook
   {{- include "operating-system-manager.volumemounts.certs" $ | nindent 0 }}
 {{- end -}}
 
-
 {{/* VolumeMounts for Admission Pod */}}
 {{- define "operating-system-manager.volumemounts.certs" -}}
   {{- if (include "operating-system-manager.admission-enabled" $) }}
@@ -270,22 +302,20 @@ operating-system-manager-webhook
   {{- end }}
 {{- end -}}
 
-{{/* MountPath for webhooks */}}
-{{- define "operating-system-manager.volumemounts.webhooks.path" -}}
-/tmp/osm/webhooks/
-{{- end -}}
-
-
 {{/* MountPath for certificates */}}
 {{- define "operating-system-manager.volumemounts.certs.path" -}}
 /tmp/osm/serving-certs/
+{{- end -}}
+
+{{/* MountPath for webhooks */}}
+{{- define "operating-system-manager.volumemounts.webhooks.path" -}}
+/tmp/osm/webhooks/
 {{- end -}}
 
 {{/* MountPath for Manifests */}}
 {{- define "operating-system-manager.volumemounts.manifests.path" -}}
 /tmp/osm/manifests/
 {{- end -}}
-
 
 {{/*
   Ensure All
@@ -302,17 +332,17 @@ operating-system-manager-webhook
   {{- if (include "operating-system-manager.manifest-exist" $) -}}
 if ! [ `find {{ include "operating-system-manager.volumemounts.manifests.path" $ }} -prune -empty 2>/dev/null` ]; then
     {{- if (include "operating-system-manager.enabled" $) }}
-  # install operating-system-manager manifests
+  # Apply operating-system-manager Manifests
   kubectl apply -f {{ include "operating-system-manager.volumemounts.manifests.path" $ }}
     {{- else }}
       {{- if $.Values.osm.component.removeManifestsOnDisable }}
+  # Delete operating-system-manager Manifests
   kubectl delete -f {{ include "operating-system-manager.volumemounts.manifests.path" $ }} 2>/dev/null || true
       {{- end }}
     {{- end }}
 fi
   {{- end -}}
 {{- end -}}
-
 
 {{/*
  Validate if any Manifests are rendered
@@ -350,13 +380,12 @@ fi
   {{- end }}
 {{- end -}}
 
-
 {{/*
-Create the Admission Webhook TLS Secret
+  Ensure Webhooks
 */}}
 {{- define "operating-system-manager.admission.webhook-cert-patch" -}}
   {{- if not (include "operating-system-manager.admission-enabled" $) }}
-# Remove Webhooks
+# Remove Webhooks (Be explicit, since content may have changed)
 kubectl delete validatingwebhookconfiguration {{ include "operating-system-manager.admission.webhook-name" $ }} 2>/dev/null || true
 kubectl delete mutatingwebhookconfiguration {{ include "operating-system-manager.admission.webhook-name" $ }} 2>/dev/null || true
   {{- else }}
@@ -377,6 +406,5 @@ kubectl patch MutatingWebhookConfiguration {{ include "operating-system-manager.
   --type='json' -p="[\
   	{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value': \"${CA_BUNDLE}\"  }\
   ]";
-
   {{- end }}
 {{- end -}}

@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.10.0](https://img.shields.io/badge/Version-0.10.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.11.0](https://img.shields.io/badge/Version-0.11.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -108,9 +108,12 @@ Global Values
 | global.components.workloads.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads (Overwrites all workloads topologySpreadConstraints) |
 | global.proxy.host | string | `""` | Proxy Host |
 | global.proxy.no_proxy | string | `"10.0.0.0/8"` | No Proxy Hosts |
-| global.registry.creds.password | string | `""` | Registry Password |
-| global.registry.creds.username | string | `""` | Registry Username |
-| global.registry.endpoint | string | `""` | Registry Endpoint |
+| global.registries.mirrors | object | `{}` | Registry Mirrors (used for containerd config) |
+| global.registries.primary | object | `{"creds":{"password":"","username":""},"endpoint":""}` | Default Registry (used for kubeadm, node-registry-mirrors etc.) |
+| global.registries.primary.creds.password | string | `""` | Registry Password |
+| global.registries.primary.creds.username | string | `""` | Registry Username |
+| global.registries.primary.endpoint | string | `""` | Registry Endpoint |
+| global.registries.secondaries | object | `{}` | Additional Registries (used in regcred secret) |
 | global.storageClassName | string | `""` | StorageClassName for all persistent volumes |
 
 ## Utilities Values
@@ -185,7 +188,6 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.component.removeManifestsOnDisable | bool | `true` | Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well) |
 | machine.enabled | bool | `true` | Enable Machine-Controller Component |
 | machine.imagePullSecrets | list | `[]` | Image pull Secrets |
-| machine.kubelet.featureGates | list | `[]` | FeatureGates for kubelet |
 | machine.labels | object | `{}` | Labels for Workload |
 | machine.metrics.service.annotations | object | `{}` | Service Annotations |
 | machine.metrics.service.labels | object | `{}` | Service Labels |
@@ -201,18 +203,12 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.metrics.serviceMonitor.namespace | string | `""` | Install the ServiceMonitor into a different Namespace, as the monitoring stack one (default: the release one) |
 | machine.metrics.serviceMonitor.targetLabels | list | `[]` | Set targetLabels for the serviceMonitor |
 | machine.nodeSelector | object | `{}` | Node Selector |
-| machine.pause.image.digest | string | `""` | Image Digest |
-| machine.pause.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
-| machine.pause.image.registry | string | `""` | Image registry |
-| machine.pause.image.repository | string | `"pause"` | Image repository |
-| machine.pause.image.tag | string | `"3.5"` | Image tag |
 | machine.podAnnotations | object | `{}` | Pod Annotations |
 | machine.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
 | machine.podLabels | object | `{}` | Pod Labels |
 | machine.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":false,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
 | machine.priorityClassName | string | `""` | Pod PriorityClassName |
 | machine.replicaCount | int | `1` | Replicas for Admission Pods |
-| machine.runtime | string | `"containerd"` | Used Runtime |
 | machine.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | machine.serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | machine.serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |
@@ -298,6 +294,7 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.component.removeManifestsOnDisable | bool | `true` | Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well) |
 | osm.enabled | bool | `false` | Enable Operating System Manager Component |
 | osm.imagePullSecrets | list | `[]` | Image pull Secrets |
+| osm.kubelet.featureGates | list | `[]` | FeatureGates for kubelet |
 | osm.labels | object | `{}` | Labels for Workload |
 | osm.metrics.enabled | bool | `true` | Enable Metrics |
 | osm.metrics.service.annotations | object | `{}` | Service Annotations |
@@ -314,12 +311,18 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.metrics.serviceMonitor.namespace | string | `""` | Install the ServiceMonitor into a different Namespace, as the monitoring stack one (default: the release one) |
 | osm.metrics.serviceMonitor.targetLabels | list | `[]` | Set targetLabels for the serviceMonitor |
 | osm.nodeSelector | object | `{}` | Node Selector |
+| osm.pause.image.digest | string | `""` | Image Digest |
+| osm.pause.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| osm.pause.image.registry | string | `""` | Image registry |
+| osm.pause.image.repository | string | `"pause"` | Image repository |
+| osm.pause.image.tag | string | `"3.5"` | Image tag |
 | osm.podAnnotations | object | `{}` | Pod Annotations |
 | osm.podDisruptionBudget | object | `{}` | Configure PodDisruptionBudget |
 | osm.podLabels | object | `{}` | Pod Labels |
 | osm.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":false,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
 | osm.priorityClassName | string | `""` | Pod PriorityClassName |
 | osm.replicaCount | int | `1` | Replicas for Admission Pods |
+| osm.runtime | string | `"containerd"` | Used Runtime |
 | osm.serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
 | osm.serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | osm.serviceAccount.name | string | `""` | The name of the service account to use. If not set and create is true, a name is generated using the fullname template |

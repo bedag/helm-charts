@@ -23,7 +23,7 @@ Component Manifests directory
 {{- end }}
 
 {{/*
-Component Manifests directory
+Component Manifests
 */}}
 {{- define "machine-controller.manifests" -}}
 {{- printf "%s/**.yaml" (include "machine-controller.manifests.dir" $) -}}
@@ -36,9 +36,8 @@ Component Webhook directory
 {{- printf "webhooks/%s" (include "machine-controller.component" $) -}}
 {{- end }}
 
-
 {{/*
-Component Webhook directory
+Component Webhook
 */}}
 {{- define "machine-controller.webhooks" -}}
 {{- printf "%s/**.yaml" (include "machine-controller.webhooks.dir" $) -}}
@@ -49,13 +48,6 @@ Component Webhook directory
 */}}
 {{- define "machine-controller.component" -}}
 machine-controller
-{{- end }}
-
-{{/*
-Expand the name of the chart.
-*/}}
-{{- define "machine-controller.name" -}}
-{{- include "machine-controller.component" $ -}}
 {{- end }}
 
 {{/*
@@ -109,7 +101,6 @@ Create the name of the service account to use
   {{- end -}}
 {{- end -}}
 
-
 {{/*
 Create the Admission Webhook TLS Secret
 */}}
@@ -148,49 +139,8 @@ checksum/webhooks: {{ (.Files.Glob (include "machine-controller.webhooks" $) | t
 */}}
 {{- define "machine-controller.controller.args" -}}
 - -kubeconfig={{ include "pkg.cluster.cp.env.mount" $ }}
-  {{- if (include "pkg.common.proxy.enabled" $) }}
-    {{- with (include "pkg.common.proxy.host" $) }}
-- -node-http-proxy={{ . }}
-      {{- with (include "pkg.common.proxy.no_proxy" $) }}
-- -node-no-proxy={{ . | quote }}
-      {{- end }}
-    {{- end }}
-  {{- end }}
-  {{- if (include "pkg.images.registry.set" $) }}
-- -node-registry-mirrors={{ include "pkg.images.registry.url" $ }}
-#- -node-containerd-registry-mirrors
-    {{- if (include "pkg.images.registry.auth" $) }}
-- -node-registry-credentials-secret={{ include "pkg.images.registry.secretnamespace" $ }}/regcreds
-    {{- end }}
-  {{- end }}
-- -cluster-dns={{ include "kubernetes.getCoreDNS" $ }}
 - -override-bootstrap-kubelet-apiserver={{ include "kubernetes.api.endpoint" $ }}
-  {{- with $.Values.machine.kubelet.featureGates }}
-- -node-kubelet-feature-gates={{ . | join "," | quote }}
-  {{- end }}
 {{- end -}}
-
-{{/*
-    Pause Image / OSM Compatible
-*/}}
-{{- define "machine-controller.pause" -}}
-{{- $machine := $.Values.machine -}}
-  {{- with $machine.pause }}
-    {{- include "pkg.images.registry.convert" (dict "image" .image "ctx" $) -}}
-  {{- end }}
-{{- end }}
-
-
-{{/*
-    Runtime / OSM Compatible
-*/}}
-{{- define "machine-controller.runtime" -}}
-{{- $machine := $.Values.machine -}}
-  {{- with $machine.runtime }}
-    {{- printf "%s" . -}}
-  {{- end }}
-{{- end }}
-
 
 {{/*
 Create the Admission Webhook Name
@@ -212,7 +162,7 @@ machine-controller-mutating-webhook
     {{- if (include "machine-controller.admission.expose.ingress" $) -}}
       {{- $base = (printf "https://%s/%s" (include "pkg.components.ingress.host" $) (include "machine-controller.admission.expose.ingress.context" $ | trimPrefix "/")) -}}
     {{- end -}}
-  
+
     {{/* Expose via Service (LoadBalancer) */}}
     {{- if (include "machine-controller.admission.expose.loadbalancer" $) -}}
       {{- $base = (printf "https://%s:%s" (include "machine-controller.admission.expose.loadbalancer.ip" $) (include "machine-controller.admission.expose.loadbalancer.port" $)) -}}
@@ -250,7 +200,6 @@ Admission Expose
   {{- end -}}
 {{- end -}}
 
-
 {{- define "machine-controller.admission.expose.loadbalancer.ip" -}}
   {{- $machine := $.Values.machine -}}
   {{- with $machine.admission.service.loadBalancerIP -}}
@@ -276,7 +225,6 @@ Admission Expose
   {{- $machine := $.Values.machine -}}
   {{- printf "%s" (required "Context Required" $machine.admission.ingress.contextPath) -}}
 {{- end -}}
-
 
 {{/* Volumes for Admission Pod */}}
 {{- define "machine-controller.volumes" -}}
@@ -338,7 +286,6 @@ Admission Expose
   {{- include "machine-controller.manifest-create" $ | nindent 0 }}
   {{- include "machine-controller.admission.webhook-cert-patch" $ | nindent 0 }}
 {{- end -}}
-
 
 {{/*
   Ensure Manifests

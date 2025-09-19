@@ -72,13 +72,13 @@ spec:
           command:
             - /usr/local/bin/osm-controller
             - -namespace=kube-system
-            {{- include "machine-controller.controller.args" $ | nindent 12 }}
+            {{- include "operating-system-manager.controller.args" $ | nindent 12 }}
             - -metrics-address=0.0.0.0:8080
             - -health-probe-address=0.0.0.0:8085
-            {{- with (include "machine-controller.runtime" $) }}
+            {{- with (include "operating-system-manager.runtime" $) }}
             - -container-runtime={{ . }}
             {{- end }}
-            {{- with (include "machine-controller.pause" $) }}
+            {{- with (include "operating-system-manager.pause" $) }}
             - -pause-image={{ . }}
             {{- end }}
             {{- with .args }}

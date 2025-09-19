@@ -1,0 +1,16 @@
+global:
+  # Image Registries
+  registries:
+    # -- Default Registry (used for kubeadm, node-registry-mirrors etc.)
+    primary:
+      # -- Registry Endpoint
+      endpoint: "docker.io"
+      creds:
+        # -- Registry Username
+        username: "foo"
+        # -- Registry Password
+        password: "bar"
+    # -- Registry Mirrors (used for containerd config)
+    mirrors:
+      # -- Key: mirror URL, Value: path in primary registry
+      ghcr.io: "/ghcr"

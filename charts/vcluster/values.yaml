@@ -6,15 +6,28 @@ global:
     # -- No Proxy Hosts
     no_proxy: "10.0.0.0/8"
 
-  # Docker Registry
-  registry:
-    # -- Registry Endpoint
-    endpoint: ""
-    creds:
-      # -- Registry Username
-      username: ""
-      # -- Registry Password
-      password: ""
+  # Image Registries
+  registries:
+    # -- Default Registry (used for kubeadm, node-registry-mirrors etc.)
+    primary:
+      # -- Registry Endpoint
+      endpoint: ""
+      creds:
+        # -- Registry Username
+        username: ""
+        # -- Registry Password
+        password: ""
+    # -- Additional Registries (used in regcred secret)
+    secondaries: {}
+      # -- Key: registry url
+      # docker.io:
+      #   creds:
+      #     username: ""
+      #     password: ""
+    # -- Registry Mirrors (used for containerd config)
+    mirrors: {}
+      # -- Key: mirror URL, Value: path in primary registry
+      # docker.io: "/dockerhub"
 
   # -- StorageClassName for all persistent volumes
   storageClassName: ""
@@ -370,29 +383,6 @@ machine:
   # -- Tag Version used for machine-controller components
   version: "v1.57.0"
 
-  # Kubelet Configuration
-  kubelet:
-    # -- FeatureGates for kubelet
-    featureGates: []
-    # RotateKubeletServerCertificate=true
-
-  # -- Used Runtime
-  runtime: containerd
-
-  # Pause Image (Required on each machine)
-  pause:
-    image:
-      # -- Image registry
-      registry: ""
-      # -- Image repository
-      repository: pause
-      # -- Image pull policy
-      pullPolicy: IfNotPresent
-      # -- Image tag
-      tag: "3.5"
-      # -- Image Digest
-      digest: ""
-
   # Controller Component
   controller:
     # -- Controller Command Arguments ([See Available](https://github.com/kubermatic/machine-controller/blob/main/cmd/machine-controller/main.go))
@@ -690,6 +680,29 @@ osm:
 
   # -- Tag Version used for both components
   version: "v1.3.0"
+
+  # Kubelet Configuration
+  kubelet:
+    # -- FeatureGates for kubelet
+    featureGates: []
+    # RotateKubeletServerCertificate=true
+
+  # -- Used Runtime
+  runtime: containerd
+
+  # Pause Image (Required on each machine)
+  pause:
+    image:
+      # -- Image registry
+      registry: ""
+      # -- Image repository
+      repository: pause
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag
+      tag: "3.5"
+      # -- Image Digest
+      digest: ""
 
   # Controller Component
   controller:

@@ -122,13 +122,3 @@ kube-system
   {{- end -}}
   {{- printf "%s/%s%s%s" $image_registry $image_repository $separator $termination -}}
 {{- end -}}
-
-{{/*
-    Registry Mirrors (containerd)
-*/}}
-{{- define "pkg.images.registry.mirrors" -}}
-  {{- $primary := $.Values.global.registries.primary.endpoint -}}
-  {{- range $registry, $path := $.Values.global.registries.mirrors }}
-- -node-containerd-registry-mirrors={{ $registry }}={{ printf "%s%s" $primary $path }}
-  {{- end }}
-{{- end -}}

@@ -1,7 +1,7 @@
 global:
   # Image Registries
   registries:
-    # -- Default Registry (used for kubeadm, node-registry-mirrors etc.)
+    # -- Default Registry (used for kubeadm, regcred secret etc.)
     primary:
       # -- Registry Endpoint
       endpoint: "docker.io"

@@ -8,7 +8,7 @@ global:
 
   # Image Registries
   registries:
-    # -- Default Registry (used for kubeadm, node-registry-mirrors etc.)
+    # -- Default Registry (used for kubeadm, regcred secret etc.)
     primary:
       # -- Registry Endpoint
       endpoint: ""
@@ -24,10 +24,6 @@ global:
       #   creds:
       #     username: ""
       #     password: ""
-    # -- Registry Mirrors (used for containerd config)
-    mirrors: {}
-      # -- Key: mirror URL, Value: path in primary registry
-      # docker.io: "/dockerhub"
 
   # -- StorageClassName for all persistent volumes
   storageClassName: ""

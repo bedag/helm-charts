@@ -152,7 +152,6 @@ checksum/webhooks: {{ (.Files.Glob (include "operating-system-manager.webhooks" 
 - -node-registry-credentials-secret={{ include "pkg.images.registry.secretnamespace" $ }}/regcreds
     {{- end }}
   {{- end }}
-  {{- include "pkg.images.registry.mirrors" $ | nindent 0 }}
 - -cluster-dns={{ include "kubernetes.getCoreDNS" $ }}
 - -override-bootstrap-kubelet-apiserver={{ include "kubernetes.api.endpoint" $ }}
   {{- with $.Values.osm.kubelet.featureGates }}

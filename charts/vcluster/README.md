@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.11.0](https://img.shields.io/badge/Version-0.11.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.11.1](https://img.shields.io/badge/Version-0.11.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -108,8 +108,7 @@ Global Values
 | global.components.workloads.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads (Overwrites all workloads topologySpreadConstraints) |
 | global.proxy.host | string | `""` | Proxy Host |
 | global.proxy.no_proxy | string | `"10.0.0.0/8"` | No Proxy Hosts |
-| global.registries.mirrors | object | `{}` | Registry Mirrors (used for containerd config) |
-| global.registries.primary | object | `{"creds":{"password":"","username":""},"endpoint":""}` | Default Registry (used for kubeadm, node-registry-mirrors etc.) |
+| global.registries.primary | object | `{"creds":{"password":"","username":""},"endpoint":""}` | Default Registry (used for kubeadm, regcred secret etc.) |
 | global.registries.primary.creds.password | string | `""` | Registry Password |
 | global.registries.primary.creds.username | string | `""` | Registry Username |
 | global.registries.primary.endpoint | string | `""` | Registry Endpoint |

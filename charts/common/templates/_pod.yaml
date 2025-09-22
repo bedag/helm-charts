@@ -36,6 +36,9 @@ priorityClassName: {{ $controllerValues.priorityClassName | quote }}
 {{- if $controllerValues.restartPolicy }}
 restartPolicy: {{ $controllerValues.restartPolicy | quote }}
 {{- end }}
+{{- if and (ne $controllerValues.terminationGracePeriodSeconds nil) (ge (int $controllerValues.terminationGracePeriodSeconds) 0) }}
+terminationGracePeriodSeconds: {{ $controllerValues.terminationGracePeriodSeconds }}
+{{- end }}
 {{- if $controllerValues.containers }}
 containers:
 {{- range $containerName, $containerValues := $controllerValues.containers }}

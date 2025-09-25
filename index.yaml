@@ -9,6 +9,31 @@ entries:
       artifacthub.io/license: Apache-2.0
       artifacthub.io/prerelease: "false"
     apiVersion: v2
+    created: "2025-09-25T20:52:33.523976866Z"
+    description: Bedag's common Helm chart to use for creating other Helm charts
+    digest: da5fe57f20e9406baaf9f8e9693332f9a7d071c2259081e46d2ea2379b826df6
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Common
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: common
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/common
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/common-12.5.1/common-12.5.1.tgz
+    version: 12.5.1
+  - annotations:
+      artifacthub.io/changes: |
+        - "[Changed]: extra annotations and labels support sprig statements"
+        - "[Added]: Possibility to optionally set appVersion in values"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
     created: "2025-08-21T07:07:21.775522199Z"
     description: Bedag's common Helm chart to use for creating other Helm charts
     digest: c0b83812cd1ad20594d42e9748e9094f5347881bd06951c747863ff64ae19948
@@ -864,6 +889,42 @@ entries:
       artifacthub.io/prerelease: "false"
     apiVersion: v2
     appVersion: 4.2.3
+    created: "2025-09-25T20:52:33.673830961Z"
+    dependencies:
+    - name: manifests
+      repository: https://bedag.github.io/helm-charts
+      version: ~0.5.0
+    deprecated: true
+    description: Manage users from multiple directories - Active Directory, LDAP,
+      OpenLDAP or Microsoft Azure AD - and control application authentication permissions
+      in one single location
+    digest: 3aa2ec0a4d28626ea65c5676a9a8587ddd00333d7cde55e3ee2f985a09f49c44
+    home: https://www.atlassian.com/software/crowd
+    icon: https://media.trustradius.com/product-logos/CP/PJ/9AQZ6ALXTFKJ-180x180.PNG
+    keywords:
+    - atlassian
+    - crowd
+    - data center
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: crowd
+    sources:
+    - https://hub.docker.com/r/atlassian/crowd
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/crowd-0.5.1/crowd-0.5.1.tgz
+    version: 0.5.1
+  - annotations:
+      artifacthub.io/changes: |
+        - "[security]: add deprecation notice"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/images: |
+        - name: crowd
+          image: atlassian/crowd:4.2.3
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: 4.2.3
     created: "2022-12-15T13:38:04.395398233Z"
     dependencies:
     - name: manifests
@@ -926,6 +987,46 @@ entries:
     - https://github.com/bedag/helm-charts/releases/download/crowd-0.4.0/crowd-0.4.0.tgz
     version: 0.4.0
   e2g:
+  - annotations:
+      artifacthub.io/changes: |
+        - "[Added]: filtergroups config"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/images: |
+        - name: e2g-5
+          image: bedag/e2g:5
+        - name: e2g-4
+          image: bedag/e2g:4
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: "5.4"
+    created: "2025-09-25T20:52:33.818821983Z"
+    dependencies:
+    - name: manifests
+      repository: https://bedag.github.io/helm-charts/
+      version: '>=0.4.0'
+    description: e2guardian Chart
+    digest: 93ac066c04035107ddde64b7245dbcff15659c163f455b47e4850f0e72c93abf
+    home: https://github.com/e2guardian/e2guardian/
+    icon: http://e2guardian.org/cms/images/banners/logo-guardian.png
+    keywords:
+    - proxy
+    - forwardproxy
+    - e2guardian
+    - e2g
+    maintainers:
+    - email: noc@bedag.ch
+      name: NOC
+    - email: sre@bedag.ch
+      name: SRE
+    name: e2g
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/e2g
+    - https://github.com/e2guardian/e2guardian/
+    - https://github.com/bedag/docker-e2g
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/e2g-1.2.4/e2g-1.2.4.tgz
+    version: 1.2.4
   - annotations:
       artifacthub.io/changes: |
         - "[Added]: filtergroups config"
@@ -1259,6 +1360,38 @@ entries:
       artifacthub.io/prerelease: "false"
     apiVersion: v2
     appVersion: 3.27.0
+    created: "2025-09-25T20:52:33.969842445Z"
+    dependencies:
+    - name: manifests
+      repository: https://bedag.github.io/helm-charts/
+      version: ~0.5.0
+    deprecated: true
+    description: Unofficial Helm Chart for Kafdrop
+    digest: badc4b910140955aa01dd04d492575378defcfb10f445dafd2366fa8878c0214
+    home: https://github.com/obsidiandynamics/kafdrop
+    icon: https://raw.githubusercontent.com/wiki/obsidiandynamics/kafdrop/images/kafdrop-logo.png
+    keywords:
+    - Apache Kafka
+    - Kafdrop
+    - Browsing
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: kafdrop
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/kafdrop-0.3.1/kafdrop-0.3.1.tgz
+    version: 0.3.1
+  - annotations:
+      artifacthub.io/changes: |
+        - "[security]: add deprecation notice"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/images: |
+        - name: kafdrop
+          image: obsidiandynamics/kafdrop:3.27.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: 3.27.0
     created: "2022-12-15T13:38:04.814954458Z"
     dependencies:
     - name: manifests
@@ -1311,6 +1444,36 @@ entries:
     - https://github.com/bedag/helm-charts/releases/download/kafdrop-0.2.3/kafdrop-0.2.3.tgz
     version: 0.2.3
   manifests:
+  - annotations:
+      artifacthub.io/changes: |
+        - "[security]: add deprecation notice"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    created: "2025-09-25T20:52:34.096416177Z"
+    dependencies:
+    - name: library
+      repository: https://buttahtoast.github.io/helm-charts/
+      version: ~0.3.0
+    deprecated: true
+    description: Bedag's Manifest chart. Library full of basic kubernetes manifests.
+    digest: 13afbf5e2f7a942199c65c7c1c67a2cf33d4932db1b15ed1e62f42787c92f57e
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Manifests
+    - Library
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: manifests
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/manifests
+    type: library
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/manifests-1.0.1/manifests-1.0.1.tgz
+    version: 1.0.1
   - annotations:
       artifacthub.io/changes: |
         - "[security]: add deprecation notice"
@@ -2084,6 +2247,36 @@ entries:
       artifacthub.io/prerelease: "false"
     apiVersion: v2
     appVersion: 1.0.0
+    created: "2025-09-25T20:52:34.28504598Z"
+    dependencies:
+    - name: library
+      repository: https://buttahtoast.github.io/helm-charts/
+      version: 3.0.0-rc.3
+    description: Render raw kubernetes manifests managed by a helm release
+    digest: e6143374bf874fe96987af94201222e64bdd6a303fe13395555721eeb79c52cb
+    home: https://github.com/bedag/helm-charts/tree/master/charts/raw
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - raw
+    - templates
+    - resources
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: raw
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/raw
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/raw-2.0.2/raw-2.0.2.tgz
+    version: 2.0.2
+  - annotations:
+      artifacthub.io/changes: |
+        - "[Changed]: Bump Dependency library to 3.0.0-rc.3"
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    appVersion: 1.0.0
     created: "2022-12-15T13:38:05.133228883Z"
     dependencies:
     - name: library
@@ -2168,6 +2361,29 @@ entries:
     - https://github.com/bedag/helm-charts/releases/download/raw-1.0.0/raw-1.0.0.tgz
     version: 1.0.0
   vcluster:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2025-09-25T20:52:34.478722309Z"
+    dependencies:
+    - name: common
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 2.14.1
+    description: Virtual Kubernetes Cluster
+    digest: 0545bee8ebd0657303b30511819f7f3a212b6cb65354b0bb7e44efffd262a890
+    home: https://artifacthub.io/packages/helm/kvaps/kubernetes
+    keywords:
+    - vcluster
+    - kubernetes
+    - machine-controller
+    - kubermatic
+    maintainers:
+    - email: sre@bedag.ch
+      name: Bedag Informatik AG
+    name: vcluster
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/vcluster-0.12.0/vcluster-0.12.0.tgz
+    version: 0.12.0
   - apiVersion: v2
     appVersion: 0.1.0
     created: "2025-09-21T16:19:31.027545912Z"
@@ -3037,4 +3253,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/vcluster-0.1.0/vcluster-0.1.0.tgz
     version: 0.1.0
-generated: "2025-09-21T16:19:31.028117195Z"
+generated: "2025-09-25T20:52:34.479240604Z"

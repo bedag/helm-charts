@@ -39,7 +39,7 @@ resources:
 
       environment: {{- include "kafdrop.configuration" $ | nindent 8 }}
         {{- if $.Values.deployment.environment }}
-          {{ include "lib.utils.lists.exceptionList" (dict "list" $.Values.deployment.environment  "exceptions" (list "KAFKA_BROKERCONNECT" "JVM_OPTS")) | nindent 8 }}
+          {{ include "lib.utils.lists.exceptionList" (dict "list" $.Values.deployment.environment "exceptions" (list "KAFKA_BROKERCONNECT" "JVM_OPTS")) | nindent 8 }}
         {{- end }}
 
       {{/*

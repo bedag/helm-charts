@@ -36,14 +36,14 @@ Crowd Home
   Crowd JVM Arguments
 */}}
 {{- define "crowd.jvm_args" -}}
-{{ if $.Values.crowd.jvm_args }}{{- include "lib.utils.strings.stringify" (dict "list" $.Values.crowd.jvm_args "delimiter" "  " "context" $) }}{{- end }} {{ include "bedag-lib.utils.helpers.javaProxies" (dict "proxy" $.Values.proxy "context" $) }}
+{{ if $.Values.crowd.jvm_args }}{{- include "lib.utils.strings.stringify" (dict "list" $.Values.crowd.jvm_args "delimiter" " " "context" $) }}{{- end }} {{ include "bedag-lib.utils.helpers.javaProxies" (dict "proxy" $.Values.proxy "context" $) }}
 {{- end -}}
 
 {{/*
   Crowd Catalina Options
 */}}
 {{- define "crowd.catalina_opts" -}}
-{{ if $.Values.crowd.cluster.enabled }}{{ if $.Values.crowd.cluster.nodeName }}-Dcluster.node.name="$POD_NAME"{{ end }}{{ end }}{{ if $.Values.crowd.catalina_opts }}{{- include "lib.utils.strings.stringify" (dict "list" $.Values.crowd.catalina_opts "delimiter" "  " "context" $) }}{{- end }}
+{{ if $.Values.crowd.cluster.enabled }}{{ if $.Values.crowd.cluster.nodeName }}-Dcluster.node.name="$POD_NAME"{{ end }}{{ end }}{{ if $.Values.crowd.catalina_opts }}{{- include "lib.utils.strings.stringify" (dict "list" $.Values.crowd.catalina_opts "delimiter" " " "context" $) }}{{- end }}
 {{- end -}}
 
 

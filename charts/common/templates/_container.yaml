@@ -17,7 +17,7 @@
   env:
     - name: TZ
       value: {{ default "Europe/Zurich" $root.Values.timezone | quote }}
-  {{- with $containerValues.env  }}
+  {{- with $containerValues.env }}
     {{- if (kindIs "slice" .) }}
       {{- toYaml . | nindent 4 }}
     {{- else }}
@@ -28,7 +28,7 @@
     {{- end }}
   {{- end }}
   ports:
-  {{- with $containerValues.containerPorts  }}
+  {{- with $containerValues.containerPorts }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   resources: {{- toYaml $containerValues.resources | nindent 4 }}

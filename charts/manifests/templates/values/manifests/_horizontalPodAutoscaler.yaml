@@ -8,7 +8,7 @@
 {{ $_.parentKey }}:
 
   ## Horizontal Pod Autoscaler Enable
-  # {{ $_.path }}enabled --  Enable HPA resource
+  # {{ $_.path }}enabled -- Enable HPA resource
   enabled: true
 
   ## Horizontal Pod Autoscaler API version

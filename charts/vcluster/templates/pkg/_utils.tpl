@@ -50,7 +50,7 @@
 {{- define "pkg.utils.template" -}}
   {{- if $.ctx }}
     {{- if typeIs "string" $.tpl }}
-      {{- tpl  $.tpl $.ctx  | replace "+|" "\n" }}
+      {{- tpl $.tpl $.ctx | replace "+|" "\n" }}
     {{- else }}
       {{- tpl ($.tpl | toYaml) $.ctx | replace "+|" "\n" }}
     {{- end }}
@@ -61,7 +61,7 @@
 {{- define "pkg.utils.envs" -}}
   {{- range $key, $value := $.envs }}
 - name: {{ $key }}
-  value: {{ include "pkg.utils.template" (dict "tpl" $value "ctx" $.ctx) }} 
+  value: {{ include "pkg.utils.template" (dict "tpl" $value "ctx" $.ctx) }}
   {{- end }}
 {{- end -}}
 

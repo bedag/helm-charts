@@ -4,7 +4,7 @@
 */}}
 {{- if (include "pkg.dev.incluster" $) }}
   {{- if (include "machine-controller.enabled" $) }}
-    {{ range $path, $_ :=  .Files.Glob (include "machine-controller.manifests" $) }}
+    {{ range $path, $_ := .Files.Glob (include "machine-controller.manifests" $) }}
       {{- with $ }}
         {{- $content := (tpl (.Files.Get $path) .) -}}
         {{- if ($content | nospace) }}
@@ -23,7 +23,7 @@ metadata:
     {{- include "machine-controller.labels" . | nindent 4 }}
   namespace: {{ .Release.Namespace }}
 stringData:
-  {{ range $path, $_ :=  .Files.Glob (include "machine-controller.manifests" $) }}
+  {{ range $path, $_ := .Files.Glob (include "machine-controller.manifests" $) }}
     {{- with $ }}
       {{- $content := (tpl (.Files.Get $path) .) -}}
       {{- if ($content | nospace) }}

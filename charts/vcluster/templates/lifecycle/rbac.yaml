@@ -5,10 +5,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 # You need to already have a Role named "pod-reader" in that namespace.
 kind: RoleBinding
 metadata:
-  name: {{ include "vcluster.fullname" .  }}-installer
+  name: {{ include "vcluster.fullname" . }}-installer
 subjects:
 - kind: ServiceAccount
-  name: {{ include "vcluster.serviceAccountName"  . }}
+  name: {{ include "vcluster.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
 roleRef:
   # "roleRef" specifies the binding to a Role / ClusterRole
@@ -21,7 +21,7 @@ roleRef:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "vcluster.fullname" .  }}
+  name: {{ include "vcluster.fullname" . }}
   labels: {{- include "vcluster.labels" . | nindent 4 }}
   namespace: {{ .Release.Namespace }}
 rules:
@@ -40,38 +40,38 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "vcluster.fullname" .  }}
+  name: {{ include "vcluster.fullname" . }}
   labels: {{- include "vcluster.labels" . | nindent 4 }}
   namespace: {{ .Release.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ include "vcluster.fullname" .  }}
+  name: {{ include "vcluster.fullname" . }}
 subjects:
 - kind: ServiceAccount
-  name: {{ include "vcluster.serviceAccountName"  . }}
+  name: {{ include "vcluster.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
-{{- if $.Values.lifecycle.argocd.rbac }}  
+{{- if $.Values.lifecycle.argocd.rbac }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "vcluster.fullname" .  }}
-  labels: {{- include "vcluster.labels" . | nindent 4 }}  
+  name: {{ include "vcluster.fullname" . }}
+  labels: {{- include "vcluster.labels" . | nindent 4 }}
   namespace: {{ $.Values.lifecycle.argocd.namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ include "vcluster.fullname" .  }}
+  name: {{ include "vcluster.fullname" . }}
 subjects:
 - kind: ServiceAccount
-  name: {{ include "vcluster.serviceAccountName"  . }}
+  name: {{ include "vcluster.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: {{ include "vcluster.fullname" .  }}
+  name: {{ include "vcluster.fullname" . }}
   labels: {{- include "vcluster.labels" . | nindent 4 }}
   namespace: {{ $.Values.lifecycle.argocd.namespace }}
 rules:

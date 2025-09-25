@@ -28,7 +28,7 @@ apiVersion: {{ $networkPolicy.apiVersion }}
 apiVersion: networking.k8s.io/v1
         {{- end }}
 metadata:
-  name:  {{ include "bedag-lib.utils.common.fullname" . }}
+  name: {{ include "bedag-lib.utils.common.fullname" . }}
   labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $networkPolicy.labels "context" $context)| nindent 4 }}
 spec:
   podSelector:

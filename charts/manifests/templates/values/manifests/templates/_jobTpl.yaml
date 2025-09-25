@@ -1,6 +1,6 @@
 {{- define "bedag-lib.values.template.job" -}}
   {{- $context := (default $ .context) }}
-  {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+  {{- $_ := dict "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
 ## Job activeDeadlineSeconds
 # {{ $_.path }}activeDeadlineSeconds -- (int) Specifies the duration in seconds relative to the startTime that the job may be active before the system tries to terminate it; value must be positive integer.
 activeDeadlineSeconds: {{ default "" $_.data.activeDeadlineSeconds }}

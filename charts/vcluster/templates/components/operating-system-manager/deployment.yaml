@@ -9,12 +9,12 @@ metadata:
   labels:
     {{- include "operating-system-manager.labels" . | nindent 4 }}
     {{- with (include "pkg.components.labels" (dict "labels" $osm.labels "ctx" $)) }}
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
   annotations:
     {{- include "operating-system-manager.manifests.checksum" $ | nindent 4 }}
     {{- with (include "pkg.components.annotations" (dict "annotations" $osm.annotations "ctx" $)) }}
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
 spec:
   {{- if not $osm.autoscaling.enabled }}

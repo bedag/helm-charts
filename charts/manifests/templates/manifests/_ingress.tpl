@@ -34,7 +34,7 @@ apiVersion: extensions/v1beta1
           {{- end }}
         {{- end }}
 metadata:
-  name:  {{ include "bedag-lib.utils.common.fullname" . }}
+  name: {{ include "bedag-lib.utils.common.fullname" . }}
   labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $ingress.labels "context" $context)| nindent 4 }}
         {{- if $ingress.annotations }}
   annotations:

@@ -10,11 +10,11 @@ metadata:
   labels:
     {{- include "autoscaler.labels" . | nindent 4 }}
     {{- with (include "pkg.components.labels" (dict "labels" $manifest.labels "ctx" $)) }}
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
   annotations:
     {{- with (include "pkg.components.annotations" (dict "annotations" $manifest.annotations "ctx" $)) }}
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
 spec:
   {{- if not $manifest.autoscaling.enabled }}

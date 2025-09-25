@@ -1,6 +1,6 @@
 {{- define "bedag-lib.values.template.pvc" -}}
   {{- $context := (default $ .context) }}
-  {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+  {{- $_ := dict "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
 ## Persistent Volume Claim Labels
 # {{ $_.path }}labels -- Merges given labels with common labels
 labels: {}

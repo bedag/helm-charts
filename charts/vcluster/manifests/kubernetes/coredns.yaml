@@ -99,7 +99,7 @@ metadata:
     addonmanager.kubernetes.io/mode: Reconcile
     kubernetes.io/name: "CoreDNS"
   {{- if $kubernetes.coredns.labels }}
-    {{- toYaml $kubernetes.coredns.labels | nindent 4  }}
+    {{- toYaml $kubernetes.coredns.labels | nindent 4 }}
   {{- end }}
   {{- with $kubernetes.coredns.annotations }}
   annotations:

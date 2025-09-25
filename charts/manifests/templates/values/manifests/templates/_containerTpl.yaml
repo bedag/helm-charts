@@ -1,6 +1,6 @@
 {{- define "bedag-lib.values.template.container" -}}
   {{- $context := (default $ .context) }}
-  {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+  {{- $_ := dict "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
 
 #
 ## -- Container

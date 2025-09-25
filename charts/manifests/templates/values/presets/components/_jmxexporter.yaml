@@ -1,6 +1,6 @@
 {{- define "bedag-lib.presets.values.jmxexporter" -}}
   {{- $context := (default $ .context) }}
-  {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+  {{- $_ := dict "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
 ## Enable JMX Exporter
 # {{ $_.path }}enabled -- Enables [JMX Exporter](https://github.com/bitnami/bitnami-docker-jmx-exporter) as Sidecar
 enabled: false

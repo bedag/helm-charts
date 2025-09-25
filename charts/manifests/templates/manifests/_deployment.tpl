@@ -31,7 +31,7 @@ metadata:
   labels: {{- include "bedag-lib.utils.common.labels" (dict "labels" $deployment.labels "context" $context)| nindent 4 }}
 spec:
       {{- with $deployment.strategy }}
-  strategy: {{ toYaml . |  nindent 4 }}
+  strategy: {{ toYaml . | nindent 4 }}
       {{- end }}
   replicas: {{ default "1" $deployment.replicaCount }}
   selector:

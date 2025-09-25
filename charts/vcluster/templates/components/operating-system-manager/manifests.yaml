@@ -10,7 +10,7 @@ metadata:
   labels:
     {{- include "operating-system-manager.labels" . | nindent 4 }}
 stringData:
-  {{ range $path, $_ :=  .Files.Glob (include "operating-system-manager.manifests" $) }}
+  {{ range $path, $_ := .Files.Glob (include "operating-system-manager.manifests" $) }}
     {{- with $ }}
       {{- $content := (tpl (.Files.Get $path) .) -}}
       {{- if ($content | nospace) }}

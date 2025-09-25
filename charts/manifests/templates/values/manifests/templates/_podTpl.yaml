@@ -1,6 +1,6 @@
 {{- define "bedag-lib.values.template.pod" -}}
   {{- $context := (default $ .context) }}
-  {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+  {{- $_ := dict "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
 ## Image Pull Secrets
 # {{ $_.path }}imagePullSecrets -- Define [ImagePullSecrets](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). Will be overwritten if set by global variable.
 imagePullSecrets: []

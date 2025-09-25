@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ include "vcluster.fullname" .  }}-manifests
+  name: {{ include "vcluster.fullname" . }}-manifests
   labels:
     {{- include "vcluster.labels" $ | nindent 4 }}
 type: Opaque

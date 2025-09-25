@@ -235,7 +235,7 @@ Admission Expose
 - name: machine-manifests
   secret:
     defaultMode: 420
-    secretName: {{ include "machine-controller.manifests.name" $  }}
+    secretName: {{ include "machine-controller.manifests.name" $ }}
   {{- if (include "machine-controller.admission-enabled" $) }}
 - name: machine-webhook-certs
   secret:
@@ -320,7 +320,7 @@ fi
   InitContainer to apply/delete manifests
 */}}
 {{- define "machine-controller.manifest-init" -}}
-  {{- $manifest := $.Values.lifecycle.jobs  -}}
+  {{- $manifest := $.Values.lifecycle.jobs -}}
   {{- if (include "machine-controller.manifest-exist" $) }}
 - name: machine-manifests
   image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
@@ -360,7 +360,7 @@ export CA_BUNDLE=`openssl base64 -in {{ include "machine-controller.volumemounts
 # Patch the CA bundle in the webhook configurations
 kubectl patch MutatingWebhookConfiguration {{ include "machine-controller.admission.mutating-webhook-name" $ }} \
   --type='json' -p="[\
-  	{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value': \"${CA_BUNDLE}\"  },\
+  	{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value': \"${CA_BUNDLE}\" },\
   	{'op': 'replace', 'path': '/webhooks/1/clientConfig/caBundle', 'value': \"${CA_BUNDLE}\" } \
   ]";
   {{- end }}

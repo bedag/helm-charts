@@ -1,6 +1,6 @@
 {{- define "bedag-lib.presets.values.readiness" -}}
   {{- $context := (default $ .context) }}
-  {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+  {{- $_ := dict "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
 ## Readiness Enable
 # {{ $_.path }}enabled -- Enables Readiness Check
 enabled: false

@@ -29,7 +29,7 @@ securityContext: {{- include "lib.utils.strings.template" (dict "value" . "conte
 resources: {{- include "lib.utils.strings.template" (dict "value" . "context" $context) | nindent 2 }}
     {{- end }}
     {{- if $values.containerFields }}
-      {{- include "lib.utils.strings.template" (dict "value" $values.containerFields "context" $context)  | nindent 0 }}
+      {{- include "lib.utils.strings.template" (dict "value" $values.containerFields "context" $context) | nindent 0 }}
     {{- end }}
 env: {{- include "lib.utils.extras.environment" $context | nindent 2 }}
     {{- if and $values.environment (kindIs "slice" $values.environment) }}
@@ -64,7 +64,7 @@ args: {{- include "lib.utils.strings.template" (dict "value" $values.args "conte
 livenessProbe: {{ include "lib.utils.strings.template" (dict "value" $values.livenessProbe "context" $context) | nindent 2 }}
     {{- end }}
     {{- with $values.readinessProbe }}
-readinessProbe: {{ include "lib.utils.strings.template" (dict "value" $values.readinessProbe "context" $context)  | nindent 2 }}
+readinessProbe: {{ include "lib.utils.strings.template" (dict "value" $values.readinessProbe "context" $context) | nindent 2 }}
     {{- end }}
     {{- if $values.startupProbe }}
 startupProbe: {{ include "lib.utils.strings.template" (dict "value" $values.startupProbe "context" $context) | nindent 2 }}

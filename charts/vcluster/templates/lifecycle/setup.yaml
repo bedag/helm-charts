@@ -8,12 +8,12 @@ metadata:
   name: {{ include "vcluster.fullname" $ }}-setup
   labels: {{- include "vcluster.labels" $ | nindent 4 }}
     {{- with (include "pkg.components.labels" (dict "labels" $jobs.setup.labels "ctx" $)) }}
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
   annotations:
-    checksum/config: {{ .Files.Get (printf "templates/bootstrap/kubeadm-config.yaml") | sha256sum  }}
+    checksum/config: {{ .Files.Get (printf "templates/bootstrap/kubeadm-config.yaml") | sha256sum }}
     {{- with (include "pkg.components.annotations" (dict "annotations" $jobs.setup.annotations "ctx" $)) }}
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
 spec:
   {{- with $jobs.setup.ttlSecondsAfterFinished }}
@@ -56,7 +56,7 @@ spec:
       containers:
       - name: current
         image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
-        imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy  "ctx" $) }}
+        imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy "ctx" $) }}
         command: [ '/bin/bash', '/scripts/configure-current.sh' ]
         env:
         {{- if $jobs.setup.injectProxy }}
@@ -80,7 +80,7 @@ spec:
           name: cache-current
       - name: vcluster
         image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
-        imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy  "ctx" $) }}
+        imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy "ctx" $) }}
         command: [ '/bin/bash', '/scripts/configure-vcluster.sh' ]
         env:
         {{- if $jobs.setup.injectProxy }}
@@ -130,21 +130,21 @@ spec:
           defaultMode: 0777
       - name: config
         configMap:
-          name: "{{ include "kubernetes.fullname" $  }}-kubeadm-config"
+          name: "{{ include "kubernetes.fullname" $ }}-kubeadm-config"
       - name: manifests
         projected:
           sources:
           - secret:
-              name: {{ include "vcluster.fullname" .  }}-manifests
+              name: {{ include "vcluster.fullname" . }}-manifests
       {{- if $kubernetes.konnectivity.enabled }}
         {{- if or $kubernetes.konnectivity.server.enabled $kubernetes.konnectivity.agent.enabled }}
           - configMap:
-              name: "{{ include "kubernetes.fullname" $  }}-konnectivity-manifests"
+              name: "{{ include "kubernetes.fullname" $ }}-konnectivity-manifests"
         {{- end }}
       {{- end }}
       {{- if $kubernetes.coredns.enabled }}
           - configMap:
-              name: "{{ include "kubernetes.fullname" $  }}-coredns-manifests"
+              name: "{{ include "kubernetes.fullname" $ }}-coredns-manifests"
       {{- end }}
       {{- with $manifest.extraVolumes }}
         {{- toYaml . | nindent 6 }}

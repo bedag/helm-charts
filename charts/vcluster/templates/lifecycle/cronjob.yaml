@@ -9,9 +9,9 @@ metadata:
     {{- with (include "pkg.components.labels" (dict "labels" $manifest.labels "ctx" $)) }}
       {{- . | nindent 4 }}
     {{- end }}
-  annotations:  
+  annotations:
     {{- with (include "pkg.components.annotations" (dict "annotations" $manifest.annotations "ctx" $)) }}
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
 spec:
   schedule: "{{ $manifest.schedule }}"
@@ -24,7 +24,7 @@ spec:
           {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
-        checksum/scripts: {{ .Files.Get "/templates/scripts-configmap.yaml" | sha256sum  }}
+        checksum/scripts: {{ .Files.Get "/templates/scripts-configmap.yaml" | sha256sum }}
         {{- with $manifest.annotations }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -32,4 +32,3 @@ spec:
       template:
       {{- (include (print $.Template.BasePath "/lifecycle/setup.yaml") . | fromYaml ).spec.template | toYaml | nindent 8 }}
 {{- end -}}
-

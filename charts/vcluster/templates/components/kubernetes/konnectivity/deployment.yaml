@@ -13,11 +13,11 @@ metadata:
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
     {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.konnectivity.server.labels "ctx" $)) }}
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
     {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.konnectivity.server.annotations "ctx" $)) }}
   annotations:
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
 spec:
   replicas: {{ $kubernetes.konnectivity.server.replicaCount }}
@@ -79,7 +79,7 @@ spec:
       containers:
         {{- include "kubernetes.konnectivityServer.containers" $ | nindent 8 }}
       volumes:
-        {{- include  "kubernetes.konnectivityServer.volumes" $ | nindent 8 }}
+        {{- include "kubernetes.konnectivityServer.volumes" $ | nindent 8 }}
     {{- end -}}
   {{- end -}}
 {{- end -}}

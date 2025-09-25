@@ -56,7 +56,7 @@ spec:
         {{- end }}
   scaleTargetRef:
         {{- if $hpa.scaleTargetRef }}
-          {{- toYaml $hpa.scaleTargetRef | nindent 4  }}
+          {{- toYaml $hpa.scaleTargetRef | nindent 4 }}
         {{- else }}
     apiVersion: apps/v1
     kind: Statefulset

@@ -1,6 +1,6 @@
 {{- define "bedag-lib.presets.values.permissions" -}}
   {{- $context := (default $ .context) }}
-  {{- $_ := dict  "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
+  {{- $_ := dict "path" (default $context.path .path) "context" $context "data" (default dict .data) "minimal" (default false .minimal) }}
 ## Volume Permission Enable
 # {{ $_.path }}enabled -- Enables Volume Permissions
 enabled: false

@@ -6,7 +6,7 @@ metadata:
   name:  {{ include "pkg.components.certificates.default_issuer" $ }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "vcluster.labels" $  | nindent 4 }}
+    {{- include "vcluster.labels" $ | nindent 4 }}
 spec:
   selfSigned: {}
 {{- end }}

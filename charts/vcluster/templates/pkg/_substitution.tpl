@@ -1,7 +1,7 @@
 {{- define "pkg.substition.variables" -}}
 
   {{/* Custom Properties */}}
-  {{- include  "pkg.substition.properties" $ | nindent 0 }}
+  {{- include "pkg.substition.properties" $ | nindent 0 }}
 
   {{/* Common Variables */}}
 cluster_name: {{ include "pkg.cluster.name" $ }}

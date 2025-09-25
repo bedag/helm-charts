@@ -16,7 +16,7 @@ data:
     egressSelections:
     - name: cluster
       connection:
-        {{- if and $kubernetes.konnectivity.enabled  $kubernetes.konnectivity.server.enabled }}
+        {{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.server.enabled }}
           {{- if has $kubernetes.konnectivity.server.mode (list "HTTPConnect" "GRPC") }}
         proxyProtocol: {{ $kubernetes.konnectivity.server.mode }}
           {{- else }}

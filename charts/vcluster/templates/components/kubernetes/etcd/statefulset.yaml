@@ -12,7 +12,7 @@ metadata:
     {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
     {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.etcd.labels "ctx" $)) }}
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
     {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.etcd.annotations "ctx" $)) }}
   annotations:
@@ -214,11 +214,11 @@ spec:
         {{- if $kubernetes.etcd.persistence.labels }}
         {{- toYaml $kubernetes.etcd.persistence.labels | nindent 4 }}
         {{- end }}
-      {{- with $kubernetes.etcd.persistence.annotations  }}
+      {{- with $kubernetes.etcd.persistence.annotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $kubernetes.etcd.persistence.finalizers  }}
+      {{- with $kubernetes.etcd.persistence.finalizers }}
       finalizers:
         {{- toYaml . | nindent 8 }}
       {{- end }}

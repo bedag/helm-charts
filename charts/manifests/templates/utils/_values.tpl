@@ -26,7 +26,7 @@ limitations under the License.
         {{- else }}
           {{- $resource = cat "bedag-lib.presets.values." ($.Values.doc.preset | lower) | nospace }}
         {{- end }}
-        {{- $path :=  (default "" $.Values.doc.path) }}
+        {{- $path := (default "" $.Values.doc.path) }}
         {{- if not (hasSuffix "." $path) }}
           {{- $path = (cat $path "." | nospace) }}
         {{- end }}

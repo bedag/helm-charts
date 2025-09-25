@@ -13,11 +13,11 @@ metadata:
     {{- if $kubernetes.etcd.backup.persistence.labels }}
       {{- toYaml $kubernetes.etcd.backup.persistence.labels | nindent 4 }}
     {{- end }}
-  {{- with $kubernetes.etcd.backup.persistence.annotations  }}
+  {{- with $kubernetes.etcd.backup.persistence.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- with $kubernetes.etcd.backup.persistence.finalizers  }}
+  {{- with $kubernetes.etcd.backup.persistence.finalizers }}
   finalizers:
     {{- toYaml . | nindent 4 }}
   {{- end }}

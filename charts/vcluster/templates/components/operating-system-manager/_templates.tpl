@@ -272,7 +272,7 @@ Admission Expose
 - name: osm-manifests
   secret:
     defaultMode: 420
-    secretName: {{ include "operating-system-manager.manifests.name" $  }}
+    secretName: {{ include "operating-system-manager.manifests.name" $ }}
   {{- if (include "operating-system-manager.admission-enabled" $) }}
 - name: osm-webhook-certs
   secret:
@@ -320,7 +320,7 @@ Admission Expose
   Ensure All
 */}}
 {{- define "operating-system-manager.ensure-resources" -}}
-  {{- include "operating-system-manager.manifest-create" $  | nindent 0 }}
+  {{- include "operating-system-manager.manifest-create" $ | nindent 0 }}
   {{- include "operating-system-manager.admission.webhook-cert-patch" $ | nindent 0 }}
 {{- end -}}
 
@@ -357,7 +357,7 @@ fi
   InitContainer to apply/delete manifests
 */}}
 {{- define "operating-system-manager.manifest-init" -}}
-  {{- $manifest := $.Values.lifecycle.jobs  -}}
+  {{- $manifest := $.Values.lifecycle.jobs -}}
   {{- if (include "operating-system-manager.manifest-exist" $) }}
 - name: osm-manifests
   image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
@@ -398,12 +398,12 @@ export CA_BUNDLE=`openssl base64 -in {{ include "operating-system-manager.volume
 # Patch the CA bundle in the webhook configurations
 kubectl patch ValidatingWebhookConfiguration {{ include "operating-system-manager.admission.webhook-name" $ }} \
   --type='json' -p="[\
-  	{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value': \"${CA_BUNDLE}\"  },\
+  	{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value': \"${CA_BUNDLE}\" },\
     {'op': 'replace', 'path': '/webhooks/1/clientConfig/caBundle', 'value': \"${CA_BUNDLE}\" } \
   ]";
 kubectl patch MutatingWebhookConfiguration {{ include "operating-system-manager.admission.webhook-name" $ }} \
   --type='json' -p="[\
-  	{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value': \"${CA_BUNDLE}\"  }\
+  	{'op': 'replace', 'path': '/webhooks/0/clientConfig/caBundle', 'value': \"${CA_BUNDLE}\" }\
   ]";
   {{- end }}
 {{- end -}}

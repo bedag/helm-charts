@@ -12,11 +12,11 @@ metadata:
   labels: {{- include "kubernetes.labels" $ | nindent 4 }}
     {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
     {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.admin.labels "ctx" $)) }}
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
     {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.admin.annotations "ctx" $)) }}
   annotations:
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
 spec:
   replicas: {{ $kubernetes.admin.replicaCount }}

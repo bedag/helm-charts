@@ -32,7 +32,7 @@ ports:
     protocol: TCP
       {{- if $.values.config }}
 volumes:
-  - name: "{{  $name }}-config"
+  - name: "{{ $name }}-config"
     configMap:
       name: {{ include "bedag-lib.utils.common.fullname" (dict "name" $name "context" $.context) }}
       {{- end }}

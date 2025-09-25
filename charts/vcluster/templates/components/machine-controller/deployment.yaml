@@ -10,12 +10,12 @@ metadata:
   labels:
     {{- include "machine-controller.labels" $ | nindent 4 }}
     {{- with (include "pkg.components.labels" (dict "labels" $machine.labels "ctx" $)) }}
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
   annotations:
     {{- include "machine-controller.manifests.checksum" $ | nindent 4 }}
     {{- with (include "pkg.components.annotations" (dict "annotations" $machine.annotations "ctx" $)) }}
-      {{-  . | nindent 4 }}
+      {{- . | nindent 4 }}
     {{- end }}
 spec:
   {{- if not $machine.autoscaling.enabled }}

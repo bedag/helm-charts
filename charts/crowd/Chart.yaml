@@ -2,7 +2,7 @@ apiVersion: v2
 name: crowd
 description: Manage users from multiple directories - Active Directory, LDAP, OpenLDAP or Microsoft Azure AD - and control application authentication permissions in one single location
 type: application
-version: 0.5.0
+version: 0.5.1
 appVersion: 4.2.3
 keywords:
   - atlassian

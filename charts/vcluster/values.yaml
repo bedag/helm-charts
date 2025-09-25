@@ -715,6 +715,35 @@ machine:
     # -- Resources configuration
     resources: {}
 
+  # Manifest
+  manifest:
+    # Image Configuration
+    image:
+      # -- Image registry
+      registry: ghcr.io
+      # -- Image repository
+      repository: kvaps/kubernetes-tools
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag
+      tag: "v0.13.4"
+      # -- Image Digest
+      digest: ""
+      # -- Image pull Secrets
+      pullSecrets: []
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      privileged: false
+      runAsUser: 20000
+      runAsGroup: 20000
+      capabilities:
+        drop:
+        - ALL
+    # -- Resources configuration
+    resources: {}
+
 # ----------------------------
 #  Operating System Manager
 # ----------------------------
@@ -1050,6 +1079,35 @@ osm:
       pullPolicy: IfNotPresent
       # -- Image tag
       tag: "v0.13.4"
+      # -- Image Digest
+      digest: ""
+      # -- Image pull Secrets
+      pullSecrets: []
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      privileged: false
+      runAsUser: 20000
+      runAsGroup: 20000
+      capabilities:
+        drop:
+        - ALL
+    # -- Resources configuration
+    resources: {}
+
+  # Manifest
+  manifest:
+    # Image Configuration
+    image:
+      # -- Image registry
+      registry: ghcr.io
+      # -- Image repository
+      repository: kvaps/kubernetes-tools
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag
+      tag: "v0.13.5"
       # -- Image Digest
       digest: ""
       # -- Image pull Secrets

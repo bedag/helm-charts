@@ -357,13 +357,14 @@ fi
   InitContainer to apply/delete manifests
 */}}
 {{- define "operating-system-manager.manifest-init" -}}
-  {{- $manifest := $.Values.lifecycle.jobs -}}
-  {{- if (include "operating-system-manager.manifest-exist" $) }}
+  {{- $manifest := $.manifest -}}
+  {{- if (include "operating-system-manager.manifest-exist" $.ctx) }}
 - name: osm-manifests
-  image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
-  env: {{- include "pkg.common.env" $ | nindent 4 }}
-    {{- include "pkg.cluster.cp.env" $ | nindent 4 }}
-  {{- with (include "pkg.components.securityContext" (dict "sc" $manifest.securityContext "ctx" $)) }}
+  image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $.ctx) }}
+  imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy "ctx" $.ctx) }}
+  env: {{- include "pkg.common.env" $.ctx | nindent 4 }}
+    {{- include "pkg.cluster.cp.env" $.ctx | nindent 4 }}
+  {{- with (include "pkg.components.securityContext" (dict "sc" $manifest.securityContext "ctx" $.ctx)) }}
   securityContext: {{ . | nindent 4 }}
   {{- end }}
   {{- with $manifest.resources }}
@@ -373,9 +374,9 @@ fi
     - /bin/sh
     - -c
     - |
-        {{- include "operating-system-manager.ensure-resources" $ | nindent 8 }}
-  volumeMounts: {{- include "pkg.cluster.cp.vms" $ | nindent 4 }}
-    {{- include "operating-system-manager.volumemounts" $ | nindent 4 }}
+        {{- include "operating-system-manager.ensure-resources" $.ctx | nindent 8 }}
+  volumeMounts: {{- include "pkg.cluster.cp.vms" $.ctx | nindent 4 }}
+    {{- include "operating-system-manager.volumemounts" $.ctx | nindent 4 }}
   {{- end }}
 {{- end -}}
 

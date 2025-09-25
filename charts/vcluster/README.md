@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.12.0](https://img.shields.io/badge/Version-0.12.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.13.0](https://img.shields.io/badge/Version-0.13.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -204,6 +204,14 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.enabled | bool | `true` | Enable Machine-Controller Component |
 | machine.imagePullSecrets | list | `[]` | Image pull Secrets |
 | machine.labels | object | `{}` | Labels for Workload |
+| machine.manifest.image.digest | string | `""` | Image Digest |
+| machine.manifest.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| machine.manifest.image.pullSecrets | list | `[]` | Image pull Secrets |
+| machine.manifest.image.registry | string | `"ghcr.io"` | Image registry |
+| machine.manifest.image.repository | string | `"kvaps/kubernetes-tools"` | Image repository |
+| machine.manifest.image.tag | string | `"v0.13.4"` | Image tag |
+| machine.manifest.resources | object | `{}` | Resources configuration |
+| machine.manifest.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"privileged":false,"runAsGroup":20000,"runAsUser":20000}` | Container Security Context |
 | machine.metrics.service.annotations | object | `{}` | Service Annotations |
 | machine.metrics.service.labels | object | `{}` | Service Labels |
 | machine.metrics.serviceMonitor.annotations | object | `{}` | Assign additional Annotations |
@@ -319,6 +327,14 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.imagePullSecrets | list | `[]` | Image pull Secrets |
 | osm.kubelet.featureGates | list | `[]` | FeatureGates for kubelet |
 | osm.labels | object | `{}` | Labels for Workload |
+| osm.manifest.image.digest | string | `""` | Image Digest |
+| osm.manifest.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| osm.manifest.image.pullSecrets | list | `[]` | Image pull Secrets |
+| osm.manifest.image.registry | string | `"ghcr.io"` | Image registry |
+| osm.manifest.image.repository | string | `"kvaps/kubernetes-tools"` | Image repository |
+| osm.manifest.image.tag | string | `"v0.13.5"` | Image tag |
+| osm.manifest.resources | object | `{}` | Resources configuration |
+| osm.manifest.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"privileged":false,"runAsGroup":20000,"runAsUser":20000}` | Container Security Context |
 | osm.metrics.enabled | bool | `true` | Enable Metrics |
 | osm.metrics.service.annotations | object | `{}` | Service Annotations |
 | osm.metrics.service.labels | object | `{}` | Service Labels |

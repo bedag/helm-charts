@@ -320,13 +320,14 @@ fi
   InitContainer to apply/delete manifests
 */}}
 {{- define "machine-controller.manifest-init" -}}
-  {{- $manifest := $.Values.lifecycle.jobs -}}
-  {{- if (include "machine-controller.manifest-exist" $) }}
+  {{- $manifest := $.manifest -}}
+  {{- if (include "machine-controller.manifest-exist" $.ctx) }}
 - name: machine-manifests
-  image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
-  env: {{- include "pkg.common.env" $ | nindent 6 }}
-    {{- include "pkg.cluster.cp.env" $ | nindent 6 }}
-  {{- with (include "pkg.components.securityContext" (dict "sc" $manifest.securityContext "ctx" $)) }}
+  image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $.ctx) }}
+  imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy "ctx" $.ctx) }}
+  env: {{- include "pkg.common.env" $.ctx | nindent 6 }}
+    {{- include "pkg.cluster.cp.env" $.ctx | nindent 6 }}
+  {{- with (include "pkg.components.securityContext" (dict "sc" $manifest.securityContext "ctx" $.ctx)) }}
   securityContext: {{ . | nindent 4 }}
   {{- end }}
   {{- with $manifest.resources }}
@@ -336,9 +337,9 @@ fi
     - /bin/sh
     - -c
     - |
-        {{- include "machine-controller.ensure-resources" $ | nindent 8 }}
-  volumeMounts: {{- include "pkg.cluster.cp.vms" $ | nindent 4 }}
-    {{- include "machine-controller.volumemounts" $ | nindent 4 }}
+        {{- include "machine-controller.ensure-resources" $.ctx | nindent 8 }}
+  volumeMounts: {{- include "pkg.cluster.cp.vms" $.ctx | nindent 4 }}
+    {{- include "machine-controller.volumemounts" $.ctx | nindent 4 }}
   {{- end }}
 {{- end -}}
 

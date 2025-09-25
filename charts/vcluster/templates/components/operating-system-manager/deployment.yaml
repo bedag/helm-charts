@@ -46,7 +46,7 @@ spec:
       terminationGracePeriodSeconds: 30
       initContainers: {{- include "pkg.cluster.connectivity" (dict "connectivity" $osm.connectivity "ctx" $) | nindent 8 }}
       {{- if $osm.component.ensureManifestsOnStartup }}
-        {{- include "operating-system-manager.manifest-init" $ | nindent 8 }}
+        {{- include "operating-system-manager.manifest-init" (dict "manifest" $osm.manifest "ctx" $) | nindent 8 }}
       {{- end }}
       containers:
           {{- with $osm.controller }}

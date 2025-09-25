@@ -73,14 +73,10 @@ spec:
         {{- end }}
       automountServiceAccountToken: false
       terminationGracePeriodSeconds: 5
-      initContainers: {{- include "pkg.cluster.connectivity" $ | nindent 8 }}
+      initContainers: {{- include "pkg.cluster.connectivity" (dict "connectivity" $kubernetes.admin.connectivity "ctx" $) | nindent 8 }}
       containers:
       - command: [ 'sleep', 'infinity' ]
-        {{- if $kubernetes.admin.image.use_jobs }}
-        image: {{ include "pkg.images.registry.convert" (dict "image" $jobs.jobs.image "ctx" $) }}
-        {{- else }}
         image: {{ include "pkg.images.registry.convert" (dict "image" $kubernetes.admin.image "ctx" $) }}
-        {{- end }}
         imagePullPolicy:  {{ include "pkg.images.registry.pullpolicy" (dict "policy" $kubernetes.admin.image.pullPolicy "ctx" $) }}
         {{- with (include "pkg.components.securityContext" (dict "sc" $kubernetes.admin.securityContext "ctx" $)) }}
         securityContext: {{ . | nindent 10 }}

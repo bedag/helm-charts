@@ -79,13 +79,13 @@ https://kubernetes.default.svc
     Connectivity Container
 */}}
 {{- define "pkg.cluster.connectivity" -}}
-  {{- $manifest := $.Values.lifecycle.jobs  -}}
+  {{- $manifest := $.connectivity -}}
 - name: connectivity
-  image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}
-  imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy "ctx" $) }}
-  env:  {{- include "pkg.common.env" $ | nindent 4 }}
-  {{- include "pkg.cluster.cp.env" $ | nindent 4 }}
-  {{- with (include "pkg.components.securityContext" (dict "sc" $manifest.securityContext "ctx" $)) }}
+  image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $.ctx) }}
+  imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" $manifest.image.pullPolicy "ctx" $.ctx) }}
+  env: {{- include "pkg.common.env" $.ctx | nindent 4 }}
+  {{- include "pkg.cluster.cp.env" $.ctx | nindent 4 }}
+  {{- with (include "pkg.components.securityContext" (dict "sc" $manifest.securityContext "ctx" $.ctx)) }}
   securityContext: {{ . | nindent 4 }}
   {{- end }}
   {{- with $manifest.resources }}
@@ -100,5 +100,5 @@ https://kubernetes.default.svc
         until kubectl cluster-info >/dev/null 2>/dev/null; do
           sleep 3
         done
-  volumeMounts: {{- include "pkg.cluster.cp.vms" $ | nindent 4 }}
+  volumeMounts: {{- include "pkg.cluster.cp.vms" $.ctx | nindent 4 }}
 {{- end }}

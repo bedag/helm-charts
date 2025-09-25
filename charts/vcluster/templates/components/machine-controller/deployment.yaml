@@ -45,7 +45,7 @@ spec:
         {{- with $machine.imagePullSecrets }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
-      initContainers: {{- include "pkg.cluster.connectivity" $ | nindent 8 }}
+      initContainers: {{- include "pkg.cluster.connectivity" (dict "connectivity" $machine.connectivity "ctx" $) | nindent 8 }}
       {{- if $machine.component.ensureManifestsOnStartup }}
         {{- include "machine-controller.manifest-init" $ | nindent 8 }}
       {{- end }}

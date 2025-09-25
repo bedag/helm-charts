@@ -261,7 +261,7 @@ lifecycle:
     image:
       registry: registry-group.mgmtbi.ch
       repository: sre/gitops/cluster_bootstrap
-      pullPolicy: Always
+      pullPolicy: IfNotPresent
       # Overrides the image tag whose default is the chart appVersion.
       tag: "dev.clusterbuild"
       digest: ""
@@ -314,6 +314,35 @@ lifecycle:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
+
+    # Connectivity
+    connectivity:
+      # Image Configuration
+      image:
+        # -- Image registry
+        registry: ghcr.io
+        # -- Image repository
+        repository: kvaps/kubernetes-tools
+        # -- Image pull policy
+        pullPolicy: IfNotPresent
+        # -- Image tag
+        tag: "v0.13.4"
+        # -- Image Digest
+        digest: ""
+        # -- Image pull Secrets
+        pullSecrets: []
+      # -- Container Security Context
+      securityContext:
+        enabled: true
+        allowPrivilegeEscalation: false
+        privileged: false
+        runAsUser: 20000
+        runAsGroup: 20000
+        capabilities:
+          drop:
+          - ALL
+      # -- Resources configuration
+      resources: {}
 
   # Setup Job
   # Uses the workload settings from the jobs section above
@@ -657,6 +686,35 @@ machine:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
 
+  # Connectivity
+  connectivity:
+    # Image Configuration
+    image:
+      # -- Image registry
+      registry: ghcr.io
+      # -- Image repository
+      repository: kvaps/kubernetes-tools
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag
+      tag: "v0.13.4"
+      # -- Image Digest
+      digest: ""
+      # -- Image pull Secrets
+      pullSecrets: []
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      privileged: false
+      runAsUser: 20000
+      runAsGroup: 20000
+      capabilities:
+        drop:
+        - ALL
+    # -- Resources configuration
+    resources: {}
+
 # ----------------------------
 #  Operating System Manager
 # ----------------------------
@@ -979,6 +1037,35 @@ osm:
     targetCPUUtilizationPercentage: 80
     # -- Benchmark Memory Usage
     targetMemoryUtilizationPercentage:
+
+  # Connectivity
+  connectivity:
+    # Image Configuration
+    image:
+      # -- Image registry
+      registry: ghcr.io
+      # -- Image repository
+      repository: kvaps/kubernetes-tools
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag
+      tag: "v0.13.4"
+      # -- Image Digest
+      digest: ""
+      # -- Image pull Secrets
+      pullSecrets: []
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      privileged: false
+      runAsUser: 20000
+      runAsGroup: 20000
+      capabilities:
+        drop:
+        - ALL
+    # -- Resources configuration
+    resources: {}
 
 # ----------------------------
 #  Kubernetes Component
@@ -1819,8 +1906,6 @@ kubernetes:
     # -- Enable Kubernetes Administration
     enabled: true
     image:
-      # -- Use the Job Image (used for kubectl admin and kubeadmin bootstrap)
-      use_jobs: true
       # -- Image registry
       registry: ghcr.io
       # -- Image repository
@@ -1890,6 +1975,35 @@ kubernetes:
     # maxUnavailable: 1
     # -- Deployment Update Strategy
     strategy: {}
+
+    # Connectivity
+    connectivity:
+      # Image Configuration
+      image:
+        # -- Image registry
+        registry: ghcr.io
+        # -- Image repository
+        repository: kvaps/kubernetes-tools
+        # -- Image pull policy
+        pullPolicy: IfNotPresent
+        # -- Image tag
+        tag: "v0.13.4"
+        # -- Image Digest
+        digest: ""
+        # -- Image pull Secrets
+        pullSecrets: []
+      # -- Container Security Context
+      securityContext:
+        enabled: true
+        allowPrivilegeEscalation: false
+        privileged: false
+        runAsUser: 20000
+        runAsGroup: 20000
+        capabilities:
+          drop:
+          - ALL
+      # -- Resources configuration
+      resources: {}
 
   # CoreDNS (via KubeADM) deployed within vcluster
   coredns:
@@ -2375,6 +2489,35 @@ autoscaler:
     # -- The name of the service account to use.
     # If not set and create is true, a name is generated using the fullname template
     name: ""
+
+  # Connectivity
+  connectivity:
+    # Image Configuration
+    image:
+      # -- Image registry
+      registry: ghcr.io
+      # -- Image repository
+      repository: kvaps/kubernetes-tools
+      # -- Image pull policy
+      pullPolicy: IfNotPresent
+      # -- Image tag
+      tag: "v0.13.4"
+      # -- Image Digest
+      digest: ""
+      # -- Image pull Secrets
+      pullSecrets: []
+    # -- Container Security Context
+    securityContext:
+      enabled: true
+      allowPrivilegeEscalation: false
+      privileged: false
+      runAsUser: 20000
+      runAsGroup: 20000
+      capabilities:
+        drop:
+        - ALL
+    # -- Resources configuration
+    resources: {}
 
 # ----------------------------
 # Utilities

@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.11.1](https://img.shields.io/badge/Version-0.11.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.12.0](https://img.shields.io/badge/Version-0.12.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -143,6 +143,14 @@ We use a lifecycle Job/Cronjob to manage certain configurations within the vclus
 | lifecycle.current.extraManifests | object | See values.yaml | These manifests will be applied inside the cluster (supports templating) |
 | lifecycle.current.extraManifestsOnInstall | object | See values.yaml | These manifests will be applied inside the cluster, but only on $.Release.Install and wont be touched again (supports templating) |
 | lifecycle.jobs.affinity | object | `{}` | Affinity |
+| lifecycle.jobs.connectivity.image.digest | string | `""` | Image Digest |
+| lifecycle.jobs.connectivity.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| lifecycle.jobs.connectivity.image.pullSecrets | list | `[]` | Image pull Secrets |
+| lifecycle.jobs.connectivity.image.registry | string | `"ghcr.io"` | Image registry |
+| lifecycle.jobs.connectivity.image.repository | string | `"kvaps/kubernetes-tools"` | Image repository |
+| lifecycle.jobs.connectivity.image.tag | string | `"v0.13.4"` | Image tag |
+| lifecycle.jobs.connectivity.resources | object | `{}` | Resources configuration |
+| lifecycle.jobs.connectivity.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"privileged":false,"runAsGroup":20000,"runAsUser":20000}` | Container Security Context |
 | lifecycle.jobs.extraEnv | list | `[]` | Additional Pod Environment variables |
 | lifecycle.jobs.extraVolumeMounts | list | `[]` | Additional Pod VolumeMounts |
 | lifecycle.jobs.extraVolumes | list | `[]` | Additional Pod Volumes |
@@ -185,6 +193,14 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 | machine.autoscaling.targetMemoryUtilizationPercentage | string | `nil` | Benchmark Memory Usage |
 | machine.component.ensureManifestsOnStartup | bool | `true` | Ensure all components manifests are present on controller start (as initContainer) |
 | machine.component.removeManifestsOnDisable | bool | `true` | Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well) |
+| machine.connectivity.image.digest | string | `""` | Image Digest |
+| machine.connectivity.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| machine.connectivity.image.pullSecrets | list | `[]` | Image pull Secrets |
+| machine.connectivity.image.registry | string | `"ghcr.io"` | Image registry |
+| machine.connectivity.image.repository | string | `"kvaps/kubernetes-tools"` | Image repository |
+| machine.connectivity.image.tag | string | `"v0.13.4"` | Image tag |
+| machine.connectivity.resources | object | `{}` | Resources configuration |
+| machine.connectivity.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"privileged":false,"runAsGroup":20000,"runAsUser":20000}` | Container Security Context |
 | machine.enabled | bool | `true` | Enable Machine-Controller Component |
 | machine.imagePullSecrets | list | `[]` | Image pull Secrets |
 | machine.labels | object | `{}` | Labels for Workload |
@@ -291,6 +307,14 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.component.ensureManifestsOnStartup | bool | `true` | Ensure all components manifests are present on controller start (as initContainer) |
 | osm.component.manageCRDs | bool | `true` | Manage CRDs within the cluster |
 | osm.component.removeManifestsOnDisable | bool | `true` | Remove all manifests on disable in the vcluster (**Attention**: When crds are deleted all crs will be deleted as well) |
+| osm.connectivity.image.digest | string | `""` | Image Digest |
+| osm.connectivity.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| osm.connectivity.image.pullSecrets | list | `[]` | Image pull Secrets |
+| osm.connectivity.image.registry | string | `"ghcr.io"` | Image registry |
+| osm.connectivity.image.repository | string | `"kvaps/kubernetes-tools"` | Image repository |
+| osm.connectivity.image.tag | string | `"v0.13.4"` | Image tag |
+| osm.connectivity.resources | object | `{}` | Resources configuration |
+| osm.connectivity.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"privileged":false,"runAsGroup":20000,"runAsUser":20000}` | Container Security Context |
 | osm.enabled | bool | `false` | Enable Operating System Manager Component |
 | osm.imagePullSecrets | list | `[]` | Image pull Secrets |
 | osm.kubelet.featureGates | list | `[]` | FeatureGates for kubelet |
@@ -818,6 +842,14 @@ Deploys an administration pod which has the admin kubeconfig mounted and allows 
 |-----|------|---------|-------------|
 | kubernetes.admin.affinity | object | `{}` | Affinity |
 | kubernetes.admin.annotations | object | `{}` | Annotations for Workload |
+| kubernetes.admin.connectivity.image.digest | string | `""` | Image Digest |
+| kubernetes.admin.connectivity.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| kubernetes.admin.connectivity.image.pullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.admin.connectivity.image.registry | string | `"ghcr.io"` | Image registry |
+| kubernetes.admin.connectivity.image.repository | string | `"kvaps/kubernetes-tools"` | Image repository |
+| kubernetes.admin.connectivity.image.tag | string | `"v0.13.4"` | Image tag |
+| kubernetes.admin.connectivity.resources | object | `{}` | Resources configuration |
+| kubernetes.admin.connectivity.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"privileged":false,"runAsGroup":20000,"runAsUser":20000}` | Container Security Context |
 | kubernetes.admin.enabled | bool | `true` | Enable Kubernetes Administration |
 | kubernetes.admin.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.admin.envsFrom | list | `[]` | Extra environment variables from |
@@ -826,7 +858,6 @@ Deploys an administration pod which has the admin kubeconfig mounted and allows 
 | kubernetes.admin.image.registry | string | `"ghcr.io"` | Image registry |
 | kubernetes.admin.image.repository | string | `"kvaps/kubernetes-tools"` | Image repository |
 | kubernetes.admin.image.tag | string | `"v0.13.4"` | Image tag (Version Overwrites) Overrides the image tag whose default is the chart appVersion. |
-| kubernetes.admin.image.use_jobs | bool | `true` | Use the Job Image (used for kubectl admin and kubeadmin bootstrap) |
 | kubernetes.admin.imagePullSecrets | list | `[]` | Image pull Secrets |
 | kubernetes.admin.injectProxy | bool | `true` | Inject Proxy as Environment Variables |
 | kubernetes.admin.labels | object | `{}` | Labels for Workload |
@@ -896,6 +927,14 @@ Available Values for the [Autsocaler component](#autoscaler).
 | autoscaler.affinity | object | `{}` | Affinity |
 | autoscaler.annotations | object | `{}` | Annotations for Workload |
 | autoscaler.args | object | `{"leader-elect":true,"logtostderr":true,"scale-down-enabled":true,"stderrthreshold":"info","v":4}` | Additional container arguments. Refer to https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#what-are-the-parameters-to-ca for the full list of cluster autoscaler parameters and their default values. Everything after the first _ will be ignored allowing the use of multi-string arguments. |
+| autoscaler.connectivity.image.digest | string | `""` | Image Digest |
+| autoscaler.connectivity.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| autoscaler.connectivity.image.pullSecrets | list | `[]` | Image pull Secrets |
+| autoscaler.connectivity.image.registry | string | `"ghcr.io"` | Image registry |
+| autoscaler.connectivity.image.repository | string | `"kvaps/kubernetes-tools"` | Image repository |
+| autoscaler.connectivity.image.tag | string | `"v0.13.4"` | Image tag |
+| autoscaler.connectivity.resources | object | `{}` | Resources configuration |
+| autoscaler.connectivity.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"privileged":false,"runAsGroup":20000,"runAsUser":20000}` | Container Security Context |
 | autoscaler.enabled | bool | `false` | Enable autoscaler component |
 | autoscaler.envs | object | `{"CAPI_GROUP":"cluster.k8s.io"}` | Extra environment variables (`key: value` style, allows templating) |
 | autoscaler.envsFrom | list | `[]` | Extra environment variables from |

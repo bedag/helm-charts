@@ -52,7 +52,7 @@ spec:
       # Reconciler Operates in the current Cluster, therefore automounting the ServiceAccountToken is required
       automountServiceAccountToken: true
       restartPolicy: OnFailure
-      initContainers: {{- include "pkg.cluster.connectivity" $ | nindent 8 }}
+      initContainers: {{- include "pkg.cluster.connectivity" (dict "connectivity" $manifest.connectivity "ctx" $) | nindent 8 }}
       containers:
       - name: current
         image: {{ include "pkg.images.registry.convert" (dict "image" $manifest.image "ctx" $) }}

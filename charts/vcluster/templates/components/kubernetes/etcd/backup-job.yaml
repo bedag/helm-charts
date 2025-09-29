@@ -102,8 +102,6 @@ spec:
             {{- else }}
               {{- include "pkg.common.env" $ | nindent 12 }}
             {{- end }}
-            - name: ETCDCTL_API
-              value: "3"
             - name: ETCDCTL_CACERT
               value: /pki/etcd/peer/ca.crt
             - name: ETCDCTL_CERT

@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.13.1](https://img.shields.io/badge/Version-0.13.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.14.0](https://img.shields.io/badge/Version-0.14.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -656,6 +656,34 @@ Deploys [ETCD](https://etcd.io/).
 | kubernetes.etcd.cleanup.tolerations | list | `[]` | Tolerations |
 | kubernetes.etcd.cleanup.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
 | kubernetes.etcd.cleanup.ttlSecondsAfterFinished | int | `120` | ttlSecondsAfterFinished for ETCD Backup Cleanup |
+| kubernetes.etcd.defrag.affinity | object | `{}` | Affinity |
+| kubernetes.etcd.defrag.annotations | object | `{}` | Annotations for Workload |
+| kubernetes.etcd.defrag.defragRule | string | `"dbQuotaUsage > 0.8 || dbSize - dbSizeInUse > 200*1024*1024"` | defrag-rule for ETCD Defragmentation (https://github.com/ahrtr/etcd-defrag?tab=readme-ov-file#defragmentation-rule) |
+| kubernetes.etcd.defrag.enabled | bool | `false` | Enable ETCD Defragmentation |
+| kubernetes.etcd.defrag.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
+| kubernetes.etcd.defrag.envsFrom | list | `[]` | Extra environment variables from |
+| kubernetes.etcd.defrag.failedJobsHistoryLimit | int | `3` | Failed Jobs History Limit for ETCD Defragmentation |
+| kubernetes.etcd.defrag.image.digest | string | `""` | Image Digest |
+| kubernetes.etcd.defrag.image.pullPolicy | string | `"IfNotPresent"` | Image pull policy |
+| kubernetes.etcd.defrag.image.registry | string | `"ghcr.io"` | Image registry |
+| kubernetes.etcd.defrag.image.repository | string | `"ahrtr/etcd-defrag"` | Image repository |
+| kubernetes.etcd.defrag.image.tag | string | `"v0.18.0"` | Image tag |
+| kubernetes.etcd.defrag.imagePullSecrets | list | `[]` | Image pull Secrets |
+| kubernetes.etcd.defrag.injectProxy | bool | `false` | Inject Proxy as Environment Variables |
+| kubernetes.etcd.defrag.labels | object | `{}` | Labels for Workload |
+| kubernetes.etcd.defrag.nodeSelector | object | `{}` | Node Selector |
+| kubernetes.etcd.defrag.podAnnotations | object | `{}` | Pod Annotations |
+| kubernetes.etcd.defrag.podLabels | object | `{}` | Pod Labels |
+| kubernetes.etcd.defrag.podSecurityContext | object | `{"enabled":true,"runAsNonRoot":true,"seccompProfile":{"type":"RuntimeDefault"}}` | Pod Security Context |
+| kubernetes.etcd.defrag.priorityClassName | string | `""` | Pod PriorityClassName |
+| kubernetes.etcd.defrag.resources | object | `{}` | Pod Requests and limits |
+| kubernetes.etcd.defrag.restartPolicy | string | `"OnFailure"` | Restart Policy for ETCD Defragmentation |
+| kubernetes.etcd.defrag.schedule | string | `"0 0 1 * *"` | Schedule for ETCD Defragmentation |
+| kubernetes.etcd.defrag.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"readOnlyRootFilesystem":true}` | Container Security Context |
+| kubernetes.etcd.defrag.successfulJobsHistoryLimit | int | `3` | Successful Jobs History Limit for ETCD Defragmentation |
+| kubernetes.etcd.defrag.tolerations | list | `[]` | Tolerations |
+| kubernetes.etcd.defrag.topologySpreadConstraints | list | `[]` | TopologySpreadConstraints for all workloads |
+| kubernetes.etcd.defrag.ttlSecondsAfterFinished | int | `120` | ttlSecondsAfterFinished for ETCD Defragmentation |
 | kubernetes.etcd.enabled | bool | `true` | Enable ETCD |
 | kubernetes.etcd.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.etcd.envsFrom | list | `[]` | Extra environment variables from |

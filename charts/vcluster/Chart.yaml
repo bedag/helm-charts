@@ -13,7 +13,3 @@ home: https://artifacthub.io/packages/helm/kvaps/kubernetes
 maintainers:
   - name: "Bedag Informatik AG"
     email: sre@bedag.ch
-dependencies:
-  - name: common
-    version: 2.14.1
-    repository: oci://registry-1.docker.io/bitnamicharts

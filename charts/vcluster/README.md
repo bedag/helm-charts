@@ -14,12 +14,6 @@ Virtual Kubernetes Cluster
 | ---- | ------ | --- |
 | Bedag Informatik AG | <sre@bedag.ch> |  |
 
-## Requirements
-
-| Repository | Name | Version |
-|------------|------|---------|
-| oci://registry-1.docker.io/bitnamicharts | common | 2.14.1 |
-
 # Major Changes
 
 Major Changes to functions are documented with the version affected. **Before upgrading the dependency version, check this section out!**

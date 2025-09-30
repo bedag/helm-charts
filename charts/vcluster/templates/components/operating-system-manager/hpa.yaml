@@ -3,7 +3,7 @@
   {{- $manifest := $osm.autoscaling -}}
   {{- if $manifest.enabled }}
 ---
-apiVersion: {{ include "common.capabilities.hpa.apiVersion" ( dict "context" $ ) }}
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "operating-system-manager.fullname" . }}

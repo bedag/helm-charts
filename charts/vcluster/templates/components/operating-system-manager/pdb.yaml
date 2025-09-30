@@ -2,7 +2,7 @@
   {{- $manifest := $.Values.osm -}}
   {{- if $manifest.podDisruptionBudget -}}
 ---
-apiVersion: {{ include "common.capabilities.policy.apiVersion" $ }}
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "operating-system-manager.fullname" . }}

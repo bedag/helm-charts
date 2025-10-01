@@ -5,7 +5,7 @@
     {{- $component_name := "apiserver" -}}
     {{- if $kubernetes.apiServer.podDisruptionBudget -}}
 ---
-apiVersion: {{ include "common.capabilities.policy.apiVersion" $ }}
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: "{{ $fullName }}-apiserver"

@@ -6,7 +6,7 @@
     {{- $manifest := $kubernetes.scheduler.autoscaling -}}
     {{- if $manifest.enabled }}
 ---
-apiVersion: {{ include "common.capabilities.hpa.apiVersion" ( dict "context" $ ) }}
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: "{{ $fullName }}-scheduler"

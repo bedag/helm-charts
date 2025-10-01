@@ -5,7 +5,7 @@
     {{- $component_name := "controller-manager" -}}
     {{- if $kubernetes.controllerManager.podDisruptionBudget -}}
 ---
-apiVersion: {{ include "common.capabilities.policy.apiVersion" $ }}
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: "{{ $fullName }}-controller-manager"

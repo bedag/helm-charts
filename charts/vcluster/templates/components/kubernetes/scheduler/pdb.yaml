@@ -5,7 +5,7 @@
     {{- $component_name := "scheduler" -}}
     {{- if $kubernetes.scheduler.podDisruptionBudget -}}
 ---
-apiVersion: {{ include "common.capabilities.policy.apiVersion" $ }}
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: "{{ $fullName }}-scheduler"

@@ -2,7 +2,7 @@
   {{- $manifest := $.Values.autoscaler -}}
   {{- if $manifest.podDisruptionBudget -}}
 ---
-apiVersion: {{ include "common.capabilities.policy.apiVersion" $ }}
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "autoscaler.fullname" . }}

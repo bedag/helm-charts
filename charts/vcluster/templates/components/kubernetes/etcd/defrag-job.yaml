@@ -1,0 +1,132 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if and $kubernetes.etcd.enabled $kubernetes.etcd.defrag.enabled -}}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "etcd" -}}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $fullName }}-etcd-defrag
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+    {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.etcd.defrag.labels "ctx" $)) }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.etcd.defrag.annotations "ctx" $)) }}
+  annotations:
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  namespace: {{ $.Release.Namespace }}
+spec:
+  schedule: "{{ $kubernetes.etcd.defrag.schedule }}"
+  successfulJobsHistoryLimit: {{ $kubernetes.etcd.defrag.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ $kubernetes.etcd.defrag.failedJobsHistoryLimit }}
+  jobTemplate:
+    metadata:
+      labels:
+        {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+        {{- with (include "pkg.components.labels" (dict "labels" $kubernetes.etcd.defrag.labels "ctx" $)) }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- with (include "pkg.components.annotations" (dict "annotations" $kubernetes.etcd.defrag.annotations "ctx" $)) }}
+      annotations:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with $kubernetes.etcd.defrag.ttlSecondsAfterFinished }}
+      ttlSecondsAfterFinished: {{ . }}
+      {{- end }}
+      template:
+        metadata:
+          labels: {{- include "kubernetes.labels" $ | nindent 12 }}
+            {{- include "pkg.components.pod_labels" (dict "labels" $kubernetes.etcd.defrag.podLabels "ctx" $) | nindent 12 }}
+            {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+          annotations:
+            {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.etcd.defrag.podAnnotations "ctx" $) | nindent 12 }}
+        spec:
+          {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $kubernetes.etcd.defrag.nodeSelector "ctx" $)) }}
+          nodeSelector: {{- . | nindent 12 }}
+          {{- end }}
+          {{- with (include "pkg.components.tolerations" (dict "tolerations" $kubernetes.etcd.defrag.tolerations "ctx" $)) }}
+          tolerations:  {{- . | nindent 12 }}
+          {{- end }}
+          {{- with (include "pkg.components.priorityClass" (dict "pc" $kubernetes.etcd.defrag.priorityClassName "ctx" $)) }}
+          priorityClassName: {{ . }}
+          {{- end }}
+          {{- with (include "pkg.components.topologySpreadConstraints" (dict "tsc" $kubernetes.etcd.defrag.topologySpreadConstraints "ctx" $)) }}
+          topologySpreadConstraints: {{ . | nindent 12 }}
+          {{- end }}
+          affinity:
+          {{- with (include "pkg.components.affinity" (dict "affinity" $kubernetes.etcd.defrag.affinity "ctx" $)) }}
+            {{- . | nindent 10 }}
+          {{- end }}
+          {{- if eq $kubernetes.etcd.defrag.podAntiAffinity "hard" }}
+            podAntiAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - topologyKey: "{{ $kubernetes.etcd.defrag.podAntiAffinityTopologyKey }}"
+                  labelSelector:
+                    matchLabels:
+                      app: {{ $fullName }}-etcd
+          {{- else if eq $kubernetes.etcd.defrag.podAntiAffinity "soft" }}
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 1
+                  podAffinityTerm:
+                    topologyKey: "{{ $kubernetes.etcd.defrag.podAntiAffinityTopologyKey }}"
+                    labelSelector:
+                      matchLabels:
+                        app: {{ $fullName }}-etcd
+          {{- end }}
+          imagePullSecrets: {{- include "pkg.images.registry.pullsecrets" $ | nindent 10 }}
+            {{- with $kubernetes.etcd.defrag.imagePullSecrets }}
+              {{- toYaml . | nindent 10 }}
+            {{- end }}
+          automountServiceAccountToken: false
+          restartPolicy: {{ $kubernetes.etcd.defrag.restartPolicy }}
+          containers:
+          - args:
+            - --endpoints={{ template "kubernetes.etcdCtlEndpoints" . }}
+            - --cacert=/pki/etcd/peer/ca.crt
+            - --cert=/pki/etcd/peer/tls.crt
+            - --key=/pki/etcd/peer/tls.key
+            - --cluster
+            - --defrag-rule
+            {{- with $kubernetes.etcd.defrag.defragRule }}
+            - {{ . | quote }}
+            {{- end }}
+            {{- with $kubernetes.etcd.defrag.envsFrom }}
+            envFrom:
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            env:
+            {{- if $kubernetes.etcd.defrag.injectProxy }}
+              {{- include "pkg.common.env.w-proxy" $ | nindent 12 }}
+            {{- else }}
+              {{- include "pkg.common.env" $ | nindent 12 }}
+            {{- end }}
+            {{- with $kubernetes.etcd.defrag.envs }}
+              {{- include "pkg.utils.envs" (dict "envs" . "ctx" $) | nindent 12 }}
+            {{- end }}
+            {{- with $kubernetes.etcd.defrag.image }}
+            image: {{ include "pkg.images.registry.convert" (dict "image" . "ctx" $) }}
+            imagePullPolicy: {{ include "pkg.images.registry.pullpolicy" (dict "policy" .pullPolicy "ctx" $) }}
+            {{- end }}
+            name: etcd-defrag
+            {{- with (include "pkg.components.securityContext" (dict "sc" $kubernetes.etcd.defrag.securityContext "ctx" $)) }}
+            securityContext: {{ . | nindent 14 }}
+            {{- end }}
+            resources:
+              {{- toYaml $kubernetes.etcd.defrag.resources | nindent 14 }}
+            volumeMounts:
+            - mountPath: /pki/etcd/peer
+              name: pki-etcd-certs-peer
+          {{- with (include "pkg.components.podSecurityContext" (dict "psc" $kubernetes.etcd.defrag.podSecurityContext "ctx" $)) }}
+          securityContext: {{ . | nindent 12 }}
+          {{- end }}
+          volumes:
+          - secret:
+              secretName: {{ $fullName }}-pki-etcd-peer
+            name: pki-etcd-certs-peer
+  {{- end -}}
+{{- end -}}

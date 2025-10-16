@@ -1,0 +1,20 @@
+{{- if (include "kubernetes.enabled" $) -}}
+  {{- $kubernetes := $.Values.kubernetes -}}
+  {{- if and $kubernetes.apiServer.enabled $kubernetes.apiServer.audit.enabled -}}
+    {{- if or (eq $kubernetes.apiServer.audit.backend "webhook") (eq $kubernetes.apiServer.audit.backend "both")}}
+    {{- $fullName := include "kubernetes.fullname" . -}}
+    {{- $component_name := "apiserver" -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullName }}-webhook-config
+  labels: {{- include "kubernetes.labels" $ | nindent 4 }}
+    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
+  namespace: {{ $.Release.Namespace }}
+data:
+  webhook.yaml: |
+    {{- $kubernetes.apiServer.audit.webhook.config | nindent 4 }}
+  {{- end -}}
+  {{- end -}}
+{{- end -}}

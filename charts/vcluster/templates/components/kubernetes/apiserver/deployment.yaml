@@ -112,15 +112,21 @@ spec:
           {{- end }}
         {{- end }}
         {{- if $kubernetes.apiServer.audit.enabled }}
-        - --audit-policy-file=/etc/kubernetes/audit/policy.yaml
+        - --audit-policy-file=/etc/kubernetes/audit/policy/policy.yaml
+        {{- if or (eq $kubernetes.apiServer.audit.backend "log") (eq $kubernetes.apiServer.audit.backend "both")}}
         - --audit-log-path=/var/log/kubernetes/audit/{{ include "pkg.cluster.name" $ }}-audit.log
-        - --audit-log-maxage={{ $kubernetes.apiServer.audit.maxAge | int }}
-        - --audit-log-maxbackup={{ $kubernetes.apiServer.audit.maxBackup | int }}
-        - --audit-log-maxsize={{ $kubernetes.apiServer.audit.maxSize | int }}
-        {{- if $kubernetes.apiServer.audit.truncateEnabled }}
-        - --audit-log-truncate-enabled={{ $kubernetes.apiServer.audit.truncateEnabled }}
-        - --audit-log-truncate-max-batch-size={{ $kubernetes.apiServer.audit.truncateMaxBatchSize | int }}
-        - --audit-log-truncate-max-event-size={{ $kubernetes.apiServer.audit.truncateMaxEventSize | int }}
+        - --audit-log-maxage={{ $kubernetes.apiServer.audit.log.maxAge | int }}
+        - --audit-log-maxbackup={{ $kubernetes.apiServer.audit.log.maxBackup | int }}
+        - --audit-log-maxsize={{ $kubernetes.apiServer.audit.log.maxSize | int }}
+        {{- if $kubernetes.apiServer.audit.log.truncateEnabled }}
+        - --audit-log-truncate-enabled={{ $kubernetes.apiServer.audit.log.truncateEnabled }}
+        - --audit-log-truncate-max-batch-size={{ $kubernetes.apiServer.audit.log.truncateMaxBatchSize | int }}
+        - --audit-log-truncate-max-event-size={{ $kubernetes.apiServer.audit.log.truncateMaxEventSize | int }}
+        {{- end }}
+        {{- end }}
+        {{- if or (eq $kubernetes.apiServer.audit.backend "webhook") (eq $kubernetes.apiServer.audit.backend "both")}}
+        - --audit-webhook-config-file=/etc/kubernetes/audit/webhook/webhook.yaml
+        - --audit-webhook-initial-backoff={{ $kubernetes.apiServer.audit.webhook.initialBackoff }}
         {{- end }}
         {{- end }}
         {{- with $kubernetes.apiServer.args }}
@@ -184,12 +190,19 @@ spec:
           {{- end }}
         {{- end }}
         {{- if $kubernetes.apiServer.audit.enabled }}
-        - mountPath: /etc/kubernetes/audit/
+        - mountPath: /etc/kubernetes/audit/policy/
           name: audit
           readOnly: true
-        - mountPath: /var/log/kubernetes/audit/
+        {{- if or (eq $kubernetes.apiServer.audit.backend "log") (eq $kubernetes.apiServer.audit.backend "both")}}
+        - mountPath: /var/log/kubernetes/audit/webhook/
           name: audit-log
           readOnly: false
+        {{- end }}
+        {{- if or (eq $kubernetes.apiServer.audit.backend "webhook") (eq $kubernetes.apiServer.audit.backend "both")}}
+        - mountPath: /etc/kubernetes/audit/webhook.yaml
+          name: webhook-config
+          readOnly: true
+        {{- end }}
         {{- end }}
         {{- with $kubernetes.apiServer.volumeMounts }}
           {{- toYaml . | nindent 8 }}
@@ -231,10 +244,17 @@ spec:
       - configMap:
           name: "{{ $fullName }}-audit-policy"
         name: audit
+      {{- if or (eq $kubernetes.apiServer.audit.backend "webhook") (eq $kubernetes.apiServer.audit.backend "both")}}
+      - configMap:
+          name: "{{ $fullName }}-webhook-config"
+        name: webhook-config
+      {{- end }}
+      {{- if or (eq $kubernetes.apiServer.audit.backend "log") (eq $kubernetes.apiServer.audit.backend "both")}}
       - name: audit-log
         hostPath:
           path: /var/log/kubernetes/audit/
           type: DirectoryOrCreate
+      {{- end }}
       {{- end }}
       {{- with $kubernetes.apiServer.volumes }}
         {{- toYaml . | nindent 6 }}

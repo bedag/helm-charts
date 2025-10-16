@@ -1757,18 +1757,44 @@ kubernetes:
       # -- Enable Audit Log
       enabled: false
 
-      # -- Defines the maximum number of days to retain old audit log files
-      maxAge: "7"
-      # -- Defines the maximum number of audit log files to retain
-      maxBackup: "2"
-      # -- Defines the maximum size in megabytes of the audit log file before it gets rotated
-      maxSize: "100"
-      # -- Whether event and batch truncating is enabled
-      truncateEnabled: false
-      # -- Maximum size in bytes of the batch sent to the underlying backend
-      truncateMaxBatchSize: "10485760"
-      # -- Maximum size in bytes of the audit event sent to the underlying backend
-      truncateMaxEventSize: "102400"
+      # -- Configure Audit Backend (log, webhook, both)
+      backend: log
+
+      webhook:
+        # -- Defines the time to wait before retrying the first failed request.
+        initialBackoff: "10s"
+
+        # -- Kubeconfig for webhook
+        config: |
+          apiVersion: v1
+          kind: Config
+          clusters:
+          - name: audit-webhook
+            cluster:
+              server: https://audit-webhook.audit-webhook.svc:9443/audit
+              insecure-skip-tls-verify: false
+          contexts:
+          - name: audit-webhook
+            context:
+              cluster: audit-webhook
+              user: ""
+          current-context: audit-webhook
+          users: []
+          preferences: {}
+
+      log:
+        # -- Defines the maximum number of days to retain old audit log files
+        maxAge: "7"
+        # -- Defines the maximum number of audit log files to retain
+        maxBackup: "2"
+        # -- Defines the maximum size in megabytes of the audit log file before it gets rotated
+        maxSize: "100"
+        # -- Whether event and batch truncating is enabled
+        truncateEnabled: false
+        # -- Maximum size in bytes of the batch sent to the underlying backend
+        truncateMaxBatchSize: "10485760"
+        # -- Maximum size in bytes of the audit event sent to the underlying backend
+        truncateMaxEventSize: "102400"
 
       # -- Audit Policy
       policy: |

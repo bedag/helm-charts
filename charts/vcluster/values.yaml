@@ -412,6 +412,8 @@ machine:
   controller:
     # -- Controller Command Arguments ([See Available](https://github.com/kubermatic/machine-controller/blob/main/cmd/machine-controller/main.go))
     args:
+      log-debug: false
+      log-format: json # json or console
       node-csr-approver: true
       join-cluster-timeout: 25m
       worker-count: 10
@@ -498,8 +500,9 @@ machine:
 
     # -- Webhook Command Arguments ([See Available](https://github.com/kubermatic/machine-controller/blob/main/cmd/webhook/main.go))
     args:
-      v: 4
-      # kubernetes-version-constraints: ">=1.18.0"
+      # on debug level, full Machine objects with inline credentials might be logged, beware!
+      log-debug: false
+      log-format: json # json or console
 
     image:
       # -- Image registry
@@ -750,7 +753,7 @@ machine:
 # Reference:
 osm:
   # -- Enable Operating System Manager Component
-  enabled: false
+  enabled: true
 
   # Component Settings
   component:
@@ -793,6 +796,8 @@ osm:
     # -- Controller Command Arguments ([See Available](https://github.com/kubermatic/operating-system-manager/blob/main/cmd/osm-controller/main.go))
     args:
       worker-count: 10
+      log-debug: false
+      log-format: json # json or console
 
     image:
       # -- Image registry
@@ -859,7 +864,7 @@ osm:
   # The Admission Webhooks are deployed into the new cluster (Testing)
   admission:
     # -- Enable Admission Webhook
-    enabled: true
+    enabled: false
 
     # Admission Webhook Config
     webhook:
@@ -875,7 +880,8 @@ osm:
 
     # -- Webhook Command Arguments ([See Available](https://github.com/kubermatic/operating-system-manager/blob/main/cmd/webhook/main.go))
     args:
-      v: 4
+      log-debug: false
+      log-format: json # json or console
 
     image:
       # -- Image registry

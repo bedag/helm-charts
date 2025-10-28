@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.14.0](https://img.shields.io/badge/Version-0.14.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.15.0](https://img.shields.io/badge/Version-0.15.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -240,7 +240,7 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 ---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| machine.controller.args | object | `{"join-cluster-timeout":"25m","node-csr-approver":true,"worker-count":10}` | Controller Command Arguments ([See Available](https://github.com/kubermatic/machine-controller/blob/main/cmd/machine-controller/main.go)) |
+| machine.controller.args | object | `{"join-cluster-timeout":"25m","log-debug":false,"log-format":"json","node-csr-approver":true,"worker-count":10}` | Controller Command Arguments ([See Available](https://github.com/kubermatic/machine-controller/blob/main/cmd/machine-controller/main.go)) |
 | machine.controller.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | machine.controller.envsFrom | list | `[]` | Extra environment variables from |
 | machine.controller.image.digest | string | `""` | Image Digest |
@@ -260,7 +260,7 @@ Available Values for the [Machine Controller Component](#machine-controller). Th
 ---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| machine.admission.args | object | `{"v":4}` | Webhook Command Arguments ([See Available](https://github.com/kubermatic/machine-controller/blob/main/cmd/webhook/main.go)) |
+| machine.admission.args | object | `{"log-debug":false,"log-format":"json"}` | Webhook Command Arguments ([See Available](https://github.com/kubermatic/machine-controller/blob/main/cmd/webhook/main.go)) |
 | machine.admission.enabled | bool | `false` | Enable Admission Webhook Feature |
 | machine.admission.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | machine.admission.envsFrom | list | `[]` | Extra environment variables from |
@@ -317,7 +317,7 @@ Available Values for the [Operating System Manager](). The component consists of
 | osm.connectivity.image.tag | string | `"v0.13.4"` | Image tag |
 | osm.connectivity.resources | object | `{}` | Resources configuration |
 | osm.connectivity.securityContext | object | `{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"enabled":true,"privileged":false,"runAsGroup":20000,"runAsUser":20000}` | Container Security Context |
-| osm.enabled | bool | `false` | Enable Operating System Manager Component |
+| osm.enabled | bool | `true` | Enable Operating System Manager Component |
 | osm.imagePullSecrets | list | `[]` | Image pull Secrets |
 | osm.kubelet.featureGates | list | `[]` | FeatureGates for kubelet |
 | osm.labels | object | `{}` | Labels for Workload |
@@ -370,7 +370,7 @@ Available Values for the [Operating System Manager](). The component consists of
 ---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| osm.controller.args | object | `{"worker-count":10}` | Controller Command Arguments ([See Available](https://github.com/kubermatic/operating-system-manager/blob/main/cmd/osm-controller/main.go)) |
+| osm.controller.args | object | `{"log-debug":false,"log-format":"json","worker-count":10}` | Controller Command Arguments ([See Available](https://github.com/kubermatic/operating-system-manager/blob/main/cmd/osm-controller/main.go)) |
 | osm.controller.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | osm.controller.envsFrom | list | `[]` | Extra environment variables from |
 | osm.controller.image.digest | string | `""` | Image Digest |
@@ -390,8 +390,8 @@ Available Values for the [Operating System Manager](). The component consists of
 ---
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| osm.admission.args | object | `{"v":4}` | Webhook Command Arguments ([See Available](https://github.com/kubermatic/operating-system-manager/blob/main/cmd/webhook/main.go)) |
-| osm.admission.enabled | bool | `true` | Enable Admission Webhook |
+| osm.admission.args | object | `{"log-debug":false,"log-format":"json"}` | Webhook Command Arguments ([See Available](https://github.com/kubermatic/operating-system-manager/blob/main/cmd/webhook/main.go)) |
+| osm.admission.enabled | bool | `false` | Enable Admission Webhook |
 | osm.admission.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | osm.admission.envsFrom | list | `[]` | Extra environment variables from |
 | osm.admission.expose | string | `""` | How to expose the admission service to be reachable from the vcluster. Can be `ingress` or `loadbalancer |

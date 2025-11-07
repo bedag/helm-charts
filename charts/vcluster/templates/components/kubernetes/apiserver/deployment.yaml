@@ -199,7 +199,7 @@ spec:
           readOnly: false
         {{- end }}
         {{- if or (eq $kubernetes.apiServer.audit.backend "webhook") (eq $kubernetes.apiServer.audit.backend "both")}}
-        - mountPath: /etc/kubernetes/audit/webhook.yaml
+        - mountPath: /etc/kubernetes/audit/webhook/
           name: webhook-config
           readOnly: true
         {{- end }}

@@ -2280,6 +2280,11 @@ kubernetes:
         pullPolicy: IfNotPresent
         # -- Image Digest
         digest: ""
+      controlplane:
+        # -- Enable Konnectivity Server for controlplane traffic
+        enabled: false
+        # -- This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment.
+        mode: "GRPC"
       # -- Image pull Secrets
       imagePullSecrets: []
       # -- Konnectivity Server Replicas (only used in HTTPConnect mode)

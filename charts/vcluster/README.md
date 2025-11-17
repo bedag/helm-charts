@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.16.1](https://img.shields.io/badge/Version-0.16.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.16.2](https://img.shields.io/badge/Version-0.16.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -808,6 +808,8 @@ The Konnectivity-Server is deployed alongside with the API-Server. It must be re
 | kubernetes.konnectivity.server.affinity | object | `{}` | Affinity |
 | kubernetes.konnectivity.server.annotations | object | `{}` | Annotations for Workload |
 | kubernetes.konnectivity.server.args | object | `{}` | Konnectivity Server extra arguments |
+| kubernetes.konnectivity.server.controlplane.enabled | bool | `false` | Enable Konnectivity Server for controlplane traffic |
+| kubernetes.konnectivity.server.controlplane.mode | string | `"GRPC"` | This controls the protocol between the API Server and the Konnectivity server. Supported values are "GRPC" and "HTTPConnect". "GRPC" will deploy konnectivity-server as a sidecar for apiserver. "HTTPConnect" will deploy konnectivity-server as separate deployment. |
 | kubernetes.konnectivity.server.enabled | bool | `true` | Enable Konnectivity Server |
 | kubernetes.konnectivity.server.envs | object | `{}` | Extra environment variables (`key: value` style, allows templating) |
 | kubernetes.konnectivity.server.envsFrom | list | `[]` | Extra environment variables from |

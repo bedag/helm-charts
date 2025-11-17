@@ -37,9 +37,29 @@ data:
         {{- else }}
         proxyProtocol: Direct
         {{- end }}
-    - name: master
+    - name: controlplane
       connection:
+        {{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.server.enabled $kubernetes.konnectivity.server.controlplane.enabled }}
+          {{- if has $kubernetes.konnectivity.server.controlplane.mode (list "HTTPConnect" "GRPC") }}
+        proxyProtocol: {{ $kubernetes.konnectivity.server.controlplane.mode }}
+          {{- else }}
+            {{- fail "$kubernetes.konnectivity.server.controlplane.mode supports only \"HTTPConnect\" and \"GRPC\" values" }}
+          {{- end }}
+        transport:
+          {{- if eq $kubernetes.konnectivity.server.controlplane.mode "GRPC" }}
+          uds:
+            udsName: /run/konnectivity-server/konnectivity-server.socket
+          {{- else }}
+          tcp:
+            url: "https://{{ $fullName }}-konnectivity-server:8131"
+            TLSConfig:
+              caBundle: /pki/konnectivity-client/ca.crt
+              clientKey: /pki/konnectivity-client/tls.key
+              clientCert: /pki/konnectivity-client/tls.crt
+          {{- end }}
+        {{- else }}
         proxyProtocol: Direct
+        {{- end }}
     - name: etcd
       connection:
         proxyProtocol: Direct

@@ -194,7 +194,7 @@ spec:
           name: audit
           readOnly: true
         {{- if or (eq $kubernetes.apiServer.audit.backend "log") (eq $kubernetes.apiServer.audit.backend "both")}}
-        - mountPath: /var/log/kubernetes/audit/webhook/
+        - mountPath: /var/log/kubernetes/audit/
           name: audit-log
           readOnly: false
         {{- end }}

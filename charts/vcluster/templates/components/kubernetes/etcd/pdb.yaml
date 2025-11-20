@@ -14,7 +14,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec: {{- toYaml $kubernetes.etcd.podDisruptionBudget | nindent 2 }}
   selector:
-    matchLabels: {{- include "kubernetes.labels" $ | nindent 6 }}
+    matchLabels: {{- include "kubernetes.selectorLabels" $ | nindent 6 }}
       {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
     {{- end -}}
   {{- end -}}

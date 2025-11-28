@@ -32,6 +32,9 @@ spec:
         {{- include "pkg.components.pod_labels" (dict "labels" $kubernetes.admin.podLabels "ctx" $) | nindent 8 }}
         {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
       annotations:
+        checksum/kubeconfig: {{ include (print $.Template.BasePath "/components/kubernetes/kubeconfig.yaml" ) . | sha256sum }}
+        checksum/kubeadm-config: {{ include (print $.Template.BasePath "/components/kubernetes/kubeadm-config.yaml" ) . | sha256sum }}
+        checksum/konnectivity-config: {{ include (print $.Template.BasePath "/components/kubernetes/konnectivity/manifests.yaml" ) . | sha256sum }}
         {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.admin.podAnnotations "ctx" $) | nindent 8 }}
     spec:
       {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $kubernetes.admin.nodeSelector "ctx" $)) }}

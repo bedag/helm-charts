@@ -31,6 +31,7 @@ spec:
       annotations: {{- include "pkg.components.pod_annotations" (dict "annotations" $osm.podAnnotations "ctx" $) | nindent 8 }}
         {{ include "operating-system-manager.manifests.checksum" $ }}
         {{ include "operating-system-manager.webhooks.checksum" $ }}
+        checksum/kubeconfig: {{ include (print $.Template.BasePath "/components/kubernetes/kubeconfig.yaml" ) . | sha256sum }}
       labels: {{- include "operating-system-manager.selectorLabels" . | nindent 8 }}
         {{- include "pkg.components.pod_labels" (dict "labels" $osm.podLabels "ctx" $) | nindent 8 }}
     spec:

@@ -32,6 +32,8 @@ spec:
       annotations: {{- include "pkg.components.pod_annotations" (dict "annotations" $machine.podAnnotations "ctx" $) | nindent 8 }}
         {{ include "machine-controller.manifests.checksum" $ }}
         {{ include "machine-controller.webhooks.checksum" $ }}
+        checksum/kubeconfig: {{ include (print $.Template.BasePath "/components/kubernetes/kubeconfig.yaml" ) . | sha256sum }}
+        checksum/provider: {{ include (print $.Template.BasePath "/components/machine-controller/providers-secret.yaml" ) . | sha256sum }}
       labels: {{- include "machine-controller.selectorLabels" . | nindent 8 }}
         {{- include "pkg.components.pod_labels" (dict "labels" $machine.podLabels "ctx" $) | nindent 8 }}
     spec:

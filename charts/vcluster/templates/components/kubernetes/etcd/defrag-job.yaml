@@ -39,7 +39,7 @@ spec:
       {{- end }}
       template:
         metadata:
-          labels: {{- include "kubernetes.labels" $ | nindent 12 }}
+          labels: {{- include "kubernetes.selectorLabels" $ | nindent 12 }}
             {{- include "pkg.components.pod_labels" (dict "labels" $kubernetes.etcd.defrag.podLabels "ctx" $) | nindent 12 }}
             {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
           annotations:

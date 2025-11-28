@@ -35,6 +35,8 @@ spec:
         {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/components/kubernetes/apiserver/config.yaml" ) . | sha256sum }}
+        checksum/policy: {{ include (print $.Template.BasePath "/components/kubernetes/apiserver/policy.yaml" ) . | sha256sum }}
+        checksum/konnectivity-config: {{ include (print $.Template.BasePath "/components/kubernetes/konnectivity/configmap.yaml" ) . | sha256sum }}
         {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.apiServer.podAnnotations "ctx" $) | nindent 8 }}
     spec:
       {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $kubernetes.apiServer.nodeSelector "ctx" $)) }}

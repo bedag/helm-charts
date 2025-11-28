@@ -33,8 +33,8 @@ spec:
         {{- include "pkg.components.pod_labels" (dict "labels" $kubernetes.scheduler.podLabels "ctx" $) | nindent 8 }}
         {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
       annotations:
-       checksum/config: {{ include (print $.Template.BasePath "/components/kubernetes/scheduler/configmap.yaml" ) . | sha256sum }}
         {{- include "pkg.components.pod_annotations" (dict "annotations" $kubernetes.scheduler.podAnnotations "ctx" $) | nindent 8 }}
+        checksum/config: {{ include (print $.Template.BasePath "/components/kubernetes/scheduler/configmap.yaml" ) . | sha256sum }}
     spec:
       {{- with (include "pkg.components.nodeselector" (dict "nodeSelector" $kubernetes.scheduler.nodeSelector "ctx" $)) }}
       nodeSelector: {{- . | nindent 8 }}

@@ -1,6 +1,6 @@
 # common
 
-![Version: 12.6.0](https://img.shields.io/badge/Version-12.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 12.7.0](https://img.shields.io/badge/Version-12.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Bedag's common Helm chart to use for creating other Helm charts
 
@@ -67,3 +67,9 @@ Major Changes to functions are documented with the version affected. **Before up
 | servicemonitor.basicAuth.userKey | string | `"username"` | userKey is the default key to grab the username in the secret |
 | servicemonitor.deploy | bool | `false` | deploy has to be set to true for rendering to be applied |
 | servicemonitor.endpoints | object | `{}` |  |
+
+## PodDisruptionBudget
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| components.component-1.pdbs | object | `{}` | pdbs is a dictionary of Pod Disruption Budgets to be configured for the component |

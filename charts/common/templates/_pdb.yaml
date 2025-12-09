@@ -1,0 +1,40 @@
+{{- define "common.pdb" -}}
+{{- $root := . }}
+{{- range $componentname, $component := .Values.components }}
+{{- if $component.pdbs }}
+{{- range $pdbname, $pdb := $component.pdbs }}
+{{- if $pdb.deploy }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ template "library.name" $root }}-{{ $componentname }}-{{ $pdbname }}
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+    app.kubernetes.io/component: {{ $componentname }}
+spec:
+  {{- if $pdb.minAvailable }}
+  minAvailable: {{ $pdb.minAvailable }}
+  {{- end }}
+  {{- if $pdb.maxUnavailable }}
+  maxUnavailable: {{ $pdb.maxUnavailable }}
+  {{- end }}
+  {{- if $pdb.unhealthyPodEvictionPolicy }}
+  unhealthyPodEvictionPolicy: {{ $pdb.unhealthyPodEvictionPolicy }}
+  {{- end }}
+  selector:
+    matchLabels:
+{{- if not $pdb.overrideSelectors }}
+      app.kubernetes.io/name: {{ template "library.name" $root }}
+      app.kubernetes.io/instance: {{ $root.Release.Name }}
+      app.kubernetes.io/component: {{ $componentname }}
+{{- else }}
+{{- range $key, $val := $pdb.overrideSelectors }}
+      {{ $key }}: {{ $val | quote }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end -}}

@@ -13,6 +13,7 @@ includes:
   pvcs: true
   job: true
   cronjob: true
+  pdb: true
 
 # start common.ingress
 ingress:
@@ -77,6 +78,14 @@ components:
               kubernetes.io/metadata.name: namespace-1
 
     # end common.networkpolicy
+
+    # start common.pdb
+    pdbs:
+      pdb-1:
+        deploy: true
+        minAvailable: 1
+    # end common.pdb
+
     controller:
       deploy: true
       type: "Deployment"
@@ -185,6 +194,14 @@ components:
           ipBlock:
             cidr: 0.0.0.0/0
     # end common.networkpolicy
+
+    # start common.pdb
+    pdbs:
+      pdb-1:
+        deploy: true
+        maxUnavailable: "50%"
+    # end common.pdb
+
     controller:
       deploy: true
       type: "StatefulSet"

@@ -465,6 +465,7 @@ components:
 
       nodeSelector: {}
       tolerations: []
+      topologySpreadConstraints: {}
       affinity: {}
 
       # volumes is a list of volumes to be created as secret or configMap

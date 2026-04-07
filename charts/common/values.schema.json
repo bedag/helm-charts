@@ -82,13 +82,88 @@
           }
         },
         "env": {
-          "type": ["array", "object"]
+          "oneOf": [
+            {
+              "title": "Environment variables as array",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": { "type": "string", "minLength": 1 },
+                  "value": { "type": "string" },
+                  "externalServiceRef": {
+                    "type": "string",
+                    "description": "Reference to an ExternalName entry in externalRefs — resolves to the service name"
+                  },
+                  "valueFrom": {
+                    "type": "object",
+                    "properties": {
+                      "secretKeyRef": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" },
+                          "externalRef": { "type": "string" },
+                          "key": { "type": "string", "minLength": 1 },
+                          "optional": { "type": "boolean" }
+                        },
+                        "required": ["key"]
+                      },
+                      "configMapKeyRef": {
+                        "type": "object",
+                        "properties": {
+                          "name": { "type": "string" },
+                          "externalRef": { "type": "string" },
+                          "key": { "type": "string", "minLength": 1 },
+                          "optional": { "type": "boolean" }
+                        },
+                        "required": ["key"]
+                      },
+                      "fieldRef": {
+                        "type": "object",
+                        "properties": {
+                          "fieldPath": { "type": "string" }
+                        }
+                      },
+                      "resourceFieldRef": {
+                        "type": "object",
+                        "properties": {
+                          "resource": { "type": "string" },
+                          "containerName": { "type": "string" },
+                          "divisor": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "title": "Environment variables as map",
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            }
+          ]
         },
         "envSecret": {
           "type": "object"
         },
         "envFrom": {
-          "type": ["array"]
+          "type": ["array"],
+          "items": {
+            "type": "object",
+            "properties": {
+              "secretRef": {
+                "type": "object"
+              },
+              "configMapRef": {
+                "type": "object"
+              },
+              "externalRef": {
+                "type": "string"
+              }
+            }
+          }
         },
         "envConfigMap": {
           "type": "object"
@@ -456,6 +531,10 @@
         "networkpolicy": {
           "type": "boolean",
           "default": false
+        },
+        "externalRefs": {
+          "type": "boolean",
+          "default": false
         }
       }
     },
@@ -485,7 +564,18 @@
                       "default": false
                     },
                     "name": {
-                      "type": "string"
+                      "oneOf": [
+                        { "title": "Existing secret name", "type": "string" },
+                        {
+                          "title": "externalRefs reference",
+                          "type": "object",
+                          "properties": {
+                            "externalRef": { "type": "string", "minLength": 1 }
+                          },
+                          "required": ["externalRef"],
+                          "additionalProperties": false
+                        }
+                      ]
                     }
                   }
                 }
@@ -622,7 +712,18 @@
                     }
                   },
                   "secretName": {
-                    "type": "string"
+                    "oneOf": [
+                      { "title": "Existing secret name", "type": "string" },
+                      {
+                        "title": "externalRefs reference",
+                        "type": "object",
+                        "properties": {
+                          "externalRef": { "type": "string", "minLength": 1 }
+                        },
+                        "required": ["externalRef"],
+                        "additionalProperties": false
+                      }
+                    ]
                   }
                 }
               }
@@ -632,9 +733,6 @@
             },
             "tls": {
               "type": "object",
-              "required": [
-                "type"
-              ],
               "properties": {
                 "type": {
                   "type": "string",
@@ -743,7 +841,18 @@
               "default": false
             },
             "existingSecret": {
-              "type": "string"
+              "oneOf": [
+                { "title": "Existing secret name", "type": "string" },
+                {
+                  "title": "externalRefs reference",
+                  "type": "object",
+                  "properties": {
+                    "externalRef": { "type": "string", "minLength": 1 }
+                  },
+                  "required": ["externalRef"],
+                  "additionalProperties": false
+                }
+              ]
             },
             "newSecret": {
               "type": "object"
@@ -800,6 +909,94 @@
         },
         "required": [
           "name"
+        ]
+      }
+    },
+    "externalRefs": {
+      "type": "array",
+      "description": "Unified registry of external dependencies — ConfigMaps, Secrets, PVCs, and ExternalName services",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique alias for this external reference"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["ConfigMap", "Secret", "PersistentVolumeClaim", "ExternalName"]
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["create", "reference"],
+            "default": "reference"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Actual Kubernetes resource name (required for mode: reference)"
+          },
+          "externalName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "DNS hostname (required for ExternalName kind with mode: create)"
+          },
+          "fullnameOverride": {
+            "type": "string",
+            "description": "Override the generated service name entirely (ExternalName kind only)"
+          },
+          "annotations": {
+            "type": "object",
+            "description": "Additional annotations (ExternalName kind with mode: create only)",
+            "additionalProperties": { "type": "string" }
+          },
+          "group": {
+            "type": "string",
+            "default": ""
+          },
+          "version": {
+            "type": "string",
+            "default": "v1"
+          },
+          "optional": {
+            "type": "boolean"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "mode": { "const": "create" }
+              },
+              "required": ["mode"]
+            },
+            "then": {
+              "required": ["id", "kind", "externalName"],
+              "properties": {
+                "kind": { "const": "ExternalName" }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "mode": { "const": "reference" }
+              }
+            },
+            "then": {
+              "required": ["id", "kind", "name"]
+            }
+          },
+          {
+            "if": {
+              "not": { "required": ["mode"] }
+            },
+            "then": {
+              "required": ["id", "kind", "name"]
+            }
+          }
         ]
       }
     },
@@ -890,7 +1087,21 @@
                   "type": "object"
                 },
                 "envFrom": {
-                  "type": ["array"]
+                  "type": ["array"],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "secretRef": {
+                        "type": "object"
+                      },
+                      "configMapRef": {
+                        "type": "object"
+                      },
+                      "externalRef": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 },
                 "replicas": {
                   "type": "integer",
@@ -1121,12 +1332,24 @@
                             "type": "string"
                           }
                         }
+                      },
+                      "externalRef": {
+                        "type": "string"
                       }
                     },
                     "required": [
-                      "name",
-                      "type"
-                    ]
+                      "name"
+                    ],
+                    "if": {
+                      "not": {
+                        "required": ["externalRef"]
+                      }
+                    },
+                    "then": {
+                      "required": [
+                        "type"
+                      ]
+                    }
                   }
                 },
                 "hostAliases": {

@@ -5,6 +5,9 @@
 {{- if eq $component.controller.type "Job" }}
 {{- $job := $component.controller }}
 {{- if $job.deploy }}
+{{- if $root.Values.externalRefs }}
+{{- include "library.externalRefs.validate" (dict "externalRefs" $root.Values.externalRefs "root" $root) }}
+{{- end }}
 ---
 apiVersion: batch/v1
 kind: Job

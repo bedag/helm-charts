@@ -58,7 +58,80 @@ securityContext: {{- omit $controllerValues.podSecurityContext "enabled" | toYam
 {{- end }}
 volumes:
   {{- range $controllerValues.volumes }}
-  {{- if and .name .type }}
+  {{- if .name }}
+  {{- if hasKey . "externalRef" }}
+  {{- if not .externalRef }}
+    {{- fail (printf "volume '%s': 'externalRef' must not be empty — either provide a valid externalRef id or remove the key" .name) }}
+  {{- end }}
+  - name: {{ template "library.name" $root }}-{{ .name }}
+    {{- if .type }}
+      {{- fail (printf "volume '%s': cannot set both 'type' and 'externalRef' — these are conflicting; use one or the other" .name) }}
+    {{- end }}
+    {{- if .existing }}
+      {{- fail (printf "volume '%s': cannot set 'existing' with 'externalRef' — 'existing' is a legacy volume field; remove it when using externalRef" .name) }}
+    {{- end }}
+    {{- if .claimNameSuffix }}
+      {{- fail (printf "volume '%s': cannot set 'claimNameSuffix' with 'externalRef' — 'claimNameSuffix' is a legacy volume field; remove it when using externalRef" .name) }}
+    {{- end }}
+    {{- if .pvcName }}
+      {{- fail (printf "volume '%s': cannot set 'pvcName' with 'externalRef' — 'pvcName' is a legacy volume field; remove it when using externalRef" .name) }}
+    {{- end }}
+    {{- if .driver }}
+      {{- fail (printf "volume '%s': cannot set 'driver' with 'externalRef' — 'driver' is a legacy volume field; remove it when using externalRef" .name) }}
+    {{- end }}
+    {{- if .medium }}
+      {{- fail (printf "volume '%s': cannot set 'medium' with 'externalRef' — 'medium' is a legacy volume field; remove it when using externalRef" .name) }}
+    {{- end }}
+    {{- if .sizeLimit }}
+      {{- fail (printf "volume '%s': cannot set 'sizeLimit' with 'externalRef' — 'sizeLimit' is a legacy volume field; remove it when using externalRef" .name) }}
+    {{- end }}
+    {{- $refJson := include "library.externalRef" (dict "id" .externalRef "externalRefs" ($root.Values.externalRefs | default list) "context" (printf "volume '%s'" .name)) }}
+    {{- $ref := $refJson | fromJson }}
+    {{- include "library.externalRef.validateKind" (dict "ref" $ref "allowedKinds" (list "ConfigMap" "Secret" "PersistentVolumeClaim") "context" (printf "volume '%s'" .name)) }}
+    {{- if eq $ref.kind "Secret" }}
+    secret:
+      secretName: {{ $ref.name }}
+      {{- if hasKey . "optional" }}
+      optional: {{ .optional }}
+      {{- else if hasKey $ref "optional" }}
+      optional: {{ $ref.optional }}
+      {{- end }}
+      {{- if .items }}
+      items:
+      {{- range .items }}
+        - key: {{ .key }}
+          path: {{ .path }}
+      {{- end }}
+      {{- end }}
+      {{- if .defaultMode }}
+      defaultMode: {{ .defaultMode }}
+      {{- end }}
+    {{- else if eq $ref.kind "ConfigMap" }}
+    configMap:
+      name: {{ $ref.name }}
+      {{- if hasKey . "optional" }}
+      optional: {{ .optional }}
+      {{- else if hasKey $ref "optional" }}
+      optional: {{ $ref.optional }}
+      {{- end }}
+      {{- if .items }}
+      items:
+      {{- range .items }}
+        - key: {{ .key }}
+          path: {{ .path }}
+      {{- end }}
+      {{- end }}
+      {{- if .defaultMode }}
+      defaultMode: {{ .defaultMode }}
+      {{- end }}
+    {{- else if eq $ref.kind "PersistentVolumeClaim" }}
+    persistentVolumeClaim:
+      claimName: {{ $ref.name }}
+      {{- if .readOnly }}
+      readOnly: {{ .readOnly }}
+      {{- end }}
+    {{- end }}
+  {{- else if .type }}
   - name: {{ template "library.name" $root }}-{{ .name }}
   {{- if eq .type "secret" }}
     secret:
@@ -143,6 +216,7 @@ volumes:
   {{- end }}
   {{- end }}
   {{- end }}
+  {{- end }}
   {{- if or $controllerValues.containers $controllerValues.initContainers }}
   {{- $containers := merge (dict) ($controllerValues.containers | default dict) ($controllerValues.initContainers | default dict) }}
   {{- range $containerName, $containerValues := $containers }}
@@ -201,7 +275,8 @@ tolerations:
 {{- if $root.Values.secrets.data.registry.pullSecret.enabled }}
 imagePullSecrets:
 {{- if $root.Values.secrets.data.registry.pullSecret.name }}
-  - name: {{ $root.Values.secrets.data.registry.pullSecret.name }}
+  {{- $result := include "library.externalRef.fromNestedField" (dict "field" "name" "path" "secrets.data.registry.pullSecret" "value" $root.Values.secrets.data.registry.pullSecret.name "externalRefs" ($root.Values.externalRefs | default list) "allowedKinds" (list "Secret")) | fromJson }}
+  - name: {{ $result.value }}
 {{- else }}
   - name: {{ template "library.name" $root }}-registry-pull-secret
 {{- end }}

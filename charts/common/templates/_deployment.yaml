@@ -5,6 +5,9 @@
 {{- if eq $component.controller.type "Deployment" }}
 {{- $deployment := $component.controller }}
 {{- if $deployment.deploy }}
+{{- if $root.Values.externalRefs }}
+{{- include "library.externalRefs.validate" (dict "externalRefs" $root.Values.externalRefs "root" $root) }}
+{{- end }}
 ---
 kind: Deployment
 apiVersion: apps/v1

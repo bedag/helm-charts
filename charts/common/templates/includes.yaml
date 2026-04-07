@@ -7,6 +7,10 @@
   {{- template "common.service" . }}
 {{- end -}}
 
+{{- if .Values.includes.externalRefs }}
+  {{- template "common.externalNameService" . }}
+{{- end -}}
+
 {{- if .Values.includes.statefulset }}
   {{- template "common.statefulset" . }}
 {{- end -}}

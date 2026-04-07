@@ -94,7 +94,7 @@
                   "value": { "type": "string" },
                   "externalServiceRef": {
                     "type": "string",
-                    "description": "Reference to an ExternalName entry in externalRefs — resolves to the service name"
+                    "description": "Reference to a Service entry in externalRefs — resolves to the service name"
                   },
                   "valueFrom": {
                     "type": "object",
@@ -914,7 +914,7 @@
     },
     "externalRefs": {
       "type": "array",
-      "description": "Unified registry of external dependencies — ConfigMaps, Secrets, PVCs, and ExternalName services",
+      "description": "Unified registry of external dependencies — ConfigMaps, Secrets, PVCs, and Services",
       "items": {
         "type": "object",
         "required": ["id", "kind"],
@@ -926,7 +926,7 @@
           },
           "kind": {
             "type": "string",
-            "enum": ["ConfigMap", "Secret", "PersistentVolumeClaim", "ExternalName"]
+            "enum": ["ConfigMap", "Secret", "PersistentVolumeClaim", "Service"]
           },
           "mode": {
             "type": "string",
@@ -941,15 +941,15 @@
           "externalName": {
             "type": "string",
             "minLength": 1,
-            "description": "DNS hostname (required for ExternalName kind with mode: create)"
+            "description": "DNS hostname (required for Service kind with mode: create)"
           },
           "fullnameOverride": {
             "type": "string",
-            "description": "Override the generated service name entirely (ExternalName kind only)"
+            "description": "Override the generated service name entirely (Service kind only)"
           },
           "annotations": {
             "type": "object",
-            "description": "Additional annotations (ExternalName kind with mode: create only)",
+            "description": "Additional annotations (Service kind with mode: create only)",
             "additionalProperties": { "type": "string" }
           },
           "group": {
@@ -975,7 +975,7 @@
             "then": {
               "required": ["id", "kind", "externalName"],
               "properties": {
-                "kind": { "const": "ExternalName" }
+                "kind": { "const": "Service" }
               }
             }
           },

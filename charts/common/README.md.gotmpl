@@ -34,7 +34,7 @@ Major Changes to functions are documented with the version affected. **Before up
 |networkpolicy template changes|10.0.0|add possibility to create multiple networkpolicies|https://github.com/bedag/helm-charts/pull/77|
 |ingress template changes|11.0.0|add possibility to create multiple ingress objects|https://github.com/bedag/helm-charts/pull/134
 |ingress template changes|12.0.0|support defining multiple hosts and secrets for one ingress|https://github.com/bedag/helm-charts/pull/138
-|unified externalRefs|12.7.0|List-based externalRefs registry for ConfigMaps, Secrets, PVCs, and ExternalName services. Supports `mode: create` (chart-managed) and `mode: reference` (pre-existing). New `externalServiceRef` env field resolves ExternalName service names.|
+|unified externalRefs|12.7.0|List-based externalRefs registry for ConfigMaps, Secrets, PVCs, and Services. Supports `mode: create` (chart-managed ExternalName Service) and `mode: reference` (pre-existing Service). New `externalServiceRef` env field resolves Service names.|
 {{/*
   Chart Values
 */}}
@@ -71,7 +71,7 @@ Major Changes to functions are documented with the version affected. **Before up
 The `externalRefs` feature provides a unified registry for declaring external dependencies at the top level of your values. It supports four resource kinds:
 
 - **ConfigMap** / **Secret** / **PersistentVolumeClaim** — reference pre-existing resources by alias in `envFrom`, `volumes`, `env valueFrom`, Ingress TLS, ServiceMonitor basicAuth, and imagePullSecrets
-- **ExternalName** — create or reference Kubernetes `ExternalName` services for external dependencies (databases, caches, APIs), resolvable in env vars via `externalServiceRef`
+- **Service** — create a Kubernetes `Service` with `spec.type: ExternalName`, or reference an existing Service for external dependencies (databases, caches, APIs), resolvable in env vars via `externalServiceRef`
 
 Enable the feature by setting `includes.externalRefs: true`.
 
@@ -82,14 +82,12 @@ Each entry in the `externalRefs` list supports:
 | Field | Required | Default | Description |
 |-------|----------|---------|-------------|
 | `id` | Yes | — | Unique alias for referencing this entry |
-| `kind` | Yes | — | Resource kind: `ConfigMap`, `Secret`, `PersistentVolumeClaim`, or `ExternalName` |
-| `mode` | No | `reference` | `reference` (pre-existing resource) or `create` (chart creates the resource). Only `ExternalName` supports `create`. |
+| `kind` | Yes | — | Resource kind: `ConfigMap`, `Secret`, `PersistentVolumeClaim`, or `Service` |
+| `mode` | No | `reference` | `reference` (pre-existing resource) or `create` (chart creates the resource). Only `Service` supports `create`. |
 | `name` | When mode=reference | — | Actual Kubernetes resource name |
-| `externalName` | When kind=ExternalName, mode=create | — | DNS hostname for the ExternalName service |
-| `fullnameOverride` | No | — | Override the generated ExternalName service name entirely (ExternalName + create only) |
-| `annotations` | No | — | Additional annotations for ExternalName services |
-| `group` | No | `""` | API group (empty string for core resources) |
-| `version` | No | `"v1"` | API version |
+| `externalName` | When kind=Service, mode=create | — | DNS hostname for the rendered `Service.spec.externalName` |
+| `fullnameOverride` | No | — | Override the generated Service name entirely (`kind: Service` + `mode: create` only) |
+| `annotations` | No | — | Additional annotations for created Services |
 | `optional` | No | — | Mark the reference as optional |
 
 ### Mode behavior
@@ -97,8 +95,8 @@ Each entry in the `externalRefs` list supports:
 | Kind | Allowed modes | What happens |
 |------|--------------|--------------|
 | ConfigMap / Secret / PVC | `reference` only | No resource created. `name` is used for lookups. |
-| ExternalName | `create` | Chart creates a `Service/ExternalName`. Name = `fullnameOverride` or `<library.name>-<id>`. |
-| ExternalName | `reference` | No resource created. `name` used for `externalServiceRef` resolution. |
+| Service | `create` | Chart creates a `Service` with `spec.type: ExternalName`. Name = `fullnameOverride` or `<library.name>-<id>`. |
+| Service | `reference` | No resource created. `name` used for `externalServiceRef` resolution. |
 
 ### Registry definition
 
@@ -123,24 +121,24 @@ externalRefs:
     kind: PersistentVolumeClaim
     name: shared-data-pvc
 
-  # ExternalName — chart creates the Service
+  # Service — chart creates a Service with spec.type=ExternalName
   - id: database
-    kind: ExternalName
+    kind: Service
     mode: create
     externalName: db.prod.example.com
 
-  # ExternalName — exact name override
+  # Service — exact name override
   - id: cache
-    kind: ExternalName
+    kind: Service
     mode: create
     externalName: cache.prod.example.com
     fullnameOverride: "redis-cache"
     annotations:
       service.beta.kubernetes.io/description: "External Redis cache"
 
-  # ExternalName — reference a pre-existing service
+  # Service — reference a pre-existing service
   - id: partner-api
-    kind: ExternalName
+    kind: Service
     mode: reference
     name: partner-api-gateway
 ```
@@ -189,7 +187,7 @@ controller:
 
 ### externalServiceRef
 
-For `ExternalName` entries, use `externalServiceRef` in env vars to resolve the Kubernetes service name:
+For `Service` entries, use `externalServiceRef` in env vars to resolve the Kubernetes service name:
 
 - **mode: create** — resolves to `fullnameOverride` or `<library.name>-<id>`
 - **mode: reference** — resolves to `name`

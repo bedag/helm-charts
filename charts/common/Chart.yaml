@@ -28,13 +28,13 @@ annotations:
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
     - kind: added
-      description: "externalRefs: unified registry for ConfigMaps, Secrets, PVCs, and ExternalName services (list format with id field)"
+      description: "externalRefs: unified registry for ConfigMaps, Secrets, PVCs, and Services (list format with id field)"
     - kind: added
-      description: "externalRefs: ExternalName kind support with mode create (chart-managed) and reference (pre-existing)"
+      description: "externalRefs: Service kind support with mode create (ExternalName service) and reference (pre-existing service)"
     - kind: added
-      description: "externalRefs: new externalServiceRef env field resolves ExternalName service names in container env vars"
+      description: "externalRefs: new externalServiceRef env field resolves referenced service names in container env vars"
     - kind: added
-      description: "externalRefs: mode field (create/reference) for ExternalName entries"
+      description: "externalRefs: mode field (create/reference) for Service entries"
     - kind: added
       description: "externalRef support for envFrom, volumes, env valueFrom secretKeyRef/configMapKeyRef"
     - kind: added
@@ -56,4 +56,4 @@ annotations:
     - kind: changed
       description: "DX: title properties on oneOf schema branches for clearer validation error messages"
     - kind: removed
-      description: "Removed standalone externalNameServices section (merged into externalRefs with kind: ExternalName)"
+      description: "Removed standalone externalNameServices section (merged into externalRefs with kind: Service)"

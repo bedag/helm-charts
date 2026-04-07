@@ -78,7 +78,9 @@ pvcs:
   - name: name-of-pvc
 # end common.pvcs
 
-# externalRefs is a unified registry of external dependencies
+# externalRefs is the happy-path coverage for the unified registry.
+# This fixture should render successfully and exercise both reference-based lookups
+# and chart-managed Services with `spec.type: ExternalName`.
 externalRefs:
   - id: app-config
     kind: ConfigMap
@@ -90,22 +92,22 @@ externalRefs:
   - id: shared-data
     kind: PersistentVolumeClaim
     name: shared-data-pvc
-  # ExternalName service — mode: create renders a Service/ExternalName resource
+  # mode=create should render a Service with `spec.type: ExternalName`
   - id: ext-database
-    kind: ExternalName
+    kind: Service
     mode: create
     externalName: db.prod.example.com
-  # ExternalName with fullnameOverride and annotations
+  # fullnameOverride and annotations should be applied to the rendered Service
   - id: ext-cache
-    kind: ExternalName
+    kind: Service
     mode: create
     externalName: cache.prod.example.com
     fullnameOverride: "redis-cache"
     annotations:
       service.beta.kubernetes.io/description: "External Redis cache"
-  # ExternalName reference — points to an existing service, no resource created
+  # mode=reference should not render a resource and should resolve to this existing Service name
   - id: partner-api
-    kind: ExternalName
+    kind: Service
     mode: reference
     name: partner-api-gateway
 

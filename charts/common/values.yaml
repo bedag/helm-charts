@@ -220,12 +220,12 @@ pvcs:
 #   storageClassName: "nfs-data"
 # end common.pvcs
 
-## -- (list) Unified registry of external dependencies — ConfigMaps, Secrets, PVCs, and ExternalName services.
+## -- (list) Unified registry of external dependencies — ConfigMaps, Secrets, PVCs, and Services.
 ## Each entry has an `id` alias used for referencing (in envFrom, volumes, env externalServiceRef, etc.).
-## Supported kinds: ConfigMap, Secret, PersistentVolumeClaim, ExternalName.
+## Supported kinds: ConfigMap, Secret, PersistentVolumeClaim, Service.
 ## Mode determines behavior:
 ##   reference (default) — points to an existing resource, no Kubernetes object is created.
-##   create              — creates a Kubernetes resource (only valid for ExternalName kind).
+##   create              — creates a Kubernetes resource (only valid for Service kind).
 ## @default -- `[]`
 # externalRefs:
 #   # Reference an existing ConfigMap
@@ -244,18 +244,18 @@ pvcs:
 #     kind: PersistentVolumeClaim
 #     name: actual-pvc-name
 #
-#   # Create an ExternalName service (requires includes.externalRefs: true)
+#   # Create a Service with spec.type=ExternalName (requires includes.externalRefs: true)
 #   - id: database
-#     kind: ExternalName
+#     kind: Service
 #     mode: create
 #     externalName: db.prod.example.com
 #     # fullnameOverride: "my-db"       # Optional: exact service name (default: <library.name>-database)
 #     # annotations:                     # Optional: additional annotations
 #     #   service.beta.kubernetes.io/description: "External database"
 #
-#   # Reference an existing ExternalName service (no resource created)
+#   # Reference an existing Service that acts as the external endpoint (no resource created)
 #   - id: partner-api
-#     kind: ExternalName
+#     kind: Service
 #     mode: reference
 #     name: partner-api-gateway         # Actual service name in the cluster
 
@@ -263,7 +263,7 @@ pvcs:
 ## envFrom with externalRef:
 ##   envFrom:
 ##     - externalRef: my-config
-## env with externalServiceRef (resolves to ExternalName service name):
+## env with externalServiceRef (resolves to Service name):
 ##   env:
 ##     - name: DATABASE_HOST
 ##       externalServiceRef: database

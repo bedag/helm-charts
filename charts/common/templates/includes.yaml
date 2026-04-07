@@ -8,6 +8,7 @@
 {{- end -}}
 
 {{- if .Values.includes.externalRefs }}
+  {{- include "library.externalRefs.validate" (dict "externalRefs" (.Values.externalRefs | default list) "root" .) -}}
   {{- template "common.externalNameService" . }}
 {{- end -}}
 

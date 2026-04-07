@@ -2,11 +2,11 @@
 library.externalRefs.validate validates the top-level externalRefs list.
 Context: dict with keys:
   - externalRefs: list of externalRef entries (each a dict with id, kind, name/externalName, mode, optional).
-  - root: the root context (needed for ExternalName service name computation).
+  - root: the root context (needed for Service kind name computation).
 Fails if:
   - Any entry is missing id or kind
   - id is not unique
-  - kind is not one of: ConfigMap, Secret, PersistentVolumeClaim, ExternalName
+  - kind is not one of: ConfigMap, Secret, PersistentVolumeClaim, Service
   - mode is invalid for the given kind
   - Required fields for the mode are missing
 */ -}}
@@ -34,7 +34,7 @@ Fails if:
     {{- if not (hasKey $ref "kind") -}}
       {{- fail (printf "externalRefs[%d] (id=%s): missing required field 'kind'" $idx $ref.id) -}}
     {{- end -}}
-    {{- $allowedKinds := list "ConfigMap" "Secret" "PersistentVolumeClaim" "ExternalName" -}}
+    {{- $allowedKinds := list "ConfigMap" "Secret" "PersistentVolumeClaim" "Service" -}}
     {{- if not (has $ref.kind $allowedKinds) -}}
       {{- fail (printf "externalRefs[%d] (id=%s): kind '%s' is not valid (allowed: %s)" $idx $ref.id $ref.kind (join ", " $allowedKinds)) -}}
     {{- end -}}
@@ -45,8 +45,8 @@ Fails if:
       {{- fail (printf "externalRefs[%d] (id=%s): mode '%s' is not valid (allowed: create, reference)" $idx $ref.id $mode) -}}
     {{- end -}}
     {{- /* ConfigMap/Secret/PVC only support reference mode */ -}}
-    {{- if and (ne $ref.kind "ExternalName") (eq $mode "create") -}}
-      {{- fail (printf "externalRefs[%d] (id=%s): mode 'create' is only valid for kind 'ExternalName' (got kind '%s')" $idx $ref.id $ref.kind) -}}
+    {{- if and (ne $ref.kind "Service") (eq $mode "create") -}}
+      {{- fail (printf "externalRefs[%d] (id=%s): mode 'create' is only valid for kind 'Service' (got kind '%s')" $idx $ref.id $ref.kind) -}}
     {{- end -}}
     {{- /* Validate required fields based on mode */ -}}
     {{- if eq $mode "reference" -}}
@@ -65,8 +65,8 @@ Fails if:
         {{- fail (printf "externalRefs[%d] (id=%s): 'externalName' must not be empty for mode 'create'" $idx $ref.id) -}}
       {{- end -}}
     {{- end -}}
-    {{- /* Default group and version for non-ExternalName kinds */ -}}
-    {{- if ne $ref.kind "ExternalName" -}}
+    {{- /* Default group and version for non-Service kinds */ -}}
+    {{- if ne $ref.kind "Service" -}}
       {{- if not (hasKey $ref "group") -}}
         {{- $_ := set $ref "group" "" -}}
       {{- end -}}
@@ -164,7 +164,7 @@ Fails if value is empty, wrong type, or externalRef is invalid.
 {{- end -}}
 
 {{- /*
-library.externalRef.resolveServiceName resolves the Kubernetes service name for an ExternalName ref.
+library.externalRef.resolveServiceName resolves the Kubernetes service name for a Service ref.
 Context: dict with keys:
   - id: string (the externalRefs entry id)
   - externalRefs: list (the externalRefs registry)
@@ -172,7 +172,7 @@ Context: dict with keys:
   - context: string (optional, error context)
 For mode=create: returns fullnameOverride or <library.name>-<id>
 For mode=reference: returns name field
-Fails if ref is not kind ExternalName.
+Fails if ref is not kind Service.
 */ -}}
 {{- define "library.externalRef.resolveServiceName" -}}
   {{- $id := .id -}}
@@ -180,8 +180,8 @@ Fails if ref is not kind ExternalName.
   {{- $root := .root -}}
   {{- $context := .context | default "" -}}
   {{- $resolved := include "library.externalRef" (dict "id" $id "externalRefs" $refs "context" $context) | fromJson -}}
-  {{- if ne $resolved.kind "ExternalName" -}}
-    {{- fail (printf "%sexternalServiceRef '%s' has kind '%s' — only 'ExternalName' refs can be resolved as service names" (ternary (printf "%s: " $context) "" (ne $context "")) $id $resolved.kind) -}}
+  {{- if ne $resolved.kind "Service" -}}
+    {{- fail (printf "%sexternalServiceRef '%s' has kind '%s' — only 'Service' refs can be resolved as service names" (ternary (printf "%s: " $context) "" (ne $context "")) $id $resolved.kind) -}}
   {{- end -}}
   {{- $mode := $resolved.mode | default "reference" -}}
   {{- if eq $mode "create" -}}

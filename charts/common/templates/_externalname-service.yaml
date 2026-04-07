@@ -1,7 +1,7 @@
 {{- define "common.externalNameService" -}}
 {{- $root := . }}
 {{- range $ref := .Values.externalRefs }}
-{{- if and (eq $ref.kind "ExternalName") (eq ($ref.mode | default "reference") "create") }}
+{{- if and (eq $ref.kind "Service") (eq ($ref.mode | default "reference") "create") }}
 ---
 apiVersion: v1
 kind: Service

@@ -56,3 +56,7 @@
 {{- if .Values.includes.networkpolicy }}
   {{- template "common.networkpolicy" . }}
 {{- end -}}
+
+{{- if .Values.includes.pdb }}
+  {{- template "common.pdb" . }}
+{{- end -}}

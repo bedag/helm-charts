@@ -148,7 +148,13 @@ Template for konnectivityServer containers
 - command:
   - /proxy-server
   - --logtostderr=true
+  {{- if and $kubernetes.konnectivity.enabled $kubernetes.konnectivity.server.enabled }}
+    {{- if or (eq $kubernetes.konnectivity.server.mode "HTTPConnect") (not $kubernetes.konnectivity.server.sidecar) }}
   - --server-count={{ $kubernetes.konnectivity.server.replicaCount }}
+    {{- else }}
+  - --server-count={{ $kubernetes.apiServer.replicaCount }}
+    {{- end }}
+  {{- end }}
   - --server-id=$(POD_NAME)
   - --cluster-cert=/pki/apiserver/tls.crt
   - --cluster-key=/pki/apiserver/tls.key

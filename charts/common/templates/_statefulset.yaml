@@ -5,6 +5,9 @@
 {{- if eq $component.controller.type "StatefulSet" }}
 {{- $statefulset := $component.controller }}
 {{- if $statefulset.deploy }}
+{{- if $root.Values.externalRefs }}
+{{- include "library.externalRefs.validate" (dict "externalRefs" $root.Values.externalRefs "root" $root) }}
+{{- end }}
 ---
 kind: StatefulSet
 apiVersion: apps/v1

@@ -5,6 +5,9 @@
 {{- if eq $component.controller.type "CronJob" }}
 {{- $cronjob := $component.controller }}
 {{- if $cronjob.deploy }}
+{{- if $root.Values.externalRefs }}
+{{- include "library.externalRefs.validate" (dict "externalRefs" $root.Values.externalRefs "root" $root) }}
+{{- end }}
 ---
 apiVersion: batch/v1
 kind: CronJob

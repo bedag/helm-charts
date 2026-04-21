@@ -1,0 +1,21 @@
+{{- define "common.externalNameService" -}}
+{{- $root := . }}
+{{- range $ref := .Values.externalRefs }}
+{{- if and (eq $ref.kind "Service") (eq ($ref.mode | default "reference") "create") }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $ref.fullnameOverride | default (printf "%s-%s" (include "library.name" $root) $ref.id) }}
+  labels:
+{{ include "library.labels.standard" $root | indent 4 }}
+{{- with $ref.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+{{- end }}
+spec:
+  type: ExternalName
+  externalName: {{ required (printf "externalRefs[id=%s].externalName is required" $ref.id) $ref.externalName }}
+{{- end }}
+{{- end }}
+{{- end -}}

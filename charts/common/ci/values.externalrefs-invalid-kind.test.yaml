@@ -1,0 +1,10 @@
+includes:
+  externalRefs: true
+
+# Negative regression fixture:
+# Unknown kinds must be rejected by schema validation.
+externalRefs:
+  - id: invalid-service
+    kind: InvalidKind
+    mode: create
+    externalName: db.prod.example.com

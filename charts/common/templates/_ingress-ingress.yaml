@@ -1,5 +1,8 @@
 {{- define "common.ingress.ingress" -}}
 {{- $root := . }}
+{{- if $root.Values.externalRefs }}
+{{- include "library.externalRefs.validate" (dict "externalRefs" $root.Values.externalRefs "root" $root) }}
+{{- end }}
 {{- $ingresses := .Values.ingresses }}
 {{- range $name, $ingress := $ingresses }}
 {{- if $ingress.deploy }}
@@ -51,15 +54,24 @@ spec:
           {{- end }}
     {{- end }}
   {{- if $ingress.tls }}
-  {{- if and (ne $ingress.tls.type "none") (ne $ingress.tls.type "") }}
+  {{- $effectiveType := $ingress.tls.type | default "" -}}
+  {{- if or (eq $effectiveType "") (eq $effectiveType "none") }}
+  {{- range $ruleIdx, $rule := $ingress.rules }}
+  {{- if and (kindIs "map" $rule.secretName) (hasKey $rule.secretName "externalRef") $rule.secretName.externalRef }}
+  {{- $effectiveType = "existing" }}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+  {{- if and (ne $effectiveType "none") (ne $effectiveType "") }}
   tls:
-    {{- range $ingress.rules }}
+    {{- range $ruleIdx, $rule := $ingress.rules }}
     - hosts:
-        - {{ .host }}
-      {{- if or (eq $ingress.tls.type "self") (eq $ingress.tls.type "provided") }}
-      secretName: {{ regexReplaceAll "\\W+" .host "-" }}
-      {{- else if eq $ingress.tls.type "existing" }}
-      secretName: {{ .secretName }}
+        - {{ $rule.host }}
+      {{- if or (eq $effectiveType "self") (eq $effectiveType "provided") }}
+      secretName: {{ regexReplaceAll "\\W+" $rule.host "-" }}
+      {{- else if eq $effectiveType "existing" }}
+      {{- $result := include "library.externalRef.fromNestedField" (dict "field" "secretName" "path" (printf "ingresses.%s.rules[%d]" $name $ruleIdx) "value" $rule.secretName "externalRefs" $root.Values.externalRefs "allowedKinds" (list "Secret")) | fromJson }}
+      secretName: {{ $result.value }}
       {{- end }}
     {{- end }}
   {{- end }}

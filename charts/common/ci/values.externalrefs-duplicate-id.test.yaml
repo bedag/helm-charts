@@ -1,0 +1,15 @@
+includes:
+  externalRefs: true
+
+# Negative regression fixture:
+# Duplicate ids must fail validation even when only the includes.externalRefs render path is enabled.
+externalRefs:
+  - id: duplicate-service
+    kind: Service
+    mode: create
+    externalName: db-one.prod.example.com
+
+  - id: duplicate-service
+    kind: Service
+    mode: create
+    externalName: db-two.prod.example.com

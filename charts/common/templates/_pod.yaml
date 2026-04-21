@@ -269,6 +269,10 @@ affinity:
 tolerations:
 {{ toYaml . | indent 2 }}
 {{- end }}
+{{- with $controllerValues.topologySpreadConstraints }}
+topologySpreadConstraints:
+{{ toYaml . | indent 2 }}
+{{- end }}
 {{- if $root.Values.secrets }}
 {{- if $root.Values.secrets.data }}
 {{- if $root.Values.secrets.data.registry }}

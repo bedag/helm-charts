@@ -2,6 +2,9 @@
 {{- $root := . }}
 {{- if .Values.servicemonitor }}
 {{- if .Values.servicemonitor.deploy }}
+{{- if $root.Values.externalRefs }}
+{{- include "library.externalRefs.validate" (dict "externalRefs" $root.Values.externalRefs "root" $root) }}
+{{- end }}
 {{- range .Values.servicemonitor.endpoints }}
 ---
 apiVersion: monitoring.coreos.com/v1
@@ -27,14 +30,16 @@ spec:
     basicAuth:
       password:
         {{- if $root.Values.servicemonitor.basicAuth.existingSecret }}
-        name: {{ $root.Values.servicemonitor.basicAuth.existingSecret }}
+        {{- $secretResult := include "library.externalRef.fromNestedField" (dict "field" "existingSecret" "path" "servicemonitor.basicAuth" "value" $root.Values.servicemonitor.basicAuth.existingSecret "externalRefs" $root.Values.externalRefs "allowedKinds" (list "Secret")) | fromJson }}
+        name: {{ $secretResult.value }}
         {{- else }}
         name: {{ template "library.name" $root }}-metrics-credentials
         {{- end }}
         key: {{ .overridePasswordKey | default $root.Values.servicemonitor.basicAuth.passwordKey }}
       username:
         {{- if $root.Values.servicemonitor.basicAuth.existingSecret }}
-        name: {{ $root.Values.servicemonitor.basicAuth.existingSecret }}
+        {{- $secretResult := include "library.externalRef.fromNestedField" (dict "field" "existingSecret" "path" "servicemonitor.basicAuth" "value" $root.Values.servicemonitor.basicAuth.existingSecret "externalRefs" $root.Values.externalRefs "allowedKinds" (list "Secret")) | fromJson }}
+        name: {{ $secretResult.value }}
         {{- else }}
         name: {{ template "library.name" $root }}-metrics-credentials
         {{- end }}

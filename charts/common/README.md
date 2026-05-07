@@ -67,3 +67,9 @@ Major Changes to functions are documented with the version affected. **Before up
 | servicemonitor.basicAuth.userKey | string | `"username"` | userKey is the default key to grab the username in the secret |
 | servicemonitor.deploy | bool | `false` | deploy has to be set to true for rendering to be applied |
 | servicemonitor.endpoints | object | `{}` |  |
+
+## PodDisruptionBudget
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| components.component-1.pdbs | object | `{}` | pdbs is a dictionary of Pod Disruption Budgets to be configured for the component |

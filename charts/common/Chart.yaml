@@ -27,5 +27,4 @@ annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
-    - "[Changed]: extra annotations and labels support sprig statements"
-    - "[Added]: Possibility to optionally set appVersion in values"
+    - "[Added]: PodDisruptionBudget (PDB) support for components"

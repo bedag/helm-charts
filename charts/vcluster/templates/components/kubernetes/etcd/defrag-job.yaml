@@ -66,8 +66,8 @@ spec:
               requiredDuringSchedulingIgnoredDuringExecution:
                 - topologyKey: "{{ $kubernetes.etcd.defrag.podAntiAffinityTopologyKey }}"
                   labelSelector:
-                    matchLabels:
-                      app: {{ $fullName }}-etcd
+                    matchLabels: {{- include "kubernetes.selectorLabels" $ | nindent 22 }}
+                      {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
           {{- else if eq $kubernetes.etcd.defrag.podAntiAffinity "soft" }}
             podAntiAffinity:
               preferredDuringSchedulingIgnoredDuringExecution:
@@ -75,8 +75,8 @@ spec:
                   podAffinityTerm:
                     topologyKey: "{{ $kubernetes.etcd.defrag.podAntiAffinityTopologyKey }}"
                     labelSelector:
-                      matchLabels:
-                        app: {{ $fullName }}-etcd
+                      matchLabels: {{- include "kubernetes.selectorLabels" $ | nindent 24 }}
+                        {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
           {{- end }}
           imagePullSecrets: {{- include "pkg.images.registry.pullsecrets" $ | nindent 10 }}
             {{- with $kubernetes.etcd.defrag.imagePullSecrets }}

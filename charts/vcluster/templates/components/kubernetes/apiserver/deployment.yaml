@@ -60,8 +60,8 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             - topologyKey: "{{ $kubernetes.apiServer.podAntiAffinityTopologyKey }}"
               labelSelector:
-                matchLabels:
-                  app: {{ $fullName }}-apiserver
+                matchLabels: {{- include "kubernetes.selectorLabels" $ | nindent 18 }}
+                  {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
       {{- else if eq $kubernetes.apiServer.podAntiAffinity "soft" }}
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -69,8 +69,8 @@ spec:
               podAffinityTerm:
                 topologyKey: "{{ $kubernetes.apiServer.podAntiAffinityTopologyKey }}"
                 labelSelector:
-                  matchLabels:
-                    app: {{ $fullName }}-apiserver
+                  matchLabels: {{- include "kubernetes.selectorLabels" $ | nindent 20 }}
+                    {{ include "pkg.common.labels.component" $ }}: {{ $component_name }}
       {{- end }}
       imagePullSecrets: {{ include "pkg.images.registry.pullsecrets" $ | nindent 8 }}
         {{- with $kubernetes.apiServer.imagePullSecrets }}

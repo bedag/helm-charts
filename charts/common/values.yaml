@@ -33,6 +33,7 @@ includes:
   pvcs: false
   servicemonitor: false
   networkpolicy: false
+  pdb: false
 
 # timezone to set as environment variable 'TZ' in each pod. Comment out for using default ("Europe/Zurich")
 # timezone: "Europe/Zurich"
@@ -302,6 +303,30 @@ components:
         #   - protocol: TCP
         #     port: 8081
     # end common.networkpolicy
+
+    # start common.pdb
+    # -- pdbs is a dictionary of Pod Disruption Budgets to be configured for the component
+    pdbs: {}
+      # specify the name of the pdb
+      # pdb-1:
+        # -- deploy has to be set to true for rendering to be applied
+        # deploy: false
+        # -- minAvailable specifies the minimum number of pods that must be available during a disruption.
+        # Can be an absolute number (e.g. 1) or a percentage (e.g. "50%").
+        # Either minAvailable or maxUnavailable must be set, but not both.
+        # minAvailable: 1
+        # -- maxUnavailable specifies the maximum number of pods that can be unavailable during a disruption.
+        # Can be an absolute number (e.g. 1) or a percentage (e.g. "50%").
+        # Either minAvailable or maxUnavailable must be set, but not both.
+        # maxUnavailable: 1
+        # -- unhealthyPodEvictionPolicy defines the criteria for when unhealthy pods should be considered for eviction.
+        # Valid values are "IfHealthyBudget" and "AlwaysAllow". Default behavior if not set depends on the Kubernetes version.
+        # unhealthyPodEvictionPolicy: "IfHealthyBudget"
+        # -- overrideSelectors is optional for overriding the default labels: 'app.kubernetes.io/name', 'app.kubernetes.io/instance' & 'app.kubernetes.io/component'
+        # overrideSelectors:
+        #   label1: "value1"
+        #   label2: "value2"
+    # end common.pdb
 
     # controller is used for deploying pods via Deployment, StatefulSet, Job or CronJob ressources
     controller:

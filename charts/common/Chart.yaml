@@ -27,5 +27,33 @@ annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
-    - "[Changed]: extra annotations and labels support sprig statements"
-    - "[Added]: Possibility to optionally set appVersion in values"
+    - kind: added
+      description: "externalRefs: unified registry for ConfigMaps, Secrets, PVCs, and Services (list format with id field)"
+    - kind: added
+      description: "externalRefs: Service kind support with mode create (ExternalName service) and reference (pre-existing service)"
+    - kind: added
+      description: "externalRefs: new externalServiceRef env field resolves referenced service names in container env vars"
+    - kind: added
+      description: "externalRefs: mode field (create/reference) for Service entries"
+    - kind: added
+      description: "externalRef support for envFrom, volumes, env valueFrom secretKeyRef/configMapKeyRef"
+    - kind: added
+      description: "externalRef support for ServiceMonitor basicAuth existingSecret"
+    - kind: added
+      description: "externalRef support for Ingress TLS secretName resolution with auto-inferred tls.type"
+    - kind: added
+      description: "externalRef support for imagePullSecrets registry pull secret name"
+    - kind: added
+      description: "externalRefs registry: optional group and version fields for GVK support"
+    - kind: changed
+      description: "includes.externalRefs replaces includes.externalNameService as the feature toggle"
+    - kind: changed
+      description: "DX: externalRef is nested under parent field (secretName, existingSecret, name) for Ingress TLS, ServiceMonitor basicAuth, and imagePullSecrets"
+    - kind: changed
+      description: "Validation hardening: shared helper for string-or-externalRef field validation with path-aware error messages"
+    - kind: changed
+      description: "Validation hardening: volumes with empty externalRef fail fast instead of being silently dropped"
+    - kind: changed
+      description: "DX: title properties on oneOf schema branches for clearer validation error messages"
+    - kind: removed
+      description: "Removed standalone externalNameServices section (merged into externalRefs with kind: Service)"

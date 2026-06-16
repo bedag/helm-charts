@@ -19,7 +19,36 @@
       value: {{ default "Europe/Zurich" $root.Values.timezone | quote }}
   {{- with $containerValues.env }}
     {{- if (kindIs "slice" .) }}
-      {{- toYaml . | nindent 4 }}
+      {{- range $entry := . }}
+        {{- if and (hasKey $entry "valueFrom") (hasKey $entry.valueFrom "secretKeyRef") (hasKey $entry.valueFrom.secretKeyRef "externalRef") }}
+        {{- $resolved := include "library.externalRef" (dict "id" $entry.valueFrom.secretKeyRef.externalRef "externalRefs" ($root.Values.externalRefs | default list)) | fromJson }}
+        {{- include "library.externalRef.validateKind" (dict "ref" $resolved "allowedKinds" (list "Secret") "context" "env valueFrom secretKeyRef") }}
+    - name: {{ $entry.name }}
+      valueFrom:
+        secretKeyRef:
+          name: {{ $resolved.name }}
+          key: {{ $entry.valueFrom.secretKeyRef.key }}
+          {{- if hasKey $entry.valueFrom.secretKeyRef "optional" }}
+          optional: {{ $entry.valueFrom.secretKeyRef.optional }}
+          {{- end }}
+        {{- else if and (hasKey $entry "valueFrom") (hasKey $entry.valueFrom "configMapKeyRef") (hasKey $entry.valueFrom.configMapKeyRef "externalRef") }}
+        {{- $resolved := include "library.externalRef" (dict "id" $entry.valueFrom.configMapKeyRef.externalRef "externalRefs" ($root.Values.externalRefs | default list)) | fromJson }}
+        {{- include "library.externalRef.validateKind" (dict "ref" $resolved "allowedKinds" (list "ConfigMap") "context" "env valueFrom configMapKeyRef") }}
+    - name: {{ $entry.name }}
+      valueFrom:
+        configMapKeyRef:
+          name: {{ $resolved.name }}
+          key: {{ $entry.valueFrom.configMapKeyRef.key }}
+          {{- if hasKey $entry.valueFrom.configMapKeyRef "optional" }}
+          optional: {{ $entry.valueFrom.configMapKeyRef.optional }}
+          {{- end }}
+        {{- else if hasKey $entry "externalServiceRef" }}
+    - name: {{ $entry.name }}
+      value: {{ include "library.externalRef.resolveServiceName" (dict "id" $entry.externalServiceRef "externalRefs" ($root.Values.externalRefs | default list) "root" $root "context" (printf "env[%s]" $entry.name)) }}
+        {{- else }}
+      {{- list $entry | toYaml | nindent 4 }}
+        {{- end }}
+      {{- end }}
     {{- else }}
       {{- range $key, $value := . }}
     - name: {{ $key }}
@@ -72,11 +101,51 @@
   {{- end }}
   {{- if or $containerValues.envFrom $controllerValues.envFrom $containerValues.envSecret $containerValues.envConfigMap $controllerValues.envSecret $controllerValues.envConfigMap }}
   envFrom:
-    {{- with $containerValues.envFrom }}
-      {{- toYaml . | nindent 4 }}
+    {{- range $entry := $containerValues.envFrom }}
+    {{- if $entry.externalRef }}
+    {{- if or (hasKey $entry "configMapRef") (hasKey $entry "secretRef") }}
+    {{- fail (printf "envFrom entry has both externalRef '%s' and configMapRef/secretRef — these conflict" $entry.externalRef) }}
     {{- end }}
-    {{- with $controllerValues.envFrom }}
-      {{- toYaml . | nindent 4 }}
+    {{- $resolved := include "library.externalRef" (dict "id" $entry.externalRef "externalRefs" ($root.Values.externalRefs | default list)) | fromJson }}
+    {{- include "library.externalRef.validateKind" (dict "ref" $resolved "allowedKinds" (list "ConfigMap" "Secret") "context" "envFrom") }}
+    {{- if eq $resolved.kind "ConfigMap" }}
+    - configMapRef:
+        name: {{ $resolved.name }}
+    {{- else }}
+    - secretRef:
+        name: {{ $resolved.name }}
+    {{- end }}
+    {{- if hasKey $entry "optional" }}
+        optional: {{ $entry.optional }}
+    {{- else if hasKey $resolved "optional" }}
+        optional: {{ $resolved.optional }}
+    {{- end }}
+    {{- else }}
+    {{- list $entry | toYaml | nindent 4 }}
+    {{- end }}
+    {{- end }}
+    {{- range $entry := $controllerValues.envFrom }}
+    {{- if $entry.externalRef }}
+    {{- if or (hasKey $entry "configMapRef") (hasKey $entry "secretRef") }}
+    {{- fail (printf "envFrom entry has both externalRef '%s' and configMapRef/secretRef — these conflict" $entry.externalRef) }}
+    {{- end }}
+    {{- $resolved := include "library.externalRef" (dict "id" $entry.externalRef "externalRefs" ($root.Values.externalRefs | default list)) | fromJson }}
+    {{- include "library.externalRef.validateKind" (dict "ref" $resolved "allowedKinds" (list "ConfigMap" "Secret") "context" "envFrom") }}
+    {{- if eq $resolved.kind "ConfigMap" }}
+    - configMapRef:
+        name: {{ $resolved.name }}
+    {{- else }}
+    - secretRef:
+        name: {{ $resolved.name }}
+    {{- end }}
+    {{- if hasKey $entry "optional" }}
+        optional: {{ $entry.optional }}
+    {{- else if hasKey $resolved "optional" }}
+        optional: {{ $resolved.optional }}
+    {{- end }}
+    {{- else }}
+    {{- list $entry | toYaml | nindent 4 }}
+    {{- end }}
     {{- end }}
     {{- if $controllerValues.envSecret }}
     - secretRef:

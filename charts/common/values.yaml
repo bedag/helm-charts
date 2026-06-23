@@ -540,6 +540,8 @@ components:
             # tag: "1.16"
             #  pullPolicy can be set to "Always". Comment out for using default ("IfNotPresent")
             # pullPolicy: Always
+            #  digest pins the image to a specific digest (e.g. sha256:...). When set, tag is ignored.
+            # digest: ""
 
           # command Entrypoint array. Not executed within a shell. The docker image's ENTRYPOINT is used if this is not provided.
           # command: []

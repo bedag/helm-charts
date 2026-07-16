@@ -6,7 +6,7 @@
 {{- $containerValues := .containerValues }}
 {{- $configFiles := .configFiles }}
 - name: {{ $containerName }}
-  image: "{{ $containerValues.image.repository }}:{{ $containerValues.image.tag | default $root.Values.defaultTag }}"
+  image: "{{ $containerValues.image.repository }}{{ if $containerValues.image.digest }}@{{ $containerValues.image.digest }}{{ else }}:{{ $containerValues.image.tag | default $root.Values.defaultTag }}{{ end }}"
   imagePullPolicy: {{ default "IfNotPresent" $containerValues.image.pullPolicy | quote }}
   {{- with $containerValues.command }}
   command: {{ toYaml . | nindent 4 }}

@@ -3,6 +3,34 @@ entries:
   common:
   - annotations:
       artifacthub.io/changes: |
+        - kind: added
+          description: StatefulSet serviceName now matches the governing Service name via optional controller.serviceName
+          links:
+            - name: GitHub Issue
+              url: https://github.com/bedag/helm-charts/issues/185
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    created: "2026-08-12T10:16:08.399940118Z"
+    description: Bedag's common Helm chart to use for creating other Helm charts
+    digest: 5ab0b1c48ace5291b7e43cf2d1e03467d91fcd0b12bd765fd20f22339e9dd088
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Common
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: common
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/common
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/common-12.9.0/common-12.9.0.tgz
+    version: 12.9.0
+  - annotations:
+      artifacthub.io/changes: |
         - "[Added]: Support image digest in container image reference"
       artifacthub.io/containsSecurityUpdates: "false"
       artifacthub.io/license: Apache-2.0
@@ -3563,4 +3591,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/vcluster-0.1.0/vcluster-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-16T05:48:50.645310331Z"
+generated: "2026-08-12T10:16:08.401419766Z"

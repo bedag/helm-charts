@@ -4,6 +4,39 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: added
+          description: Added components.<name>.services.<name>.ports list to allow defining multiple ports on a single Service (e.g. for a StatefulSet's governing/headless service)
+          links:
+            - name: GitHub Issue
+              url: https://github.com/bedag/helm-charts/issues/187
+        - kind: added
+          description: Added components.<name>.services.<name>.publishNotReadyAddresses to support StatefulSet governing services addressable before pods are ready
+          links:
+            - name: GitHub Issue
+              url: https://github.com/bedag/helm-charts/issues/187
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
+    created: "2026-08-17T09:31:38.702701151Z"
+    description: Bedag's common Helm chart to use for creating other Helm charts
+    digest: 7f0571a02b3935a00e5ac595c3f86e79e6cdfaa250110756bfdd25c95bbf433b
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Common
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: common
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/common
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/common-12.10.0/common-12.10.0.tgz
+    version: 12.10.0
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
           description: StatefulSet serviceName now matches the governing Service name via optional controller.serviceName
           links:
             - name: GitHub Issue
@@ -3591,4 +3624,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/vcluster-0.1.0/vcluster-0.1.0.tgz
     version: 0.1.0
-generated: "2026-08-12T10:16:08.401419766Z"
+generated: "2026-08-17T09:31:38.703232425Z"

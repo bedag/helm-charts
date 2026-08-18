@@ -13,6 +13,7 @@ metadata:
   labels:
 {{ include "library.labels.standard" $root | indent 4 }}
     app.kubernetes.io/component: {{ $name }}
+  {{- include "library.annotations" (dict "map" $cronjob.annotations "ctx" $root) | nindent 2 }}
 spec:
   schedule: {{ $cronjob.schedule | default "* * * * *" | quote }}
   {{- if $cronjob.concurrencyPolicy }}

@@ -825,6 +825,9 @@
                     "deploy": {
                       "type": "boolean",
                       "default": false
+                    },
+                    "annotations": {
+                      "type": "object"
                     }
                   }
                 }
@@ -881,6 +884,9 @@
                   "default": false
                 },
                 "extraAnnotations": {
+                  "type": "object"
+                },
+                "annotations": {
                   "type": "object"
                 },
                 "extraLabels": {

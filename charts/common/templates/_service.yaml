@@ -12,6 +12,7 @@ metadata:
   labels:
 {{ include "library.labels.standard" $root | indent 4 }}
     app.kubernetes.io/component: {{ $componentname }}
+  {{- include "library.annotations" (dict "map" $service.annotations "ctx" $root) | nindent 2 }}
 spec:
   type: {{ $service.type | default "ClusterIP" }}
   {{- if eq $service.type "LoadBalancer" }}

@@ -11,6 +11,21 @@ where the value can be templated with the given context
 {{- end -}}
 
 {{- /*
+library.annotations renders a metadata "annotations:" block for a given
+map of annotations, with each value templated via "library.mapify" (i.e.
+"tpl" against the given context). It is meant to be included directly
+under a resource's own "metadata:" block, e.g. to set resource-level
+annotations such as "helm.sh/hook", as opposed to annotations set on a
+Pod template (see e.g. controller.extraAnnotations).
+*/ -}}
+{{- define "library.annotations" -}}
+  {{- if $.map }}
+annotations:
+  {{- include "library.mapify" (dict "map" $.map "ctx" $.ctx) | nindent 2 }}
+  {{- end }}
+{{- end -}}
+
+{{- /*
 library.labels.standard prints the standard Helm labels.
 The standard labels are frequently used in metadata.
 

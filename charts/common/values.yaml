@@ -265,6 +265,9 @@ components:
         #     port: 9300
         #     targetPort: 9300
         #     protocol: TCP
+        #  annotations is optional and sets annotations on the Service's own metadata.annotations
+        # annotations:
+        #   foo: bar
     # end common.service
     # start common.networkpolicy
     # networkpolicy allows access from outside of the namespace or from other pods
@@ -338,11 +341,22 @@ components:
 
       # Extra annotations on all Pods
       # We use this for example to set the prometheus annotations.
+      # Note: this sets annotations on the Pod template (spec.template.metadata.annotations),
+      # NOT on this resource itself. See "annotations" below for resource-level annotations.
       extraAnnotations: {}
       # foo: bar
       # prometheus.io/path: /metrics
       # prometheus.io/port: "8080"
       # prometheus.io/scrape: "true"
+
+      # annotations sets annotations on the generated resource itself
+      # (Job/CronJob/Deployment/StatefulSet metadata.annotations), as opposed to
+      # extraAnnotations above which sets annotations on the Pod template. This is
+      # used e.g. to control Helm's execution order/hooks for a Job:
+      annotations: {}
+      # helm.sh/hook: test
+      # helm.sh/hook-weight: "-5"
+      # helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
 
       # Extra labels on all Pods
       extraLabels: {}

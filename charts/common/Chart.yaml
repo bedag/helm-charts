@@ -1,7 +1,7 @@
 apiVersion: v2
 name: common
 description: "Bedag's common Helm chart to use for creating other Helm charts"
-version: 12.10.0
+version: 12.11.0
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -27,6 +27,11 @@ annotations:
   artifacthub.io/prerelease: "false"
   artifacthub.io/license: Apache-2.0
   artifacthub.io/changes: |
+    - kind: added
+      description: Added annotations field to components.<name>.controller and components.<name>.services.<name> to set metadata.annotations on the generated Job/CronJob/Deployment/StatefulSet/Service resource itself (e.g. for helm.sh/hook* annotations), distinct from the Pod-template-scoped extraAnnotations
+      links:
+        - name: GitHub Issue
+          url: https://github.com/bedag/helm-charts/issues/189
     - kind: added
       description: Added components.<name>.services.<name>.ports list to allow defining multiple ports on a single Service (e.g. for a StatefulSet's governing/headless service)
       links:

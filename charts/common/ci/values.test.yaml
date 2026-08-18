@@ -57,6 +57,8 @@ components:
         loadBalancerClass: test
         loadBalancerSourceRanges:
           - 10.0.0.0/8
+        annotations:
+          example.com/owner: platform-team
     # end common.service
     # start common.networkpolicy
     networkpolicies:
@@ -80,6 +82,8 @@ components:
     controller:
       deploy: true
       type: "Deployment"
+      annotations:
+        example.com/owner: platform-team
       hostAliases:
       - ip: "127.0.0.1"
         hostnames:
@@ -304,6 +308,10 @@ components:
       ttlSecondsAfterFinished: 0
       automountServiceAccountToken: false
       restartPolicy: "Never"
+      annotations:
+        helm.sh/hook: test
+        helm.sh/hook-weight: "-5"
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
 
       # podSecurityContext holds pod-level security attributes and common container settings.
       # Some fields are also present in container.securityContext. Field values of containerSecurityContext take precedence over field values of podSecurityContext.

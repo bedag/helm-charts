@@ -13,6 +13,7 @@ metadata:
   labels:
 {{ include "library.labels.standard" $root | indent 4 }}
     app.kubernetes.io/component: {{ $name }}
+  {{- include "library.annotations" (dict "map" $job.annotations "ctx" $root) | nindent 2 }}
 spec:
 {{- include "common.jobspec" (dict "root" $root "job" $job "name" $name) | indent 2 }}
 {{- end }}

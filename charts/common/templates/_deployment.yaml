@@ -13,6 +13,7 @@ metadata:
   labels:
 {{ include "library.labels.standard" $root | indent 4 }}
     app.kubernetes.io/component: {{ $name }}
+  {{- include "library.annotations" (dict "map" $deployment.annotations "ctx" $root) | nindent 2 }}
 spec:
   replicas: {{ if kindIs "float64" $deployment.replicas }}{{ $deployment.replicas }}{{ else }}{{ 1 }}{{ end }}
   revisionHistoryLimit: {{ $deployment.revisionHistoryLimit | default 3 }}

@@ -59,19 +59,19 @@ spec:
         {{- range $containerName, $containerValues := $containers }}
         {{- $configMap := $containerValues.envConfigMap }}
         {{- if and $configMap (not $deployment.disableChecksumAnnotations) }}
-        checksum/envConfigMap: {{ print $configMap | sha256sum }}
+        checksum/envConfigMap-{{ $containerName }}: {{ print $configMap | sha256sum }}
         {{- end }}
         {{- $secret := $containerValues.envSecret }}
         {{- if and $secret (not $deployment.disableChecksumAnnotations) }}
-        checksum/envSecret: {{ print $secret | sha256sum }}
+        checksum/envSecret-{{ $containerName }}: {{ print $secret | sha256sum }}
         {{- end }}
         {{- $configFiles := $containerValues.configFiles }}
         {{- if and $configFiles (not $deployment.disableChecksumAnnotations) }}
-        checksum/configFiles: {{ print $configFiles | sha256sum }}
+        checksum/configFiles-{{ $containerName }}: {{ print $configFiles | sha256sum }}
         {{- end }}
         {{- $binaryFiles := $containerValues.binaryFiles }}
         {{- if and $binaryFiles (not $deployment.disableChecksumAnnotations) }}
-        checksum/binaryFiles: {{ print $binaryFiles | sha256sum }}
+        checksum/binaryFiles-{{ $containerName }}: {{ print $binaryFiles | sha256sum }}
         {{- end }}
         {{- end }}
         {{- end }}

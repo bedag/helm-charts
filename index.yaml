@@ -22,6 +22,44 @@ entries:
       artifacthub.io/license: Apache-2.0
       artifacthub.io/prerelease: "false"
     apiVersion: v2
+    created: "2026-08-20T10:54:55.594338785Z"
+    description: Bedag's common Helm chart to use for creating other Helm charts
+    digest: 0cbe8e9c2084a82db5ab546e5f5aef8463e4f1ba8b739787e9ea5292ffc38a1e
+    icon: https://www.bedag.ch/wGlobal/wGlobal/layout/images/logo.svg
+    keywords:
+    - Bedag
+    - Common
+    maintainers:
+    - email: sre@bedag.ch
+      name: SRE
+    name: common
+    sources:
+    - https://github.com/bedag/helm-charts/tree/master/charts/common
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/common-12.12.0/common-12.12.0.tgz
+    version: 12.12.0
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: Added annotations field to components.<name>.controller and components.<name>.services.<name> to set metadata.annotations on the generated Job/CronJob/Deployment/StatefulSet/Service resource itself (e.g. for helm.sh/hook* annotations), distinct from the Pod-template-scoped extraAnnotations
+          links:
+            - name: GitHub Issue
+              url: https://github.com/bedag/helm-charts/issues/189
+        - kind: added
+          description: Added components.<name>.services.<name>.ports list to allow defining multiple ports on a single Service (e.g. for a StatefulSet's governing/headless service)
+          links:
+            - name: GitHub Issue
+              url: https://github.com/bedag/helm-charts/issues/187
+        - kind: added
+          description: Added components.<name>.services.<name>.publishNotReadyAddresses to support StatefulSet governing services addressable before pods are ready
+          links:
+            - name: GitHub Issue
+              url: https://github.com/bedag/helm-charts/issues/187
+      artifacthub.io/containsSecurityUpdates: "false"
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/prerelease: "false"
+    apiVersion: v2
     created: "2026-08-18T08:21:09.301356566Z"
     description: Bedag's common Helm chart to use for creating other Helm charts
     digest: 8c6576df15ea476732acc24105b3a3f212751ce1eda53d609f27db4a5e0bc179
@@ -3662,4 +3700,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/vcluster-0.1.0/vcluster-0.1.0.tgz
     version: 0.1.0
-generated: "2026-08-18T08:21:09.3020398Z"
+generated: "2026-08-20T10:54:55.594912838Z"

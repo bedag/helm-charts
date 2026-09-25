@@ -96,9 +96,9 @@ volumes:
       {{- end }}
       {{- else }}
       name: {{ template "library.name" $root }}-{{ .name }}
+      {{- end }}
       {{- if .defaultMode }}
       defaultMode: {{ .defaultMode }}
-      {{- end }}
       {{- end }}
   {{- else if eq .type "persistentVolumeClaim" }}
     persistentVolumeClaim:

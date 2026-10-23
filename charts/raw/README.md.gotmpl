@@ -58,6 +58,79 @@ templates:
 
 A very basic example. But might get you started.
 
+## Using Templates with Value Interpolation
+
+When using `templates` with Helm interpolation (e.g., `{{ .Values.foo }}`), the `tpl` function renders these templates. However, **value scoping matters** depending on how you use this chart.
+
+### Standalone Usage
+
+When using the raw chart directly, values are accessible at the root level:
+
+```yaml
+myConfig:
+  clusterIP: 10.0.0.1
+
+templates:
+  - |
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: my-service
+      spec:
+        clusterIP: {{ .Values.myConfig.clusterIP }}
+```
+
+### As a Dependency (Subchart)
+
+When using the raw chart as a **dependency** in another chart, values under `raw:` are scoped to the raw subchart. This means `.Values` inside templates only sees what's under `raw:` in your parent values.
+
+**Option 1: Define values inside `raw:`**
+
+```yaml
+# Parent chart values.yaml
+raw:
+  myConfig:
+    clusterIP: 10.0.0.1
+    clusterIPs:
+      - 10.0.0.1
+      - 10.0.0.2
+  templates:
+    - |
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: my-service
+        spec:
+          clusterIP: {{ .Values.myConfig.clusterIP }}
+          clusterIPs: {{ .Values.myConfig.clusterIPs | toJson }}
+```
+
+**Option 2: Use global values**
+
+Global values are accessible to all subcharts, including the raw chart:
+
+```yaml
+# Parent chart values.yaml
+global:
+  myConfig:
+    clusterIP: 10.0.0.1
+    clusterIPs:
+      - 10.0.0.1
+      - 10.0.0.2
+
+raw:
+  templates:
+    - |
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: my-service
+        spec:
+          clusterIP: {{ .Values.global.myConfig.clusterIP }}
+          clusterIPs: {{ .Values.global.myConfig.clusterIPs | toJson }}
+```
+
+> **Note:** If your templates show literal `{{ ... }}` instead of rendered values, you're likely referencing values outside the raw chart's scope. Move your values under `raw:` or use `global:`.
 
 {{/*
   Chart Values

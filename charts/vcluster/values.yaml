@@ -1780,7 +1780,6 @@ kubernetes:
               user: ""
           current-context: audit-webhook
           users: []
-          preferences: {}
 
       log:
         # -- Defines the maximum number of days to retain old audit log files

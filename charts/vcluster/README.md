@@ -2,7 +2,7 @@
 
 __This Chart is under active development! We try to improve documentation and values consistency over time__
 
-![Version: 0.16.6](https://img.shields.io/badge/Version-0.16.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.17.1](https://img.shields.io/badge/Version-0.17.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Virtual Kubernetes Cluster
 
@@ -452,7 +452,7 @@ Deploys [Kubernetes API Server](https://kubernetes.io/docs/reference/command-lin
 | kubernetes.apiServer.audit.log.truncateMaxBatchSize | string | `"10485760"` | Maximum size in bytes of the batch sent to the underlying backend |
 | kubernetes.apiServer.audit.log.truncateMaxEventSize | string | `"102400"` | Maximum size in bytes of the audit event sent to the underlying backend |
 | kubernetes.apiServer.audit.policy | string | `"# Log all requests at the Metadata level.\napiVersion: audit.k8s.io/v1\nkind: Policy\nrules:\n  - level: Metadata\n"` | Audit Policy |
-| kubernetes.apiServer.audit.webhook.config | string | `"apiVersion: v1\nkind: Config\nclusters:\n- name: audit-webhook\n  cluster:\n    server: https://audit-webhook.audit-webhook.svc:9443/audit\n    insecure-skip-tls-verify: false\ncontexts:\n- name: audit-webhook\n  context:\n    cluster: audit-webhook\n    user: \"\"\ncurrent-context: audit-webhook\nusers: []\npreferences: {}\n"` | Kubeconfig for webhook |
+| kubernetes.apiServer.audit.webhook.config | string | `"apiVersion: v1\nkind: Config\nclusters:\n- name: audit-webhook\n  cluster:\n    server: https://audit-webhook.audit-webhook.svc:9443/audit\n    insecure-skip-tls-verify: false\ncontexts:\n- name: audit-webhook\n  context:\n    cluster: audit-webhook\n    user: \"\"\ncurrent-context: audit-webhook\nusers: []\n"` | Kubeconfig for webhook |
 | kubernetes.apiServer.audit.webhook.initialBackoff | string | `"10s"` | Defines the time to wait before retrying the first failed request. |
 | kubernetes.apiServer.autoscaling.enabled | bool | `false` | Enable Horizontal Pod Autoscaler |
 | kubernetes.apiServer.autoscaling.maxReplicas | int | `5` | Maximum available Replicas |

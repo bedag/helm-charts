@@ -52,7 +52,6 @@ data:
     contexts: null
     current-context: ""
     kind: Config
-    preferences: {}
     users: null
 EOT
 

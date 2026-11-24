@@ -2612,6 +2612,25 @@ entries:
   vcluster:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2026-11-24T09:21:10.254302074Z"
+    description: Virtual Kubernetes Cluster
+    digest: c8258a1504b0f88fcc4e91f33278ea90174a662fdea943536c698b899de7f70a
+    home: https://artifacthub.io/packages/helm/kvaps/kubernetes
+    keywords:
+    - vcluster
+    - kubernetes
+    - machine-controller
+    - kubermatic
+    maintainers:
+    - email: sre@bedag.ch
+      name: Bedag Informatik AG
+    name: vcluster
+    type: application
+    urls:
+    - https://github.com/bedag/helm-charts/releases/download/vcluster-0.17.1/vcluster-0.17.1.tgz
+    version: 0.17.1
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2026-06-05T12:37:27.829499441Z"
     description: Virtual Kubernetes Cluster
     digest: a4772141aad74da06282d41739b97771eeac23ee9b876c5b514acfc7691b33af
@@ -3738,4 +3757,4 @@ entries:
     urls:
     - https://github.com/bedag/helm-charts/releases/download/vcluster-0.1.0/vcluster-0.1.0.tgz
     version: 0.1.0
-generated: "2026-09-25T17:13:34.031674707Z"
+generated: "2026-11-24T09:21:10.254527775Z"

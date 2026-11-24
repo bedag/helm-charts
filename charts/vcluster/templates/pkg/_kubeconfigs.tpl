@@ -28,7 +28,6 @@ contexts:
   name: default-context
 current-context: default-context
 kind: Config
-preferences: {}
 users:
 - name: default-auth
   user:
